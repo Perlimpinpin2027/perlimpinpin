@@ -10,6 +10,10 @@ import {
   getCandidateRanking,
 } from "@/lib/queries";
 
+// La page dépend de données Neon qui changent (analyses publiées, scores) —
+// rendu dynamique à chaque requête plutôt que figé au build.
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const [featuredAnalysis, topDeclarations, rankedCandidates] =
     await Promise.all([
