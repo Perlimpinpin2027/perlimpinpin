@@ -274,6 +274,15 @@ function extractJson(data) {
   return JSON.parse(cleaned);
 }
 
+// Le modèle renvoie parfois ces champs comme des tableaux de points plutôt
+// qu'une chaîne unique. Le schéma Prisma attend un String — on normalise.
+function toText(value) {
+  if (Array.isArray(value)) {
+    return value.map((item) => `• ${item}`).join("\n");
+  }
+  return value;
+}
+
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   const { candidat: candidatNom, theme, source } = args;
@@ -342,12 +351,12 @@ async function main() {
       scoreOperationnel: notation.scoreOperationnel,
       scoreBudgetaire: notation.scoreBudgetaire,
       scorePertinence: notation.scorePertinence,
-      verdict: parsed.verdict_final,
-      cequiEstEtabli: parsed.ce_qui_est_etabli,
-      cequiEstProbable: parsed.ce_qui_est_probable,
-      cequiEstDiscutable: parsed.ce_qui_est_discutable,
-      cequiEstInconnu: parsed.ce_qui_est_inconnu,
-      sourcesUtilisees: parsed.sources_utilisees,
+      verdict: toText(parsed.verdict_final),
+      cequiEstEtabli: toText(parsed.ce_qui_est_etabli),
+      cequiEstProbable: toText(parsed.ce_qui_est_probable),
+      cequiEstDiscutable: toText(parsed.ce_qui_est_discutable),
+      cequiEstInconnu: toText(parsed.ce_qui_est_inconnu),
+      sourcesUtilisees: toText(parsed.sources_utilisees),
       statut: "brouillon",
       versionMethodologie: "v1.0",
       contenuComplet: parsed,
