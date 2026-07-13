@@ -67,7 +67,7 @@ export async function getTopDeclarations(limit = 3) {
 export async function getCandidateRanking(limit = 7) {
   const candidats = await prisma.candidat.findMany({
     take: limit,
-    orderBy: [{ scoreMoyen: "desc" }, { nom: "asc" }],
+    orderBy: [{ scoreMoyen: { sort: "desc", nulls: "last" } }, { nom: "asc" }],
     include: {
       propositions: {
         include: { analyses: true },
