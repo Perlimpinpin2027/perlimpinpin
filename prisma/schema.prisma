@@ -1,0 +1,85 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Candidat {
+  id         Int      @id @default(autoincrement())
+  nom        String   @unique
+  parti      String
+  photoUrl   String?
+  scoreMoyen Float?
+  createdAt  DateTime @default(now())
+
+  propositions Proposition[]
+}
+
+model Proposition {
+  id              Int      @id @default(autoincrement())
+  texteOriginal   String
+  theme           String
+  dateDeclaration DateTime
+  createdAt       DateTime @default(now())
+
+  candidatId Int
+  candidat   Candidat @relation(fields: [candidatId], references: [id])
+
+  analyses Analyse[]
+}
+
+model Analyse {
+  id Int @id @default(autoincrement())
+
+  propositionId Int
+  proposition   Proposition @relation(fields: [propositionId], references: [id])
+
+  // Score global sur 100
+  scoreFaisabilite Int
+
+  // Sous-scores sur 20 chacun
+  scoreSolidite     Int
+  scoreJuridique    Int
+  scoreOperationnel Int
+  scoreBudgetaire   Int
+  scorePertinence   Int
+
+  verdict String
+
+  cequiEstEtabli     String
+  cequiEstProbable   String
+  cequiEstDiscutable String
+  cequiEstInconnu    String
+
+  sourcesUtilisees String
+
+  // "brouillon" | "publie"
+  statut String @default("brouillon")
+
+  versionMethodologie String @default("v1.0")
+
+  // Réponse JSON complète renvoyée par l'API Anthropic
+  contenuComplet Json
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Source {
+  id  Int    @id @default(autoincrement())
+  nom String
+  url String
+
+  // "institutionnelle" | "statistique" | "juridique" | "autre"
+  type String
+
+  createdAt DateTime @default(now())
+}
