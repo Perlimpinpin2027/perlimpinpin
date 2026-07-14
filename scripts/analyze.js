@@ -1,5 +1,6 @@
 import "dotenv/config";
 import { pathToFileURL } from "node:url";
+import { writeFileSync } from "node:fs";
 import { PrismaClient } from "../src/generated/prisma/client.ts";
 import { PrismaNeon } from "@prisma/adapter-neon";
 import { neonConfig } from "@neondatabase/serverless";
@@ -172,8 +173,21 @@ async function callClaude(messages) {
     body: JSON.stringify({
       model: "claude-sonnet-5",
       max_tokens: 16000,
-      system: SYSTEM_PROMPT,
-      tools: [{ type: "web_search_20260209", name: "web_search" }],
+      // Le prompt système (doctrine, méthode, barème, format) est identique
+      // à chaque appel — on le met en cache pour ne pas le repayer en entier
+      // à chaque analyse (prix plein la 1ère fois, ~10% du prix ensuite).
+      system: [
+        {
+          type: "text",
+          text: SYSTEM_PROMPT,
+          cache_control: { type: "ephemeral" },
+        },
+      ],
+      // Plafond de recherches web par analyse, pour éviter qu'une proposition
+      // complexe ne déclenche un nombre de recherches excessif et coûteux.
+      tools: [
+        { type: "web_search_20260209", name: "web_search", max_uses: 10 },
+      ],
       messages,
       stream: true,
     }),
@@ -271,7 +285,16 @@ function extractJson(data) {
     .replace(/^```\s*/i, "")
     .replace(/```\s*$/i, "");
 
-  return JSON.parse(cleaned);
+  try {
+    return JSON.parse(cleaned);
+  } catch (error) {
+    // On vient de payer cet appel — on sauvegarde la sortie brute plutôt
+    // que de la perdre, pour pouvoir la récupérer/inspecter manuellement.
+    const dumpPath = `./failed-analysis-${Date.now()}.txt`;
+    writeFileSync(dumpPath, lastText, "utf-8");
+    console.error(`JSON invalide — réponse brute sauvegardée dans ${dumpPath}`);
+    throw error;
+  }
 }
 
 // Le modèle renvoie parfois ces champs comme des tableaux de points plutôt
@@ -323,6 +346,14 @@ async function main() {
     ];
     data = await callClaude(messages);
   }
+
+  const usage = data.usage ?? {};
+  console.log("");
+  console.log("Usage API :");
+  console.log(`  input_tokens (non caché)      : ${usage.input_tokens ?? "?"}`);
+  console.log(`  cache_creation_input_tokens   : ${usage.cache_creation_input_tokens ?? "?"}`);
+  console.log(`  cache_read_input_tokens       : ${usage.cache_read_input_tokens ?? "?"}`);
+  console.log(`  output_tokens                 : ${usage.output_tokens ?? "?"}`);
 
   const parsed = extractJson(data);
   const notation = parsed.notation_detaillee ?? {};
