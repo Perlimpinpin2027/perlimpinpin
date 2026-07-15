@@ -185,6 +185,100 @@ export async function getCandidatDetail(id) {
   };
 }
 
+// Compte les votes like/dislike par Analyse, filtré depuis `sinceDate`
+// (ou sur toute la période si `sinceDate` est omis).
+async function getVoteCountsByAnalyse(sinceDate) {
+  const rows = await prisma.feedback.groupBy({
+    by: ["analyseId", "type"],
+    where: sinceDate ? { createdAt: { gte: sinceDate } } : undefined,
+    _count: { _all: true },
+  });
+
+  const counts = new Map();
+  for (const row of rows) {
+    const entry = counts.get(row.analyseId) ?? { likes: 0, dislikes: 0 };
+    if (row.type === "like") entry.likes = row._count._all;
+    if (row.type === "dislike") entry.dislikes = row._count._all;
+    counts.set(row.analyseId, entry);
+  }
+  return counts;
+}
+
+// Renvoie l'analyseId ayant le plus de votes pour `key` ("likes"/"dislikes"),
+// ou null si aucune analyse n'a de vote sur cette période.
+function pickTopVoted(counts, key) {
+  let bestId = null;
+  let bestCount = 0;
+  for (const [analyseId, entry] of counts) {
+    if (entry[key] > bestCount) {
+      bestCount = entry[key];
+      bestId = analyseId;
+    }
+  }
+  return bestId;
+}
+
+async function buildLeaderboardCard(analyseId, counts) {
+  if (!analyseId) return null;
+
+  const analyse = await prisma.analyse.findUnique({
+    where: { id: analyseId },
+    include: { proposition: { include: { candidat: true } } },
+  });
+  if (!analyse) return null;
+
+  const contenu = analyse.contenuComplet ?? {};
+  const excerptSource = contenu.verdict_final ?? contenu.resume_court ?? analyse.verdict;
+  const excerptText = Array.isArray(excerptSource)
+    ? excerptSource.join(" ")
+    : (excerptSource ?? "");
+  const excerpt =
+    excerptText.length > 150 ? `${excerptText.slice(0, 149).trimEnd()}…` : excerptText;
+
+  const { likes, dislikes } = counts.get(analyseId) ?? { likes: 0, dislikes: 0 };
+
+  return {
+    propositionId: analyse.proposition.id,
+    titre: displayTitle(analyse.proposition),
+    candidatNom: analyse.proposition.candidat.nom,
+    candidatPhotoUrl: analyse.proposition.candidat.photoUrl,
+    excerpt,
+    score: analyse.scoreFaisabilite,
+    likes,
+    dislikes,
+  };
+}
+
+async function buildLeaderboardSection(counts) {
+  const [topLiked, topDisliked] = await Promise.all([
+    buildLeaderboardCard(pickTopVoted(counts, "likes"), counts),
+    buildLeaderboardCard(pickTopVoted(counts, "dislikes"), counts),
+  ]);
+  return { topLiked, topDisliked };
+}
+
+// Classement des déclarations par votes pour la page /prix-perlimpinpin :
+// général (toutes périodes), 30 derniers jours, 10 derniers jours.
+export async function getFeedbackLeaderboard() {
+  const now = Date.now();
+  const since30 = new Date(now - 30 * 24 * 60 * 60 * 1000);
+  const since10 = new Date(now - 10 * 24 * 60 * 60 * 1000);
+
+  const [allCounts, counts30, counts10] = await Promise.all([
+    getVoteCountsByAnalyse(),
+    getVoteCountsByAnalyse(since30),
+    getVoteCountsByAnalyse(since10),
+  ]);
+
+  const [general, last30, last10] = await Promise.all([
+    buildLeaderboardSection(allCounts),
+    buildLeaderboardSection(counts30),
+    buildLeaderboardSection(counts10),
+  ]);
+
+  return { general, last30, last10 };
+}
+
 // Détail d'une déclaration : la Proposition, son Candidat, et sa dernière
 // Analyse (avec le contenuComplet JSON pour les 17 sections).
 export async function getDeclarationDetail(propositionId) {
