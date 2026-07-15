@@ -77,6 +77,61 @@ export async function getCandidateRanking(limit = 7) {
   }));
 }
 
+// Liste des déclarations publiées pour la page /declarations, avec filtres
+// (candidat, thème) et tri (date ou score). Retourne aussi les listes de
+// candidats/thèmes disponibles pour construire les filtres.
+export async function getPublishedDeclarations({ candidat, theme, sort } = {}) {
+  const orderBy =
+    sort === "score_asc"
+      ? [{ scoreFaisabilite: "asc" }]
+      : sort === "score_desc"
+        ? [{ scoreFaisabilite: "desc" }]
+        : [{ createdAt: "desc" }];
+
+  const [analyses, allPublished] = await Promise.all([
+    prisma.analyse.findMany({
+      where: {
+        statut: "publie",
+        ...(candidat ? { proposition: { candidat: { nom: candidat } } } : {}),
+        ...(theme ? { proposition: { theme } } : {}),
+      },
+      orderBy,
+      include: {
+        proposition: { include: { candidat: true } },
+      },
+    }),
+    prisma.analyse.findMany({
+      where: { statut: "publie" },
+      include: { proposition: { include: { candidat: true } } },
+    }),
+  ]);
+
+  const candidats = [
+    ...new Map(
+      allPublished.map((a) => [
+        a.proposition.candidat.nom,
+        { nom: a.proposition.candidat.nom, parti: a.proposition.candidat.parti },
+      ]),
+    ).values(),
+  ].sort((a, b) => a.nom.localeCompare(b.nom, "fr"));
+
+  const themes = [...new Set(allPublished.map((a) => a.proposition.theme))].sort(
+    (a, b) => a.localeCompare(b, "fr"),
+  );
+
+  const declarations = analyses.map((analyse) => ({
+    id: analyse.proposition.id,
+    titre: displayTitle(analyse.proposition),
+    candidatNom: analyse.proposition.candidat.nom,
+    candidatParti: analyse.proposition.candidat.parti,
+    theme: analyse.proposition.theme,
+    dateLabel: dateFormatter.format(analyse.proposition.dateDeclaration),
+    score: analyse.scoreFaisabilite,
+  }));
+
+  return { declarations, candidats, themes };
+}
+
 // Détail d'une déclaration : la Proposition, son Candidat, et sa dernière
 // Analyse (avec le contenuComplet JSON pour les 17 sections).
 export async function getDeclarationDetail(propositionId) {

@@ -40,7 +40,7 @@ const rangeStyles = {
   red: { border: "border-l-red-500", badge: "bg-red-50 text-red-700" },
 };
 
-function ColumnHeader({ title, subtitle, linkLabel }) {
+function ColumnHeader({ title, subtitle, linkLabel, linkHref }) {
   return (
     <div className="mb-6 flex items-start justify-between gap-4">
       <div>
@@ -50,12 +50,12 @@ function ColumnHeader({ title, subtitle, linkLabel }) {
         ) : null}
       </div>
       {linkLabel ? (
-        <a
-          href="#"
+        <Link
+          href={linkHref || "#"}
           className="shrink-0 text-sm font-semibold text-blue-600 transition-colors hover:text-blue-800"
         >
           {linkLabel}
-        </a>
+        </Link>
       ) : null}
     </div>
   );
@@ -67,6 +67,7 @@ function TopDeclarationsColumn({ declarations }) {
       <ColumnHeader
         title="Déclarations les plus consultées"
         linkLabel="Voir toutes →"
+        linkHref="/declarations"
       />
 
       {declarations.length === 0 ? (
