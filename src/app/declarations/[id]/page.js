@@ -1,16 +1,14 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
-import {
-  getDeclarationDetail,
-  scoreToFlag,
-  scoreToVerdictLabel,
-} from "@/lib/queries";
+import { getDeclarationDetail } from "@/lib/queries";
+import { getScoreBadge } from "@/lib/score";
 
 export const dynamic = "force-dynamic";
 
-const flagStyles = {
+const colorStyles = {
   red: { score: "text-red-600", badge: "bg-red-50 text-red-700" },
+  orange: { score: "text-orange-600", badge: "bg-orange-50 text-orange-700" },
   green: { score: "text-green-600", badge: "bg-green-50 text-green-700" },
 };
 
@@ -79,8 +77,8 @@ export default async function DeclarationDetailPage({ params }) {
 
   const { analyse } = declaration;
   const contenu = analyse.contenuComplet ?? {};
-  const flagColor = scoreToFlag(analyse.scoreFaisabilite);
-  const colors = flagStyles[flagColor];
+  const badge = getScoreBadge(analyse.scoreFaisabilite);
+  const colors = colorStyles[badge.color];
   const notation = contenu.notation_detaillee ?? {};
 
   return (
@@ -140,10 +138,9 @@ export default async function DeclarationDetailPage({ params }) {
                 </span>
               </div>
               <div
-                className={`mt-3 inline-flex w-fit items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${colors.badge}`}
+                className={`mt-3 inline-flex w-fit items-center rounded-full px-3 py-1 text-xs font-semibold ${colors.badge}`}
               >
-                <span aria-hidden="true">🚩</span>
-                {flagColor === "green" ? "Green Flag" : "Red Flag"}
+                {badge.label}
               </div>
             </div>
 

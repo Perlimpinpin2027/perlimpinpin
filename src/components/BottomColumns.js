@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getScoreBadge } from "@/lib/score";
 
 const scoreRanges = [
   {
@@ -21,9 +22,16 @@ const scoreRanges = [
   },
 ];
 
-const flagStyles = {
+const badgeStyles = {
   green: "bg-green-50 text-green-700",
+  orange: "bg-orange-50 text-orange-700",
   red: "bg-red-50 text-red-700",
+};
+
+const scoreTextStyles = {
+  green: "text-green-600",
+  orange: "text-orange-600",
+  red: "text-red-600",
 };
 
 const rangeStyles = {
@@ -67,43 +75,46 @@ function TopDeclarationsColumn({ declarations }) {
         </p>
       ) : (
         <ul className="flex flex-col gap-5">
-          {declarations.map((item, index) => (
-            <li key={`${item.name}-${index}`}>
-              <Link
-                href={`/declarations/${item.propositionId}`}
-                className="-m-2 flex items-start gap-3 rounded-xl p-2 transition-colors hover:bg-zinc-50"
-              >
-                <div
-                  className="h-9 w-9 shrink-0 rounded-full bg-zinc-200"
-                  aria-hidden="true"
-                />
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-semibold text-zinc-900">
-                    {item.name}
-                  </p>
-                  <p className="mt-0.5 line-clamp-2 text-sm font-medium text-zinc-800">
-                    &ldquo;{item.quote}&rdquo;
-                  </p>
-                  <p className="mt-1 text-xs text-zinc-400">
-                    {item.date} · {item.theme}
-                  </p>
-                </div>
-                <div className="flex shrink-0 flex-col items-end gap-1">
-                  <span className="text-sm font-bold text-zinc-900">
-                    {item.score}
-                    <span className="text-xs font-medium text-zinc-400">
-                      /100
+          {declarations.map((item, index) => {
+            const badge = getScoreBadge(item.score);
+            return (
+              <li key={`${item.name}-${index}`}>
+                <Link
+                  href={`/declarations/${item.propositionId}`}
+                  className="-m-2 flex items-start gap-3 rounded-xl p-2 transition-colors hover:bg-zinc-50"
+                >
+                  <div
+                    className="h-9 w-9 shrink-0 rounded-full bg-zinc-200"
+                    aria-hidden="true"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold text-zinc-900">
+                      {item.name}
+                    </p>
+                    <p className="mt-0.5 line-clamp-2 text-sm font-medium text-zinc-800">
+                      &ldquo;{item.quote}&rdquo;
+                    </p>
+                    <p className="mt-1 text-xs text-zinc-400">
+                      {item.date} · {item.theme}
+                    </p>
+                  </div>
+                  <div className="flex shrink-0 flex-col items-end gap-1">
+                    <span className="text-sm font-bold text-zinc-900">
+                      {item.score}
+                      <span className="text-xs font-medium text-zinc-400">
+                        /100
+                      </span>
                     </span>
-                  </span>
-                  <span
-                    className={`rounded-full px-2 py-0.5 text-xs font-semibold ${flagStyles[item.flag]}`}
-                  >
-                    {item.flag === "green" ? "Green Flag" : "Red Flag"}
-                  </span>
-                </div>
-              </Link>
-            </li>
-          ))}
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-xs font-semibold ${badgeStyles[badge.color]}`}
+                    >
+                      {badge.label}
+                    </span>
+                  </div>
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>
@@ -197,7 +208,9 @@ function ReliabilityIndexColumn({ candidates }) {
                     Pas encore noté
                   </span>
                 ) : (
-                  <span className="text-sm font-bold text-zinc-900">
+                  <span
+                    className={`text-sm font-bold ${scoreTextStyles[getScoreBadge(candidate.avgScore).color]}`}
+                  >
                     {candidate.avgScore}
                     <span className="text-xs font-medium text-zinc-400">
                       /100

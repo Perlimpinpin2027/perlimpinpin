@@ -1,7 +1,13 @@
-const flagStyles = {
+import { getScoreBadge } from "@/lib/score";
+
+const colorStyles = {
   red: {
     score: "text-red-600",
     badge: "bg-red-50 text-red-700",
+  },
+  orange: {
+    score: "text-orange-600",
+    badge: "bg-orange-50 text-orange-700",
   },
   green: {
     score: "text-green-600",
@@ -9,15 +15,7 @@ const flagStyles = {
   },
 };
 
-export default function ScoreCard({
-  score,
-  flagLabel,
-  flagColor = "red",
-  verdictLabel,
-  verdictDescription,
-}) {
-  const colors = flagStyles[flagColor] ?? flagStyles.red;
-
+export default function ScoreCard({ score, verdictDescription }) {
   if (score == null) {
     return (
       <div className="flex h-full flex-col items-center justify-center rounded-2xl border border-zinc-200 bg-white p-6 text-center">
@@ -28,6 +26,9 @@ export default function ScoreCard({
       </div>
     );
   }
+
+  const badge = getScoreBadge(score);
+  const colors = colorStyles[badge.color];
 
   return (
     <div className="flex h-full flex-col rounded-2xl border border-zinc-200 bg-white p-6">
@@ -43,14 +44,12 @@ export default function ScoreCard({
       </div>
 
       <div
-        className={`mt-4 inline-flex w-fit items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${colors.badge}`}
+        className={`mt-4 inline-flex w-fit items-center rounded-full px-3 py-1 text-xs font-semibold ${colors.badge}`}
       >
-        <span aria-hidden="true">🚩</span>
-        {flagLabel}
+        {badge.label}
       </div>
 
-      <p className="mt-5 text-sm font-bold text-zinc-900">{verdictLabel}</p>
-      <p className="mt-1 text-sm leading-relaxed text-zinc-500">
+      <p className="mt-5 text-sm leading-relaxed text-zinc-500">
         {verdictDescription}
       </p>
     </div>

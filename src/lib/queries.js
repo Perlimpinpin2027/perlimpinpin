@@ -6,18 +6,6 @@ const dateFormatter = new Intl.DateTimeFormat("fr-FR", {
   year: "numeric",
 });
 
-// Seuils alignés sur la légende "Comment fonctionne le score ?"
-// (70-100 Plutôt fondé / 40-69 Partiellement fondé / 0-39 Non étayé).
-export function scoreToFlag(score) {
-  return score >= 70 ? "green" : "red";
-}
-
-export function scoreToVerdictLabel(score) {
-  if (score >= 70) return "Plutôt fondé";
-  if (score >= 40) return "Partiellement fondé";
-  return "Non étayé";
-}
-
 // Titre court pour l'affichage sur les cartes. Si `titre` n'a pas été
 // généré (anciennes propositions), on retombe sur texteOriginal tronqué.
 function displayTitle(proposition) {
@@ -37,8 +25,6 @@ export async function getFeaturedAnalysis() {
 
   if (!analyse) return null;
 
-  const flagColor = scoreToFlag(analyse.scoreFaisabilite);
-
   return {
     propositionId: analyse.proposition.id,
     quoteText: displayTitle(analyse.proposition),
@@ -46,9 +32,6 @@ export async function getFeaturedAnalysis() {
     personRole: `Déclaration • ${analyse.proposition.theme}`,
     dateLabel: dateFormatter.format(analyse.proposition.dateDeclaration),
     score: analyse.scoreFaisabilite,
-    flagColor,
-    flagLabel: flagColor === "green" ? "Green Flag" : "Red Flag",
-    verdictLabel: scoreToVerdictLabel(analyse.scoreFaisabilite),
     verdictDescription: analyse.verdict,
   };
 }
@@ -70,7 +53,6 @@ export async function getTopDeclarations(limit = 3) {
     date: dateFormatter.format(analyse.proposition.dateDeclaration),
     theme: analyse.proposition.theme,
     score: analyse.scoreFaisabilite,
-    flag: scoreToFlag(analyse.scoreFaisabilite),
   }));
 }
 
