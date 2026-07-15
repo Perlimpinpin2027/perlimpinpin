@@ -132,6 +132,19 @@ export async function getPublishedDeclarations({ candidat, theme, sort } = {}) {
   return { declarations, candidats, themes };
 }
 
+// Thèmes distincts utilisés par les analyses publiées, pour les tags
+// cliquables du Hero de la page d'accueil.
+export async function getPublishedThemes() {
+  const analyses = await prisma.analyse.findMany({
+    where: { statut: "publie" },
+    select: { proposition: { select: { theme: true } } },
+  });
+
+  return [...new Set(analyses.map((a) => a.proposition.theme))].sort((a, b) =>
+    a.localeCompare(b, "fr"),
+  );
+}
+
 // Détail d'une déclaration : la Proposition, son Candidat, et sa dernière
 // Analyse (avec le contenuComplet JSON pour les 17 sections).
 export async function getDeclarationDetail(propositionId) {

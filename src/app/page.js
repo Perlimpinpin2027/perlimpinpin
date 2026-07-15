@@ -2,7 +2,7 @@ import Header from "@/components/Header";
 import HeroText from "@/components/HeroText";
 import FeaturedQuoteCard from "@/components/FeaturedQuoteCard";
 import ScoreCard from "@/components/ScoreCard";
-import SearchBar from "@/components/SearchBar";
+import ThemeTags from "@/components/ThemeTags";
 import BottomColumns from "@/components/BottomColumns";
 import {
   getFeaturedAnalysis,
@@ -36,7 +36,7 @@ export default async function Home() {
 
       <section className="w-full px-6 pb-10 sm:px-8">
         <div className="mx-auto w-full max-w-[1280px]">
-          <SearchBar />
+          <ThemeTags />
         </div>
       </section>
 
