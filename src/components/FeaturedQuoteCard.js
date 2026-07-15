@@ -1,4 +1,7 @@
+import Link from "next/link";
+
 export default function FeaturedQuoteCard({
+  propositionId,
   quoteText,
   personName,
   personRole,
@@ -43,13 +46,13 @@ export default function FeaturedQuoteCard({
         </div>
       </div>
 
-      <button
-        type="button"
+      <Link
+        href={`/declarations/${propositionId}`}
         className="mt-6 inline-flex w-fit items-center gap-1.5 text-sm font-semibold text-blue-600 transition-colors hover:text-blue-800"
       >
         Voir l&apos;analyse complète
         <span aria-hidden="true">→</span>
-      </button>
+      </Link>
 
       <div className="mt-auto flex items-center justify-center gap-4 border-t border-zinc-100 pt-5 text-sm text-zinc-500">
         <button

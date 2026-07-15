@@ -306,6 +306,30 @@ function toText(value) {
   return value;
 }
 
+const TITRE_MAX_LENGTH = 80;
+
+// Choisit resume_court ou mesure_reformulee — le plus court des deux —
+// comme titre affichable sur les cartes, tronqué à ~80 caractères.
+function buildTitre(parsed) {
+  const candidates = [parsed.resume_court, parsed.mesure_reformulee].filter(
+    (value) => typeof value === "string" && value.trim().length > 0,
+  );
+  if (candidates.length === 0) return null;
+
+  const shortest = candidates.reduce((best, current) =>
+    current.length < best.length ? current : best,
+  );
+
+  if (shortest.length <= TITRE_MAX_LENGTH) return shortest;
+
+  // Coupe au dernier espace avant la limite pour éviter de tronquer en
+  // plein milieu d'un mot.
+  const truncated = shortest.slice(0, TITRE_MAX_LENGTH);
+  const lastSpace = truncated.lastIndexOf(" ");
+  const cut = lastSpace > 40 ? truncated.slice(0, lastSpace) : truncated;
+  return `${cut.trimEnd()}…`;
+}
+
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   const { candidat: candidatNom, theme, source } = args;
@@ -357,6 +381,7 @@ async function main() {
 
   const parsed = extractJson(data);
   const notation = parsed.notation_detaillee ?? {};
+  const titre = buildTitre(parsed);
 
   const candidat = await prisma.candidat.upsert({
     where: { nom: candidatNom },
@@ -366,6 +391,7 @@ async function main() {
 
   const proposition = await prisma.proposition.create({
     data: {
+      titre,
       texteOriginal: source,
       theme,
       dateDeclaration: new Date(),
@@ -395,6 +421,7 @@ async function main() {
   });
 
   console.log("");
+  console.log(`Titre     : ${proposition.titre}`);
   console.log(`Candidat  : ${candidat.nom} (${candidat.parti})`);
   console.log(`Thème     : ${theme}`);
   console.log(`Analyse   : #${analyse.id} (statut: ${analyse.statut})`);

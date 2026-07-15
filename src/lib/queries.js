@@ -8,14 +8,22 @@ const dateFormatter = new Intl.DateTimeFormat("fr-FR", {
 
 // Seuils alignés sur la légende "Comment fonctionne le score ?"
 // (70-100 Plutôt fondé / 40-69 Partiellement fondé / 0-39 Non étayé).
-function scoreToFlag(score) {
+export function scoreToFlag(score) {
   return score >= 70 ? "green" : "red";
 }
 
-function scoreToVerdictLabel(score) {
+export function scoreToVerdictLabel(score) {
   if (score >= 70) return "Plutôt fondé";
   if (score >= 40) return "Partiellement fondé";
   return "Non étayé";
+}
+
+// Titre court pour l'affichage sur les cartes. Si `titre` n'a pas été
+// généré (anciennes propositions), on retombe sur texteOriginal tronqué.
+function displayTitle(proposition) {
+  if (proposition.titre) return proposition.titre;
+  const text = proposition.texteOriginal;
+  return text.length > 80 ? `${text.slice(0, 79).trimEnd()}…` : text;
 }
 
 export async function getFeaturedAnalysis() {
@@ -32,7 +40,8 @@ export async function getFeaturedAnalysis() {
   const flagColor = scoreToFlag(analyse.scoreFaisabilite);
 
   return {
-    quoteText: analyse.proposition.texteOriginal,
+    propositionId: analyse.proposition.id,
+    quoteText: displayTitle(analyse.proposition),
     personName: analyse.proposition.candidat.nom,
     personRole: `Déclaration • ${analyse.proposition.theme}`,
     dateLabel: dateFormatter.format(analyse.proposition.dateDeclaration),
@@ -55,8 +64,9 @@ export async function getTopDeclarations(limit = 3) {
   });
 
   return analyses.map((analyse) => ({
+    propositionId: analyse.proposition.id,
     name: analyse.proposition.candidat.nom,
-    quote: analyse.proposition.texteOriginal,
+    quote: displayTitle(analyse.proposition),
     date: dateFormatter.format(analyse.proposition.dateDeclaration),
     theme: analyse.proposition.theme,
     score: analyse.scoreFaisabilite,
@@ -83,4 +93,30 @@ export async function getCandidateRanking(limit = 7) {
       0,
     ),
   }));
+}
+
+// Détail d'une déclaration : la Proposition, son Candidat, et sa dernière
+// Analyse (avec le contenuComplet JSON pour les 17 sections).
+export async function getDeclarationDetail(propositionId) {
+  const proposition = await prisma.proposition.findUnique({
+    where: { id: propositionId },
+    include: {
+      candidat: true,
+      analyses: { orderBy: { createdAt: "desc" }, take: 1 },
+    },
+  });
+
+  if (!proposition) return null;
+
+  const analyse = proposition.analyses[0] ?? null;
+
+  return {
+    id: proposition.id,
+    titre: displayTitle(proposition),
+    texteOriginal: proposition.texteOriginal,
+    theme: proposition.theme,
+    dateLabel: dateFormatter.format(proposition.dateDeclaration),
+    candidat: proposition.candidat,
+    analyse,
+  };
 }

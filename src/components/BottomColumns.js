@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const scoreRanges = [
   {
     range: "70-100",
@@ -66,35 +68,40 @@ function TopDeclarationsColumn({ declarations }) {
       ) : (
         <ul className="flex flex-col gap-5">
           {declarations.map((item, index) => (
-            <li key={`${item.name}-${index}`} className="flex items-start gap-3">
-              <div
-                className="h-9 w-9 shrink-0 rounded-full bg-zinc-200"
-                aria-hidden="true"
-              />
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-semibold text-zinc-900">
-                  {item.name}
-                </p>
-                <p className="mt-0.5 line-clamp-2 text-sm font-medium text-zinc-800">
-                  &ldquo;{item.quote}&rdquo;
-                </p>
-                <p className="mt-1 text-xs text-zinc-400">
-                  {item.date} · {item.theme}
-                </p>
-              </div>
-              <div className="flex shrink-0 flex-col items-end gap-1">
-                <span className="text-sm font-bold text-zinc-900">
-                  {item.score}
-                  <span className="text-xs font-medium text-zinc-400">
-                    /100
+            <li key={`${item.name}-${index}`}>
+              <Link
+                href={`/declarations/${item.propositionId}`}
+                className="-m-2 flex items-start gap-3 rounded-xl p-2 transition-colors hover:bg-zinc-50"
+              >
+                <div
+                  className="h-9 w-9 shrink-0 rounded-full bg-zinc-200"
+                  aria-hidden="true"
+                />
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-semibold text-zinc-900">
+                    {item.name}
+                  </p>
+                  <p className="mt-0.5 line-clamp-2 text-sm font-medium text-zinc-800">
+                    &ldquo;{item.quote}&rdquo;
+                  </p>
+                  <p className="mt-1 text-xs text-zinc-400">
+                    {item.date} · {item.theme}
+                  </p>
+                </div>
+                <div className="flex shrink-0 flex-col items-end gap-1">
+                  <span className="text-sm font-bold text-zinc-900">
+                    {item.score}
+                    <span className="text-xs font-medium text-zinc-400">
+                      /100
+                    </span>
                   </span>
-                </span>
-                <span
-                  className={`rounded-full px-2 py-0.5 text-xs font-semibold ${flagStyles[item.flag]}`}
-                >
-                  {item.flag === "green" ? "Green Flag" : "Red Flag"}
-                </span>
-              </div>
+                  <span
+                    className={`rounded-full px-2 py-0.5 text-xs font-semibold ${flagStyles[item.flag]}`}
+                  >
+                    {item.flag === "green" ? "Green Flag" : "Red Flag"}
+                  </span>
+                </div>
+              </Link>
             </li>
           ))}
         </ul>

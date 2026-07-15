@@ -25,6 +25,10 @@ model Candidat {
 
 model Proposition {
   id              Int      @id @default(autoincrement())
+  // Titre court généré à partir de l'analyse (resume_court/mesure_reformulee),
+  // pour l'affichage sur les cartes. Nullable pour les propositions
+  // antérieures à l'ajout de ce champ.
+  titre           String?
   texteOriginal   String
   theme           String
   dateDeclaration DateTime
