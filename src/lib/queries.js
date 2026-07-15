@@ -145,6 +145,46 @@ export async function getPublishedThemes() {
   );
 }
 
+// Liste de tous les candidats pour la page /candidats, avec leur nombre de
+// déclarations publiées et leur score moyen.
+export async function getAllCandidats() {
+  const candidats = await prisma.candidat.findMany({
+    orderBy: [{ scoreMoyen: { sort: "desc", nulls: "last" } }, { nom: "asc" }],
+    include: {
+      propositions: {
+        include: { analyses: { where: { statut: "publie" } } },
+      },
+    },
+  });
+
+  return candidats.map((candidat) => ({
+    id: candidat.id,
+    nom: candidat.nom,
+    parti: candidat.parti,
+    photoUrl: candidat.photoUrl,
+    scoreMoyen: candidat.scoreMoyen,
+    declarationsPubliees: candidat.propositions.reduce(
+      (total, proposition) => total + proposition.analyses.length,
+      0,
+    ),
+  }));
+}
+
+// Détail d'un candidat pour sa fiche /candidats/[id].
+export async function getCandidatDetail(id) {
+  const candidat = await prisma.candidat.findUnique({ where: { id } });
+
+  if (!candidat) return null;
+
+  return {
+    id: candidat.id,
+    nom: candidat.nom,
+    parti: candidat.parti,
+    photoUrl: candidat.photoUrl,
+    scoreMoyen: candidat.scoreMoyen,
+  };
+}
+
 // Détail d'une déclaration : la Proposition, son Candidat, et sa dernière
 // Analyse (avec le contenuComplet JSON pour les 17 sections).
 export async function getDeclarationDetail(propositionId) {

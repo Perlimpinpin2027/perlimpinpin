@@ -179,6 +179,7 @@ function ReliabilityIndexColumn({ candidates }) {
         title="Indice de fiabilité des candidats"
         subtitle="Score moyen évolutif sur les 30 derniers jours"
         linkLabel="Voir tous les candidats →"
+        linkHref="/candidats"
       />
 
       {candidates.length === 0 ? (
