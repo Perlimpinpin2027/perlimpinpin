@@ -17,17 +17,18 @@ const candidatesData = [
   { nom: "Gabriel Attal", parti: "Renaissance" },
   { nom: "Marine Tondelier", parti: "Les Écologistes" },
   { nom: "Bruno Retailleau", parti: "Les Républicains" },
+  { nom: "Éric Zemmour", parti: "Reconquête" },
+  { nom: "Dominique de Villepin", parti: "La France humaniste" },
 ];
 
 async function main() {
-  // Repartir d'une base propre pour que le seed soit rejouable.
-  await prisma.analyse.deleteMany();
-  await prisma.proposition.deleteMany();
-  await prisma.candidat.deleteMany();
-
+  // Upsert par nom : rejouable sans jamais toucher aux propositions/analyses
+  // déjà publiées pour les candidats existants.
   for (const data of candidatesData) {
-    const candidat = await prisma.candidat.create({
-      data: {
+    const candidat = await prisma.candidat.upsert({
+      where: { nom: data.nom },
+      update: { parti: data.parti },
+      create: {
         nom: data.nom,
         parti: data.parti,
         photoUrl: null,
