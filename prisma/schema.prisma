@@ -75,6 +75,26 @@ model Analyse {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  feedbacks Feedback[]
+}
+
+model Feedback {
+  id Int @id @default(autoincrement())
+
+  analyseId Int
+  analyse   Analyse @relation(fields: [analyseId], references: [id])
+
+  // "like" | "dislike"
+  type String
+
+  // Raison du dislike, nullable (uniquement si type = "dislike")
+  raison String?
+
+  // Texte libre si raison = "autre"
+  raisonAutre String?
+
+  createdAt DateTime @default(now())
 }
 
 model Source {

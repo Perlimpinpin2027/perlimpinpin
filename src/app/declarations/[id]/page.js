@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
+import FeedbackWidget from "@/components/FeedbackWidget";
 import { getDeclarationDetail } from "@/lib/queries";
 import { getScoreBadge } from "@/lib/score";
 
@@ -160,6 +161,12 @@ export default async function DeclarationDetailPage({ params }) {
               ))}
             </div>
           </div>
+
+          <FeedbackWidget
+            analyseId={analyse.id}
+            initialLikes={declaration.feedbackCounts.likes}
+            initialDislikes={declaration.feedbackCounts.dislikes}
+          />
 
           <Section title="Résumé">
             <TextOrList value={contenu.resume_court} />

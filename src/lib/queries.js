@@ -200,6 +200,20 @@ export async function getDeclarationDetail(propositionId) {
 
   const analyse = proposition.analyses[0] ?? null;
 
+  const feedbackCounts = analyse
+    ? await (async () => {
+        const [likes, dislikes] = await Promise.all([
+          prisma.feedback.count({
+            where: { analyseId: analyse.id, type: "like" },
+          }),
+          prisma.feedback.count({
+            where: { analyseId: analyse.id, type: "dislike" },
+          }),
+        ]);
+        return { likes, dislikes };
+      })()
+    : { likes: 0, dislikes: 0 };
+
   return {
     id: proposition.id,
     titre: displayTitle(proposition),
@@ -208,5 +222,6 @@ export async function getDeclarationDetail(propositionId) {
     dateLabel: dateFormatter.format(proposition.dateDeclaration),
     candidat: proposition.candidat,
     analyse,
+    feedbackCounts,
   };
 }
