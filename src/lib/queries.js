@@ -14,8 +14,10 @@ function displayTitle(proposition) {
   return text.length > 80 ? `${text.slice(0, 79).trimEnd()}…` : text;
 }
 
-export async function getFeaturedAnalysis() {
-  const analyse = await prisma.analyse.findFirst({
+// Toutes les analyses publiées, des plus récentes aux plus anciennes, pour
+// le carrousel "Prix Perlimpinpin de la semaine" + la carte Score associée.
+export async function getFeaturedRotation() {
+  const analyses = await prisma.analyse.findMany({
     where: { statut: "publie" },
     orderBy: { createdAt: "desc" },
     include: {
@@ -23,9 +25,7 @@ export async function getFeaturedAnalysis() {
     },
   });
 
-  if (!analyse) return null;
-
-  return {
+  return analyses.map((analyse) => ({
     propositionId: analyse.proposition.id,
     quoteText: displayTitle(analyse.proposition),
     personName: analyse.proposition.candidat.nom,
@@ -33,7 +33,7 @@ export async function getFeaturedAnalysis() {
     dateLabel: dateFormatter.format(analyse.proposition.dateDeclaration),
     score: analyse.scoreFaisabilite,
     verdictDescription: analyse.verdict,
-  };
+  }));
 }
 
 export async function getTopDeclarations(limit = 3) {

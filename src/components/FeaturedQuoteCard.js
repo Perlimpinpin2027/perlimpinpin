@@ -6,6 +6,11 @@ export default function FeaturedQuoteCard({
   personName,
   personRole,
   dateLabel,
+  currentIndex = 0,
+  total = 0,
+  onPrev,
+  onNext,
+  onSelect,
 }) {
   if (!quoteText) {
     return (
@@ -58,28 +63,39 @@ export default function FeaturedQuoteCard({
         <button
           type="button"
           aria-label="Citation précédente"
-          className="flex h-7 w-7 items-center justify-center rounded-full transition-colors hover:bg-zinc-100 hover:text-zinc-900"
+          onClick={onPrev}
+          disabled={total <= 1}
+          className="flex h-7 w-7 items-center justify-center rounded-full transition-colors hover:bg-zinc-100 hover:text-zinc-900 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent"
         >
           ‹
         </button>
-        <span className="text-xs font-medium text-zinc-600">1/5</span>
+        <span className="text-xs font-medium text-zinc-600">
+          {currentIndex + 1}/{total}
+        </span>
         <button
           type="button"
           aria-label="Citation suivante"
-          className="flex h-7 w-7 items-center justify-center rounded-full transition-colors hover:bg-zinc-100 hover:text-zinc-900"
+          onClick={onNext}
+          disabled={total <= 1}
+          className="flex h-7 w-7 items-center justify-center rounded-full transition-colors hover:bg-zinc-100 hover:text-zinc-900 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent"
         >
           ›
         </button>
       </div>
 
-      <div className="mt-3 flex items-center justify-center gap-1.5" aria-hidden="true">
-        {Array.from({ length: 4 }).map((_, index) => (
-          <span
-            key={index}
-            className={`h-1.5 w-1.5 rounded-full ${index === 0 ? "bg-zinc-800" : "bg-zinc-200"}`}
-          />
-        ))}
-      </div>
+      {total > 1 ? (
+        <div className="mt-3 flex items-center justify-center gap-1.5">
+          {Array.from({ length: total }).map((_, index) => (
+            <button
+              key={index}
+              type="button"
+              aria-label={`Voir la citation ${index + 1}`}
+              onClick={() => onSelect?.(index)}
+              className={`h-1.5 w-1.5 rounded-full transition-colors ${index === currentIndex ? "bg-zinc-800" : "bg-zinc-200 hover:bg-zinc-400"}`}
+            />
+          ))}
+        </div>
+      ) : null}
     </div>
   );
 }

@@ -1,11 +1,10 @@
 import Header from "@/components/Header";
 import HeroText from "@/components/HeroText";
-import FeaturedQuoteCard from "@/components/FeaturedQuoteCard";
-import ScoreCard from "@/components/ScoreCard";
+import FeaturedCarousel from "@/components/FeaturedCarousel";
 import ThemeTags from "@/components/ThemeTags";
 import BottomColumns from "@/components/BottomColumns";
 import {
-  getFeaturedAnalysis,
+  getFeaturedRotation,
   getTopDeclarations,
   getCandidateRanking,
 } from "@/lib/queries";
@@ -15,9 +14,9 @@ import {
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const [featuredAnalysis, topDeclarations, rankedCandidates] =
+  const [featuredRotation, topDeclarations, rankedCandidates] =
     await Promise.all([
-      getFeaturedAnalysis(),
+      getFeaturedRotation(),
       getTopDeclarations(3),
       getCandidateRanking(7),
     ]);
@@ -29,8 +28,7 @@ export default async function Home() {
       <section className="w-full px-6 py-10 sm:px-8 sm:py-14">
         <div className="mx-auto grid w-full max-w-[1280px] grid-cols-1 gap-8 lg:grid-cols-[5fr_3fr_2fr] lg:gap-6">
           <HeroText />
-          <FeaturedQuoteCard {...(featuredAnalysis ?? {})} />
-          <ScoreCard {...(featuredAnalysis ?? {})} />
+          <FeaturedCarousel items={featuredRotation} />
         </div>
       </section>
 
