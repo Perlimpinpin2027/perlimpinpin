@@ -5,6 +5,7 @@ import { PrismaClient } from "../src/generated/prisma/client.ts";
 import { PrismaNeon } from "@prisma/adapter-neon";
 import { neonConfig } from "@neondatabase/serverless";
 import ws from "ws";
+import { cleanContenu } from "./lib/clean-text.js";
 
 neonConfig.webSocketConstructor = ws;
 
@@ -108,24 +109,33 @@ Interprétation du score final :
 - 75 à 89 : faisable et pertinent
 - 90 à 100 : faisable, pertinent et fortement nécessaire
 
+Règles pour le titre court (champ titre_court) :
+- ne jamais inclure le nom du candidat (déjà affiché juste à côté sur toutes les cartes du site) ;
+- une phrase courte et sobre, centrée sur la mesure elle-même (le chiffre clé ou le mécanisme central), pas sur le jugement qu'on en fait ;
+- pas d'adjectif putaclic, pas de ponctuation excessive ;
+- éviter le format "Titre : sous-titre" sauf si ça sert vraiment la clarté ;
+- longueur cible : une ligne, ~50 à 60 caractères, jamais plus de 2 lignes sur mobile ;
+- exemples de référence : "Retour à 62 ans : la réforme des retraites annulée" ; "200 000 postes de fonctionnaires supprimés" ; "Durcir la taxation des transactions financières".
+
 Format obligatoire de sortie :
-1. resume_court
-2. mesure_reformulee
-3. mise_en_contexte_dans_le_programme
-4. contexte_local
-5. contexte_national
-6. contexte_international
-7. analyse_par_criteres
-8. ce_qui_est_etabli
-9. ce_qui_est_probable
-10. ce_qui_est_discutable
-11. ce_qui_est_inconnu
-12. angles_morts_et_effets_de_bord
-13. notation_detaillee_sur_100
-14. verdict_final
-15. sources_utilisees
-16. niveau_de_confiance
-17. limites
+1. titre_court
+2. resume_court
+3. mesure_reformulee
+4. mise_en_contexte_dans_le_programme
+5. contexte_local
+6. contexte_national
+7. contexte_international
+8. analyse_par_criteres
+9. ce_qui_est_etabli
+10. ce_qui_est_probable
+11. ce_qui_est_discutable
+12. ce_qui_est_inconnu
+13. angles_morts_et_effets_de_bord
+14. notation_detaillee_sur_100
+15. verdict_final
+16. sources_utilisees
+17. niveau_de_confiance
+18. limites
 
 Consignes de rédaction :
 - le rendu doit être plus court que dans une note longue ;
@@ -139,7 +149,7 @@ Consignes de rédaction :
 - toute affirmation importante doit être suivie d'une source ;
 - si une sous-question ne peut pas être tranchée, écrire explicitement : "sources insuffisantes".`;
 
-const JSON_INSTRUCTION = `Réponds UNIQUEMENT en JSON valide, sans texte avant ni après, avec exactement ces clés : resume_court, mesure_reformulee, mise_en_contexte_dans_le_programme, contexte_local, contexte_national, contexte_international, analyse_par_criteres, ce_qui_est_etabli, ce_qui_est_probable, ce_qui_est_discutable, ce_qui_est_inconnu, angles_morts_et_effets_de_bord, notation_detaillee (objet avec scoreSolidite, scoreJuridique, scoreOperationnel, scoreBudgetaire, scorePertinence, scoreTotal), verdict_final, sources_utilisees, niveau_de_confiance, limites.`;
+const JSON_INSTRUCTION = `Réponds UNIQUEMENT en JSON valide, sans texte avant ni après, avec exactement ces clés : titre_court, resume_court, mesure_reformulee, mise_en_contexte_dans_le_programme, contexte_local, contexte_national, contexte_international, analyse_par_criteres, ce_qui_est_etabli, ce_qui_est_probable, ce_qui_est_discutable, ce_qui_est_inconnu, angles_morts_et_effets_de_bord, notation_detaillee (objet avec scoreSolidite, scoreJuridique, scoreOperationnel, scoreBudgetaire, scorePertinence, scoreTotal), verdict_final, sources_utilisees, niveau_de_confiance, limites.`;
 
 export const SYSTEM_PROMPT = `${ANALYSIS_PROMPT}\n\n${JSON_INSTRUCTION}`;
 
@@ -308,9 +318,26 @@ function toText(value) {
 
 const TITRE_MAX_LENGTH = 80;
 
-// Choisit resume_court ou mesure_reformulee — le plus court des deux —
-// comme titre affichable sur les cartes, tronqué à ~80 caractères.
+// Coupe au dernier espace avant la limite pour éviter de tronquer en
+// plein milieu d'un mot.
+function truncateTitre(text) {
+  if (text.length <= TITRE_MAX_LENGTH) return text;
+  const truncated = text.slice(0, TITRE_MAX_LENGTH);
+  const lastSpace = truncated.lastIndexOf(" ");
+  const cut = lastSpace > 40 ? truncated.slice(0, lastSpace) : truncated;
+  return `${cut.trimEnd()}…`;
+}
+
+// Le titre affiché sur les cartes vient directement de titre_court, généré
+// par le modèle selon les règles du prompt (pas de nom de candidat, centré
+// sur la mesure, ~50-60 caractères). Filet de sécurité si le modèle omet
+// ce champ : on retombe sur l'ancienne dérivation depuis resume_court /
+// mesure_reformulee.
 function buildTitre(parsed) {
+  if (typeof parsed.titre_court === "string" && parsed.titre_court.trim().length > 0) {
+    return truncateTitre(parsed.titre_court.trim());
+  }
+
   const candidates = [parsed.resume_court, parsed.mesure_reformulee].filter(
     (value) => typeof value === "string" && value.trim().length > 0,
   );
@@ -320,14 +347,7 @@ function buildTitre(parsed) {
     current.length < best.length ? current : best,
   );
 
-  if (shortest.length <= TITRE_MAX_LENGTH) return shortest;
-
-  // Coupe au dernier espace avant la limite pour éviter de tronquer en
-  // plein milieu d'un mot.
-  const truncated = shortest.slice(0, TITRE_MAX_LENGTH);
-  const lastSpace = truncated.lastIndexOf(" ");
-  const cut = lastSpace > 40 ? truncated.slice(0, lastSpace) : truncated;
-  return `${cut.trimEnd()}…`;
+  return truncateTitre(shortest);
 }
 
 async function main() {
@@ -379,7 +399,9 @@ async function main() {
   console.log(`  cache_read_input_tokens       : ${usage.cache_read_input_tokens ?? "?"}`);
   console.log(`  output_tokens                 : ${usage.output_tokens ?? "?"}`);
 
-  const parsed = extractJson(data);
+  // Nettoie les balises <cite index="X-Y">texte</cite> laissées par le tool
+  // web_search sur l'ensemble des champs texte, avant toute écriture en base.
+  const parsed = cleanContenu(extractJson(data));
   const notation = parsed.notation_detaillee ?? {};
   const titre = buildTitre(parsed);
 
