@@ -4,6 +4,7 @@ export default function FeaturedQuoteCard({
   propositionId,
   quoteText,
   personName,
+  personPhotoUrl,
   personRole,
   dateLabel,
   currentIndex = 0,
@@ -36,9 +37,10 @@ export default function FeaturedQuoteCard({
       </blockquote>
 
       <div className="mt-6 flex items-center gap-3">
-        <div
-          className="h-10 w-10 shrink-0 rounded-full bg-zinc-200"
-          aria-hidden="true"
+        <img
+          src={personPhotoUrl || "/avatar-placeholder.svg"}
+          alt={personName}
+          className="h-10 w-10 shrink-0 rounded-full object-cover"
         />
         <div className="flex flex-col">
           <span className="text-sm font-semibold text-zinc-900">

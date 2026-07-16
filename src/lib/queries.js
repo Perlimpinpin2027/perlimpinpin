@@ -29,6 +29,7 @@ export async function getFeaturedRotation() {
     propositionId: analyse.proposition.id,
     quoteText: displayTitle(analyse.proposition),
     personName: analyse.proposition.candidat.nom,
+    personPhotoUrl: analyse.proposition.candidat.photoUrl,
     personRole: `Déclaration • ${analyse.proposition.theme}`,
     dateLabel: dateFormatter.format(analyse.proposition.dateDeclaration),
     score: analyse.scoreFaisabilite,
@@ -49,6 +50,7 @@ export async function getTopDeclarations(limit = 3) {
   return analyses.map((analyse) => ({
     propositionId: analyse.proposition.id,
     name: analyse.proposition.candidat.nom,
+    photoUrl: analyse.proposition.candidat.photoUrl,
     quote: displayTitle(analyse.proposition),
     date: dateFormatter.format(analyse.proposition.dateDeclaration),
     theme: analyse.proposition.theme,
@@ -69,6 +71,7 @@ export async function getCandidateRanking(limit = 7) {
 
   return candidats.map((candidat) => ({
     name: candidat.nom,
+    photoUrl: candidat.photoUrl,
     avgScore: candidat.scoreMoyen,
     declarations: candidat.propositions.reduce(
       (total, proposition) => total + proposition.analyses.length,
@@ -124,6 +127,7 @@ export async function getPublishedDeclarations({ candidat, theme, sort } = {}) {
     titre: displayTitle(analyse.proposition),
     candidatNom: analyse.proposition.candidat.nom,
     candidatParti: analyse.proposition.candidat.parti,
+    candidatPhotoUrl: analyse.proposition.candidat.photoUrl,
     theme: analyse.proposition.theme,
     dateLabel: dateFormatter.format(analyse.proposition.dateDeclaration),
     score: analyse.scoreFaisabilite,

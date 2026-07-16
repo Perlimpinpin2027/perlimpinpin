@@ -104,9 +104,10 @@ export default async function DeclarationDetailPage({ params }) {
             </h1>
 
             <div className="mt-6 flex items-center gap-3">
-              <div
-                className="h-11 w-11 shrink-0 rounded-full bg-zinc-200"
-                aria-hidden="true"
+              <img
+                src={declaration.candidat.photoUrl || "/avatar-placeholder.svg"}
+                alt={declaration.candidat.nom}
+                className="h-11 w-11 shrink-0 rounded-full object-cover"
               />
               <div className="flex flex-col">
                 <span className="text-sm font-semibold text-zinc-900">

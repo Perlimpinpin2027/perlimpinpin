@@ -84,9 +84,10 @@ function TopDeclarationsColumn({ declarations }) {
                   href={`/declarations/${item.propositionId}`}
                   className="-m-2 flex items-start gap-3 rounded-xl p-2 transition-colors hover:bg-zinc-50"
                 >
-                  <div
-                    className="h-9 w-9 shrink-0 rounded-full bg-zinc-200"
-                    aria-hidden="true"
+                  <img
+                    src={item.photoUrl || "/avatar-placeholder.svg"}
+                    alt={item.name}
+                    className="h-9 w-9 shrink-0 rounded-full object-cover"
                   />
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-semibold text-zinc-900">
@@ -191,9 +192,10 @@ function ReliabilityIndexColumn({ candidates }) {
               <span className="w-4 shrink-0 text-sm font-semibold text-zinc-400">
                 {index + 1}
               </span>
-              <div
-                className="h-9 w-9 shrink-0 rounded-full bg-zinc-200"
-                aria-hidden="true"
+              <img
+                src={candidate.photoUrl || "/avatar-placeholder.svg"}
+                alt={candidate.name}
+                className="h-9 w-9 shrink-0 rounded-full object-cover"
               />
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-semibold text-zinc-900">
