@@ -218,6 +218,27 @@ function pickTopVoted(counts, key) {
   return bestId;
 }
 
+// Carte commune (candidat, titre, extrait, score) partagée par le
+// classement par votes et le classement par score de /prix-perlimpinpin.
+function buildAnalyseCard(analyse) {
+  const contenu = analyse.contenuComplet ?? {};
+  const excerptSource = contenu.verdict_final ?? contenu.resume_court ?? analyse.verdict;
+  const excerptText = Array.isArray(excerptSource)
+    ? excerptSource.join(" ")
+    : (excerptSource ?? "");
+  const excerpt =
+    excerptText.length > 150 ? `${excerptText.slice(0, 149).trimEnd()}…` : excerptText;
+
+  return {
+    propositionId: analyse.proposition.id,
+    titre: displayTitle(analyse.proposition),
+    candidatNom: analyse.proposition.candidat.nom,
+    candidatPhotoUrl: analyse.proposition.candidat.photoUrl,
+    excerpt,
+    score: analyse.scoreFaisabilite,
+  };
+}
+
 async function buildLeaderboardCard(analyseId, counts) {
   if (!analyseId) return null;
 
@@ -227,26 +248,9 @@ async function buildLeaderboardCard(analyseId, counts) {
   });
   if (!analyse) return null;
 
-  const contenu = analyse.contenuComplet ?? {};
-  const excerptSource = contenu.verdict_final ?? contenu.resume_court ?? analyse.verdict;
-  const excerptText = Array.isArray(excerptSource)
-    ? excerptSource.join(" ")
-    : (excerptSource ?? "");
-  const excerpt =
-    excerptText.length > 150 ? `${excerptText.slice(0, 149).trimEnd()}…` : excerptText;
-
   const { likes, dislikes } = counts.get(analyseId) ?? { likes: 0, dislikes: 0 };
 
-  return {
-    propositionId: analyse.proposition.id,
-    titre: displayTitle(analyse.proposition),
-    candidatNom: analyse.proposition.candidat.nom,
-    candidatPhotoUrl: analyse.proposition.candidat.photoUrl,
-    excerpt,
-    score: analyse.scoreFaisabilite,
-    likes,
-    dislikes,
-  };
+  return { ...buildAnalyseCard(analyse), likes, dislikes };
 }
 
 async function buildLeaderboardSection(counts) {
@@ -277,6 +281,31 @@ export async function getFeedbackLeaderboard() {
   ]);
 
   return { general, last30, last10 };
+}
+
+// Déclarations avec le score Perlimpinpin le plus haut et le plus bas parmi
+// toutes les analyses publiées, pour le podium en haut de /prix-perlimpinpin.
+export async function getScoreExtremes() {
+  const [highest, lowest] = await Promise.all([
+    prisma.analyse.findFirst({
+      where: { statut: "publie" },
+      orderBy: [{ scoreFaisabilite: "desc" }, { createdAt: "asc" }],
+      include: { proposition: { include: { candidat: true } } },
+    }),
+    prisma.analyse.findFirst({
+      where: { statut: "publie" },
+      orderBy: [{ scoreFaisabilite: "asc" }, { createdAt: "asc" }],
+      include: { proposition: { include: { candidat: true } } },
+    }),
+  ]);
+
+  return {
+    highest: highest ? buildAnalyseCard(highest) : null,
+    // Si une seule analyse publiée existe, highest et lowest seraient la
+    // même déclaration affichée deux fois — on n'affiche alors qu'une carte.
+    lowest:
+      lowest && lowest.id !== highest?.id ? buildAnalyseCard(lowest) : null,
+  };
 }
 
 // Détail d'une déclaration : la Proposition, son Candidat, et sa dernière
