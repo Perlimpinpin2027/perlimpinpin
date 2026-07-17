@@ -14,6 +14,18 @@ function displayTitle(proposition) {
   return text.length > 80 ? `${text.slice(0, 79).trimEnd()}…` : text;
 }
 
+// Le champ `theme` des propositions est un texte libre saisi lors de
+// l'analyse (ex: "Retraites", "Économie"), pas un slug. On le normalise
+// pour le comparer au slug de /themes/[slug].
+function slugifyTheme(theme) {
+  return theme
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
 // Toutes les analyses publiées, des plus récentes aux plus anciennes, pour
 // le carrousel "Prix Perlimpinpin de la semaine" + la carte Score associée.
 export async function getFeaturedRotation() {
@@ -147,6 +159,28 @@ export async function getPublishedThemes() {
   return [...new Set(analyses.map((a) => a.proposition.theme))].sort((a, b) =>
     a.localeCompare(b, "fr"),
   );
+}
+
+// Propositions publiées pour un thème éditorial donné (page /themes/[slug]),
+// une ligne par candidat, triées par score décroissant.
+export async function getPublishedPropositionsByThemeSlug(slug) {
+  const analyses = await prisma.analyse.findMany({
+    where: { statut: "publie" },
+    include: { proposition: { include: { candidat: true } } },
+  });
+
+  return analyses
+    .filter((analyse) => slugifyTheme(analyse.proposition.theme) === slug)
+    .map((analyse) => ({
+      propositionId: analyse.proposition.id,
+      candidatNom: analyse.proposition.candidat.nom,
+      candidatParti: analyse.proposition.candidat.parti,
+      candidatPhotoUrl: analyse.proposition.candidat.photoUrl,
+      titre: displayTitle(analyse.proposition),
+      excerpt: analyse.resumeAccueil ?? analyse.teaser ?? null,
+      score: analyse.scoreFaisabilite,
+    }))
+    .sort((a, b) => b.score - a.score);
 }
 
 // Liste de tous les candidats pour la page /candidats, avec leur nombre de
