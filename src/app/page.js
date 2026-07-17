@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Header from "@/components/Header";
 import HeroText from "@/components/HeroText";
 import FeaturedCarousel from "@/components/FeaturedCarousel";
@@ -24,6 +25,15 @@ export default async function Home() {
   return (
     <div className="flex min-h-screen flex-col bg-white font-sans">
       <Header />
+
+      <Image
+        src="/banner-perlimpinpin.webp"
+        alt="Perlimpinpin"
+        width={2172}
+        height={724}
+        priority
+        className="h-auto w-full"
+      />
 
       <section className="w-full px-6 py-10 sm:px-8 sm:py-14">
         <div className="mx-auto grid w-full max-w-[1280px] grid-cols-1 gap-8 lg:grid-cols-[5fr_3fr_2fr] lg:gap-6">
