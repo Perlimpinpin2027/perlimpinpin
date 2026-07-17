@@ -163,85 +163,96 @@ export default async function DeclarationDetailPage({ params }) {
             </div>
           </div>
 
+          <section className="rounded-2xl border-2 border-blue-100 bg-blue-50/50 p-6 sm:p-8">
+            <h2 className="text-xs font-bold uppercase tracking-widest text-blue-700">
+              Le résumé de Perlimpinpin IA
+            </h2>
+            <p className="mt-3 text-lg leading-relaxed text-zinc-800 sm:text-xl">
+              {analyse.teaser || "Résumé à venir."}
+            </p>
+          </section>
+
           <FeedbackWidget
             analyseId={analyse.id}
             initialLikes={declaration.feedbackCounts.likes}
             initialDislikes={declaration.feedbackCounts.dislikes}
           />
 
-          <Section title="Résumé">
-            <TextOrList value={contenu.resume_court} />
-          </Section>
+          <div className="flex flex-col gap-6">
+            <h2 className="font-serif text-2xl font-bold text-zinc-900">
+              Le raisonnement complet
+            </h2>
 
-          <Section title="Mesure reformulée">
-            <TextOrList value={contenu.mesure_reformulee} />
-          </Section>
-
-          <Section title="Mise en contexte dans le programme">
-            <TextOrList value={contenu.mise_en_contexte_dans_le_programme} />
-          </Section>
-
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
-            <Section title="Contexte local">
-              <TextOrList value={contenu.contexte_local} />
+            <Section title="Mesure reformulée">
+              <TextOrList value={contenu.mesure_reformulee} />
             </Section>
-            <Section title="Contexte national">
-              <TextOrList value={contenu.contexte_national} />
-            </Section>
-            <Section title="Contexte international">
-              <TextOrList value={contenu.contexte_international} />
-            </Section>
-          </div>
 
-          <Section title="Analyse par critères">
-            <div className="flex flex-col gap-4">
-              {Object.entries(contenu.analyse_par_criteres ?? {}).map(
-                ([key, value]) => (
-                  <div key={key}>
-                    <p className="font-semibold text-zinc-900">
-                      {criteriaLabels[key] ?? key}
-                    </p>
-                    <p className="mt-1">{value}</p>
-                  </div>
-                ),
-              )}
+            <Section title="Mise en contexte dans le programme">
+              <TextOrList value={contenu.mise_en_contexte_dans_le_programme} />
+            </Section>
+
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+              <Section title="Contexte local">
+                <TextOrList value={contenu.contexte_local} />
+              </Section>
+              <Section title="Contexte national">
+                <TextOrList value={contenu.contexte_national} />
+              </Section>
+              <Section title="Contexte international">
+                <TextOrList value={contenu.contexte_international} />
+              </Section>
             </div>
-          </Section>
 
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-            <Section title="Ce qui est établi">
-              <TextOrList value={contenu.ce_qui_est_etabli} />
+            <Section title="Analyse par critères">
+              <div className="flex flex-col gap-4">
+                {Object.entries(contenu.analyse_par_criteres ?? {}).map(
+                  ([key, value]) => (
+                    <div key={key}>
+                      <p className="font-semibold text-zinc-900">
+                        {criteriaLabels[key] ?? key}
+                      </p>
+                      <p className="mt-1">{value}</p>
+                    </div>
+                  ),
+                )}
+              </div>
             </Section>
-            <Section title="Ce qui est probable">
-              <TextOrList value={contenu.ce_qui_est_probable} />
-            </Section>
-            <Section title="Ce qui est discutable">
-              <TextOrList value={contenu.ce_qui_est_discutable} />
-            </Section>
-            <Section title="Ce qui est inconnu">
-              <TextOrList value={contenu.ce_qui_est_inconnu} />
-            </Section>
-          </div>
 
-          <Section title="Angles morts et effets de bord">
-            <TextOrList value={contenu.angles_morts_et_effets_de_bord} />
-          </Section>
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <Section title="Ce qui est établi">
+                <TextOrList value={contenu.ce_qui_est_etabli} />
+              </Section>
+              <Section title="Ce qui est probable">
+                <TextOrList value={contenu.ce_qui_est_probable} />
+              </Section>
+              <Section title="Ce qui est discutable">
+                <TextOrList value={contenu.ce_qui_est_discutable} />
+              </Section>
+              <Section title="Ce qui est inconnu">
+                <TextOrList value={contenu.ce_qui_est_inconnu} />
+              </Section>
+            </div>
 
-          <Section title="Verdict final">
-            <TextOrList value={contenu.verdict_final} />
-          </Section>
-
-          <Section title="Sources utilisées">
-            <TextOrList value={contenu.sources_utilisees} />
-          </Section>
-
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-            <Section title="Niveau de confiance">
-              <TextOrList value={contenu.niveau_de_confiance} />
+            <Section title="Angles morts et effets de bord">
+              <TextOrList value={contenu.angles_morts_et_effets_de_bord} />
             </Section>
-            <Section title="Limites">
-              <TextOrList value={contenu.limites} />
+
+            <Section title="Verdict final">
+              <TextOrList value={contenu.verdict_final} />
             </Section>
+
+            <Section title="Sources utilisées">
+              <TextOrList value={contenu.sources_utilisees} />
+            </Section>
+
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <Section title="Niveau de confiance">
+                <TextOrList value={contenu.niveau_de_confiance} />
+              </Section>
+              <Section title="Limites">
+                <TextOrList value={contenu.limites} />
+              </Section>
+            </div>
           </div>
         </article>
       </main>

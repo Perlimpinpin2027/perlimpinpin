@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { pathToFileURL } from "node:url";
-import { writeFileSync } from "node:fs";
+import { writeFileSync, readFileSync } from "node:fs";
 import { PrismaClient } from "../src/generated/prisma/client.ts";
 import { PrismaNeon } from "@prisma/adapter-neon";
 import { neonConfig } from "@neondatabase/serverless";
@@ -117,25 +117,42 @@ Règles pour le titre court (champ titre_court) :
 - longueur cible : une ligne, ~50 à 60 caractères, jamais plus de 2 lignes sur mobile ;
 - exemples de référence : "Retour à 62 ans : la réforme des retraites annulée" ; "200 000 postes de fonctionnaires supprimés" ; "Durcir la taxation des transactions financières".
 
+Règles pour le résumé d'accueil (champ resume_accueil) :
+- un résumé journalistique, punchy, en 2 à 3 phrases courtes, style chapô d'article de presse — pas une reformulation académique ;
+- donne le point fort ET le point faible de la mesure, sans jargon de notation : jamais les mots "score", "verdict", "note", jamais "discutable"/"faisable" tels quels ;
+- s'appuie sur un fait concret et chiffré si possible (l'écart entre deux estimations, un précédent, une donnée officielle) plutôt qu'une généralité ;
+- longueur cible : 200 à 250 caractères maximum ;
+- exemple de référence (calibre le ton et la longueur) : "Retour à 62 ans : la promesse est simple, la facture beaucoup moins. Les estimations de coût varient du simple au quadruple (8 à 32 milliards d'euros), et la Cour des comptes doute de l'effet sur l'emploi. Politiquement cohérent, budgétairement flou."
+
+Règles pour le teaser de la fiche déclaration (champ teaser) :
+- un texte journalistique un peu plus développé que le résumé d'accueil, en 3 à 5 phrases ;
+- explique ce qu'est la mesure et pose le principal point de tension ou de doute qu'elle soulève ;
+- ne donne NI le verdict final NI le score NI aucun terme de notation ("score", "note", "verdict", "discutable", "faisable") ;
+- objectif : donner envie de lire le raisonnement complet en dessous, pas le résumer entièrement — reste teasing mais toujours factuel et sobre, jamais putaclic ;
+- longueur cible : 400 à 500 caractères maximum ;
+- exemple de référence (calibre le ton et la longueur) : "Revenir à 60 ans pour tous, comme avant 2010 : c'est la promesse la plus nette du programme de Mélenchon sur les retraites. Le candidat veut la financer sans toucher à l'âge, uniquement par une hausse progressive des cotisations. Reste à savoir si ce financement suffit vraiment à équilibrer un système déjà sous tension — et ce qu'en pensent les instances chargées de le vérifier."
+
 Format obligatoire de sortie :
 1. titre_court
-2. resume_court
-3. mesure_reformulee
-4. mise_en_contexte_dans_le_programme
-5. contexte_local
-6. contexte_national
-7. contexte_international
-8. analyse_par_criteres
-9. ce_qui_est_etabli
-10. ce_qui_est_probable
-11. ce_qui_est_discutable
-12. ce_qui_est_inconnu
-13. angles_morts_et_effets_de_bord
-14. notation_detaillee_sur_100
-15. verdict_final
-16. sources_utilisees
-17. niveau_de_confiance
-18. limites
+2. resume_accueil
+3. teaser
+4. resume_court
+5. mesure_reformulee
+6. mise_en_contexte_dans_le_programme
+7. contexte_local
+8. contexte_national
+9. contexte_international
+10. analyse_par_criteres
+11. ce_qui_est_etabli
+12. ce_qui_est_probable
+13. ce_qui_est_discutable
+14. ce_qui_est_inconnu
+15. angles_morts_et_effets_de_bord
+16. notation_detaillee_sur_100
+17. verdict_final
+18. sources_utilisees
+19. niveau_de_confiance
+20. limites
 
 Consignes de rédaction :
 - le rendu doit être plus court que dans une note longue ;
@@ -149,7 +166,7 @@ Consignes de rédaction :
 - toute affirmation importante doit être suivie d'une source ;
 - si une sous-question ne peut pas être tranchée, écrire explicitement : "sources insuffisantes".`;
 
-const JSON_INSTRUCTION = `Réponds UNIQUEMENT en JSON valide, sans texte avant ni après, avec exactement ces clés : titre_court, resume_court, mesure_reformulee, mise_en_contexte_dans_le_programme, contexte_local, contexte_national, contexte_international, analyse_par_criteres, ce_qui_est_etabli, ce_qui_est_probable, ce_qui_est_discutable, ce_qui_est_inconnu, angles_morts_et_effets_de_bord, notation_detaillee (objet avec scoreSolidite, scoreJuridique, scoreOperationnel, scoreBudgetaire, scorePertinence, scoreTotal), verdict_final, sources_utilisees, niveau_de_confiance, limites.`;
+const JSON_INSTRUCTION = `Réponds UNIQUEMENT en JSON valide, sans texte avant ni après, avec exactement ces clés : titre_court, resume_accueil, teaser, resume_court, mesure_reformulee, mise_en_contexte_dans_le_programme, contexte_local, contexte_national, contexte_international, analyse_par_criteres, ce_qui_est_etabli, ce_qui_est_probable, ce_qui_est_discutable, ce_qui_est_inconnu, angles_morts_et_effets_de_bord, notation_detaillee (objet avec scoreSolidite, scoreJuridique, scoreOperationnel, scoreBudgetaire, scorePertinence, scoreTotal), verdict_final, sources_utilisees, niveau_de_confiance, limites.`;
 
 export const SYSTEM_PROMPT = `${ANALYSIS_PROMPT}\n\n${JSON_INSTRUCTION}`;
 
@@ -167,40 +184,62 @@ function parseArgs(argv) {
   return args;
 }
 
+const ANTHROPIC_BASE_URL = "https://api.anthropic.com/v1";
+const ANTHROPIC_HEADERS = {
+  "Content-Type": "application/json",
+  "x-api-key": process.env.ANTHROPIC_API_KEY,
+  "anthropic-version": "2023-06-01",
+};
+
+// Plafond de recherches web par analyse, pour éviter qu'une proposition
+// complexe ne déclenche un nombre de recherches excessif et coûteux.
+const WEB_SEARCH_MAX_USES = 6;
+
+function buildUserMessage({ candidatNom, theme, source }) {
+  return [
+    `Candidat : ${candidatNom}`,
+    `Thème : ${theme}`,
+    "",
+    "Proposition à analyser :",
+    source,
+  ].join("\n");
+}
+
+// Corps de requête partagé entre le mode streaming (un seul item) et le
+// mode batch (plusieurs items) — seule la présence de `stream` diffère,
+// la Batch API n'acceptant que des requêtes non-streaming.
+function buildRequestBody(messages, { stream = false } = {}) {
+  return {
+    model: "claude-sonnet-5",
+    max_tokens: 16000,
+    // Le prompt système (doctrine, méthode, barème, format) est identique
+    // à chaque appel — on le met en cache pour ne pas le repayer en entier
+    // à chaque analyse (prix plein la 1ère fois, ~10% du prix ensuite).
+    system: [
+      {
+        type: "text",
+        text: SYSTEM_PROMPT,
+        cache_control: { type: "ephemeral" },
+      },
+    ],
+    tools: [
+      { type: "web_search_20260209", name: "web_search", max_uses: WEB_SEARCH_MAX_USES },
+    ],
+    messages,
+    ...(stream ? { stream: true } : {}),
+  };
+}
+
 // La requête (recherche web + réflexion + génération d'un JSON structuré
 // en 17 sections) peut prendre plusieurs minutes. En mode non-streaming,
 // le serveur ne renvoie les en-têtes HTTP qu'une fois la réponse complète
 // prête, ce qui dépasse le timeout par défaut du client fetch. Le
 // streaming envoie les en-têtes dès le début de la génération.
 async function callClaude(messages) {
-  const response = await fetch("https://api.anthropic.com/v1/messages", {
+  const response = await fetch(`${ANTHROPIC_BASE_URL}/messages`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-api-key": process.env.ANTHROPIC_API_KEY,
-      "anthropic-version": "2023-06-01",
-    },
-    body: JSON.stringify({
-      model: "claude-sonnet-5",
-      max_tokens: 16000,
-      // Le prompt système (doctrine, méthode, barème, format) est identique
-      // à chaque appel — on le met en cache pour ne pas le repayer en entier
-      // à chaque analyse (prix plein la 1ère fois, ~10% du prix ensuite).
-      system: [
-        {
-          type: "text",
-          text: SYSTEM_PROMPT,
-          cache_control: { type: "ephemeral" },
-        },
-      ],
-      // Plafond de recherches web par analyse, pour éviter qu'une proposition
-      // complexe ne déclenche un nombre de recherches excessif et coûteux.
-      tools: [
-        { type: "web_search_20260209", name: "web_search", max_uses: 10 },
-      ],
-      messages,
-      stream: true,
-    }),
+    headers: ANTHROPIC_HEADERS,
+    body: JSON.stringify(buildRequestBody(messages, { stream: true })),
   });
 
   if (!response.ok) {
@@ -211,6 +250,23 @@ async function callClaude(messages) {
   }
 
   return readStreamedMessage(response);
+}
+
+// Lance une analyse pour un seul item, en gérant la reprise si le tool
+// web_search atteint la limite d'itérations internes du serveur.
+async function analyzeOne(item) {
+  let messages = [{ role: "user", content: buildUserMessage(item) }];
+  let data = await callClaude(messages);
+
+  while (data.stop_reason === "pause_turn") {
+    messages = [
+      { role: "user", content: buildUserMessage(item) },
+      { role: "assistant", content: data.content },
+    ];
+    data = await callClaude(messages);
+  }
+
+  return data;
 }
 
 async function readStreamedMessage(response) {
@@ -350,72 +406,84 @@ function buildTitre(parsed) {
   return truncateTitre(shortest);
 }
 
-async function main() {
-  const args = parseArgs(process.argv.slice(2));
-  const { candidat: candidatNom, theme, source } = args;
+const RESUME_ACCUEIL_MAX_LENGTH = 250;
 
-  if (!candidatNom || !theme || !source) {
-    console.error(
-      "Usage: node scripts/analyze.js --candidat \"Nom\" --theme \"Thème\" --source \"Texte ou url de la proposition\"",
-    );
-    process.exitCode = 1;
-    return;
+// Coupe à la dernière phrase complète avant la limite plutôt qu'en plein
+// milieu d'un mot, pour rester lisible sur la carte d'accueil.
+function truncateResumeAccueil(text) {
+  if (text.length <= RESUME_ACCUEIL_MAX_LENGTH) return text;
+  const truncated = text.slice(0, RESUME_ACCUEIL_MAX_LENGTH);
+  const lastSentenceEnd = Math.max(
+    truncated.lastIndexOf(". "),
+    truncated.lastIndexOf("? "),
+    truncated.lastIndexOf("! "),
+  );
+  if (lastSentenceEnd > 100) return truncated.slice(0, lastSentenceEnd + 1);
+  const lastSpace = truncated.lastIndexOf(" ");
+  const cut = lastSpace > 100 ? truncated.slice(0, lastSpace) : truncated;
+  return `${cut.trimEnd()}…`;
+}
+
+// Résumé journalistique pour la carte "Prix de la semaine" de l'accueil,
+// généré directement par le modèle (champ resume_accueil).
+function buildResumeAccueil(parsed) {
+  if (
+    typeof parsed.resume_accueil === "string" &&
+    parsed.resume_accueil.trim().length > 0
+  ) {
+    return truncateResumeAccueil(parsed.resume_accueil.trim());
   }
+  return null;
+}
 
-  if (!process.env.ANTHROPIC_API_KEY) {
-    console.error(
-      "ANTHROPIC_API_KEY n'est pas défini (voir votre fichier .env).",
-    );
-    process.exitCode = 1;
-    return;
+const TEASER_MAX_LENGTH = 500;
+
+// Même logique de coupe que le résumé d'accueil, avec une limite plus haute.
+function truncateTeaser(text) {
+  if (text.length <= TEASER_MAX_LENGTH) return text;
+  const truncated = text.slice(0, TEASER_MAX_LENGTH);
+  const lastSentenceEnd = Math.max(
+    truncated.lastIndexOf(". "),
+    truncated.lastIndexOf("? "),
+    truncated.lastIndexOf("! "),
+  );
+  if (lastSentenceEnd > 200) return truncated.slice(0, lastSentenceEnd + 1);
+  const lastSpace = truncated.lastIndexOf(" ");
+  const cut = lastSpace > 200 ? truncated.slice(0, lastSpace) : truncated;
+  return `${cut.trimEnd()}…`;
+}
+
+// Teaser plus développé pour la section "Le résumé de Perlimpinpin IA" de
+// la fiche déclaration, généré directement par le modèle (champ teaser).
+function buildTeaser(parsed) {
+  if (typeof parsed.teaser === "string" && parsed.teaser.trim().length > 0) {
+    return truncateTeaser(parsed.teaser.trim());
   }
+  return null;
+}
 
-  const userMessage = [
-    `Candidat : ${candidatNom}`,
-    `Thème : ${theme}`,
-    "",
-    "Proposition à analyser :",
-    source,
-  ].join("\n");
-
-  let messages = [{ role: "user", content: userMessage }];
-  let data = await callClaude(messages);
-
-  // web_search est un outil serveur ; en cas de dépassement du nombre
-  // d'itérations de recherche internes, l'API renvoie stop_reason "pause_turn".
-  while (data.stop_reason === "pause_turn") {
-    messages = [
-      { role: "user", content: userMessage },
-      { role: "assistant", content: data.content },
-    ];
-    data = await callClaude(messages);
-  }
-
-  const usage = data.usage ?? {};
-  console.log("");
-  console.log("Usage API :");
-  console.log(`  input_tokens (non caché)      : ${usage.input_tokens ?? "?"}`);
-  console.log(`  cache_creation_input_tokens   : ${usage.cache_creation_input_tokens ?? "?"}`);
-  console.log(`  cache_read_input_tokens       : ${usage.cache_read_input_tokens ?? "?"}`);
-  console.log(`  output_tokens                 : ${usage.output_tokens ?? "?"}`);
-
+// Nettoie la réponse, construit le titre, et écrit Candidat/Proposition/
+// Analyse en base — partagé entre le mode single et le mode batch.
+async function saveAnalysis(item, data) {
   // Nettoie les balises <cite index="X-Y">texte</cite> laissées par le tool
   // web_search sur l'ensemble des champs texte, avant toute écriture en base.
   const parsed = cleanContenu(extractJson(data));
   const notation = parsed.notation_detaillee ?? {};
   const titre = buildTitre(parsed);
+  const resumeAccueil = buildResumeAccueil(parsed);
+  const teaser = buildTeaser(parsed);
 
   const candidat = await prisma.candidat.upsert({
-    where: { nom: candidatNom },
+    where: { nom: item.candidatNom },
     update: {},
-    create: { nom: candidatNom, parti: "Non renseigné" },
+    create: { nom: item.candidatNom, parti: "Non renseigné" },
   });
 
   const proposition = await prisma.proposition.create({
     data: {
       titre,
-      texteOriginal: source,
-      theme,
+      texteOriginal: item.source,
+      theme: item.theme,
       dateDeclaration: new Date(),
       candidatId: candidat.id,
     },
@@ -431,6 +499,8 @@ async function main() {
       scoreBudgetaire: notation.scoreBudgetaire,
       scorePertinence: notation.scorePertinence,
       verdict: toText(parsed.verdict_final),
+      resumeAccueil,
+      teaser,
       cequiEstEtabli: toText(parsed.ce_qui_est_etabli),
       cequiEstProbable: toText(parsed.ce_qui_est_probable),
       cequiEstDiscutable: toText(parsed.ce_qui_est_discutable),
@@ -442,13 +512,263 @@ async function main() {
     },
   });
 
+  return { candidat, proposition, analyse };
+}
+
+function printUsage(usage) {
+  console.log(`  input_tokens (non caché)      : ${usage.input_tokens ?? "?"}`);
+  console.log(`  cache_creation_input_tokens   : ${usage.cache_creation_input_tokens ?? "?"}`);
+  console.log(`  cache_read_input_tokens       : ${usage.cache_read_input_tokens ?? "?"}`);
+  console.log(`  output_tokens                 : ${usage.output_tokens ?? "?"}`);
+}
+
+// --- Batch API (POST /v1/messages/batches) ---------------------------------
+// Permet de soumettre plusieurs propositions en une seule requête, traitées
+// de façon asynchrone côté Anthropic à 50% du tarif standard. Contrairement
+// au mode single, les requêtes de batch sont non-streaming (la Batch API ne
+// supporte pas stream:true) — pas de risque de timeout HTTP pour autant,
+// puisque la création du batch répond immédiatement avec un id à consulter.
+
+async function createBatch(items) {
+  const requests = items.map((item, index) => ({
+    custom_id: `item-${index}`,
+    params: buildRequestBody(
+      [{ role: "user", content: buildUserMessage(item) }],
+      { stream: false },
+    ),
+  }));
+
+  const response = await fetch(`${ANTHROPIC_BASE_URL}/messages/batches`, {
+    method: "POST",
+    headers: ANTHROPIC_HEADERS,
+    body: JSON.stringify({ requests }),
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      `Erreur création batch (${response.status}) : ${await response.text()}`,
+    );
+  }
+
+  return response.json();
+}
+
+async function retrieveBatch(batchId) {
+  const response = await fetch(`${ANTHROPIC_BASE_URL}/messages/batches/${batchId}`, {
+    headers: ANTHROPIC_HEADERS,
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      `Erreur consultation batch (${response.status}) : ${await response.text()}`,
+    );
+  }
+
+  return response.json();
+}
+
+const BATCH_POLL_INTERVAL_MS = 15_000;
+// La plupart des batches se terminent en moins d'une heure (max documenté :
+// 24h) ; au-delà de ce délai on arrête de bloquer le script, mais le batch
+// continue de tourner côté Anthropic et reste consultable via son id.
+const BATCH_MAX_WAIT_MS = 60 * 60 * 1000;
+
+async function waitForBatch(batchId) {
+  const startedAt = Date.now();
+
+  while (true) {
+    const batch = await retrieveBatch(batchId);
+    const counts = batch.request_counts ?? {};
+    console.log(
+      `  statut : ${batch.processing_status} (succeeded=${counts.succeeded ?? 0}, errored=${counts.errored ?? 0}, processing=${counts.processing ?? 0})`,
+    );
+
+    if (batch.processing_status === "ended") return batch;
+
+    if (Date.now() - startedAt > BATCH_MAX_WAIT_MS) {
+      throw new Error(
+        `Le batch ${batchId} n'est pas terminé après ${BATCH_MAX_WAIT_MS / 60000} minutes. ` +
+          "Il continue de tourner côté Anthropic ; relancez la consultation plus tard avec cet id.",
+      );
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, BATCH_POLL_INTERVAL_MS));
+  }
+}
+
+// Les résultats sont au format JSONL : une ligne JSON par requête, dans un
+// ordre non garanti — on indexe par custom_id, jamais par position.
+async function fetchBatchResults(resultsUrl) {
+  const response = await fetch(resultsUrl, { headers: ANTHROPIC_HEADERS });
+
+  if (!response.ok) {
+    throw new Error(
+      `Erreur récupération résultats batch (${response.status}) : ${await response.text()}`,
+    );
+  }
+
+  const text = await response.text();
+  const results = new Map();
+
+  for (const line of text.split("\n")) {
+    if (!line.trim()) continue;
+    const entry = JSON.parse(line);
+    results.set(entry.custom_id, entry.result);
+  }
+
+  return results;
+}
+
+// Attend la fin d'un batch déjà créé et écrit les résultats en base. Séparé
+// de runBatch() pour pouvoir reprendre le suivi d'un batch existant (--resume-
+// batch) sans le recréer si le polling local a été interrompu — le batch
+// continue de tourner côté Anthropic indépendamment du script local, et le
+// recréer facturerait une deuxième fois les mêmes analyses.
+async function finishBatch(batchId, items) {
+  const finished = await waitForBatch(batchId);
   console.log("");
-  console.log(`Titre     : ${proposition.titre}`);
-  console.log(`Candidat  : ${candidat.nom} (${candidat.parti})`);
+  console.log(`Batch terminé : ${batchId}`);
+
+  const results = await fetchBatchResults(finished.results_url);
+  const totalUsage = {
+    input_tokens: 0,
+    cache_creation_input_tokens: 0,
+    cache_read_input_tokens: 0,
+    output_tokens: 0,
+  };
+
+  for (const [index, item] of items.entries()) {
+    const customId = `item-${index}`;
+    const result = results.get(customId);
+    console.log("");
+
+    if (!result) {
+      console.error(`✗ ${item.candidatNom} — aucun résultat trouvé pour ${customId}`);
+      continue;
+    }
+
+    if (result.type !== "succeeded") {
+      const detail = result.error ? ` : ${result.error.message}` : "";
+      console.error(`✗ ${item.candidatNom} — ${result.type}${detail}`);
+      continue;
+    }
+
+    const data = result.message;
+
+    // web_search est un outil serveur ; si la limite d'itérations internes du
+    // serveur est atteinte, l'API renvoie stop_reason "pause_turn". La reprise
+    // automatique (comme en mode single) n'est pas gérée en mode batch — on
+    // journalise l'échec plutôt que d'enregistrer une analyse incomplète.
+    if (data.stop_reason === "pause_turn") {
+      console.error(`✗ ${item.candidatNom} — analyse interrompue (pause_turn), non enregistrée`);
+      continue;
+    }
+
+    const usage = data.usage ?? {};
+    for (const key of Object.keys(totalUsage)) {
+      totalUsage[key] += usage[key] ?? 0;
+    }
+
+    try {
+      const saved = await saveAnalysis(item, data);
+      console.log(`✓ ${item.candidatNom} — "${saved.proposition.titre}"`);
+      console.log(`  Score   : ${saved.analyse.scoreFaisabilite}/100`);
+      console.log(`  Analyse : #${saved.analyse.id} (statut: ${saved.analyse.statut})`);
+      printUsage(usage);
+    } catch (error) {
+      console.error(`✗ ${item.candidatNom} — échec de l'écriture en base : ${error.message}`);
+    }
+  }
+
+  console.log("");
+  console.log("Usage total du batch :");
+  printUsage(totalUsage);
+  console.log("");
+
+  return totalUsage;
+}
+
+async function runBatch(items) {
+  console.log(`Soumission d'un batch de ${items.length} proposition(s)...`);
+  const batch = await createBatch(items);
+  console.log(`Batch créé : ${batch.id} (statut initial : ${batch.processing_status})`);
+  console.log("");
+
+  return finishBatch(batch.id, items);
+}
+
+function readBatchFile(path) {
+  const raw = JSON.parse(readFileSync(path, "utf-8"));
+  if (!Array.isArray(raw) || raw.length === 0) {
+    throw new Error(
+      "Le fichier --batch doit contenir un tableau JSON non vide de { candidat, theme, source }.",
+    );
+  }
+
+  return raw.map((entry, index) => {
+    if (!entry.candidat || !entry.theme || !entry.source) {
+      throw new Error(
+        `Entrée #${index} du batch invalide : candidat, theme et source sont requis.`,
+      );
+    }
+    return { candidatNom: entry.candidat, theme: entry.theme, source: entry.source };
+  });
+}
+
+async function main() {
+  const args = parseArgs(process.argv.slice(2));
+
+  if (!process.env.ANTHROPIC_API_KEY) {
+    console.error(
+      "ANTHROPIC_API_KEY n'est pas défini (voir votre fichier .env).",
+    );
+    process.exitCode = 1;
+    return;
+  }
+
+  if (args.batch && args["resume-batch"]) {
+    // Reprend le suivi d'un batch déjà soumis (ex. après une coupure réseau
+    // pendant le polling) sans le recréer — il continue de tourner côté
+    // Anthropic indépendamment du script local.
+    const items = readBatchFile(args.batch);
+    await finishBatch(args["resume-batch"], items);
+    return;
+  }
+
+  if (args.batch) {
+    const items = readBatchFile(args.batch);
+    await runBatch(items);
+    return;
+  }
+
+  const { candidat: candidatNom, theme, source } = args;
+
+  if (!candidatNom || !theme || !source) {
+    console.error(
+      "Usage: node scripts/analyze.js --candidat \"Nom\" --theme \"Thème\" --source \"Texte ou url de la proposition\"\n" +
+        "   ou: node scripts/analyze.js --batch chemin/vers/propositions.json\n" +
+        "   ou: node scripts/analyze.js --batch chemin/vers/propositions.json --resume-batch msgbatch_...",
+    );
+    process.exitCode = 1;
+    return;
+  }
+
+  const item = { candidatNom, theme, source };
+  const data = await analyzeOne(item);
+
+  console.log("");
+  console.log("Usage API :");
+  printUsage(data.usage ?? {});
+
+  const saved = await saveAnalysis(item, data);
+
+  console.log("");
+  console.log(`Titre     : ${saved.proposition.titre}`);
+  console.log(`Candidat  : ${saved.candidat.nom} (${saved.candidat.parti})`);
   console.log(`Thème     : ${theme}`);
-  console.log(`Analyse   : #${analyse.id} (statut: ${analyse.statut})`);
-  console.log(`Score     : ${analyse.scoreFaisabilite}/100`);
-  console.log(`Verdict   : ${analyse.verdict}`);
+  console.log(`Analyse   : #${saved.analyse.id} (statut: ${saved.analyse.statut})`);
+  console.log(`Score     : ${saved.analyse.scoreFaisabilite}/100`);
+  console.log(`Verdict   : ${saved.analyse.verdict}`);
   console.log("");
 }
 

@@ -33,7 +33,7 @@ export async function getFeaturedRotation() {
     personRole: `Déclaration • ${analyse.proposition.theme}`,
     dateLabel: dateFormatter.format(analyse.proposition.dateDeclaration),
     score: analyse.scoreFaisabilite,
-    verdictDescription: analyse.verdict,
+    verdictDescription: analyse.resumeAccueil ?? analyse.verdict,
   }));
 }
 

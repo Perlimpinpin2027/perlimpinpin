@@ -58,6 +58,17 @@ model Analyse {
 
   verdict String
 
+  // Résumé journalistique court (~200-250 caractères) pour la carte "Prix
+  // de la semaine" de la page d'accueil. Nullable pour les analyses
+  // antérieures à l'ajout de ce champ.
+  resumeAccueil String?
+
+  // Texte journalistique plus développé (~400-500 caractères) pour la
+  // section "Le résumé de Perlimpinpin IA" en tête de la fiche déclaration.
+  // Pose la mesure et le point de tension principal, sans donner le verdict
+  // ni le score. Nullable pour les analyses antérieures à ce champ.
+  teaser String?
+
   cequiEstEtabli     String
   cequiEstProbable   String
   cequiEstDiscutable String
