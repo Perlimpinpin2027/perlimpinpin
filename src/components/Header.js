@@ -16,7 +16,7 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-30 w-full border-b border-zinc-200 bg-white">
+    <header className="sticky top-0 z-30 w-full border-b border-zinc-200 bg-background">
       <div className="flex items-center justify-between gap-6 px-6 py-4 sm:px-8">
         <Link href="/" className="flex shrink-0 items-center gap-2">
           <span
@@ -100,7 +100,7 @@ export default function Header() {
             aria-hidden="true"
             onClick={() => setIsMenuOpen(false)}
           />
-          <div className="absolute left-0 right-0 top-full z-30 border-b border-zinc-200 bg-white px-6 py-4 shadow-lg md:hidden">
+          <div className="absolute left-0 right-0 top-full z-30 border-b border-zinc-200 bg-background px-6 py-4 shadow-lg md:hidden">
             <nav>
               <ul className="flex flex-col divide-y divide-zinc-100">
                 {navLinks.map((link) => (

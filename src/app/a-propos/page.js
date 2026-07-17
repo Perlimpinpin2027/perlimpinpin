@@ -20,7 +20,7 @@ const founders = [
 
 export default function AProposPage() {
   return (
-    <div className="flex min-h-screen flex-col bg-white font-sans">
+    <div className="flex min-h-screen flex-col bg-background font-sans">
       <Header />
 
       <main className="w-full px-6 py-12 sm:px-8 sm:py-16">

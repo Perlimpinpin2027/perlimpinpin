@@ -23,7 +23,7 @@ export default async function Home() {
     ]);
 
   return (
-    <div className="flex min-h-screen flex-col bg-white font-sans">
+    <div className="flex min-h-screen flex-col bg-background font-sans">
       <Header />
 
       <Image
