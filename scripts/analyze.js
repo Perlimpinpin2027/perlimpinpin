@@ -164,7 +164,9 @@ Consignes de rédaction :
 - pas de jargon inutile ;
 - toujours expliquer brièvement pourquoi une note est donnée ;
 - toute affirmation importante doit être suivie d'une source ;
-- si une sous-question ne peut pas être tranchée, écrire explicitement : "sources insuffisantes".`;
+- si une sous-question ne peut pas être tranchée, écrire explicitement : "sources insuffisantes" ;
+- écris comme un bon journaliste économique s'adressant à un lecteur non-expert : phrases courtes et directes, formulations actives et concrètes ; évite les tournures robotiques ou administratives ("il convient de noter que", "il est à souligner que", "il apparaît que") ;
+- n'utilise JAMAIS le tiret (—, –, ou "-" isolé entre espaces) comme signe de ponctuation pour marquer une pause, une opposition ou une explication dans une phrase (exemple à proscrire : "coûteuse — et sans garantie de résultat") ; reformule systématiquement avec une vraie ponctuation (virgule, point, deux-points) ou un mot de liaison ("mais", "toutefois", "cependant"), ou sépare en deux phrases ; cette règle s'applique à tous les champs générés, y compris titre_court, resume_accueil et teaser.`;
 
 const JSON_INSTRUCTION = `Réponds UNIQUEMENT en JSON valide, sans texte avant ni après, avec exactement ces clés : titre_court, resume_accueil, teaser, resume_court, mesure_reformulee, mise_en_contexte_dans_le_programme, contexte_local, contexte_national, contexte_international, analyse_par_criteres, ce_qui_est_etabli, ce_qui_est_probable, ce_qui_est_discutable, ce_qui_est_inconnu, angles_morts_et_effets_de_bord, notation_detaillee (objet avec scoreSolidite, scoreJuridique, scoreOperationnel, scoreBudgetaire, scorePertinence, scoreTotal), verdict_final, sources_utilisees, niveau_de_confiance, limites.`;
 
