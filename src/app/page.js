@@ -30,7 +30,7 @@ export default async function Home() {
         src="/banner-perlimpinpin.webp"
         alt="Perlimpinpin"
         width={2172}
-        height={724}
+        height={230}
         priority
         className="h-auto w-full"
       />
