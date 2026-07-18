@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 const navLinks = [
   { label: "Déclarations", href: "/declarations" },
@@ -18,16 +19,15 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-30 w-full border-b border-zinc-200 bg-background">
       <div className="flex items-center justify-between gap-6 px-6 py-4 sm:px-8">
-        <Link href="/" className="flex shrink-0 items-center gap-2">
-          <span
-            className="flex h-7 w-7 items-center justify-center rounded-md bg-blue-600 text-sm font-bold text-white"
-            aria-hidden="true"
-          >
-            P
-          </span>
-          <span className="text-lg font-semibold tracking-tight text-zinc-900">
-            Perlimpinpin
-          </span>
+        <Link href="/" className="flex shrink-0 items-center">
+          <Image
+            src="/banner-perlimpinpin.webp"
+            alt="Perlimpinpin"
+            width={2172}
+            height={230}
+            priority
+            className="h-8 w-auto sm:h-9"
+          />
         </Link>
 
         <nav className="hidden md:block">
