@@ -5,18 +5,6 @@ import { getScoreBadge } from "@/lib/score";
 
 export const dynamic = "force-dynamic";
 
-const badgeStyles = {
-  green: "bg-green-50 text-green-700",
-  orange: "bg-orange-50 text-orange-700",
-  red: "bg-red-50 text-red-700",
-};
-
-const scoreTextStyles = {
-  green: "text-green-600",
-  orange: "text-orange-600",
-  red: "text-red-600",
-};
-
 const sections = [
   { key: "general", title: "Classement général", subtitle: "Toutes périodes confondues" },
   { key: "last30", title: "30 derniers jours", subtitle: "Votes des 30 derniers jours" },
@@ -72,12 +60,12 @@ function PodiumCard({ card, tint }) {
       ) : null}
 
       <div className="mt-auto flex items-center gap-2 pt-2">
-        <span className={`text-2xl font-extrabold tracking-tight ${scoreTextStyles[badge.color]}`}>
+        <span className={`text-2xl font-extrabold tracking-tight ${badge.scoreClass}`}>
           {card.score}
           <span className="text-sm font-semibold text-zinc-400">/100</span>
         </span>
         <span
-          className={`rounded-full px-2 py-0.5 text-xs font-semibold ${badgeStyles[badge.color]}`}
+          className={`rounded-full px-2 py-0.5 text-xs font-semibold ${badge.badgeClass}`}
         >
           {badge.label}
         </span>
@@ -123,12 +111,12 @@ function LeaderboardCard({ card, voteLabel, voteIcon }) {
 
       <div className="mt-auto flex items-center justify-between border-t border-zinc-100 pt-4">
         <div className="flex items-center gap-2">
-          <span className={`text-sm font-bold ${scoreTextStyles[badge.color]}`}>
+          <span className={`text-sm font-bold ${badge.scoreClass}`}>
             {card.score}
             <span className="text-xs font-medium text-zinc-400">/100</span>
           </span>
           <span
-            className={`rounded-full px-2 py-0.5 text-xs font-semibold ${badgeStyles[badge.color]}`}
+            className={`rounded-full px-2 py-0.5 text-xs font-semibold ${badge.badgeClass}`}
           >
             {badge.label}
           </span>

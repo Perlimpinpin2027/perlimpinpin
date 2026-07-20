@@ -103,11 +103,11 @@ Barème de notation sur 100 :
 
 Interprétation du score final :
 - 0 à 19 : irréaliste
-- 20 à 39 : très fragile
-- 40 à 59 : discutable
-- 60 à 74 : plausible mais conditionnel
-- 75 à 89 : faisable et pertinent
-- 90 à 100 : faisable, pertinent et fortement nécessaire
+- 20 à 39 : fragile
+- 40 à 59 : partiellement fondé
+- 60 à 74 : plausible sous condition
+- 75 à 89 : solide et chiffré
+- 90 à 100 : exemplaire
 
 Règles pour le titre court (champ titre_court) :
 - ne jamais inclure le nom du candidat (déjà affiché juste à côté sur toutes les cartes du site) ;

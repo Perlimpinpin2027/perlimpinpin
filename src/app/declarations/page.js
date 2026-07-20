@@ -5,18 +5,6 @@ import { getScoreBadge } from "@/lib/score";
 
 export const dynamic = "force-dynamic";
 
-const badgeStyles = {
-  green: "bg-green-50 text-green-700",
-  orange: "bg-orange-50 text-orange-700",
-  red: "bg-red-50 text-red-700",
-};
-
-const scoreTextStyles = {
-  green: "text-green-600",
-  orange: "text-orange-600",
-  red: "text-red-600",
-};
-
 const sortOptions = [
   { value: "date", label: "Date" },
   { value: "score_desc", label: "Score ↓" },
@@ -200,7 +188,7 @@ export default async function DeclarationsPage({ searchParams }) {
                       </p>
                       <div className="flex shrink-0 items-center gap-2">
                         <span
-                          className={`text-sm font-bold ${scoreTextStyles[badge.color]}`}
+                          className={`text-sm font-bold ${badge.scoreClass}`}
                         >
                           {d.score}
                           <span className="text-xs font-medium text-zinc-400">
@@ -208,7 +196,7 @@ export default async function DeclarationsPage({ searchParams }) {
                           </span>
                         </span>
                         <span
-                          className={`rounded-full px-2 py-0.5 text-xs font-semibold ${badgeStyles[badge.color]}`}
+                          className={`rounded-full px-2 py-0.5 text-xs font-semibold ${badge.badgeClass}`}
                         >
                           {badge.label}
                         </span>

@@ -6,12 +6,6 @@ import { getScoreBadge } from "@/lib/score";
 
 export const dynamic = "force-dynamic";
 
-const colorStyles = {
-  red: { score: "text-red-600", badge: "bg-red-50 text-red-700" },
-  orange: { score: "text-orange-600", badge: "bg-orange-50 text-orange-700" },
-  green: { score: "text-green-600", badge: "bg-green-50 text-green-700" },
-};
-
 // Blocs de contenu éditorial de la fiche candidat. Chaque entrée est vide
 // pour le moment (contenu à rédiger) — il suffit de remplir `contenu` pour
 // que le bloc s'affiche.
@@ -37,7 +31,6 @@ export default async function CandidatDetailPage({ params }) {
 
   const badge =
     candidat.scoreMoyen == null ? null : getScoreBadge(candidat.scoreMoyen);
-  const colors = badge ? colorStyles[badge.color] : null;
 
   return (
     <div className="flex min-h-screen flex-col bg-background font-sans">
@@ -70,7 +63,7 @@ export default async function CandidatDetailPage({ params }) {
                   <>
                     <div className="mt-2 flex items-baseline gap-1.5">
                       <span
-                        className={`text-5xl font-extrabold tracking-tight ${colors.score}`}
+                        className={`text-5xl font-extrabold tracking-tight ${badge.scoreClass}`}
                       >
                         {Math.round(candidat.scoreMoyen)}
                       </span>
@@ -79,7 +72,7 @@ export default async function CandidatDetailPage({ params }) {
                       </span>
                     </div>
                     <div
-                      className={`mt-3 inline-flex w-fit items-center rounded-full px-3 py-1 text-xs font-semibold ${colors.badge}`}
+                      className={`mt-3 inline-flex w-fit items-center rounded-full px-3 py-1 text-xs font-semibold ${badge.badgeClass}`}
                     >
                       {badge.label}
                     </div>

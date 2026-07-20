@@ -1,4 +1,5 @@
 import Header from "@/components/Header";
+import { getScoreBands } from "@/lib/score";
 
 export const metadata = {
   title: "Méthode — Perlimpinpin",
@@ -88,28 +89,14 @@ const criteria = [
   },
 ];
 
-const scoreRows = [
-  { range: "0 – 19", verdict: "Irréaliste", color: "red" },
-  { range: "20 – 39", verdict: "Très fragile", color: "red" },
-  { range: "40 – 59", verdict: "Discutable", color: "orange" },
-  {
-    range: "60 – 74",
-    verdict: "Plausible mais conditionnel",
-    color: "orange",
-  },
-  { range: "75 – 89", verdict: "Faisable et pertinent", color: "green" },
-  {
-    range: "90 – 100",
-    verdict: "Faisable, pertinent et fortement nécessaire",
-    color: "green",
-  },
-];
-
-const rowStyles = {
-  red: "bg-red-50 text-red-700",
-  orange: "bg-orange-50 text-orange-700",
-  green: "bg-green-50 text-green-700",
-};
+const scoreRows = getScoreBands()
+  .slice()
+  .reverse()
+  .map((band) => ({
+    range: `${band.min} – ${band.max}`,
+    verdict: band.label,
+    badgeClass: band.badge,
+  }));
 
 const guardrails = [
   {
@@ -234,7 +221,7 @@ export default function MethodePage() {
                     </td>
                     <td className="px-5 py-3">
                       <span
-                        className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${rowStyles[row.color]}`}
+                        className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${row.badgeClass}`}
                       >
                         {row.verdict}
                       </span>

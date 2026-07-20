@@ -1,43 +1,19 @@
 import Link from "next/link";
-import { getScoreBadge } from "@/lib/score";
+import { getScoreBadge, getScoreBands } from "@/lib/score";
 
-const scoreRanges = [
-  {
-    range: "70-100",
-    label: "Plutôt fondé",
-    color: "green",
-    description: "S'appuie sur des données publiques vérifiables et cohérentes.",
-  },
-  {
-    range: "40-69",
-    label: "Partiellement fondé",
-    color: "orange",
-    description: "Repose sur des éléments réels mais incomplets ou fragiles.",
-  },
-  {
-    range: "0-39",
-    label: "Non étayé",
-    color: "red",
-    description: "Aucune donnée publique ne permet d'établir la faisabilité.",
-  },
-];
-
-const badgeStyles = {
-  green: "bg-green-50 text-green-700",
-  orange: "bg-orange-50 text-orange-700",
-  red: "bg-red-50 text-red-700",
+const bandDescriptions = {
+  Exemplaire: "Solidement démontré, chiffré et cohérent avec les données disponibles.",
+  "Solide et chiffré": "S'appuie sur des données publiques vérifiables et cohérentes.",
+  "Plausible sous condition": "Réaliste mais dépend de conditions ou de financements incertains.",
+  "Partiellement fondé": "Repose sur des éléments réels mais incomplets ou fragiles.",
+  Fragile: "Peu d'éléments vérifiables viennent appuyer cette déclaration.",
+  Irréaliste: "Aucune donnée publique ne permet d'établir la faisabilité.",
 };
 
-const scoreTextStyles = {
-  green: "text-green-600",
-  orange: "text-orange-600",
-  red: "text-red-600",
-};
-
-const rangeStyles = {
-  green: { border: "border-l-green-500", badge: "bg-green-50 text-green-700" },
-  orange: { border: "border-l-orange-500", badge: "bg-orange-50 text-orange-700" },
-  red: { border: "border-l-red-500", badge: "bg-red-50 text-red-700" },
+const borderStyles = {
+  green: "border-l-green-500",
+  orange: "border-l-orange-500",
+  red: "border-l-red-500",
 };
 
 function ColumnHeader({ title, subtitle, linkLabel, linkHref, icon }) {
@@ -111,7 +87,7 @@ function TopDeclarationsColumn({ declarations }) {
                       </span>
                     </span>
                     <span
-                      className={`rounded-full px-2 py-0.5 text-xs font-semibold ${badgeStyles[badge.color]}`}
+                      className={`rounded-full px-2 py-0.5 text-xs font-semibold ${badge.badgeClass}`}
                     >
                       {badge.label}
                     </span>
@@ -156,22 +132,24 @@ function ScoreExplainerColumn() {
       </p>
 
       <div className="flex flex-col gap-4">
-        {scoreRanges.map((item) => (
+        {getScoreBands().map((item) => (
           <div
-            key={item.range}
-            className={`border-l-4 pl-4 ${rangeStyles[item.color].border}`}
+            key={item.label}
+            className={`border-l-4 pl-4 ${borderStyles[item.color]}`}
           >
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-sm font-semibold text-zinc-900">
-                {item.range}
+                {item.min}-{item.max}
               </span>
               <span
-                className={`rounded-full px-2 py-0.5 text-xs font-semibold ${rangeStyles[item.color].badge}`}
+                className={`rounded-full px-2 py-0.5 text-xs font-semibold ${item.badge}`}
               >
                 {item.label}
               </span>
             </div>
-            <p className="mt-1 text-sm text-zinc-500">{item.description}</p>
+            <p className="mt-1 text-sm text-zinc-500">
+              {bandDescriptions[item.label]}
+            </p>
           </div>
         ))}
       </div>
@@ -235,7 +213,7 @@ function ReliabilityIndexColumn({ candidates }) {
                   </span>
                 ) : (
                   <span
-                    className={`text-sm font-bold ${scoreTextStyles[getScoreBadge(candidate.avgScore).color]}`}
+                    className={`text-sm font-bold ${getScoreBadge(candidate.avgScore).scoreClass}`}
                   >
                     {candidate.avgScore}
                     <span className="text-xs font-medium text-zinc-400">

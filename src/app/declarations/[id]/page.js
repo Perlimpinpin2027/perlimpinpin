@@ -7,12 +7,6 @@ import { getScoreBadge } from "@/lib/score";
 
 export const dynamic = "force-dynamic";
 
-const colorStyles = {
-  red: { score: "text-red-600", badge: "bg-red-50 text-red-700" },
-  orange: { score: "text-orange-600", badge: "bg-orange-50 text-orange-700" },
-  green: { score: "text-green-600", badge: "bg-green-50 text-green-700" },
-};
-
 const criteriaLabels = {
   faisabilite_juridique: "Faisabilité juridique",
   faisabilite_operationnelle: "Faisabilité opérationnelle",
@@ -140,7 +134,6 @@ export default async function DeclarationDetailPage({ params }) {
   const { analyse } = declaration;
   const contenu = analyse.contenuComplet ?? {};
   const badge = getScoreBadge(analyse.scoreFaisabilite);
-  const colors = colorStyles[badge.color];
   const notation = contenu.notation_detaillee ?? {};
   const scoreComment = firstSentence(analyse.resumeAccueil);
 
@@ -191,7 +184,7 @@ export default async function DeclarationDetailPage({ params }) {
               </span>
               <div className="mt-2 flex items-baseline gap-1.5">
                 <span
-                  className={`text-5xl font-extrabold tracking-tight ${colors.score}`}
+                  className={`text-5xl font-extrabold tracking-tight ${badge.scoreClass}`}
                 >
                   {analyse.scoreFaisabilite}
                 </span>
@@ -200,7 +193,7 @@ export default async function DeclarationDetailPage({ params }) {
                 </span>
               </div>
               <div
-                className={`mt-3 inline-flex w-fit items-center rounded-full px-3 py-1 text-xs font-semibold ${colors.badge}`}
+                className={`mt-3 inline-flex w-fit items-center rounded-full px-3 py-1 text-xs font-semibold ${badge.badgeClass}`}
               >
                 {badge.label}
               </div>

@@ -6,12 +6,6 @@ import { getScoreBadge } from "@/lib/score";
 
 const SWIPE_THRESHOLD_PX = 40;
 
-const colorStyles = {
-  red: { score: "text-red-600", badge: "bg-red-50 text-red-700" },
-  orange: { score: "text-orange-600", badge: "bg-orange-50 text-orange-700" },
-  green: { score: "text-green-600", badge: "bg-green-50 text-green-700" },
-};
-
 // Carte unique "Prix Perlimpinpin de la semaine" : photo à gauche (~40%),
 // contenu à droite, score + bouton en pied de carte pleine largeur. Reçoit
 // l'état du carrousel (index/total/callbacks) depuis FeaturedCarousel.
@@ -58,7 +52,6 @@ export default function FeaturedCard({
   }
 
   const badge = getScoreBadge(score);
-  const colors = colorStyles[badge.color];
 
   return (
     <div className="flex h-full flex-col rounded-2xl border border-zinc-200 bg-white sm:flex-row">
@@ -129,12 +122,12 @@ export default function FeaturedCard({
         {/* Le score est l'info la plus importante après le titre : mis en
             valeur juste avant le bouton, pas relégué dans une barre basse. */}
         <div className="mt-6 flex flex-wrap items-center gap-3">
-          <span className={`text-5xl font-extrabold tracking-tight ${colors.score}`}>
+          <span className={`text-5xl font-extrabold tracking-tight ${badge.scoreClass}`}>
             {score}
             <span className="text-lg font-semibold text-zinc-400">/100</span>
           </span>
           <span
-            className={`rounded-full px-3 py-1 text-xs font-semibold ${colors.badge}`}
+            className={`rounded-full px-3 py-1 text-xs font-semibold ${badge.badgeClass}`}
           >
             {badge.label}
           </span>
