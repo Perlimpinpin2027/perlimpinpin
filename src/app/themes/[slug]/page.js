@@ -74,7 +74,7 @@ export default async function ThemeDetailPage({ params }) {
                     <img
                       src={proposition.candidatPhotoUrl || "/avatar-placeholder.svg"}
                       alt={proposition.candidatNom}
-                      className="h-11 w-11 shrink-0 rounded-full object-cover"
+                      className="h-11 w-11 shrink-0 rounded-lg object-cover object-top"
                     />
 
                     <div className="min-w-0 flex-1">

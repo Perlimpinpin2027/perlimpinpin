@@ -49,7 +49,7 @@ export default async function CandidatDetailPage({ params }) {
             <img
               src={candidat.photoUrl || "/avatar-placeholder.svg"}
               alt={candidat.nom}
-              className="h-[300px] w-[300px] shrink-0 rounded-2xl object-cover"
+              className="h-[300px] w-[300px] shrink-0 rounded-2xl object-cover object-top"
             />
 
             <div className="flex flex-col justify-center gap-3">

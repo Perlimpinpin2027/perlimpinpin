@@ -180,7 +180,7 @@ export default async function DeclarationsPage({ searchParams }) {
                       <img
                         src={d.candidatPhotoUrl || "/avatar-placeholder.svg"}
                         alt={d.candidatNom}
-                        className="h-9 w-9 shrink-0 rounded-full object-cover"
+                        className="h-9 w-9 shrink-0 rounded-lg object-cover object-top"
                       />
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-semibold text-zinc-900">

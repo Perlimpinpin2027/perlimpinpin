@@ -40,11 +40,14 @@ const rangeStyles = {
   red: { border: "border-l-red-500", badge: "bg-red-50 text-red-700" },
 };
 
-function ColumnHeader({ title, subtitle, linkLabel, linkHref }) {
+function ColumnHeader({ title, subtitle, linkLabel, linkHref, icon }) {
   return (
     <div className="mb-6 flex items-start justify-between gap-4">
       <div>
-        <h2 className="text-base font-bold text-zinc-900">{title}</h2>
+        <h2 className="flex items-center gap-2 text-base font-bold text-zinc-900">
+          {icon}
+          {title}
+        </h2>
         {subtitle ? (
           <p className="mt-0.5 text-xs text-zinc-400">{subtitle}</p>
         ) : null}
@@ -87,7 +90,7 @@ function TopDeclarationsColumn({ declarations }) {
                   <img
                     src={item.photoUrl || "/avatar-placeholder.svg"}
                     alt={item.name}
-                    className="h-9 w-9 shrink-0 rounded-full object-cover"
+                    className="h-9 w-9 shrink-0 rounded-lg object-cover object-top"
                   />
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-semibold text-zinc-900">
@@ -126,7 +129,26 @@ function TopDeclarationsColumn({ declarations }) {
 function ScoreExplainerColumn() {
   return (
     <div className="rounded-2xl border border-zinc-200 bg-white p-6">
-      <ColumnHeader title="Comment fonctionne le score ?" />
+      <ColumnHeader
+        title="Comment fonctionne le score ?"
+        icon={
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={1.5}
+            className="h-5 w-5 shrink-0 text-blue-600"
+            aria-hidden="true"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+            />
+          </svg>
+        }
+      />
 
       <p className="mb-6 text-sm leading-relaxed text-zinc-500">
         Le Score Perlimpinpin évalue la qualité informationnelle des
@@ -195,7 +217,7 @@ function ReliabilityIndexColumn({ candidates }) {
               <img
                 src={candidate.photoUrl || "/avatar-placeholder.svg"}
                 alt={candidate.name}
-                className="h-9 w-9 shrink-0 rounded-full object-cover"
+                className="h-9 w-9 shrink-0 rounded-lg object-cover object-top"
               />
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-semibold text-zinc-900">

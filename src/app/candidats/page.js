@@ -52,7 +52,7 @@ export default async function CandidatsPage() {
                     <img
                       src={candidat.photoUrl || "/avatar-placeholder.svg"}
                       alt={candidat.nom}
-                      className="h-14 w-14 shrink-0 rounded-full object-cover"
+                      className="h-14 w-14 shrink-0 rounded-lg object-cover object-top"
                     />
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-semibold text-zinc-900">

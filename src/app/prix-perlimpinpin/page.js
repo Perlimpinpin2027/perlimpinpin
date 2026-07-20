@@ -58,7 +58,7 @@ function PodiumCard({ card, tint }) {
         <img
           src={card.candidatPhotoUrl || "/avatar-placeholder.svg"}
           alt={card.candidatNom}
-          className="h-10 w-10 shrink-0 rounded-full object-cover"
+          className="h-10 w-10 shrink-0 rounded-lg object-cover object-top"
         />
         <p className="text-sm font-semibold text-zinc-900">{card.candidatNom}</p>
       </div>
@@ -108,7 +108,7 @@ function LeaderboardCard({ card, voteLabel, voteIcon }) {
         <img
           src={card.candidatPhotoUrl || "/avatar-placeholder.svg"}
           alt={card.candidatNom}
-          className="h-10 w-10 shrink-0 rounded-full object-cover"
+          className="h-10 w-10 shrink-0 rounded-lg object-cover object-top"
         />
         <p className="text-sm font-semibold text-zinc-900">{card.candidatNom}</p>
       </div>

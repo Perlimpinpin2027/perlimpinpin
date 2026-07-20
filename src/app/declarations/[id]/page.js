@@ -107,7 +107,7 @@ export default async function DeclarationDetailPage({ params }) {
               <img
                 src={declaration.candidat.photoUrl || "/avatar-placeholder.svg"}
                 alt={declaration.candidat.nom}
-                className="h-11 w-11 shrink-0 rounded-full object-cover"
+                className="h-11 w-11 shrink-0 rounded-lg object-cover object-top"
               />
               <div className="flex flex-col">
                 <span className="text-sm font-semibold text-zinc-900">
