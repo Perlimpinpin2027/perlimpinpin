@@ -14,7 +14,7 @@ const founders = [
   {
     nom: "Arno Fontaine",
     role: "Conseiller en économie comportementale",
-    bio: "Diplômé en économie et sciences politiques (Paris II Panthéon-Assas, Sciences Po Grenoble), Arno est conseiller en économie comportementale. Il travaille actuellement au sein du département de gouvernance publique de l'OCDE sur l'impact de l'intelligence artificielle sur le cerveau humain et les processus décisionnels.\n\nIl s'intéresse particulièrement à la manière dont se forment nos systèmes de croyance et notre rapport à l'information — un sujet qu'il a notamment exploré à l'Agence française de développement, en intégrant les apports de la psychologie comportementale aux politiques publiques. C'est cette conviction qui l'a poussé à cofonder Perlimpinpin : donner au public des repères factuels clairs face aux promesses politiques.",
+    bio: "Diplômé en économie et sciences politiques (Paris II Panthéon-Assas, Sciences Po Grenoble), Arno est conseiller en économie comportementale. Il a travaillé au sein du département de gouvernance publique de l'OCDE sur l'impact de l'intelligence artificielle sur le cerveau humain et les processus décisionnels et a auparavant développé un programme de sciences comportementales appliqué aux opérations de développement au sein de l'Agence française de développement.\n\nIl s'intéresse particulièrement à la manière dont se forment nos systèmes de croyance et notre rapport à l'information, grâce aux apports de la psychologie comportementale. C'est cette conviction qui l'a poussé à cofonder Perlimpinpin : donner au public des repères factuels clairs face aux promesses politiques.",
   },
 ];
 
