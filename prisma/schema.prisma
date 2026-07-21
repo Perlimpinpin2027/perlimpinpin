@@ -81,8 +81,22 @@ model Analyse {
 
   versionMethodologie String @default("v1.0")
 
-  // Réponse JSON complète renvoyée par l'API Anthropic
+  // Réponse JSON complète renvoyée par l'API Anthropic (sortie finale, après
+  // arbitrage de l'étape 3 du pipeline)
   contenuComplet Json
+
+  // Sortie brute du contrôle qualité Mistral (étape 2 du pipeline). Nullable :
+  // absent si Mistral a échoué (mode dégradé) ou pour les analyses générées
+  // avant l'ajout de cette étape.
+  contreAvisMistral Json?
+
+  // Pour chaque remarque de contreAvisMistral, ce que Claude a accepté ou
+  // rejeté et pourquoi (étape 3). Usage interne, jamais exposé au lecteur.
+  auditArbitrage Json?
+
+  // Détail des tokens et du coût estimé par étape du pipeline :
+  // { tokensEtape1, tokensEtape2, tokensEtape3, coutEstimeTotal }
+  coutPipeline Json?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

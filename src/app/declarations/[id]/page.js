@@ -11,14 +11,18 @@ const criteriaLabels = {
   faisabilite_juridique: "Faisabilité juridique",
   faisabilite_operationnelle: "Faisabilité opérationnelle",
   soutenabilite_budgetaire: "Soutenabilité budgétaire",
-  efficacite_probable: "Efficacité probable",
+  efficacite_attendue: "Efficacité attendue",
   pertinence_sociale_economique_ecologique: "Pertinence",
 };
 
+// Barème depuis v2.0-pipeline3etapes (voir scripts/analyze.js) : 5 critères
+// à poids différents (20/20/25/20/15) plus deux malus cumulables. `max` sert
+// à afficher le bon dénominateur par ligne (elles n'ont plus toutes /20).
 const notationLabels = [
   {
     key: "scoreSolidite",
     label: "Solidité factuelle",
+    max: 20,
     icon: (
       <path
         strokeLinecap="round"
@@ -28,8 +32,9 @@ const notationLabels = [
     ),
   },
   {
-    key: "scoreJuridique",
-    label: "Faisabilité juridique",
+    key: "scoreJuridiqueOperationnel",
+    label: "Faisabilité juridique et opérationnelle",
+    max: 25,
     icon: (
       <path
         strokeLinecap="round"
@@ -39,8 +44,9 @@ const notationLabels = [
     ),
   },
   {
-    key: "scoreOperationnel",
-    label: "Faisabilité opérationnelle",
+    key: "scoreEfficaciteAttendue",
+    label: "Efficacité attendue",
+    max: 20,
     icon: (
       <>
         <path
@@ -55,6 +61,7 @@ const notationLabels = [
   {
     key: "scoreBudgetaire",
     label: "Soutenabilité budgétaire",
+    max: 20,
     icon: (
       <path
         strokeLinecap="round"
@@ -64,16 +71,22 @@ const notationLabels = [
     ),
   },
   {
-    key: "scorePertinence",
-    label: "Pertinence",
+    key: "scoreDurabilite",
+    label: "Soutenabilité dans la durée",
+    max: 15,
     icon: (
-      <>
-        <circle cx="12" cy="12" r="8.25" strokeLinecap="round" strokeLinejoin="round" />
-        <circle cx="12" cy="12" r="4.25" strokeLinecap="round" strokeLinejoin="round" />
-        <circle cx="12" cy="12" r="0.75" fill="currentColor" />
-      </>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+      />
     ),
   },
+];
+
+const malusLabels = [
+  { key: "malusVotePasse", label: "Incohérence avec un vote passé" },
+  { key: "malusClimat", label: "Contradiction avec les engagements climatiques" },
 ];
 
 function Section({ title, children }) {
@@ -309,7 +322,7 @@ export default async function DeclarationDetailPage({ params }) {
               </span>
 
               <div className="mt-4 flex flex-col divide-y divide-zinc-100">
-                {notationLabels.map(({ key, label, icon }) => (
+                {notationLabels.map(({ key, label, max, icon }) => (
                   <div key={key} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
                     <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600">
                       <svg
@@ -328,7 +341,7 @@ export default async function DeclarationDetailPage({ params }) {
                       <p className="text-lg font-bold text-zinc-900">
                         {notation[key] ?? "—"}
                         <span className="text-xs font-medium text-zinc-400">
-                          /20
+                          /{max}
                         </span>
                       </p>
                       <p className="text-xs text-zinc-500">{label}</p>
@@ -336,6 +349,18 @@ export default async function DeclarationDetailPage({ params }) {
                   </div>
                 ))}
               </div>
+
+              {malusLabels.some(({ key }) => notation[key] < 0) ? (
+                <div className="mt-4 flex flex-col gap-1.5 border-t border-zinc-100 pt-4">
+                  {malusLabels.map(({ key, label }) =>
+                    notation[key] < 0 ? (
+                      <p key={key} className="text-xs text-red-600">
+                        <span className="font-semibold">{notation[key]}</span> — {label}
+                      </p>
+                    ) : null,
+                  )}
+                </div>
+              ) : null}
 
               <Link
                 href="/methode"
