@@ -21,7 +21,7 @@ const steps = [
     body: "Dans le programme du candidat (cohérence avec ses autres engagements), dans la réalité française actuelle (contraintes budgétaires, cadre juridique, précédents), et dans le contexte international si pertinent (droit européen, comparaisons avec d'autres pays).",
   },
   {
-    title: "On évalue selon cinq critères indépendants, chacun noté sur 20 :",
+    title: "On évalue selon cinq critères indépendants, pour un total de 100 points :",
     body: null,
   },
   {
@@ -32,7 +32,8 @@ const steps = [
 
 const criteria = [
   {
-    name: "Solidité factuelle",
+    name: "Solidité factuelle et documentaire",
+    points: 20,
     question: "les chiffres et affirmations sont-ils exacts et à jour ?",
     icon: (
       <path
@@ -43,9 +44,26 @@ const criteria = [
     ),
   },
   {
-    name: "Faisabilité juridique",
+    name: "Efficacité attendue",
+    points: 20,
     question:
-      "la mesure est-elle compatible avec la Constitution, le droit français et européen ?",
+      "la mesure atteint-elle l'objectif annoncé, et y a-t-il des risques d'effets rebond documentés qui annuleraient le bénéfice ?",
+    icon: (
+      <>
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 0 1 1.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.559.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.893.149c-.425.07-.765.383-.93.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 0 1-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.397.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.269-1.45-.12l-.773-.774a1.125 1.125 0 0 1-.12-1.45l.527-.737c.25-.35.273-.806.108-1.204-.165-.397-.505-.71-.93-.78l-.894-.15c-.542-.09-.94-.558-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.107-1.204l-.527-.738a1.125 1.125 0 0 1 .12-1.45l.773-.773a1.125 1.125 0 0 1 1.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894Z"
+        />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+      </>
+    ),
+  },
+  {
+    name: "Faisabilité juridique et réglementaire",
+    points: 25,
+    question:
+      "compatible avec la Constitution, le droit français et européen, y compris les engagements climatiques de l'État français ?",
     icon: (
       <path
         strokeLinecap="round"
@@ -55,18 +73,8 @@ const criteria = [
     ),
   },
   {
-    name: "Faisabilité opérationnelle",
-    question: "peut-elle être mise en œuvre dans les délais annoncés ?",
-    icon: (
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 0 1 0 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 0 1 0-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281Z"
-      />
-    ),
-  },
-  {
-    name: "Soutenabilité budgétaire",
+    name: "Coût et soutenabilité budgétaire",
+    points: 20,
     question: "le financement est-il crédible et documenté ?",
     icon: (
       <path
@@ -77,13 +85,15 @@ const criteria = [
     ),
   },
   {
-    name: "Pertinence",
-    question: "répond-elle réellement au problème qu'elle prétend résoudre ?",
+    name: "Faisabilité opérationnelle",
+    points: 15,
+    question:
+      "la mesure est-elle concrètement réalisable dans les délais annoncés, et tient-elle sur la durée même si le contexte change ?",
     icon: (
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
-        d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456Z"
+        d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
       />
     ),
   },
@@ -177,6 +187,9 @@ export default function MethodePage() {
                           <p className="text-sm leading-relaxed text-zinc-600">
                             <span className="font-semibold text-zinc-900">
                               {criterion.name}
+                            </span>{" "}
+                            <span className="text-xs font-medium text-zinc-400">
+                              ({criterion.points} pts)
                             </span>{" "}
                             — {criterion.question}
                           </p>

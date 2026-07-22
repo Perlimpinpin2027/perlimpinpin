@@ -15,13 +15,13 @@ const criteriaLabels = {
   pertinence_sociale_economique_ecologique: "Pertinence",
 };
 
-// Barème depuis v2.0-pipeline3etapes (voir scripts/analyze.js) : 5 critères
-// à poids différents (20/20/25/20/15) plus deux malus cumulables. `max` sert
-// à afficher le bon dénominateur par ligne (elles n'ont plus toutes /20).
+// Barème officiel (voir scripts/analyze.js) : 5 critères à poids différents
+// (20/20/25/20/15), addition simple, sans malus ni bonus. `max` sert à
+// afficher le bon dénominateur par ligne (elles n'ont pas toutes /20).
 const notationLabels = [
   {
     key: "scoreSolidite",
-    label: "Solidité factuelle",
+    label: "Solidité factuelle et documentaire",
     max: 20,
     icon: (
       <path
@@ -32,8 +32,8 @@ const notationLabels = [
     ),
   },
   {
-    key: "scoreJuridiqueOperationnel",
-    label: "Faisabilité juridique et opérationnelle",
+    key: "scoreJuridiqueReglementaire",
+    label: "Faisabilité juridique et réglementaire",
     max: 25,
     icon: (
       <path
@@ -60,7 +60,7 @@ const notationLabels = [
   },
   {
     key: "scoreBudgetaire",
-    label: "Soutenabilité budgétaire",
+    label: "Coût et soutenabilité budgétaire",
     max: 20,
     icon: (
       <path
@@ -71,8 +71,8 @@ const notationLabels = [
     ),
   },
   {
-    key: "scoreDurabilite",
-    label: "Soutenabilité dans la durée",
+    key: "scoreFaisabiliteOperationnelle",
+    label: "Faisabilité opérationnelle",
     max: 15,
     icon: (
       <path
@@ -82,11 +82,6 @@ const notationLabels = [
       />
     ),
   },
-];
-
-const malusLabels = [
-  { key: "malusVotePasse", label: "Incohérence avec un vote passé" },
-  { key: "malusClimat", label: "Contradiction avec les engagements climatiques" },
 ];
 
 function Section({ title, children }) {
@@ -349,18 +344,6 @@ export default async function DeclarationDetailPage({ params }) {
                   </div>
                 ))}
               </div>
-
-              {malusLabels.some(({ key }) => notation[key] < 0) ? (
-                <div className="mt-4 flex flex-col gap-1.5 border-t border-zinc-100 pt-4">
-                  {malusLabels.map(({ key, label }) =>
-                    notation[key] < 0 ? (
-                      <p key={key} className="text-xs text-red-600">
-                        <span className="font-semibold">{notation[key]}</span> — {label}
-                      </p>
-                    ) : null,
-                  )}
-                </div>
-              ) : null}
 
               <Link
                 href="/methode"

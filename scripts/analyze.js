@@ -134,24 +134,20 @@ Règles de recherche :
 - quand une comparaison internationale est fragile, l'écrire ;
 - ne cite jamais une source que tu n'as pas effectivement consultée.
 
-Barème de notation sur 100 :
+Barème de notation sur 100 (addition simple des 5 critères, sans aucun malus ni bonus) :
 - Solidité factuelle et documentaire (les chiffres et affirmations avancés sont-ils exacts et à jour ?) — 20 points
 - Efficacité attendue (la mesure atteint-elle l'objectif annoncé, et y a-t-il des risques d'effets rebond documentés qui annuleraient le bénéfice ?) — 20 points
-- Faisabilité juridique et opérationnelle (compatible avec la Constitution, le droit français et européen, et concrètement réalisable dans les délais annoncés ?) — 25 points
+- Faisabilité juridique et réglementaire (compatible avec la Constitution, le droit français et européen, y compris les engagements climatiques de l'État français ?) — 25 points
 - Coût et soutenabilité budgétaire (le financement est-il crédible et documenté ?) — 20 points
-- Soutenabilité dans la durée (la mesure tient-elle sur la durée, peut-elle s'adapter si le contexte change ?) — 15 points
-
-Malus (cumulables, note finale plancher à 0) :
-- Incohérence avec un vote passé du candidat (il faut beaucoup d'évidence) : -10 points ou moins si peu de démonstration
-- Contradiction avec les engagements climatiques français : -10 points ou moins si peu de démonstration
+- Faisabilité opérationnelle (la mesure est-elle concrètement réalisable dans les délais annoncés, et tient-elle sur la durée même si le contexte change ?) — 15 points
 
 Interprétation du score final :
 - 0 à 19 : irréaliste
-- 20 à 39 : très fragile
-- 40 à 59 : discutable
-- 60 à 74 : plausible mais conditionnel
-- 75 à 89 : faisable et pertinent
-- 90 à 100 : faisable, pertinent et fortement nécessaire
+- 20 à 39 : fragile
+- 40 à 59 : partiellement fondé
+- 60 à 74 : plausible sous condition
+- 75 à 89 : solide et chiffré
+- 90 à 100 : exemplaire
 
 Règles pour le titre court (champ titre_court) :
 - ne jamais inclure le nom du candidat (déjà affiché juste à côté sur toutes les cartes du site) ;
@@ -192,7 +188,7 @@ Format obligatoire de sortie :
 13. ce_qui_est_discutable
 14. ce_qui_est_inconnu
 15. angles_morts_et_effets_de_bord
-16. notation_detaillee (objet avec scoreSolidite /20, scoreEfficaciteAttendue /20, scoreJuridiqueOperationnel /25, scoreBudgetaire /20, scoreDurabilite /15, malusVotePasse 0 à -10, malusClimat 0 à -10, scoreTotal /100 plancher 0)
+16. notation_detaillee (objet avec scoreSolidite /20, scoreEfficaciteAttendue /20, scoreJuridiqueReglementaire /25, scoreBudgetaire /20, scoreFaisabiliteOperationnelle /15, scoreTotal /100 — addition simple des 5 critères, sans malus ni bonus)
 17. impact_temporel_et_sectoriel (à renseigner uniquement si la mesure a une dimension économique/budgétaire/monétaire, sinon null) : effets court terme / moyen terme / long terme ; et si pertinent, effet sur l'inflation et le pouvoir d'achat, sur la consommation des ménages, et sur la confiance et la stabilité du secteur bancaire
 18. verdict_final (facile à comprendre)
 19. sources_utilisees
@@ -215,7 +211,7 @@ Consignes de rédaction :
 - écris comme un bon journaliste économique s'adressant à un lecteur non-expert : phrases courtes et directes, formulations actives et concrètes ; évite les tournures robotiques ou administratives ("il convient de noter que", "il est à souligner que", "il apparaît que") ;
 - n'utilise JAMAIS le tiret (—, –, ou "-" isolé entre espaces) comme signe de ponctuation pour marquer une pause, une opposition ou une explication dans une phrase (exemple à proscrire : "coûteuse — et sans garantie de résultat") ; reformule systématiquement avec une vraie ponctuation (virgule, point, deux-points) ou un mot de liaison ("mais", "toutefois", "cependant"), ou sépare en deux phrases ; cette règle s'applique à tous les champs générés, y compris titre_court, resume_accueil, teaser et teasing_final.`;
 
-const JSON_INSTRUCTION = `Réponds UNIQUEMENT en JSON valide, sans texte avant ni après, avec exactement ces clés : titre_court, resume_accueil, teaser, resume_court, mesure_reformulee, mise_en_contexte_dans_le_programme, contexte_local, contexte_national, contexte_international, analyse_par_criteres, ce_qui_est_etabli, ce_qui_est_probable, ce_qui_est_discutable, ce_qui_est_inconnu, angles_morts_et_effets_de_bord, notation_detaillee (objet avec scoreSolidite, scoreEfficaciteAttendue, scoreJuridiqueOperationnel, scoreBudgetaire, scoreDurabilite, malusVotePasse, malusClimat, scoreTotal), impact_temporel_et_sectoriel (objet ou null), verdict_final, sources_utilisees, niveau_de_confiance, limites, teasing_final.`;
+const JSON_INSTRUCTION = `Réponds UNIQUEMENT en JSON valide, sans texte avant ni après, avec exactement ces clés : titre_court, resume_accueil, teaser, resume_court, mesure_reformulee, mise_en_contexte_dans_le_programme, contexte_local, contexte_national, contexte_international, analyse_par_criteres, ce_qui_est_etabli, ce_qui_est_probable, ce_qui_est_discutable, ce_qui_est_inconnu, angles_morts_et_effets_de_bord, notation_detaillee (objet avec scoreSolidite, scoreEfficaciteAttendue, scoreJuridiqueReglementaire, scoreBudgetaire, scoreFaisabiliteOperationnelle, scoreTotal — addition simple des 5 critères, sans malus ni bonus), impact_temporel_et_sectoriel (objet ou null), verdict_final, sources_utilisees, niveau_de_confiance, limites, teasing_final.`;
 
 export const SYSTEM_PROMPT = `${ANALYSIS_PROMPT}\n\n${JSON_INSTRUCTION}`;
 
@@ -1050,18 +1046,18 @@ async function saveAnalysis(item, pipelineResult) {
     data: {
       propositionId: proposition.id,
       scoreFaisabilite: notation.scoreTotal,
-      // Le nouveau barème (Solidité / Efficacité attendue / Faisabilité
-      // juridique+opérationnelle / Budgétaire / Durabilité + malus) ne
-      // correspond plus 1:1 aux 5 colonnes historiques /20, pensées pour
-      // l'ancien barème (et affichées telles quelles par la carte "Détail
-      // du score" du site). En attendant une décision sur leur évolution,
-      // on y range provisoirement les nouveaux sous-scores les plus
-      // proches — à corriger avant toute publication sous ce barème :
+      // Barème (v3, sans malus) : Solidité /20, Efficacité attendue /20,
+      // Faisabilité juridique et réglementaire /25, Coût et soutenabilité
+      // budgétaire /20, Faisabilité opérationnelle /15. Ne correspond pas
+      // 1:1 aux libellés des 5 colonnes historiques /20 (pensées pour un
+      // ancien barème uniforme) — on y range les sous-scores actuels les
+      // plus proches ; la carte "Détail du score" du site lit désormais
+      // notation_detaillee directement (contenuComplet), pas ces colonnes.
       scoreSolidite: notation.scoreSolidite,
-      scoreJuridique: notation.scoreJuridiqueOperationnel, // désormais sur 25, pas 20
+      scoreJuridique: notation.scoreJuridiqueReglementaire, // sur 25, pas 20
       scoreOperationnel: notation.scoreEfficaciteAttendue, // rebaptisé "efficacité attendue"
       scoreBudgetaire: notation.scoreBudgetaire,
-      scorePertinence: notation.scoreDurabilite, // rebaptisé "soutenabilité dans la durée"
+      scorePertinence: notation.scoreFaisabiliteOperationnelle, // rebaptisé "faisabilité opérationnelle"
       verdict: toText(parsed.verdict_final),
       resumeAccueil,
       teaser,
@@ -1090,13 +1086,11 @@ function printUsage(usage) {
 }
 
 function printScoreDetail(notation) {
-  console.log(`  Solidité factuelle et documentaire       : ${notation.scoreSolidite ?? "?"}/20`);
-  console.log(`  Efficacité attendue                      : ${notation.scoreEfficaciteAttendue ?? "?"}/20`);
-  console.log(`  Faisabilité juridique et opérationnelle  : ${notation.scoreJuridiqueOperationnel ?? "?"}/25`);
-  console.log(`  Coût et soutenabilité budgétaire         : ${notation.scoreBudgetaire ?? "?"}/20`);
-  console.log(`  Soutenabilité dans la durée               : ${notation.scoreDurabilite ?? "?"}/15`);
-  console.log(`  Malus vote passé                          : ${notation.malusVotePasse ?? 0}`);
-  console.log(`  Malus engagements climatiques              : ${notation.malusClimat ?? 0}`);
+  console.log(`  Solidité factuelle et documentaire        : ${notation.scoreSolidite ?? "?"}/20`);
+  console.log(`  Efficacité attendue                       : ${notation.scoreEfficaciteAttendue ?? "?"}/20`);
+  console.log(`  Faisabilité juridique et réglementaire    : ${notation.scoreJuridiqueReglementaire ?? "?"}/25`);
+  console.log(`  Coût et soutenabilité budgétaire          : ${notation.scoreBudgetaire ?? "?"}/20`);
+  console.log(`  Faisabilité opérationnelle                : ${notation.scoreFaisabiliteOperationnelle ?? "?"}/15`);
   console.log(`  Score total                                : ${notation.scoreTotal ?? "?"}/100`);
 }
 

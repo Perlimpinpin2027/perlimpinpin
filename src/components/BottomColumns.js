@@ -10,12 +10,6 @@ const bandDescriptions = {
   Irréaliste: "Aucune donnée publique ne permet d'établir la faisabilité.",
 };
 
-const borderStyles = {
-  green: "border-l-green-500",
-  orange: "border-l-orange-500",
-  red: "border-l-red-500",
-};
-
 function ColumnHeader({ title, subtitle, linkLabel, linkHref, icon }) {
   return (
     <div className="mb-6 flex items-start justify-between gap-4">
@@ -135,7 +129,7 @@ function ScoreExplainerColumn() {
         {getScoreBands().map((item) => (
           <div
             key={item.label}
-            className={`border-l-4 pl-4 ${borderStyles[item.color]}`}
+            className={`border-l-4 pl-4 ${item.border}`}
           >
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-sm font-semibold text-zinc-900">

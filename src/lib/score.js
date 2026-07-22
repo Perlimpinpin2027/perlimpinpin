@@ -15,9 +15,9 @@ const SCORE_BANDS = [
 // Classes Tailwind associées à chaque couleur — définies une seule fois
 // ici plutôt que recopiées dans chaque composant qui affiche un score.
 const COLOR_CLASSES = {
-  red: { score: "text-red-600", badge: "bg-red-50 text-red-700" },
-  orange: { score: "text-orange-600", badge: "bg-orange-50 text-orange-700" },
-  green: { score: "text-green-600", badge: "bg-green-50 text-green-700" },
+  red: { score: "text-red-600", badge: "bg-red-50 text-red-700", border: "border-l-red-500" },
+  orange: { score: "text-orange-600", badge: "bg-orange-50 text-orange-700", border: "border-l-orange-500" },
+  green: { score: "text-green-600", badge: "bg-green-50 text-green-700", border: "border-l-green-500" },
 };
 
 export function getScoreBadge(score) {

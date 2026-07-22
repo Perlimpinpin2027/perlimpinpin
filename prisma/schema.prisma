@@ -49,7 +49,12 @@ model Analyse {
   // Score global sur 100
   scoreFaisabilite Int
 
-  // Sous-scores sur 20 chacun
+  // Sous-scores du barème (poids variables selon le critère, voir
+  // scripts/analyze.js — colonnes historiques, non lues par l'UI qui lit
+  // directement contenuComplet.notation_detaillee ; scoreJuridique/
+  // scoreOperationnel/scorePertinence portent désormais des valeurs dont le
+  // nom de colonne ne correspond plus exactement au libellé du critère,
+  // voir le commentaire dans saveAnalysis())
   scoreSolidite     Int
   scoreJuridique    Int
   scoreOperationnel Int
