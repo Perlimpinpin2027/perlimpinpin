@@ -26,7 +26,7 @@ const steps = [
   },
   {
     title: "On distingue explicitement",
-    body: "ce qui est établi, ce qui est probable, ce qui est discutable, et ce qui reste inconnu. Quand une source manque, on l'écrit noir sur blanc : « sources insuffisantes » — plutôt que de deviner.",
+    body: "ce qui est établi, ce qui est probable, ce qui est discutable, et ce qui reste inconnu. Quand une source manque, on l'écrit noir sur blanc : « sources insuffisantes », plutôt que de deviner.",
   },
 ];
 
@@ -121,10 +121,6 @@ const guardrails = [
     lead: "On signale les désaccords entre sources",
     rest: " plutôt que de trancher arbitrairement en leur faveur.",
   },
-  {
-    lead: "Chaque analyse assistée par IA est relue par un humain",
-    rest: " avant publication.",
-  },
 ];
 
 export default function MethodePage() {
@@ -191,7 +187,7 @@ export default function MethodePage() {
                             <span className="text-xs font-medium text-zinc-400">
                               ({criterion.points} pts)
                             </span>{" "}
-                            — {criterion.question}
+                            : {criterion.question}
                           </p>
                         </li>
                       ))}
@@ -246,6 +242,68 @@ export default function MethodePage() {
           </div>
 
           <h2 className="mt-12 text-2xl font-bold text-zinc-900">
+            D&apos;où vient notre grille
+          </h2>
+
+          <p className="mt-4 text-sm leading-relaxed text-zinc-600">
+            On n&apos;a pas inventé ces cinq critères dans notre coin. Ils
+            s&apos;inspirent de plusieurs décennies de recherche, en France
+            et à l&apos;international, sur la manière de juger sérieusement
+            une politique publique, notamment les travaux d&apos;Eugene
+            Bardach (Berkeley), l&apos;un des fondateurs de l&apos;analyse
+            des politiques publiques aux États-Unis, et d&apos;Elinor
+            Ostrom, première femme à avoir reçu le prix Nobel
+            d&apos;économie (2009), qui a montré qu&apos;une réforme peut
+            être parfaitement légale sur le papier et pourtant échouer dans
+            les faits parce que le vrai pouvoir de décision appartient à
+            d&apos;autres acteurs que ceux visés par la promesse.
+          </p>
+
+          <p className="mt-4 text-sm leading-relaxed text-zinc-600">
+            En France, Pierre Muller, Yves Surel et Patrice Duran ont posé
+            les bases de l&apos;analyse des politiques publiques. Et
+            l&apos;universitaire italien Giandomenico Majone nous rappelle
+            qu&apos;aucune évaluation n&apos;est jamais totalement neutre :
+            c&apos;est pour ça qu&apos;on rend notre grille et nos sources
+            publiques.
+          </p>
+
+          <h2 className="mt-12 text-2xl font-bold text-zinc-900">
+            Notre processus de vérification
+          </h2>
+
+          <p className="mt-4 text-sm leading-relaxed text-zinc-600">
+            Chaque analyse passe par plusieurs étapes avant publication,
+            pour limiter les erreurs et les angles morts d&apos;un seul
+            modèle.
+          </p>
+
+          <p className="mt-4 text-sm leading-relaxed text-zinc-600">
+            Une première analyse est effectuée avec Claude, qui soulève les
+            points les plus importants : chiffres et sources, faisabilité
+            juridique, coût, effets attendus, angles morts.
+          </p>
+
+          <p className="mt-4 text-sm leading-relaxed text-zinc-600">
+            Une contre-analyse est ensuite effectuée avec Mistral, un
+            second modèle indépendant, dont le rôle est justement de
+            challenger la première analyse en repérant un chiffre douteux,
+            une affirmation juridique trop tranchée, ou un point
+            structurant qui aurait été oublié.
+          </p>
+
+          <p className="mt-4 text-sm leading-relaxed text-zinc-600">
+            Le résumé final est produit par Claude, qui tranche entre les
+            deux analyses et n&apos;intègre que les remarques réellement
+            fondées.
+          </p>
+
+          <p className="mt-4 text-sm leading-relaxed text-zinc-600">
+            Cette double vérification par IA est ensuite relue par des
+            experts vérificateurs avant toute publication.
+          </p>
+
+          <h2 className="mt-12 text-2xl font-bold text-zinc-900">
             Nos garde-fous
           </h2>
 
@@ -272,7 +330,7 @@ export default function MethodePage() {
 
           <p className="mt-4 mb-16 text-sm leading-relaxed text-zinc-600">
             Perlimpinpin ne dit pas si une mesure est souhaitable
-            politiquement — ça reste un choix de valeurs, propre à chacun.
+            politiquement : ça reste un choix de valeurs, propre à chacun.
             On évalue si une promesse est réaliste, chiffrée et cohérente
             avec les contraintes du pays. Le reste, c&apos;est à vous de le
             décider dans les urnes.
