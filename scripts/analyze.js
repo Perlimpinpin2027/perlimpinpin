@@ -379,7 +379,13 @@ function buildUserMessage({ candidatNom, theme, source }) {
 function buildRequestBody(messages, { stream = false, toolChoice, thinking } = {}) {
   return {
     model: "claude-sonnet-5",
-    max_tokens: 16000,
+    // 32000 (et non 16000) pour laisser de la marge à la réflexion adaptative
+    // sur les propositions denses en vérifications chiffrées : budget_tokens
+    // n'existe plus sur claude-sonnet-5 (400 garanti), donc le seul levier
+    // pour éviter qu'un raisonnement long n'épuise tout le budget avant
+    // d'écrire le JSON final est un plafond plus généreux. Coût nul si non
+    // utilisé — max_tokens est un plafond, pas une dépense garantie.
+    max_tokens: 32000,
     // Le prompt système (doctrine, méthode, barème, format) est identique
     // à chaque appel — on le met en cache pour ne pas le repayer en entier
     // à chaque analyse (prix plein la 1ère fois, ~10% du prix ensuite).
