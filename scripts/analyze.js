@@ -48,25 +48,23 @@ const ANALYSIS_PROMPT = readFileSync(
   "utf-8",
 );
 
-const JSON_INSTRUCTION = `Réponds UNIQUEMENT en JSON valide, sans texte avant ni après, avec exactement ces clés : titre_court, resume_accueil, teaser, resume_court, mesure_reformulee, mise_en_contexte_dans_le_programme, contexte_local, contexte_national, contexte_international, analyse_par_criteres, ce_qui_est_etabli, ce_qui_est_probable, ce_qui_est_discutable, ce_qui_est_inconnu, angles_morts_et_effets_de_bord, notation_detaillee (objet avec scoreSolidite, scoreEfficaciteAttendue, scoreJuridiqueReglementaire, scoreBudgetaire, scoreFaisabiliteOperationnelle, scoreTotal — addition simple des 5 critères, sans malus ni bonus), impact_temporel_et_sectoriel (objet ou null), verdict_final, sources_utilisees, niveau_de_confiance, limites, teasing_final.`;
+const JSON_INSTRUCTION = `Réponds UNIQUEMENT en JSON valide, sans texte avant ni après, avec exactement ces clés : mesure_reformulee, nature_et_existant, contexte_programme, contexte_national, contexte_international, impact_environnement (chaîne ou null), analyse_par_criteres, analyse_longevites, impact_temporel_et_sectoriel (chaîne ou null), ce_qui_est_etabli, ce_qui_est_probable, ce_qui_est_discutable, ce_qui_est_inconnu, angles_morts, notation_detaillee (objet avec factuel, efficacite, juridique, cout, operationnel, score_total — addition simple des 5 critères, sans malus ni bonus — et appreciation), verdict_final, sources_utilisees, niveau_de_confiance, limites, resume_court, phrase_teasing.`;
 
 export const SYSTEM_PROMPT = `${ANALYSIS_PROMPT}\n\n${JSON_INSTRUCTION}`;
 
 // --- Étape 2/3 : contrôle qualité indépendant (Mistral) ---------------------
 
-const MISTRAL_SYSTEM_PROMPT = `Tu es un contrôleur qualité indépendant pour Perlimpinpin. Une première IA a produit l'analyse ci-dessous sur une proposition politique. Tu ne dois PAS recommencer l'analyse ni proposer de nouveau score.
+const MISTRAL_SYSTEM_PROMPT = `Tu es un contrôleur qualité indépendant pour Perlimpinpin. Une première IA a produit l'analyse JSON ci-dessous sur une proposition politique. Tu ne dois PAS recommencer l'analyse ni proposer de nouveau score.
 
-MISSION, dans cet ordre de priorité :
+MISSION (par ordre de priorité) :
 1. CHIFFRES ET SOURCES : un chiffre te semble-t-il faux, périmé, ou mal attribué ? Donne ta meilleure estimation alternative et ta confiance (haute/moyenne/faible).
 2. QUALIFICATION JURIDIQUE : une affirmation sur la légalité/faisabilité constitutionnelle ou européenne te semble-t-elle erronée ou trop tranchée ? Ne confonds jamais faisabilité juridique et rapport de force politique conjoncturel (une majorité parlementaire actuelle contraire à une mesure n'est PAS un obstacle juridique).
-3. COHÉRENCE NOTE/TEXTE : la notation_detaillee reflète-t-elle vraiment la sévérité du texte écrit juste au-dessus, ou y a-t-il un décalage ?
+3. COHÉRENCE NOTE/TEXTE : la notation reflète-t-elle vraiment la sévérité de l'analyse écrite juste au-dessus ?
 4. ANGLE MORT MAJEUR uniquement : un point structurant absent, pas un détail.
 
-NE FAIS PAS de remarques sur le style, la longueur, ou des nuances mineures sans conséquence sur le score ou les faits.
+Ne fais PAS de remarques sur le style, la longueur, ou des nuances mineures sans conséquence sur le score ou les faits. Si tu n'as aucune remarque sérieuse, ne force rien : mieux vaut une liste courte et solide qu'une liste longue et creuse.
 
-Si tu n'as AUCUNE remarque sérieuse sur un point, ne force rien : mieux vaut une liste courte et solide qu'une liste longue et creuse.
-
-Réponds en JSON strict, maximum 300 mots au total, avec exactement cette forme :
+Réponds en JSON strict, maximum 300 mots au total :
 {
   "remarques": [
     {
@@ -79,17 +77,11 @@ Réponds en JSON strict, maximum 300 mots au total, avec exactement cette forme 
   "avis_general": "solide" | "à nuancer" | "fragile"
 }`;
 
+// Le nouveau prompt méthodologique (étape 2) attend l'intégralité de
+// l'analyse d'étape 1, pas un sous-ensemble choisi côté code : Mistral doit
+// pouvoir juger la cohérence entre n'importe quelle section et la notation.
 function buildMistralUserMessage(parsed1) {
-  const sections = {
-    mesure_reformulee: parsed1.mesure_reformulee,
-    analyse_par_criteres: parsed1.analyse_par_criteres,
-    ce_qui_est_etabli: parsed1.ce_qui_est_etabli,
-    ce_qui_est_probable: parsed1.ce_qui_est_probable,
-    ce_qui_est_discutable: parsed1.ce_qui_est_discutable,
-    angles_morts_et_effets_de_bord: parsed1.angles_morts_et_effets_de_bord,
-    notation_detaillee: parsed1.notation_detaillee,
-  };
-  return `SECTIONS À CONTRÔLER (JSON) :\n${JSON.stringify(sections, null, 2)}`;
+  return `ANALYSE À CONTRÔLER (JSON) :\n${JSON.stringify(parsed1, null, 2)}`;
 }
 
 const MISTRAL_BASE_URL = "https://api.mistral.ai/v1";
@@ -141,31 +133,43 @@ async function callMistralQualityControl(parsed1) {
 
 // --- Étape 3/3 : arbitrage final (Claude, conversation prolongée) ----------
 
+// Ne re-colle pas le JSON de l'étape 1 dans ce message (contrairement au
+// texte brut du prompt méthodologique, qui suggère "{{reponse_etape_1}}") :
+// cette conversation reprend déjà l'historique complet de l'étape 1 (voir
+// withCacheBreakpoint / arbitrate), donc Claude y a accès nativement — le
+// re-coller doublerait le coût et casserait la réutilisation du cache chaud.
 function buildArbitrationUserMessage(mistralResult) {
   const mistralSection = mistralResult
     ? JSON.stringify(mistralResult.parsed, null, 2)
     : "AUCUN — Mistral indisponible";
 
-  return `Voici le contrôle qualité indépendant réalisé sur ton analyse ci-dessus.
+  return `Voici ton analyse initiale (ci-dessus) et le contrôle qualité de Mistral.
 
 CONTRÔLE MISTRAL :
 ${mistralSection}
 
 MISSION :
-1. Pour chaque remarque de Mistral avec confiance "haute" ou "moyenne" : décide si elle est fondée. Si oui, intègre-la dans la section appropriée et ajuste la notation si ça change vraiment l'évaluation. Ignore les remarques à confiance "faible" sauf si elles pointent un vrai problème évident.
-2. Ne mentionne JAMAIS dans le texte final qu'un second modèle a été consulté, le lecteur ne doit voir qu'une analyse cohérente et unifiée.
-3. Remplis un champ audit_arbitrage (usage interne, jamais montré au lecteur) : un tableau d'objets { remarque, decision, raison }, un par remarque de Mistral, avec decision "acceptee" ou "rejetee" et raison en une phrase. Tableau vide si CONTRÔLE MISTRAL est "AUCUN — Mistral indisponible".
-4. Régénère l'intégralité du JSON de sortie (mêmes clés que ton analyse initiale, plus audit_arbitrage), en conservant EXACTEMENT le même barème et la même structure qu'avant, en intégrant les corrections retenues au point 1.
-
-Le ton doit rester humain, légèrement aéré, sans tirets cadratins ni tiret d'interruption.
-
-Ne mentionne jamais, dans les champs destinés à la publication, l'existence d'un second modèle, d'un contrôle qualité, d'un arbitrage, d'un pipeline en plusieurs étapes, ou d'un document de travail interne quelconque.
-
-Si CONTRÔLE MISTRAL indique "AUCUN — Mistral indisponible", ignore le point 1 et régénère directement le JSON à partir de ton analyse initiale, sans rien changer sur le fond.
+1. Pour chaque remarque de Mistral avec confiance "haute" ou "moyenne" : décide si elle est fondée. Si oui, intègre-la dans la section appropriée et ajuste la notation si ça change vraiment l'évaluation. Ignore les remarques à confiance "faible" sauf si elles pointent un problème évident.
+2. Si CONTRÔLE MISTRAL est "AUCUN — Mistral indisponible", ignore le point 1 et conserve ton analyse initiale telle quelle.
+3. Si aucune remarque de Mistral n'affecte le fond ou si le contrôle est indisponible, recopie intégralement les champs de ton analyse initiale dans fiche_complete sans modifier leur texte.
+4. Remplis le champ interne \`auditArbitrage\` (non public, suivi qualité interne) : pour chaque remarque de Mistral, précise si elle a été acceptée ou rejetée, et pourquoi en une phrase. Tableau vide si CONTRÔLE MISTRAL est indisponible.
+5. Ne mentionne JAMAIS, dans les champs destinés à la publication, l'existence d'un second modèle, d'un contrôle qualité, d'un arbitrage, d'un pipeline en plusieurs étapes, ou d'un document de travail interne. Le lecteur ne doit voir qu'une analyse journalistique autonome.
+6. Ton humain, légèrement aéré, rigoureux, sans jargon, sans tirets cadratins.
 
 Aucun outil n'est disponible pour ce tour (pas de recherche web, pas d'exécution de code) : n'essaie pas d'en invoquer un, même pour vérifier ou formatter le JSON. Ta réponse doit être uniquement du texte brut.
 
-Réponds UNIQUEMENT en JSON valide, sans texte avant ni après, avec exactement les mêmes clés que l'étape précédente (titre_court, resume_accueil, teaser, resume_court, mesure_reformulee, mise_en_contexte_dans_le_programme, contexte_local, contexte_national, contexte_international, analyse_par_criteres, ce_qui_est_etabli, ce_qui_est_probable, ce_qui_est_discutable, ce_qui_est_inconnu, angles_morts_et_effets_de_bord, notation_detaillee, impact_temporel_et_sectoriel, verdict_final, sources_utilisees, niveau_de_confiance, limites, teasing_final), plus audit_arbitrage. La toute première caractère de ta réponse doit être "{" et le tout dernier "}" : aucun bloc de code, aucune balise, aucun commentaire, aucun appel d'outil, rien d'autre que l'objet JSON lui-même.`;
+FORMAT DE SORTIE JSON STRICT, sans texte avant ni après, sans bloc de code, sans commentaire, sans appel d'outil :
+{
+  "auditArbitrage": [
+    {"remarque": "...", "statut": "acceptee|rejetee", "raison": "..."}
+  ],
+  "fiche_complete": {
+    /* tous les champs de ton analyse initiale, mis à jour après arbitrage, SAUF resume_court et phrase_teasing (remontés à la racine ci-dessous) */
+  },
+  "resume_court": "... (ton journalistique, phrase courte et accrocheuse, pas engagée ni partisane)",
+  "teaser_accueil": "... (ton journalistique, deux phrases : résumé + question sur le réalisme, sans utiliser le mot 'réaliste'/'réalisme')"
+}
+La toute première caractère de ta réponse doit être "{" et le tout dernier "}".`;
 }
 
 // Ajoute un point de cache éphémère sur le dernier bloc du dernier message
@@ -279,7 +283,7 @@ async function runPipeline(item) {
   const { data: data1, priorMessages } = await analyzeOne(item);
   const parsed1 = cleanContenu(extractJson(data1));
   console.log(
-    `  ✓ terminé (score initial : ${parsed1.notation_detaillee?.scoreTotal ?? "?"}/100)`,
+    `  ✓ terminé (score initial : ${parsed1.notation_detaillee?.score_total ?? "?"}/100)`,
   );
 
   console.log("Étape 2/3 : contrôle qualité (Mistral)...");
@@ -295,15 +299,23 @@ async function runPipeline(item) {
 
   console.log("Étape 3/3 : arbitrage final (Claude)...");
   const data3 = await arbitrate(priorMessages, mistralResult);
-  const parsed3 = cleanContenu(extractJson(data3));
-  console.log(
-    `  ✓ terminé (score final : ${parsed3.notation_detaillee?.scoreTotal ?? "?"}/100)`,
-  );
+  const arbitrage3 = extractJson(data3);
 
-  const auditArbitrage = Array.isArray(parsed3.audit_arbitrage) ? parsed3.audit_arbitrage : [];
-  // Sorti du contenu public : usage interne uniquement, stocké dans sa
-  // propre colonne (auditArbitrage), pas dans contenuComplet.
-  delete parsed3.audit_arbitrage;
+  const auditArbitrage = Array.isArray(arbitrage3.auditArbitrage)
+    ? arbitrage3.auditArbitrage
+    : [];
+  // fiche_complete porte tous les champs de la fiche sauf resume_court et
+  // teaser_accueil, remontés à la racine de l'enveloppe d'étape 3 (voir
+  // buildArbitrationUserMessage) — on les refusionne ici pour reconstituer
+  // une fiche complète unique, de même forme que la sortie de l'étape 1.
+  const parsed3 = cleanContenu({
+    ...(arbitrage3.fiche_complete ?? {}),
+    resume_court: arbitrage3.resume_court,
+    teaser_accueil: arbitrage3.teaser_accueil,
+  });
+  console.log(
+    `  ✓ terminé (score final : ${parsed3.notation_detaillee?.score_total ?? "?"}/100)`,
+  );
 
   const coutPipeline = buildCoutPipeline({
     usage1: data1.usage ?? {},
@@ -775,11 +787,10 @@ function truncateTitre(text) {
   return `${cut.trimEnd()}…`;
 }
 
-// Le titre affiché sur les cartes vient directement de titre_court, généré
-// par le modèle selon les règles du prompt (pas de nom de candidat, centré
-// sur la mesure, ~50-60 caractères). Filet de sécurité si le modèle omet
-// ce champ : on retombe sur l'ancienne dérivation depuis resume_court /
-// mesure_reformulee.
+// Le nouveau schéma ne produit plus de titre_court dédié : on dérive
+// systématiquement le titre depuis resume_court / mesure_reformulee (le
+// bloc titre_court ci-dessous reste en filet de sécurité si un ancien
+// contenu ou un futur prompt le réintroduit).
 function buildTitre(parsed) {
   if (typeof parsed.titre_court === "string" && parsed.titre_court.trim().length > 0) {
     return truncateTitre(parsed.titre_court.trim());
@@ -815,14 +826,16 @@ function truncateResumeAccueil(text) {
   return `${cut.trimEnd()}…`;
 }
 
-// Résumé journalistique pour la carte "Prix de la semaine" de l'accueil,
-// généré directement par le modèle (champ resume_accueil).
+// Résumé journalistique pour la carte "Prix de la semaine" de l'accueil.
+// L'ancien champ dédié resume_accueil a disparu du nouveau schéma ; on lui
+// substitue teaser_accueil (produit à l'étape 3, explicitement nommé pour
+// l'accueil : résumé + question), le candidat le plus proche par le nom.
 function buildResumeAccueil(parsed) {
   if (
-    typeof parsed.resume_accueil === "string" &&
-    parsed.resume_accueil.trim().length > 0
+    typeof parsed.teaser_accueil === "string" &&
+    parsed.teaser_accueil.trim().length > 0
   ) {
-    return truncateResumeAccueil(parsed.resume_accueil.trim());
+    return truncateResumeAccueil(parsed.teaser_accueil.trim());
   }
   return null;
 }
@@ -844,11 +857,14 @@ function truncateTeaser(text) {
   return `${cut.trimEnd()}…`;
 }
 
-// Teaser plus développé pour la section "Le résumé de Perlimpinpin IA" de
-// la fiche déclaration, généré directement par le modèle (champ teaser).
+// Teaser pour la section "Le résumé de Perlimpinpin IA" de la fiche
+// déclaration. L'ancien champ dédié teaser (400-500 caractères développés)
+// a disparu du nouveau schéma, qui ne produit plus de format long ; on lui
+// substitue resume_court (le champ le plus proche disponible), plus court
+// que l'ancien format.
 function buildTeaser(parsed) {
-  if (typeof parsed.teaser === "string" && parsed.teaser.trim().length > 0) {
-    return truncateTeaser(parsed.teaser.trim());
+  if (typeof parsed.resume_court === "string" && parsed.resume_court.trim().length > 0) {
+    return truncateTeaser(parsed.resume_court.trim());
   }
   return null;
 }
@@ -882,19 +898,22 @@ async function saveAnalysis(item, pipelineResult) {
   const analyse = await prisma.analyse.create({
     data: {
       propositionId: proposition.id,
-      scoreFaisabilite: notation.scoreTotal,
-      // Barème (v3, sans malus) : Solidité /20, Efficacité attendue /20,
-      // Faisabilité juridique et réglementaire /25, Coût et soutenabilité
-      // budgétaire /20, Faisabilité opérationnelle /15. Ne correspond pas
-      // 1:1 aux libellés des 5 colonnes historiques /20 (pensées pour un
-      // ancien barème uniforme) — on y range les sous-scores actuels les
-      // plus proches ; la carte "Détail du score" du site lit désormais
-      // notation_detaillee directement (contenuComplet), pas ces colonnes.
-      scoreSolidite: notation.scoreSolidite,
-      scoreJuridique: notation.scoreJuridiqueReglementaire, // sur 25, pas 20
-      scoreOperationnel: notation.scoreEfficaciteAttendue, // rebaptisé "efficacité attendue"
-      scoreBudgetaire: notation.scoreBudgetaire,
-      scorePertinence: notation.scoreFaisabiliteOperationnelle, // rebaptisé "faisabilité opérationnelle"
+      scoreFaisabilite: notation.score_total,
+      // Colonnes historiques (Int, non lues par l'UI — la carte "Détail du
+      // score" du site lit notation_detaillee directement dans
+      // contenuComplet). Réalignées par SENS avec les 5 critères du nouveau
+      // barème (factuel/efficacite/juridique/cout/operationnel) : 4 des 5
+      // colonnes correspondent maintenant exactement à leur nom
+      // (scoreSolidite/scoreJuridique/scoreBudgetaire/scoreOperationnel).
+      // Il ne reste que scorePertinence sans critère de même nom dans le
+      // nouveau barème : on y range "efficacite" (efficacité attendue),
+      // le seul critère restant, comme c'était déjà le cas avec l'ancien
+      // schéma (voir historique de ce fichier).
+      scoreSolidite: notation.factuel,
+      scoreJuridique: notation.juridique,
+      scoreOperationnel: notation.operationnel,
+      scoreBudgetaire: notation.cout,
+      scorePertinence: notation.efficacite,
       verdict: toText(parsed.verdict_final),
       resumeAccueil,
       teaser,
@@ -904,7 +923,7 @@ async function saveAnalysis(item, pipelineResult) {
       cequiEstInconnu: toText(parsed.ce_qui_est_inconnu),
       sourcesUtilisees: toText(parsed.sources_utilisees),
       statut: "brouillon",
-      versionMethodologie: "v2.0-pipeline3etapes",
+      versionMethodologie: "v3.0-pipeline3etapes",
       contenuComplet: parsed,
       contreAvisMistral,
       auditArbitrage,
@@ -923,12 +942,12 @@ function printUsage(usage) {
 }
 
 function printScoreDetail(notation) {
-  console.log(`  Solidité factuelle et documentaire        : ${notation.scoreSolidite ?? "?"}/20`);
-  console.log(`  Efficacité attendue                       : ${notation.scoreEfficaciteAttendue ?? "?"}/20`);
-  console.log(`  Faisabilité juridique et réglementaire    : ${notation.scoreJuridiqueReglementaire ?? "?"}/25`);
-  console.log(`  Coût et soutenabilité budgétaire          : ${notation.scoreBudgetaire ?? "?"}/20`);
-  console.log(`  Faisabilité opérationnelle                : ${notation.scoreFaisabiliteOperationnelle ?? "?"}/15`);
-  console.log(`  Score total                                : ${notation.scoreTotal ?? "?"}/100`);
+  console.log(`  Solidité factuelle et documentaire        : ${notation.factuel ?? "?"}/20`);
+  console.log(`  Efficacité attendue                       : ${notation.efficacite ?? "?"}/20`);
+  console.log(`  Faisabilité juridique et réglementaire    : ${notation.juridique ?? "?"}/25`);
+  console.log(`  Coût et soutenabilité budgétaire          : ${notation.cout ?? "?"}/20`);
+  console.log(`  Faisabilité opérationnelle                : ${notation.operationnel ?? "?"}/15`);
+  console.log(`  Score total                                : ${notation.score_total ?? "?"}/100`);
 }
 
 function printCoutPipeline(coutPipeline) {

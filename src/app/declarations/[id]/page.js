@@ -7,20 +7,13 @@ import { getScoreBadge } from "@/lib/score";
 
 export const dynamic = "force-dynamic";
 
-const criteriaLabels = {
-  faisabilite_juridique: "Faisabilité juridique",
-  faisabilite_operationnelle: "Faisabilité opérationnelle",
-  soutenabilite_budgetaire: "Soutenabilité budgétaire",
-  efficacite_attendue: "Efficacité attendue",
-  pertinence_sociale_economique_ecologique: "Pertinence",
-};
-
 // Barème officiel (voir scripts/analyze.js) : 5 critères à poids différents
 // (20/20/25/20/15), addition simple, sans malus ni bonus. `max` sert à
 // afficher le bon dénominateur par ligne (elles n'ont pas toutes /20).
+// Les clés correspondent directement à contenu.notation_detaillee.
 const notationLabels = [
   {
-    key: "scoreSolidite",
+    key: "factuel",
     label: "Solidité factuelle et documentaire",
     max: 20,
     icon: (
@@ -32,7 +25,7 @@ const notationLabels = [
     ),
   },
   {
-    key: "scoreJuridiqueReglementaire",
+    key: "juridique",
     label: "Faisabilité juridique et réglementaire",
     max: 25,
     icon: (
@@ -44,7 +37,7 @@ const notationLabels = [
     ),
   },
   {
-    key: "scoreEfficaciteAttendue",
+    key: "efficacite",
     label: "Efficacité attendue",
     max: 20,
     icon: (
@@ -59,7 +52,7 @@ const notationLabels = [
     ),
   },
   {
-    key: "scoreBudgetaire",
+    key: "cout",
     label: "Coût et soutenabilité budgétaire",
     max: 20,
     icon: (
@@ -71,7 +64,7 @@ const notationLabels = [
     ),
   },
   {
-    key: "scoreFaisabiliteOperationnelle",
+    key: "operationnel",
     label: "Faisabilité opérationnelle",
     max: 15,
     icon: (
@@ -369,13 +362,10 @@ export default async function DeclarationDetailPage({ params }) {
             </Section>
 
             <Section title="Mise en contexte dans le programme">
-              <TextOrList value={contenu.mise_en_contexte_dans_le_programme} />
+              <TextOrList value={contenu.contexte_programme} />
             </Section>
 
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
-              <Section title="Contexte local">
-                <TextOrList value={contenu.contexte_local} />
-              </Section>
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <Section title="Contexte national">
                 <TextOrList value={contenu.contexte_national} />
               </Section>
@@ -385,18 +375,7 @@ export default async function DeclarationDetailPage({ params }) {
             </div>
 
             <Section title="Analyse par critères">
-              <div className="flex flex-col gap-4">
-                {Object.entries(contenu.analyse_par_criteres ?? {}).map(
-                  ([key, value]) => (
-                    <div key={key}>
-                      <p className="font-semibold text-zinc-900">
-                        {criteriaLabels[key] ?? key}
-                      </p>
-                      <p className="mt-1">{value}</p>
-                    </div>
-                  ),
-                )}
-              </div>
+              <TextOrList value={contenu.analyse_par_criteres} />
             </Section>
 
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -415,7 +394,7 @@ export default async function DeclarationDetailPage({ params }) {
             </div>
 
             <Section title="Angles morts et effets de bord">
-              <TextOrList value={contenu.angles_morts_et_effets_de_bord} />
+              <TextOrList value={contenu.angles_morts} />
             </Section>
 
             <Section title="Verdict final">
