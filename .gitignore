@@ -44,3 +44,5 @@ next-env.d.ts
 
 # ancien fichier SQLite local (migré vers Postgres/Neon)
 dev.db
+
+.vercel

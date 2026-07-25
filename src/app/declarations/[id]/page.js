@@ -88,6 +88,23 @@ function Section({ title, children }) {
   );
 }
 
+// Convertit un marquage minimal **gras** en JSX, sans dépendance markdown
+// complète — le contenu vient de fiches où seuls quelques mots-clés (chiffre,
+// source, date, qualificatif) sont mis en avant, jamais des phrases entières.
+function renderRichText(text) {
+  if (typeof text !== "string") return text;
+  return text.split(/(\*\*[^*]+\*\*)/g).map((part, index) => {
+    const match = part.match(/^\*\*([^*]+)\*\*$/);
+    return match ? (
+      <strong key={index} className="font-semibold text-zinc-900">
+        {match[1]}
+      </strong>
+    ) : (
+      <span key={index}>{part}</span>
+    );
+  });
+}
+
 function TextOrList({ value }) {
   if (!value) {
     return <p className="text-zinc-400">Non renseigné.</p>;
@@ -101,13 +118,62 @@ function TextOrList({ value }) {
               className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-zinc-400"
               aria-hidden="true"
             />
-            <span>{item}</span>
+            <span>{renderRichText(item)}</span>
           </li>
         ))}
       </ul>
     );
   }
-  return <p>{value}</p>;
+  return <p>{renderRichText(value)}</p>;
+}
+
+// Bloc "Analyse par critères" : un mini-card par critère, réutilisant les
+// mêmes icônes/couleurs que "Détail du score" (notationLabels) pour que les
+// deux blocs se répondent visuellement. `criteres` est un objet keyé comme
+// notation_detaillee (factuel/efficacite/juridique/cout/operationnel).
+function CriteresCards({ criteres, notation }) {
+  const hasContent =
+    criteres && typeof criteres === "object" && !Array.isArray(criteres);
+
+  if (!hasContent) {
+    return <TextOrList value={criteres} />;
+  }
+
+  return (
+    <div className="flex flex-col gap-4">
+      {notationLabels.map(({ key, label, max, icon }) => (
+        <div
+          key={key}
+          className="rounded-xl border border-blue-100 bg-blue-50/40 p-4"
+        >
+          <div className="flex items-center gap-3">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.5}
+                className="h-4.5 w-4.5"
+                aria-hidden="true"
+              >
+                {icon}
+              </svg>
+            </span>
+            <p className="text-sm font-bold text-zinc-900">
+              {label}
+              <span className="ml-1.5 font-medium text-zinc-500">
+                — {notation?.[key] ?? "—"}/{max}
+              </span>
+            </p>
+          </div>
+          <p className="mt-3 text-sm leading-relaxed text-zinc-600">
+            {renderRichText(criteres[key])}
+          </p>
+        </div>
+      ))}
+    </div>
+  );
 }
 
 // Première phrase de resumeAccueil, pour le court commentaire sous le
@@ -215,86 +281,93 @@ export default async function DeclarationDetailPage({ params }) {
             </div>
           </aside>
 
-          {/* Extrait analysé */}
-          <section className="rounded-2xl border border-zinc-200 bg-white p-6 sm:p-8 lg:col-span-2 lg:col-start-1 lg:row-start-2">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-zinc-500">
+          {/* Extrait analysé + Résumé IA : un seul item de grille (flex-col
+              avec son propre gap) pour que leur espacement mutuel ne dépende
+              pas de la hauteur de "Détail du score" dans la colonne 3 — sur
+              une grille CSS, la hauteur de ligne s'aligne sur la plus haute
+              cellule de la ligne, ce qui créait un grand vide sous "Extrait
+              analysé" quand la sidebar était plus haute que lui. */}
+          <div className="flex flex-col gap-6 lg:col-span-2 lg:col-start-1 lg:row-start-2">
+            <section className="rounded-2xl border border-zinc-200 bg-white p-6 sm:p-8">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-zinc-500">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={1.5}
+                    className="h-4 w-4 text-zinc-400"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M7.5 8.25h9m-9 3.75h4.5m-8.55 5.865c.5.196 1.032.336 1.582.412a10.5 10.5 0 0 0 9.4-4.5.75.75 0 0 0-.05-.87A10.457 10.457 0 0 0 12 3.75c-5.799 0-10.5 4.701-10.5 10.5 0 1.442.291 2.816.818 4.067a.75.75 0 0 1-.06.727l-1.045 1.567a.375.375 0 0 0 .343.564 4.483 4.483 0 0 0 2.694-.914Z"
+                    />
+                  </svg>
+                  Extrait analysé
+                </h2>
+                <span className="flex shrink-0 items-center gap-1.5 rounded-full border border-zinc-200 px-3 py-1 text-xs font-semibold text-zinc-600">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={1.5}
+                    className="h-3.5 w-3.5"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
+                    />
+                  </svg>
+                  Sources publiques
+                </span>
+              </div>
+
+              <blockquote className="mt-4 text-base leading-relaxed text-zinc-700">
+                &ldquo;{declaration.texteOriginal}&rdquo;
+              </blockquote>
+            </section>
+
+            {/* Le résumé de Perlimpinpin IA */}
+            <section className="rounded-2xl border border-zinc-200 bg-zinc-50 p-6 sm:p-8">
+              <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-blue-700">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth={1.5}
-                  className="h-4 w-4 text-zinc-400"
+                  className="h-4 w-4"
                   aria-hidden="true"
                 >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    d="M7.5 8.25h9m-9 3.75h4.5m-8.55 5.865c.5.196 1.032.336 1.582.412a10.5 10.5 0 0 0 9.4-4.5.75.75 0 0 0-.05-.87A10.457 10.457 0 0 0 12 3.75c-5.799 0-10.5 4.701-10.5 10.5 0 1.442.291 2.816.818 4.067a.75.75 0 0 1-.06.727l-1.045 1.567a.375.375 0 0 0 .343.564 4.483 4.483 0 0 0 2.694-.914Z"
+                    d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456Z"
                   />
                 </svg>
-                Extrait analysé
+                Le résumé de Perlimpinpin IA
               </h2>
-              <span className="flex shrink-0 items-center gap-1.5 rounded-full border border-zinc-200 px-3 py-1 text-xs font-semibold text-zinc-600">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={1.5}
-                  className="h-3.5 w-3.5"
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
-                  />
-                </svg>
-                Sources publiques
-              </span>
-            </div>
-
-            <blockquote className="mt-4 text-base leading-relaxed text-zinc-700">
-              &ldquo;{declaration.texteOriginal}&rdquo;
-            </blockquote>
-          </section>
-
-          {/* Le résumé de Perlimpinpin IA */}
-          <section className="rounded-2xl border border-zinc-200 bg-zinc-50 p-6 sm:p-8 lg:col-span-2 lg:col-start-1 lg:row-start-3">
-            <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-blue-700">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={1.5}
-                className="h-4 w-4"
-                aria-hidden="true"
+              <p className="mt-3 text-lg leading-relaxed text-zinc-800 sm:text-xl">
+                {analyse.teaser ? renderRichText(analyse.teaser) : "Résumé à venir."}
+              </p>
+              <Link
+                href="#raisonnement-complet"
+                className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 transition-colors hover:text-blue-800"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456Z"
-                />
-              </svg>
-              Le résumé de Perlimpinpin IA
-            </h2>
-            <p className="mt-3 text-lg leading-relaxed text-zinc-800 sm:text-xl">
-              {analyse.teaser || "Résumé à venir."}
-            </p>
-            <Link
-              href="#raisonnement-complet"
-              className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 transition-colors hover:text-blue-800"
-            >
-              Voir le raisonnement complet
-              <span aria-hidden="true">→</span>
-            </Link>
-          </section>
+                Voir le raisonnement complet
+                <span aria-hidden="true">→</span>
+              </Link>
+            </section>
+          </div>
 
           {/* Like / dislike */}
-          <div className="lg:col-span-2 lg:col-start-1 lg:row-start-4">
+          <div className="lg:col-span-2 lg:col-start-1 lg:row-start-3">
             <FeedbackWidget
               analyseId={analyse.id}
               initialLikes={declaration.feedbackCounts.likes}
@@ -351,7 +424,7 @@ export default async function DeclarationDetailPage({ params }) {
           {/* Raisonnement complet */}
           <div
             id="raisonnement-complet"
-            className="flex scroll-mt-24 flex-col gap-6 lg:col-span-2 lg:col-start-1 lg:row-start-5"
+            className="flex scroll-mt-24 flex-col gap-6 lg:col-span-2 lg:col-start-1 lg:row-start-4"
           >
             <h2 className="font-serif text-2xl font-bold text-zinc-900">
               Le raisonnement complet
@@ -375,7 +448,7 @@ export default async function DeclarationDetailPage({ params }) {
             </div>
 
             <Section title="Analyse par critères">
-              <TextOrList value={contenu.analyse_par_criteres} />
+              <CriteresCards criteres={contenu.analyse_par_criteres} notation={notation} />
             </Section>
 
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -416,7 +489,7 @@ export default async function DeclarationDetailPage({ params }) {
           </div>
 
           {/* Bandeau de confiance */}
-          <div className="grid grid-cols-1 gap-6 rounded-2xl border border-zinc-200 bg-white p-6 sm:grid-cols-3 sm:p-8 lg:col-span-3 lg:col-start-1 lg:row-start-6">
+          <div className="grid grid-cols-1 gap-6 rounded-2xl border border-zinc-200 bg-white p-6 sm:grid-cols-3 sm:p-8 lg:col-span-3 lg:col-start-1 lg:row-start-5">
             <Link
               href="/methode"
               className="flex items-start gap-3 transition-colors hover:text-blue-700"

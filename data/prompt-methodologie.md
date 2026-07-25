@@ -76,13 +76,20 @@ FORMAT DE SORTIE : réponds STRICTEMENT en JSON avec les clés suivantes (mettre
 Ne réponds RIEN d'autre que le bloc JSON brut (pas de 'Voici l'analyse :', pas de balises de code markdown sauf si spécifié) 
 
 {
-  "mesure_reformulee": "...",
+  "titre_court": "... (la mesure elle-même, formulée simplement, ~50-70 caractères, jamais de nom de candidat ni de verbe introductif du type 'propose de' ou 'veut', le nom du candidat étant déjà affiché ailleurs sur la page)",
+  "mesure_reformulee": "...",
   "nature_et_existant": "...",
   "contexte_programme": "...",
   "contexte_national": "...",
   "contexte_international": "...",
   "impact_environnement": "... ou null",
-  "analyse_par_criteres": "...",
+  "analyse_par_criteres": {
+    "factuel": "... (mets en gras avec **...** seulement les 2 à 4 mots-clés les plus importants du paragraphe : un chiffre, une source, une date, un qualificatif structurant, jamais une phrase entière)",
+    "efficacite": "... (même règle de mise en gras)",
+    "juridique": "... (même règle de mise en gras)",
+    "cout": "... (même règle de mise en gras)",
+    "operationnel": "... (même règle de mise en gras)"
+  },
   "analyse_longevites": "...",
   "impact_temporel_et_sectoriel": "... ou null",
   "ce_qui_est_etabli": "...",

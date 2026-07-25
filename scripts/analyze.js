@@ -48,7 +48,7 @@ const ANALYSIS_PROMPT = readFileSync(
   "utf-8",
 );
 
-const JSON_INSTRUCTION = `Réponds UNIQUEMENT en JSON valide, sans texte avant ni après, avec exactement ces clés : mesure_reformulee, nature_et_existant, contexte_programme, contexte_national, contexte_international, impact_environnement (chaîne ou null), analyse_par_criteres, analyse_longevites, impact_temporel_et_sectoriel (chaîne ou null), ce_qui_est_etabli, ce_qui_est_probable, ce_qui_est_discutable, ce_qui_est_inconnu, angles_morts, notation_detaillee (objet avec factuel, efficacite, juridique, cout, operationnel, score_total — addition simple des 5 critères, sans malus ni bonus — et appreciation), verdict_final, sources_utilisees, niveau_de_confiance, limites, resume_court, phrase_teasing.`;
+const JSON_INSTRUCTION = `Réponds UNIQUEMENT en JSON valide, sans texte avant ni après, avec exactement ces clés : titre_court (la mesure elle-même, formulée simplement, sans nom de candidat ni verbe introductif comme « propose de » ou « veut » — le nom du candidat est déjà affiché ailleurs sur la page —, ~50-70 caractères), mesure_reformulee, nature_et_existant, contexte_programme, contexte_national, contexte_international, impact_environnement (chaîne ou null), analyse_par_criteres (objet avec factuel, efficacite, juridique, cout, operationnel — un paragraphe d'explication par critère, mêmes clés que notation_detaillee ; dans chaque paragraphe, mets en gras avec **...** seulement les 2 à 4 mots-clés les plus importants à repérer en un coup d'œil — un chiffre, une source, une date, un qualificatif structurant —, jamais une phrase entière), analyse_longevites, impact_temporel_et_sectoriel (chaîne ou null), ce_qui_est_etabli, ce_qui_est_probable, ce_qui_est_discutable, ce_qui_est_inconnu, angles_morts, notation_detaillee (objet avec factuel, efficacite, juridique, cout, operationnel, score_total — addition simple des 5 critères, sans malus ni bonus — et appreciation), verdict_final, sources_utilisees, niveau_de_confiance, limites, resume_court, phrase_teasing.`;
 
 export const SYSTEM_PROMPT = `${ANALYSIS_PROMPT}\n\n${JSON_INSTRUCTION}`;
 
@@ -793,10 +793,13 @@ function truncateTitre(text) {
   return `${cut.trimEnd()}…`;
 }
 
-// Le nouveau schéma ne produit plus de titre_court dédié : on dérive
-// systématiquement le titre depuis resume_court / mesure_reformulee (le
-// bloc titre_court ci-dessous reste en filet de sécurité si un ancien
-// contenu ou un futur prompt le réintroduit).
+// Le titre affiché sur les cartes vient de titre_court, généré par le
+// modèle selon les règles du prompt (la mesure elle-même, sans nom de
+// candidat ni « propose de »/« veut », le nom étant déjà affiché ailleurs
+// sur la page). Filet de sécurité si le modèle omet ce champ (ou pour du
+// contenu antérieur à sa réintroduction) : dérivation depuis resume_court /
+// mesure_reformulee — moins bon stylistiquement (contient souvent le nom du
+// candidat et un verbe introductif) mais jamais vide.
 function buildTitre(parsed) {
   if (typeof parsed.titre_court === "string" && parsed.titre_court.trim().length > 0) {
     return truncateTitre(parsed.titre_court.trim());
