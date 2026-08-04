@@ -7,75 +7,81 @@ import { getScoreBadge } from "@/lib/score";
 
 export const dynamic = "force-dynamic";
 
-// Barème officiel (voir scripts/analyze.js) : 5 critères à poids différents
-// (20/20/25/20/15), addition simple, sans malus ni bonus. `max` sert à
-// afficher le bon dénominateur par ligne (elles n'ont pas toutes /20).
-// Les clés correspondent directement à contenu.notation_detaillee.
+// Icônes réutilisées à la fois par l'ancien et le nouveau barème (mêmes
+// pictogrammes, juste réattribués différemment selon le schéma détecté).
+const ICON_FACTUEL = (
+  <path
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z"
+  />
+);
+const ICON_JURIDIQUE = (
+  <path
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    d="M12 3v17.25m0-17.25c-1.472 0-2.882.265-4.185.75M12 3c1.472 0 2.882.265 4.185.75M18.75 21H5.25M4.5 8.25h4.5m6 0h4.5M3 8.25l2.25-4.5h3l-2.25 4.5H3Zm12 0 2.25-4.5h3l-2.25 4.5h-3Z"
+  />
+);
+const ICON_EFFICACITE = (
+  <>
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 0 1 1.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.559.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.893.149c-.425.07-.765.383-.93.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 0 1-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.397.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.269-1.45-.12l-.773-.774a1.125 1.125 0 0 1-.12-1.45l.527-.737c.25-.35.273-.806.108-1.204-.165-.397-.505-.71-.93-.78l-.894-.15c-.542-.09-.94-.558-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.107-1.204l-.527-.738a1.125 1.125 0 0 1 .12-1.45l.773-.773a1.125 1.125 0 0 1 1.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894Z"
+    />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+  </>
+);
+const ICON_COUT = (
+  <path
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z"
+  />
+);
+const ICON_OPERATIONNEL = (
+  <path
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+  />
+);
+
+// Ancien barème (5 critères à poids différents 20/20/25/20/15, addition
+// simple) : encore utilisé par les fiches produites avant le nouveau
+// barème à garde-fou juridique (voir plus bas). Les clés correspondent
+// directement à contenu.notation_detaillee.
 const notationLabels = [
-  {
-    key: "factuel",
-    label: "Solidité factuelle et documentaire",
-    max: 20,
-    icon: (
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z"
-      />
-    ),
-  },
-  {
-    key: "juridique",
-    label: "Faisabilité juridique et réglementaire",
-    max: 25,
-    icon: (
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M12 3v17.25m0-17.25c-1.472 0-2.882.265-4.185.75M12 3c1.472 0 2.882.265 4.185.75M18.75 21H5.25M4.5 8.25h4.5m6 0h4.5M3 8.25l2.25-4.5h3l-2.25 4.5H3Zm12 0 2.25-4.5h3l-2.25 4.5h-3Z"
-      />
-    ),
-  },
-  {
-    key: "efficacite",
-    label: "Efficacité attendue",
-    max: 20,
-    icon: (
-      <>
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 0 1 1.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.559.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.893.149c-.425.07-.765.383-.93.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 0 1-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.397.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.269-1.45-.12l-.773-.774a1.125 1.125 0 0 1-.12-1.45l.527-.737c.25-.35.273-.806.108-1.204-.165-.397-.505-.71-.93-.78l-.894-.15c-.542-.09-.94-.558-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.107-1.204l-.527-.738a1.125 1.125 0 0 1 .12-1.45l.773-.773a1.125 1.125 0 0 1 1.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894Z"
-        />
-        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-      </>
-    ),
-  },
-  {
-    key: "cout",
-    label: "Coût et soutenabilité budgétaire",
-    max: 20,
-    icon: (
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z"
-      />
-    ),
-  },
-  {
-    key: "operationnel",
-    label: "Faisabilité opérationnelle",
-    max: 15,
-    icon: (
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-      />
-    ),
-  },
+  { key: "factuel", label: "Solidité factuelle et documentaire", max: 20, icon: ICON_FACTUEL },
+  { key: "juridique", label: "Faisabilité juridique et réglementaire", max: 25, icon: ICON_JURIDIQUE },
+  { key: "efficacite", label: "Efficacité attendue", max: 20, icon: ICON_EFFICACITE },
+  { key: "cout", label: "Coût et soutenabilité budgétaire", max: 20, icon: ICON_COUT },
+  { key: "operationnel", label: "Faisabilité opérationnelle", max: 15, icon: ICON_OPERATIONNEL },
 ];
+
+// Nouveau barème (4 critères de 25 points additionnés + un critère
+// juridique évalué séparément comme garde-fou, non additionné — voir
+// data/prompt-methodologie.md). Détecté par la présence de
+// score_juridique_garde_fou dans notation_detaillee (absent de l'ancien
+// schéma), pour ne pas casser l'affichage des fiches déjà publiées.
+const notationLabelsV2 = [
+  { key: "factuel", label: "Solidité factuelle et documentaire", max: 25, icon: ICON_FACTUEL },
+  { key: "efficacite", label: "Efficacité attendue", max: 25, icon: ICON_EFFICACITE },
+  { key: "operationnel", label: "Faisabilité opérationnelle", max: 25, icon: ICON_OPERATIONNEL },
+  { key: "cout", label: "Coût et soutenabilité budgétaire", max: 25, icon: ICON_COUT },
+];
+
+// Icônes pour le tableau structuré analyse_par_criteres (étape 3, nouveau
+// barème) : les valeurs de `critere` n'utilisent pas les mêmes clés que
+// notation_detaillee (ex. "solidite_factuelle" au lieu de "factuel").
+const CRITERE_ICONS = {
+  solidite_factuelle: ICON_FACTUEL,
+  efficacite: ICON_EFFICACITE,
+  operationnel: ICON_OPERATIONNEL,
+  cout: ICON_COUT,
+  juridique_garde_fou: ICON_JURIDIQUE,
+};
 
 function Section({ title, children }) {
   return (
@@ -127,50 +133,104 @@ function TextOrList({ value }) {
   return <p>{renderRichText(value)}</p>;
 }
 
-// Bloc "Analyse par critères" : un mini-card par critère, réutilisant les
-// mêmes icônes/couleurs que "Détail du score" (notationLabels) pour que les
-// deux blocs se répondent visuellement. `criteres` est un objet keyé comme
-// notation_detaillee (factuel/efficacite/juridique/cout/operationnel).
-function CriteresCards({ criteres, notation }) {
-  const hasContent =
-    criteres && typeof criteres === "object" && !Array.isArray(criteres);
+// Une card de critère, partagée par les deux formats de analyse_par_criteres
+// ci-dessous (tableau structuré du nouveau barème, ou objet keyé de
+// l'ancien) : icône + titre + note/max + texte, avec un liseré distinct
+// (ambre) pour le critère juridique de garde-fou, et un badge si le veto
+// s'est déclenché (score_total plafonné à 30/100 malgré les 4 autres
+// critères).
+function CriteriaCard({ icon, label, note, max, isGardeFou, vetoApplique, texte }) {
+  return (
+    <div
+      className={`rounded-xl border p-4 ${
+        isGardeFou ? "border-amber-200 bg-amber-50/50" : "border-blue-100 bg-blue-50/40"
+      }`}
+    >
+      <div className="flex items-center gap-3">
+        <span
+          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${
+            isGardeFou ? "bg-amber-100 text-amber-700" : "bg-blue-50 text-blue-600"
+          }`}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={1.5}
+            className="h-4.5 w-4.5"
+            aria-hidden="true"
+          >
+            {icon}
+          </svg>
+        </span>
+        <p className="text-sm font-bold text-zinc-900">
+          {label}
+          <span className="ml-1.5 font-medium text-zinc-500">
+            — {note ?? "—"}/{max}
+          </span>
+          {isGardeFou ? (
+            <span className="ml-2 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-700">
+              Garde-fou
+            </span>
+          ) : null}
+          {vetoApplique ? (
+            <span className="ml-2 rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-red-700">
+              Veto appliqué
+            </span>
+          ) : null}
+        </p>
+      </div>
+      <p className="mt-3 text-sm leading-relaxed text-zinc-600">{renderRichText(texte)}</p>
+    </div>
+  );
+}
 
-  if (!hasContent) {
+// Bloc "Analyse par critères" : gère trois formes possibles selon la fiche —
+// tableau structuré (nouveau barème, étape 3, un objet par critère dont le
+// juridique de garde-fou), objet keyé (ancien format à 5 clés), ou simple
+// chaîne (repli générique) pour tout format non reconnu.
+function CriteresCards({ criteres, notation }) {
+  if (Array.isArray(criteres)) {
+    if (criteres.length === 0) return <TextOrList value={null} />;
+    return (
+      <div className="flex flex-col gap-4">
+        {criteres.map((item, index) => (
+          <CriteriaCard
+            key={item.critere ?? index}
+            icon={CRITERE_ICONS[item.critere] ?? ICON_FACTUEL}
+            label={item.titre ?? item.critere ?? "Critère"}
+            note={item.note}
+            max={item.note_max ?? 25}
+            isGardeFou={Boolean(item.est_garde_fou)}
+            vetoApplique={Boolean(item.veto_applique)}
+            texte={item.texte}
+          />
+        ))}
+      </div>
+    );
+  }
+
+  const hasObjectContent =
+    criteres && typeof criteres === "object";
+
+  if (!hasObjectContent) {
     return <TextOrList value={criteres} />;
   }
 
   return (
     <div className="flex flex-col gap-4">
       {notationLabels.map(({ key, label, max, icon }) => (
-        <div
+        <CriteriaCard
           key={key}
-          className="rounded-xl border border-blue-100 bg-blue-50/40 p-4"
-        >
-          <div className="flex items-center gap-3">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={1.5}
-                className="h-4.5 w-4.5"
-                aria-hidden="true"
-              >
-                {icon}
-              </svg>
-            </span>
-            <p className="text-sm font-bold text-zinc-900">
-              {label}
-              <span className="ml-1.5 font-medium text-zinc-500">
-                — {notation?.[key] ?? "—"}/{max}
-              </span>
-            </p>
-          </div>
-          <p className="mt-3 text-sm leading-relaxed text-zinc-600">
-            {renderRichText(criteres[key])}
-          </p>
-        </div>
+          icon={icon}
+          label={label}
+          note={notation?.[key]}
+          max={max}
+          isGardeFou={false}
+          vetoApplique={false}
+          texte={criteres[key]}
+        />
       ))}
     </div>
   );
@@ -202,6 +262,7 @@ export default async function DeclarationDetailPage({ params }) {
   const contenu = analyse.contenuComplet ?? {};
   const badge = getScoreBadge(analyse.scoreFaisabilite);
   const notation = contenu.notation_detaillee ?? {};
+  const isNouveauBareme = notation.score_juridique_garde_fou !== undefined;
   const scoreComment = firstSentence(analyse.resumeAccueil);
 
   return (
@@ -383,9 +444,42 @@ export default async function DeclarationDetailPage({ params }) {
               </span>
 
               <div className="mt-4 flex flex-col divide-y divide-zinc-100">
-                {notationLabels.map(({ key, label, max, icon }) => (
-                  <div key={key} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600">
+                {/* score_juridique_garde_fou n'existe que dans le nouveau
+                    barème (4 critères + garde-fou juridique séparé) : son
+                    absence signale une fiche à l'ancien format (5 critères
+                    additionnés), pour laquelle on garde l'affichage inchangé. */}
+                {(isNouveauBareme ? notationLabelsV2 : notationLabels).map(
+                  ({ key, label, max, icon }) => (
+                    <div key={key} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth={1.5}
+                          className="h-4.5 w-4.5"
+                          aria-hidden="true"
+                        >
+                          {icon}
+                        </svg>
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-lg font-bold text-zinc-900">
+                          {notation[key] ?? "—"}
+                          <span className="text-xs font-medium text-zinc-400">
+                            /{max}
+                          </span>
+                        </p>
+                        <p className="text-xs text-zinc-500">{label}</p>
+                      </div>
+                    </div>
+                  ),
+                )}
+
+                {isNouveauBareme ? (
+                  <div className="flex items-center gap-3 py-3 last:pb-0">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-700">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"
@@ -395,20 +489,25 @@ export default async function DeclarationDetailPage({ params }) {
                         className="h-4.5 w-4.5"
                         aria-hidden="true"
                       >
-                        {icon}
+                        {ICON_JURIDIQUE}
                       </svg>
                     </span>
                     <div className="min-w-0 flex-1">
                       <p className="text-lg font-bold text-zinc-900">
-                        {notation[key] ?? "—"}
-                        <span className="text-xs font-medium text-zinc-400">
-                          /{max}
-                        </span>
+                        {notation.score_juridique_garde_fou ?? "—"}
+                        <span className="text-xs font-medium text-zinc-400">/100</span>
                       </p>
-                      <p className="text-xs text-zinc-500">{label}</p>
+                      <p className="text-xs text-zinc-500">
+                        Faisabilité juridique (garde-fou)
+                        {notation.veto_juridique_applique ? (
+                          <span className="ml-1.5 font-semibold text-red-600">
+                            · veto appliqué
+                          </span>
+                        ) : null}
+                      </p>
                     </div>
                   </div>
-                ))}
+                ) : null}
               </div>
 
               <Link

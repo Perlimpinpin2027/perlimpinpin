@@ -271,7 +271,16 @@ MISSION :
 4. Si aucune remarque de Mistral n'affecte le fond ou si le contrôle est null, recopie intégralement les champs du JSON de l'Étape 1 dans fiche_complete sans modifier leur texte.
 5. Remplis le champ interne \`auditArbitrage\` (non public, suivi qualité interne) : pour chaque remarque de Mistral, précise si elle a été acceptée ou rejetée, et pourquoi en une phrase.
 6. Ne mentionne JAMAIS, dans les champs destinés à la publication, l'existence d'un second modèle, d'un contrôle qualité, d'un arbitrage, d'un pipeline en plusieurs étapes, ou d'un document de travail interne. Le lecteur ne doit voir qu'une analyse journalistique autonome.
-7. Ton humain, légèrement aéré, rigoureux, sans jargon, sans tirets cadratins.
+
+7. Génère titre_fiche : un titre court et accrocheur de la mesure, formulé à l'infinitif ou en substantif, SANS jamais mentionner le nom du candidat (il est déjà affiché ailleurs sur la page, via sa fiche). Exemple : au lieu de "Attal veut réécrire le Code du travail autour de...", écris "Réécrire le Code du travail autour de quelques grands principes". Doit tenir en une ligne à l'écran (environ 90 caractères maximum).
+
+8. Réécris verdict_final pour qu'il soit critique et incisif, pas seulement descriptif : il doit trancher clairement où la mesure est solide et où elle ne l'est pas, en 3 à 5 phrases courtes. Structure de référence : un constat factuel (ce qui est bien établi), un "mais" qui introduit la limite principale (précédent similaire, effet documenté, absence de chiffrage...), puis une phrase de synthèse qui dit explicitement sur quoi la mesure est solide et sur quoi elle est fragile. Exemple de ton attendu : "La mesure s'appuie sur un constat factuel solide : l'inflation du Code du travail est réelle et bien documentée. Mais elle reprend un objectif déjà poursuivi à trois reprises depuis 2015 sans jamais aboutir à la simplification radicale annoncée. [...] La mesure est donc solide sur le plan juridique et factuel, mais fragile sur son efficacité réelle et son calendrier de mise en oeuvre." Rester factuel et sourcé, jamais partisan ni sur l'opportunité politique de la mesure.
+
+9. De même, resume_court doit trancher, pas rester neutre-descriptif : dire clairement, en une phrase, où la mesure tient et où elle ne tient pas.
+
+10. Restructure analyse_par_criteres : au lieu d'un paragraphe unique, produis un tableau de 5 objets, un par critère (les 4 critères additionnés, dans l'ordre du barème, puis le critère juridique de garde-fou en dernier). Pour chaque critère, résume le texte de l'étape 1 en 2 à 4 phrases maximum, et mets en gras (**...**) le fait, chiffre, source ou précédent le plus décisif du paragraphe — jamais une phrase entière, jamais plus de 2 segments en gras par critère. Le gras doit porter sur ce qui justifie concrètement la note (une source citée, un précédent nommé, un chiffre clé), pas sur des mots au hasard.
+
+11. Pour tout, ton humain, légèrement aéré, rigoureux, sans jargon, sans tirets cadratins.
 
 Aucun outil n'est disponible pour ce tour (pas de recherche web, pas d'exécution de code) : n'essaie pas d'en invoquer un, même pour vérifier ou formatter le JSON. Ta réponse doit être uniquement du texte brut.
 
@@ -281,10 +290,28 @@ FORMAT DE SORTIE JSON STRICT, sans texte avant ni après, sans bloc de code, san
     {"remarque": "...", "statut": "acceptee|rejetee", "raison": "..."}
   ],
   "fiche_complete": {
-    /* tous les champs de l'analyse initiale, mis à jour après arbitrage, SAUF resume_court et phrase_teasing (remontés à la racine ci-dessous) */
+    /* Tous les champs de l'étape 1, mis à jour après arbitrage, SAUF
+       resume_court et phrase_teasing (remontés à la racine ci-dessous).
+       analyse_par_criteres devient un tableau :
+       [
+         {
+           "critere": "solidite_factuelle" | "efficacite" | "operationnel" | "cout" | "juridique_garde_fou",
+           "titre": "...",
+           "note": 0,
+           "note_max": 25,
+           "est_garde_fou": false,
+           "veto_applique": false,
+           "texte": "... avec **mise en gras** du fait décisif ..."
+         }
+       ]
+       (note_max=100 et est_garde_fou=true uniquement pour juridique_garde_fou ;
+       veto_applique=true uniquement si le veto s'est déclenché, pertinent
+       seulement pour juridique_garde_fou) */
   },
-  "resume_court": "... (ton journalistique, phrase courte et accrocheuse, pas engagée ni partisane)",
-  "teaser_accueil": "... (ton journalistique, deux phrases : résumé + question sur le réalisme, sans utiliser le mot 'réaliste'/'réalisme')"
+  "titre_fiche": "... (sans le nom du candidat)",
+  "resume_court": "... (ton journalistique, tranché — voir mission 9)",
+  "teaser_accueil": "... (ton journalistique, deux phrases : résumé + question sur le réalisme, sans utiliser le mot 'réaliste'/'réalisme')",
+  "verdict_final": "... (critique et incisif — voir mission 8, remonté ici aussi pour cohérence d'affichage)"
 }
 La toute première caractère de ta réponse doit être "{" et le tout dernier "}".`;
 }
@@ -591,6 +618,13 @@ function truncateTitre(text) {
 }
 
 function buildTitre(parsed) {
+  // titre_fiche (étape 3, mission 7) est prioritaire : généré après
+  // arbitrage, explicitement sans nom de candidat. titre_court (étape 1)
+  // reste en second recours, puis la dérivation depuis resume_court /
+  // mesure_reformulee si aucun des deux n'est fourni.
+  if (typeof parsed.titre_fiche === "string" && parsed.titre_fiche.trim().length > 0) {
+    return truncateTitre(parsed.titre_fiche.trim());
+  }
   if (typeof parsed.titre_court === "string" && parsed.titre_court.trim().length > 0) {
     return truncateTitre(parsed.titre_court.trim());
   }
@@ -676,6 +710,13 @@ async function runPipeline23(etape1) {
     ...(arbitrage3.fiche_complete ?? {}),
     resume_court: arbitrage3.resume_court,
     teaser_accueil: arbitrage3.teaser_accueil,
+    // verdict_final remonté à la racine par l'étape 3 (mission 8 : version
+    // retravaillée, plus incisive) — prioritaire sur celui, potentiellement
+    // resté inchangé, dans fiche_complete.
+    verdict_final: arbitrage3.verdict_final ?? arbitrage3.fiche_complete?.verdict_final,
+    // titre_fiche n'existe pas dans le schéma étape 1 : uniquement produit
+    // ici, à la racine de l'étape 3.
+    titre_fiche: arbitrage3.titre_fiche,
   });
   console.log(
     `  ✓ terminé (score final : ${parsed3.notation_detaillee?.score_total ?? "?"}/100)`,
