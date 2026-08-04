@@ -66,15 +66,17 @@ export default function FeaturedCard({
     // carte photo+texte, dans cette marge, jamais superposées à la photo.
     <div className="relative px-1 sm:px-14">
       <div
-        className={`flex h-full flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white sm:flex-row ${slideAnimationClass}`}
+        className={`flex h-full flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white sm:h-[540px] sm:flex-row ${slideAnimationClass}`}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        {/* Photo : ratio fixe (aspect-ratio), indépendant de la hauteur de
-            la colonne de texte — auparavant la photo s'étirait pour
-            correspondre à la hauteur du texte (variable selon le candidat),
-            d'où des cartes de tailles très différentes. */}
-        <div className="relative aspect-[4/5] w-full shrink-0 self-center sm:aspect-[3/4] sm:w-2/5">
+        {/* Photo : hauteur fixe sur desktop (celle de la carte, elle-même
+            fixée en dur ci-dessus — sm:h-[540px] — plutôt que dérivée du
+            contenu) pour que la photo remplisse tout l'espace disponible,
+            comme avant le premier correctif, tout en restant constante
+            d'un candidat à l'autre. Sur mobile (empilé), pas de risque
+            d'étirement croisé : aspect-ratio suffit. */}
+        <div className="relative aspect-[4/5] w-full shrink-0 sm:aspect-auto sm:h-full sm:w-2/5">
           <img
             src={personPhotoUrl || "/avatar-placeholder.svg"}
             alt={personName}
@@ -110,7 +112,7 @@ export default function FeaturedCard({
             &ldquo;{quoteText}&rdquo;
           </blockquote>
           {verdictDescription ? (
-            <p className="mt-3 line-clamp-4 text-sm leading-relaxed text-zinc-500">
+            <p className="mt-3 line-clamp-5 text-sm leading-relaxed text-zinc-500">
               {verdictDescription}
             </p>
           ) : null}
