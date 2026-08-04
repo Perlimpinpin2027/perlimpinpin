@@ -20,3 +20,33 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Carrousel "Prix Perlimpinpin de la semaine" : glissement directionnel à
+   chaque changement de carte, déclenché par le remount React (key={index}
+   côté FeaturedCard) plutôt que par un état de transition manuel. */
+@keyframes slide-in-from-right {
+  from {
+    transform: translateX(24px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+@keyframes slide-in-from-left {
+  from {
+    transform: translateX(-24px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+.animate-slide-in-right {
+  animation: slide-in-from-right 350ms ease-out;
+}
+.animate-slide-in-left {
+  animation: slide-in-from-left 350ms ease-out;
+}
