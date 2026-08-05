@@ -1,0 +1,79 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+
+// Carte sticky de la colonne latérale : affiche le score en permanence, et
+// bascule son contenu secondaire (commentaire + bouton -> mini sommaire de
+// navigation) une fois que le lecteur a dépassé le résumé IA en haut de
+// page. Détecté via un écouteur de scroll qui compare la position d'une
+// sentinelle posée par la page (id="resume-sentinel") au viewport, plutôt
+// qu'un IntersectionObserver — la position de scroll seule suffit ici, pas
+// besoin de dépendre du pipeline de rendu/compositing.
+export default function StickyScoreCard({ score, badge, scoreComment, sections }) {
+  const [scrolledPast, setScrolledPast] = useState(false);
+
+  useEffect(() => {
+    const sentinel = document.getElementById("resume-sentinel");
+    if (!sentinel) return undefined;
+
+    const checkPosition = () => setScrolledPast(sentinel.getBoundingClientRect().top < 0);
+    checkPosition();
+
+    window.addEventListener("scroll", checkPosition, { passive: true });
+    window.addEventListener("resize", checkPosition);
+    return () => {
+      window.removeEventListener("scroll", checkPosition);
+      window.removeEventListener("resize", checkPosition);
+    };
+  }, []);
+
+  return (
+    <div className="rounded-2xl border border-zinc-200 bg-white p-6">
+      <span className="text-xs font-bold uppercase tracking-widest text-zinc-500">
+        Score Perlimpinpin
+      </span>
+      <div className="mt-2 flex items-baseline gap-1.5">
+        <span className={`text-5xl font-extrabold tracking-tight ${badge.scoreClass}`}>
+          {score}
+        </span>
+        <span className="text-lg font-semibold text-zinc-400">/100</span>
+      </div>
+      <div
+        className={`mt-3 inline-flex w-fit items-center rounded-full px-3 py-1 text-xs font-semibold ${badge.badgeClass}`}
+      >
+        {badge.label}
+      </div>
+
+      {scrolledPast ? (
+        <nav className="mt-4 flex flex-col gap-1 border-t border-zinc-100 pt-4">
+          <span className="mb-1 text-xs font-semibold uppercase tracking-wide text-zinc-400">
+            Sur cette page
+          </span>
+          {sections.map(({ id, label }) => (
+            <a
+              key={id}
+              href={`#${id}`}
+              className="rounded-lg px-2 py-1.5 text-sm text-zinc-600 transition-colors hover:bg-zinc-50 hover:text-blue-700"
+            >
+              {label}
+            </a>
+          ))}
+        </nav>
+      ) : (
+        <>
+          {scoreComment ? (
+            <p className="mt-4 text-sm leading-relaxed text-zinc-500">{scoreComment}</p>
+          ) : null}
+          <Link
+            href="#raisonnement-complet"
+            className="mt-5 inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-zinc-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-zinc-800"
+          >
+            Lire l&apos;analyse détaillée
+            <span aria-hidden="true">→</span>
+          </Link>
+        </>
+      )}
+    </div>
+  );
+}
