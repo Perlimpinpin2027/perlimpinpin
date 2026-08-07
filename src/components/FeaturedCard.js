@@ -65,6 +65,14 @@ export default function FeaturedCard({
     // Padding latéral réservé aux flèches (fix #2) : elles vivent hors de la
     // carte photo+texte, dans cette marge, jamais superposées à la photo.
     <div className="relative px-1 sm:px-14">
+      {/* Forme de fond décorative derrière le portrait (voir maquette) :
+          casse l'effet plat du cadre photo. Doit vivre hors de la carte
+          (qui a overflow-hidden) pour pouvoir déborder légèrement de ses
+          bords. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -inset-6 -z-10 rounded-[2.5rem] bg-gradient-to-br from-rose-100 via-orange-100 to-blue-100 opacity-70 blur-2xl sm:right-[55%]"
+      />
       <div
         className={`flex h-full flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white sm:h-[540px] sm:flex-row ${slideAnimationClass}`}
         onTouchStart={handleTouchStart}
@@ -133,7 +141,7 @@ export default function FeaturedCard({
 
           <Link
             href={`/declarations/${propositionId}`}
-            className="mt-5 inline-flex w-fit items-center gap-1.5 rounded-full bg-zinc-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-zinc-800"
+            className="mt-5 inline-flex w-fit items-center gap-1.5 rounded-full bg-zinc-900 px-5 py-2.5 text-sm font-semibold text-white shadow-[0_12px_28px_-10px_rgba(220,38,38,0.45)] transition-colors hover:bg-zinc-800"
           >
             Voir l&apos;analyse complète
             <span aria-hidden="true">→</span>

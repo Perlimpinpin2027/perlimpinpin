@@ -23,7 +23,7 @@ export default async function Home() {
     ]);
 
   return (
-    <div className="flex min-h-screen flex-col bg-background font-sans">
+    <div className="flex min-h-screen flex-col bg-page-gradient font-sans">
       <Header />
 
       <section className="w-full px-6 py-10 sm:px-8 sm:py-14">

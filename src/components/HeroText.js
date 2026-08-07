@@ -2,6 +2,11 @@ const features = [
   {
     title: "Analyses assistées par l'IA",
     description: "Pour traiter plus de données, plus vite.",
+    // Fond pastel distinct par icône (bleu déjà utilisé comme accent
+    // principal du site, puis deux teintes complémentaires) pour donner du
+    // relief à cette rangée, plutôt que trois icônes plates identiques.
+    bgClass: "bg-blue-50",
+    iconClass: "text-blue-600",
     icon: (
       <path
         strokeLinecap="round"
@@ -13,6 +18,8 @@ const features = [
   {
     title: "Experts et journalistes",
     description: "Des analyses relues et contextualisées.",
+    bgClass: "bg-emerald-50",
+    iconClass: "text-emerald-600",
     icon: (
       <path
         strokeLinecap="round"
@@ -24,6 +31,8 @@ const features = [
   {
     title: "Sources publiques",
     description: "Toutes nos informations sont vérifiées.",
+    bgClass: "bg-violet-50",
+    iconClass: "text-violet-600",
     icon: (
       <path
         strokeLinecap="round"
@@ -37,7 +46,22 @@ const features = [
 export default function HeroText() {
   return (
     <div className="flex flex-col">
-      <span className="text-xs font-bold uppercase tracking-widest text-red-600">
+      <span className="inline-flex w-fit items-center gap-1.5 rounded-full border border-red-200 bg-red-50 px-3 py-1 text-xs font-bold uppercase tracking-widest text-red-600">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={1.8}
+          className="h-3.5 w-3.5"
+          aria-hidden="true"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M3 3v1.5M3 21v-6m0 0l2.77-.693a9 9 0 0 1 6.208.682l.108.054a9 9 0 0 0 6.086.71l3.114-.732a48.524 48.524 0 0 1-.005-10.499l-3.11.732a9 9 0 0 1-6.085-.711l-.108-.054a9 9 0 0 0-6.208-.682L3 4.5M3 15V4.5"
+          />
+        </svg>
         Présidentielle 2027
       </span>
 
@@ -55,17 +79,21 @@ export default function HeroText() {
       <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-3">
         {features.map((feature) => (
           <div key={feature.title} className="flex items-start gap-2.5">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={1.5}
-              className="mt-0.5 h-5 w-5 shrink-0 text-blue-600"
-              aria-hidden="true"
+            <span
+              className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${feature.bgClass}`}
             >
-              {feature.icon}
-            </svg>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.5}
+                className={`h-5 w-5 ${feature.iconClass}`}
+                aria-hidden="true"
+              >
+                {feature.icon}
+              </svg>
+            </span>
             <div>
               <p className="text-sm font-semibold text-zinc-900">
                 {feature.title}

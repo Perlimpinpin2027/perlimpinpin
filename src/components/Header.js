@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -15,9 +15,37 @@ const navLinks = [
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  // Fond flouté/semi-transparent + ombre uniquement une fois la page
+  // scrollée, pour distinguer le header sticky du contenu qui défile
+  // dessous sans l'alourdir visuellement quand on est tout en haut.
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const checkScroll = () => setIsScrolled(window.scrollY > 8);
+    checkScroll();
+    window.addEventListener("scroll", checkScroll, { passive: true });
+    return () => window.removeEventListener("scroll", checkScroll);
+  }, []);
 
   return (
-    <header className="sticky top-0 z-30 w-full border-b border-zinc-200 bg-background">
+    <header
+      className={`sticky top-0 z-30 w-full border-b transition-colors duration-200 ${
+        isScrolled
+          ? "border-zinc-200/70 bg-background/80"
+          : "border-transparent bg-background"
+      }`}
+      // box-shadow/backdrop-filter posés en style inline plutôt qu'en
+      // classes Tailwind (shadow-sm/backdrop-blur-md) : ces utilitaires
+      // composent leur valeur via des custom properties CSS (--tw-shadow,
+      // --tw-backdrop-blur) qui, sur ce site, ne se résolvent pas de façon
+      // fiable sur un header déjà monté — l'inline style pose la valeur
+      // finale directement, sans cette indirection.
+      style={
+        isScrolled
+          ? { boxShadow: "0 1px 3px 0 rgb(0 0 0 / 0.1)", backdropFilter: "blur(12px)" }
+          : undefined
+      }
+    >
       <div className="flex items-center justify-between gap-6 px-6 py-4 sm:px-8">
         <Link href="/" className="flex shrink-0 items-center">
           <Image

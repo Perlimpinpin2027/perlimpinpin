@@ -21,6 +21,19 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Fond de page en léger dégradé (au lieu d'une couleur unie) : deux taches
+   radiales très douces reprenant les deux accents déjà utilisés sur le site
+   (bleu des liens/CTA, rouge des libellés "thème"), superposées à la même
+   couleur de base ivoire pour ne rien changer ailleurs (cartes toujours en
+   blanc pur par-dessus). Utilisé à la place de bg-background sur le wrapper
+   racine de chaque page. */
+.bg-page-gradient {
+  background-color: var(--background);
+  background-image:
+    radial-gradient(ellipse 900px 500px at 10% -10%, rgba(37, 99, 235, 0.06), transparent 60%),
+    radial-gradient(ellipse 800px 450px at 100% 0%, rgba(220, 38, 38, 0.05), transparent 55%);
+}
+
 /* Carrousel "Prix Perlimpinpin de la semaine" : glissement directionnel à
    chaque changement de carte, déclenché par le remount React (key={index}
    côté FeaturedCard) plutôt que par un état de transition manuel. */
