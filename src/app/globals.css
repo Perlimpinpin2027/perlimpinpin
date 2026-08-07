@@ -21,17 +21,17 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Fond de page en léger dégradé (au lieu d'une couleur unie) : deux taches
-   radiales très douces reprenant les deux accents déjà utilisés sur le site
-   (bleu des liens/CTA, rouge des libellés "thème"), superposées à la même
+/* Fond de page en dégradé (au lieu d'une couleur unie) : tache lavande en
+   haut à gauche, tache pêche/corail en haut à droite, superposées à la même
    couleur de base ivoire pour ne rien changer ailleurs (cartes toujours en
    blanc pur par-dessus). Utilisé à la place de bg-background sur le wrapper
-   racine de chaque page. */
+   racine de chaque page. Opacité relevée (16-18%) après un premier passage
+   à 5-6% qui rendait le dégradé imperceptible à l'écran. */
 .bg-page-gradient {
   background-color: var(--background);
   background-image:
-    radial-gradient(ellipse 900px 500px at 10% -10%, rgba(37, 99, 235, 0.06), transparent 60%),
-    radial-gradient(ellipse 800px 450px at 100% 0%, rgba(220, 38, 38, 0.05), transparent 55%);
+    radial-gradient(ellipse 1000px 600px at 0% -5%, rgba(167, 139, 250, 0.18), transparent 60%),
+    radial-gradient(ellipse 900px 550px at 100% -5%, rgba(251, 146, 60, 0.16), transparent 60%);
 }
 
 /* Carrousel "Prix Perlimpinpin de la semaine" : glissement directionnel à

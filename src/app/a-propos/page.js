@@ -7,9 +7,19 @@ export const metadata = {
   description: "Qui est derrière Perlimpinpin et pourquoi ce projet existe.",
 };
 
-function SectionTitle({ children }) {
+// Chaque section de l'essai : séparateur fin au-dessus pour la distinguer
+// du paragraphe précédent, puis titre + paragraphes dans un bloc à bordure
+// gauche rouge (style callout) pour marquer visuellement le changement de
+// sous-partie.
+function Section({ title, children }) {
   return (
-    <h2 className="mt-2 text-xl font-bold text-zinc-900">{children}</h2>
+    <div className="pt-6">
+      <hr className="border-zinc-200" />
+      <div className="mt-6 flex flex-col gap-4 border-l-4 border-red-500 pl-5">
+        <h2 className="text-xl font-bold text-zinc-900">{title}</h2>
+        {children}
+      </div>
+    </div>
   );
 }
 
@@ -81,12 +91,11 @@ const founders = [
   {
     nom: "Matis Brasca",
     role: "Responsable associatif",
-    bio: "Biographie à venir.",
   },
   {
     nom: "Arno Fontaine",
     role: "Conseiller en économie comportementale",
-    bio: "Diplômé en économie et sciences politiques (Paris II Panthéon-Assas, Sciences Po Grenoble), Arno est conseiller en économie comportementale. Il a travaillé au sein du département de gouvernance publique de l'OCDE sur l'impact de l'intelligence artificielle sur le cerveau humain et les processus décisionnels et a auparavant développé un programme de sciences comportementales appliqué aux opérations de développement au sein de l'Agence française de développement.\n\nIl s'intéresse particulièrement à la manière dont se forment nos systèmes de croyance et notre rapport à l'information, grâce aux apports de la psychologie sociale. C'est cette conviction qui l'a poussé à cofonder Perlimpinpin : donner au public des repères factuels clairs face aux promesses politiques.",
+    linkedin: "https://www.linkedin.com/in/arno-fontaine-049a52100/",
   },
 ];
 
@@ -146,19 +155,14 @@ export default function AProposPage() {
             ))}
 
             {essaySections.map((section) => (
-              <div key={section.title} className="flex flex-col gap-4">
-                <SectionTitle>{section.title}</SectionTitle>
+              <Section key={section.title} title={section.title}>
                 {section.paragraphs.map((text) => (
                   <LeadParagraph key={text.slice(0, 24)} text={text} />
                 ))}
-              </div>
+              </Section>
             ))}
 
-            <div className="flex flex-col gap-4">
-              <SectionTitle>
-                Une méthodologie 100 % ouverte et transparente
-              </SectionTitle>
-
+            <Section title="Une méthodologie 100 % ouverte et transparente">
               <LeadParagraph text={methodologyIntro} />
 
               <p className="text-base leading-relaxed text-zinc-600">
@@ -184,46 +188,55 @@ export default function AProposPage() {
               </p>
 
               <LeadParagraph text={governanceParagraph} />
-            </div>
+            </Section>
 
-            <div className="flex flex-col gap-4">
-              <SectionTitle>{closingSection.title}</SectionTitle>
+            <Section title={closingSection.title}>
               {closingSection.paragraphs.map((text) => (
                 <LeadParagraph key={text.slice(0, 24)} text={text} />
               ))}
-            </div>
+            </Section>
           </div>
 
           <h2 className="mt-16 text-2xl font-bold text-zinc-900">
             Fondateurs
           </h2>
 
-          <div className="mt-6 grid grid-cols-1 gap-10 sm:grid-cols-2">
+          <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
             {founders.map((founder) => (
-              <div key={founder.nom} className="flex flex-col gap-4">
-                <img
-                  src="/avatar-placeholder.svg"
-                  alt={founder.nom}
-                  className="h-40 w-40 shrink-0 rounded-2xl object-cover"
-                />
-
-                <div>
+              <div
+                key={founder.nom}
+                className="rounded-xl border border-zinc-200 bg-white/60 p-5"
+              >
+                {founder.linkedin ? (
+                  <a
+                    href={founder.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-lg font-bold text-zinc-900 transition-colors hover:text-blue-700"
+                  >
+                    {founder.nom}
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      className="h-3.5 w-3.5 opacity-60"
+                      aria-hidden="true"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+                      />
+                    </svg>
+                  </a>
+                ) : (
                   <p className="text-lg font-bold text-zinc-900">
                     {founder.nom}
                   </p>
-                  <p className="text-sm text-zinc-500">{founder.role}</p>
-                </div>
-
-                <div className="flex flex-col gap-3">
-                  {founder.bio.split("\n\n").map((paragraph, index) => (
-                    <p
-                      key={index}
-                      className="text-sm leading-relaxed text-zinc-600"
-                    >
-                      {paragraph}
-                    </p>
-                  ))}
-                </div>
+                )}
+                <p className="mt-1 text-sm text-zinc-500">{founder.role}</p>
               </div>
             ))}
           </div>
