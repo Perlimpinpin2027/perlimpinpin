@@ -25,13 +25,17 @@ body {
    haut à gauche, tache pêche/corail en haut à droite, superposées à la même
    couleur de base ivoire pour ne rien changer ailleurs (cartes toujours en
    blanc pur par-dessus). Utilisé à la place de bg-background sur le wrapper
-   racine de chaque page. Opacité relevée (16-18%) après un premier passage
-   à 5-6% qui rendait le dégradé imperceptible à l'écran. */
+   racine de chaque page.
+   Historique d'opacité : 5-6 % puis 16-18 % se sont tous les deux révélés
+   imperceptibles une fois mélangés à l'ivoire de fond (--background,
+   #fdfbf9) — à 18 %, le résultat calculé était rgb(238,231,249), à peine
+   distinct du blanc. Remonté à ~35-38 % avec des taches plus grandes pour
+   un résultat sans ambiguïté. */
 .bg-page-gradient {
   background-color: var(--background);
   background-image:
-    radial-gradient(ellipse 1000px 600px at 0% -5%, rgba(167, 139, 250, 0.18), transparent 60%),
-    radial-gradient(ellipse 900px 550px at 100% -5%, rgba(251, 146, 60, 0.16), transparent 60%);
+    radial-gradient(1200px 800px at -5% -10%, rgba(167, 139, 250, 0.38), transparent 65%),
+    radial-gradient(1200px 800px at 105% -10%, rgba(251, 146, 60, 0.32), transparent 65%);
 }
 
 /* Carrousel "Prix Perlimpinpin de la semaine" : glissement directionnel à

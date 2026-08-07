@@ -8,15 +8,17 @@ export const metadata = {
 };
 
 // Chaque section de l'essai : séparateur fin au-dessus pour la distinguer
-// du paragraphe précédent, puis titre + paragraphes dans un bloc à bordure
-// gauche rouge (style callout) pour marquer visuellement le changement de
-// sous-partie.
+// du paragraphe précédent, puis titre avec un petit trait rouge fin à
+// gauche (accent visuel sur la seule ligne du titre, pas une bordure de
+// bloc qui engloberait aussi les paragraphes en dessous).
 function Section({ title, children }) {
   return (
     <div className="pt-6">
       <hr className="border-zinc-200" />
-      <div className="mt-6 flex flex-col gap-4 border-l-4 border-red-500 pl-5">
-        <h2 className="text-xl font-bold text-zinc-900">{title}</h2>
+      <div className="mt-6 flex flex-col gap-4">
+        <h2 className="border-l-2 border-red-500 pl-3 text-xl font-bold leading-tight text-zinc-900">
+          {title}
+        </h2>
         {children}
       </div>
     </div>
@@ -87,18 +89,6 @@ const closingSection = {
   ],
 };
 
-const founders = [
-  {
-    nom: "Matis Brasca",
-    role: "Responsable associatif",
-  },
-  {
-    nom: "Arno Fontaine",
-    role: "Conseiller en économie comportementale",
-    linkedin: "https://www.linkedin.com/in/arno-fontaine-049a52100/",
-  },
-];
-
 export default function AProposPage() {
   return (
     <div className="flex min-h-screen flex-col bg-page-gradient font-sans">
@@ -139,7 +129,16 @@ export default function AProposPage() {
             <div className="mt-6 h-px w-10 bg-zinc-300" aria-hidden="true" />
 
             <p className="mt-6 text-sm font-medium text-zinc-500">
-              Par Arno Fontaine et Matis Brasca
+              Par{" "}
+              <a
+                href="https://www.linkedin.com/in/arno-fontaine-049a52100/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold text-zinc-600 underline decoration-zinc-300 underline-offset-2 transition-colors hover:text-blue-700"
+              >
+                Arno Fontaine
+              </a>{" "}
+              et Matis Brasca
             </p>
           </div>
 
@@ -195,50 +194,6 @@ export default function AProposPage() {
                 <LeadParagraph key={text.slice(0, 24)} text={text} />
               ))}
             </Section>
-          </div>
-
-          <h2 className="mt-16 text-2xl font-bold text-zinc-900">
-            Fondateurs
-          </h2>
-
-          <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
-            {founders.map((founder) => (
-              <div
-                key={founder.nom}
-                className="rounded-xl border border-zinc-200 bg-white/60 p-5"
-              >
-                {founder.linkedin ? (
-                  <a
-                    href={founder.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-lg font-bold text-zinc-900 transition-colors hover:text-blue-700"
-                  >
-                    {founder.nom}
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                      className="h-3.5 w-3.5 opacity-60"
-                      aria-hidden="true"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
-                      />
-                    </svg>
-                  </a>
-                ) : (
-                  <p className="text-lg font-bold text-zinc-900">
-                    {founder.nom}
-                  </p>
-                )}
-                <p className="mt-1 text-sm text-zinc-500">{founder.role}</p>
-              </div>
-            ))}
           </div>
 
           <p className="mt-16 text-xs text-zinc-400">
