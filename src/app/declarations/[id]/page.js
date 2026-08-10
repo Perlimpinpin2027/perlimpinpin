@@ -144,6 +144,52 @@ function TextOrList({ value }) {
   return <p>{renderRichText(value)}</p>;
 }
 
+// sources_utilisees : chaîne simple par élément sur les fiches antérieures
+// au schéma V3, objet structuré { id, titre, organisme, url, type, ... }
+// depuis (voir data/prompt-methodologie.md, section SOURCES STRUCTURÉES).
+// TextOrList/renderRichText ne savent afficher que des chaînes ; ce
+// composant dédié gère les deux formes sans faire planter le rendu React
+// sur un objet.
+function SourcesList({ value }) {
+  if (!value || (Array.isArray(value) && value.length === 0)) {
+    return <p className="text-zinc-400">Non renseigné.</p>;
+  }
+  if (!Array.isArray(value)) {
+    return <TextOrList value={value} />;
+  }
+  if (typeof value[0] !== "object" || value[0] === null) {
+    return <TextOrList value={value} />;
+  }
+
+  return (
+    <ul className="flex flex-col gap-2">
+      {value.map((source, index) => (
+        <li key={source.id ?? index} className="flex items-start gap-2">
+          <span
+            className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-zinc-400"
+            aria-hidden="true"
+          />
+          <span>
+            {source.url ? (
+              <a
+                href={source.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-blue-600 transition-colors hover:text-blue-800"
+              >
+                {source.titre ?? source.url}
+              </a>
+            ) : (
+              <span className="font-medium text-zinc-900">{source.titre ?? "Source"}</span>
+            )}
+            {source.organisme ? <span className="text-zinc-500"> — {source.organisme}</span> : null}
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 // Une card de critère, partagée par les deux formats de analyse_par_criteres
 // ci-dessous (tableau structuré du nouveau barème, ou objet keyé de
 // l'ancien) : icône + titre + note/max + texte, avec un liseré distinct
@@ -326,6 +372,15 @@ export default async function DeclarationDetailPage({ params }) {
   const badge = getScoreBadge(analyse.scoreFaisabilite);
   const notation = contenu.notation_detaillee ?? {};
   const isNouveauBareme = notation.score_juridique_garde_fou !== undefined;
+  // Schéma V3 (pipeline "ajustement juridique bonus-malus", data/prompt-
+  // methodologie.md) : qualification_juridique remplace score_juridique_
+  // garde_fou/veto_juridique_applique. Comme V2, il utilise 4 critères /25
+  // (notationLabelsV2), mais l'incidence juridique n'est plus une note
+  // affichée comme un 5e score/jauge — seulement, si non nulle, une
+  // explication textuelle (voir plus bas). Ne jamais afficher deux scores
+  // concurrents pour une même fiche.
+  const qualificationJuridique = contenu.qualification_juridique;
+  const isNouveauBaremeV3 = !isNouveauBareme && qualificationJuridique !== undefined;
   const scoreComment = firstSentence(analyse.resumeAccueil);
 
   return (
@@ -415,11 +470,11 @@ export default async function DeclarationDetailPage({ params }) {
               </span>
 
               <div className="mt-4 flex flex-col divide-y divide-zinc-100">
-                {/* score_juridique_garde_fou n'existe que dans le nouveau
-                    barème (4 critères + garde-fou juridique séparé) : son
+                {/* score_juridique_garde_fou (V2) et qualification_juridique
+                    (V3) n'existent que dans les barèmes à 4 critères ; leur
                     absence signale une fiche à l'ancien format (5 critères
                     additionnés), pour laquelle on garde l'affichage inchangé. */}
-                {(isNouveauBareme ? notationLabelsV2 : notationLabels).map(
+                {(isNouveauBareme || isNouveauBaremeV3 ? notationLabelsV2 : notationLabels).map(
                   ({ key, label, max, icon }) => (
                     <ScoreBar
                       key={key}
@@ -444,6 +499,35 @@ export default async function DeclarationDetailPage({ params }) {
                   />
                 ) : null}
               </div>
+
+              {/* V3 : l'incidence juridique n'est plus un score séparé —
+                  seulement un texte explicatif quand l'ajustement n'est pas
+                  nul (voir section 31 de la spec : jamais un second score
+                  ni deux jauges concurrentes). */}
+              {isNouveauBaremeV3 && qualificationJuridique.ajustement_juridique !== 0 ? (
+                <div
+                  className={`mt-4 rounded-xl border p-4 ${
+                    qualificationJuridique.ajustement_juridique > 0
+                      ? "border-emerald-200 bg-emerald-50/50"
+                      : "border-amber-200 bg-amber-50/50"
+                  }`}
+                >
+                  <p
+                    className={`text-xs font-semibold uppercase tracking-wide ${
+                      qualificationJuridique.ajustement_juridique > 0 ? "text-emerald-700" : "text-amber-700"
+                    }`}
+                  >
+                    Incidence juridique{" "}
+                    {qualificationJuridique.ajustement_juridique > 0
+                      ? `positive (+${qualificationJuridique.ajustement_juridique})`
+                      : `négative (${qualificationJuridique.ajustement_juridique})`}{" "}
+                    sur le score
+                  </p>
+                  <p className="mt-1.5 text-sm leading-relaxed text-zinc-700">
+                    {qualificationJuridique.justification_juridique}
+                  </p>
+                </div>
+              ) : null}
 
               <Link
                 href="/methode"
@@ -551,7 +635,7 @@ export default async function DeclarationDetailPage({ params }) {
               </Section>
 
               <Section title="Sources utilisées">
-                <TextOrList value={contenu.sources_utilisees} />
+                <SourcesList value={contenu.sources_utilisees} />
               </Section>
 
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
