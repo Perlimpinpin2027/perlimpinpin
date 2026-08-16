@@ -381,7 +381,19 @@ export default async function DeclarationDetailPage({ params }) {
   // concurrents pour une même fiche.
   const qualificationJuridique = contenu.qualification_juridique;
   const isNouveauBaremeV3 = !isNouveauBareme && qualificationJuridique !== undefined;
+  // Schéma V4 (pipeline à 4 étapes, recherche bornée + rédaction éditoriale
+  // séparée, voir scripts/analyze.js) : seul schéma qui porte un
+  // discriminant explicite (schema_version) plutôt qu'un sniffing
+  // structurel — contenuComplet n'y contient plus que le contenu déjà
+  // publiable (contenuPublic + notation_detaillee + sources_utilisees),
+  // jamais les notes de travail internes de l'analyste (voir
+  // buildContenuCompletV4 dans scripts/analyze.js). La page affiche donc,
+  // pour ces fiches, un résumé plus court que pour les versions antérieures.
+  const isV4 = contenu.schema_version === "v4";
   const scoreComment = firstSentence(analyse.resumeAccueil);
+  const tocSections = isV4
+    ? TOC_SECTIONS.filter((section) => section.id === "analyse-criteres" || section.id === "verdict")
+    : TOC_SECTIONS;
 
   return (
     <div className="flex min-h-screen flex-col bg-page-gradient font-sans">
@@ -470,11 +482,12 @@ export default async function DeclarationDetailPage({ params }) {
               </span>
 
               <div className="mt-4 flex flex-col divide-y divide-zinc-100">
-                {/* score_juridique_garde_fou (V2) et qualification_juridique
-                    (V3) n'existent que dans les barèmes à 4 critères ; leur
-                    absence signale une fiche à l'ancien format (5 critères
-                    additionnés), pour laquelle on garde l'affichage inchangé. */}
-                {(isNouveauBareme || isNouveauBaremeV3 ? notationLabelsV2 : notationLabels).map(
+                {/* score_juridique_garde_fou (V2), qualification_juridique
+                    (V3) et schema_version "v4" désignent tous un barème à 4
+                    critères /25 ; leur absence signale une fiche à l'ancien
+                    format (5 critères additionnés), pour laquelle on garde
+                    l'affichage inchangé. */}
+                {(isNouveauBareme || isNouveauBaremeV3 || isV4 ? notationLabelsV2 : notationLabels).map(
                   ({ key, label, max, icon }) => (
                     <ScoreBar
                       key={key}
@@ -590,45 +603,60 @@ export default async function DeclarationDetailPage({ params }) {
                 Le raisonnement complet
               </h2>
 
-              <Section title="Mesure reformulée">
-                <TextOrList value={contenu.mesure_reformulee} />
-              </Section>
+              {/* Schéma V4 : contenuComplet ne porte plus les notes de
+                  travail internes de l'analyste (mesure_reformulee,
+                  contexte_*, ce_qui_est_etabli/probable/discutable/inconnu,
+                  angles_morts, niveau_de_confiance, limites) — elles restent
+                  dans analyseCanonique, jamais exposée au front-end (voir
+                  scripts/analyze.js, buildContenuCompletV4). Ce bloc reste
+                  donc réservé aux fiches antérieures au pipeline à 4 étapes. */}
+              {!isV4 ? (
+                <>
+                  <Section title="Mesure reformulée">
+                    <TextOrList value={contenu.mesure_reformulee} />
+                  </Section>
 
-              <Section title="Mise en contexte dans le programme">
-                <TextOrList value={contenu.contexte_programme} />
-              </Section>
+                  <Section title="Mise en contexte dans le programme">
+                    <TextOrList value={contenu.contexte_programme} />
+                  </Section>
 
-              <div id="contexte" className="scroll-mt-24 grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <Section title="Contexte national">
-                  <TextOrList value={contenu.contexte_national} />
-                </Section>
-                <Section title="Contexte international">
-                  <TextOrList value={contenu.contexte_international} />
-                </Section>
-              </div>
+                  <div id="contexte" className="scroll-mt-24 grid grid-cols-1 gap-6 sm:grid-cols-2">
+                    <Section title="Contexte national">
+                      <TextOrList value={contenu.contexte_national} />
+                    </Section>
+                    <Section title="Contexte international">
+                      <TextOrList value={contenu.contexte_international} />
+                    </Section>
+                  </div>
+                </>
+              ) : null}
 
               <Section id="analyse-criteres" title="Analyse par critères">
                 <CriteresCards criteres={contenu.analyse_par_criteres} notation={notation} />
               </Section>
 
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <Section title="Ce qui est établi">
-                  <TextOrList value={contenu.ce_qui_est_etabli} />
-                </Section>
-                <Section title="Ce qui est probable">
-                  <TextOrList value={contenu.ce_qui_est_probable} />
-                </Section>
-                <Section title="Ce qui est discutable">
-                  <TextOrList value={contenu.ce_qui_est_discutable} />
-                </Section>
-                <Section title="Ce qui est inconnu">
-                  <TextOrList value={contenu.ce_qui_est_inconnu} />
-                </Section>
-              </div>
+              {!isV4 ? (
+                <>
+                  <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                    <Section title="Ce qui est établi">
+                      <TextOrList value={contenu.ce_qui_est_etabli} />
+                    </Section>
+                    <Section title="Ce qui est probable">
+                      <TextOrList value={contenu.ce_qui_est_probable} />
+                    </Section>
+                    <Section title="Ce qui est discutable">
+                      <TextOrList value={contenu.ce_qui_est_discutable} />
+                    </Section>
+                    <Section title="Ce qui est inconnu">
+                      <TextOrList value={contenu.ce_qui_est_inconnu} />
+                    </Section>
+                  </div>
 
-              <Section id="angles-morts" title="Angles morts et effets de bord">
-                <TextOrList value={contenu.angles_morts} />
-              </Section>
+                  <Section id="angles-morts" title="Angles morts et effets de bord">
+                    <TextOrList value={contenu.angles_morts} />
+                  </Section>
+                </>
+              ) : null}
 
               <Section id="verdict" title="Verdict final">
                 <TextOrList value={contenu.verdict_final} />
@@ -638,14 +666,16 @@ export default async function DeclarationDetailPage({ params }) {
                 <SourcesList value={contenu.sources_utilisees} />
               </Section>
 
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <Section title="Niveau de confiance">
-                  <TextOrList value={contenu.niveau_de_confiance} />
-                </Section>
-                <Section title="Limites">
-                  <TextOrList value={contenu.limites} />
-                </Section>
-              </div>
+              {!isV4 ? (
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  <Section title="Niveau de confiance">
+                    <TextOrList value={contenu.niveau_de_confiance} />
+                  </Section>
+                  <Section title="Limites">
+                    <TextOrList value={contenu.limites} />
+                  </Section>
+                </div>
+              ) : null}
             </div>
 
             {/* Like / dislike, juste avant le bandeau de confiance */}
@@ -747,7 +777,7 @@ export default async function DeclarationDetailPage({ params }) {
               score={analyse.scoreFaisabilite}
               badge={badge}
               scoreComment={scoreComment}
-              sections={TOC_SECTIONS}
+              sections={tocSections}
             />
           </aside>
         </div>

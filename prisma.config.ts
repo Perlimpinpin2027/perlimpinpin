@@ -3,6 +3,22 @@
 import "dotenv/config";
 import { defineConfig } from "prisma/config";
 
+// INCIDENT (voir historique git) : shadowDatabaseUrl pointait auparavant
+// vers DIRECT_URL, qui s'est avérée être la MÊME base Neon que
+// DATABASE_URL (même endpoint, juste avec/sans pooler) — pas une base
+// séparée. `prisma migrate dev` a traité cette "shadow" comme jetable et a
+// vidé la vraie base de production. Restaurée depuis un Point-in-Time
+// Restore Neon.
+//
+// Correctif : shadowDatabaseUrl pointe maintenant vers SHADOW_DATABASE_URL,
+// une variable dédiée, volontairement absente de .env tant qu'une branche
+// Neon réellement distincte n'a pas été créée pour cet usage (voir
+// instructions fournies à l'utilisateur). Tant qu'elle est absente,
+// `prisma migrate dev` échoue immédiatement ("shadow database URL
+// manquante") au lieu de retomber silencieusement sur DATABASE_URL ou
+// DIRECT_URL. Ne JAMAIS faire pointer cette variable vers DATABASE_URL ou
+// DIRECT_URL, ni vers une autre variable déjà utilisée pour la base
+// principale.
 export default defineConfig({
   schema: "prisma/schema.prisma",
   migrations: {
@@ -11,6 +27,6 @@ export default defineConfig({
   },
   datasource: {
     url: process.env["DATABASE_URL"],
-    shadowDatabaseUrl: process.env["DIRECT_URL"],
+    shadowDatabaseUrl: process.env["SHADOW_DATABASE_URL"],
   },
 });

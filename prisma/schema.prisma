@@ -100,8 +100,32 @@ model Analyse {
   auditArbitrage Json?
 
   // Détail des tokens et du coût estimé par étape du pipeline :
-  // { tokensEtape1, tokensEtape2, tokensEtape3, coutEstimeTotal }
+  // { tokensEtape1, tokensEtape2, tokensEtape3, coutEstimeTotal, tokensEtape4? }
   coutPipeline Json?
+
+  // --- Pipeline V4 (voir data/prompt-arbitrage.md) : sépare l'analyse
+  // interne qui fait foi du contenu traduit pour l'affichage public. ---
+
+  // Analyse canonique interne (faits, sources, degrés de certitude, les 4
+  // notes, qualification juridique complète avec affirmations_juridiques).
+  // Fait foi pour tout recalcul ou audit. Ne doit jamais être exposée
+  // directement au front-end. Nullable : absente sur les analyses
+  // générées avant le pipeline V4 (voir versionMethodologie, utilisé comme
+  // discriminant explicite de schéma côté front-end plutôt que la
+  // déduction par présence de champs).
+  analyseCanonique Json?
+
+  // Contenu public final (étape 4, Mistral éditorial), c'est la seule
+  // donnée que le front-end doit afficher pour une fiche V4. Nullable :
+  // absent si l'étape éditoriale a échoué (utiliser alors
+  // contenu_public_secours produit par l'étape 3, stocké ici aussi une
+  // fois retenu) ou pour les analyses antérieures au pipeline V4.
+  contenuPublic Json?
+
+  // Contrôle de fidélité de la passe éditoriale (correspondance des points
+  // obligatoires, citations/nombres/dates repris, absence de nouvelle
+  // affirmation). Usage interne uniquement, jamais exposé au lecteur.
+  controleFideliteEditorial Json?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

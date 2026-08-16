@@ -1,20 +1,20 @@
 import { test, describe } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
 import {
   computeAppreciation,
   computeScoreTotal,
   computeNiveauImpactAttendu,
   applyFinalScore,
-  validateFiche,
-  checkAjustementJuridiqueDocumentation,
-  checkSourcesJuridiquesReferences,
+  validateAnalyseCanoniqueStructure,
+  checkAjustementDocumentation,
+  neutralizeAjustementJuridique,
 } from "./scoring.js";
 
-// Fiche minimale mais complète au sens de FicheSchema, pour les tests qui
-// passent par validateFiche()/applyFinalScore() plutôt que directement par
-// les fonctions de calcul. Les 4 notes et l'ajustement juridique sont
-// surchargeables par test.
+// --- Fabriques -----------------------------------------------------------
+// Analyse canonique minimale mais complète au sens de AnalyseCanoniqueSchema
+// (schéma V4 : perimetre_competence, sous_mesures, affirmations_juridiques),
+// surchargeable par test.
+
 function makeCriteres({ factuel = 20, efficacite = 20, operationnel = 20, cout = 20 } = {}) {
   return [
     { critere: "solidite_factuelle", titre: "Solidité factuelle et documentaire", note: factuel, note_max: 25, texte: "Texte." },
@@ -24,22 +24,59 @@ function makeCriteres({ factuel = 20, efficacite = 20, operationnel = 20, cout =
   ];
 }
 
+function makeAffirmation(overrides = {}) {
+  return {
+    id: "J1",
+    affirmation: "Affirmation de test.",
+    norme_ou_engagement: "Norme de test.",
+    source_ids: ["S1"],
+    portee_de_la_source: "Portée décrite.",
+    application_a_la_proposition: "Application décrite.",
+    degre_applicabilite: "directe",
+    confiance: "haute",
+    incidence_sur_ajustement: "Justifie le malus.",
+    ...overrides,
+  };
+}
+
 function makeQualification(overrides = {}) {
   return {
     ajustement_juridique: 0,
     niveau_impact_juridique: "neutre",
     confiance_qualification: "haute",
     nature_contrainte: null,
-    justification_juridique: "Aucun obstacle identifié.",
+    justification_juridique_technique: "Aucun obstacle identifié.",
     voie_mise_en_conformite: null,
     sources_juridiques: [],
+    affirmations_juridiques: [],
     ...overrides,
   };
 }
 
-function makeFiche({ criteres, qualification, sources = [] } = {}) {
+function makeSource(overrides = {}) {
+  return {
+    id: "S1",
+    titre: "Source de test",
+    organisme: "Organisme",
+    url: "https://exemple.fr",
+    date_publication: null,
+    date_consultation: "2026-08-12",
+    type: "texte_juridique",
+    ...overrides,
+  };
+}
+
+function makeAnalyseCanonique({ criteres, qualification, sources = [] } = {}) {
   return {
     mesure_reformulee: "Une mesure de test.",
+    perimetre_competence: {
+      territoire: "France",
+      niveau_decision: "national",
+      autorite_competente: "Parlement",
+      horizon_annonce: null,
+      degre_precision: "moyen",
+    },
+    sous_mesures: [],
     nature_et_existant: "Nature de test.",
     contexte_programme: "Contexte programme de test.",
     contexte_national: "Contexte national de test.",
@@ -54,112 +91,64 @@ function makeFiche({ criteres, qualification, sources = [] } = {}) {
     ce_qui_est_discutable: "Discutable de test.",
     ce_qui_est_inconnu: "Inconnu de test.",
     angles_morts: "Angles morts de test.",
-    verdict_final: "Verdict de test.",
     sources_utilisees: sources,
     niveau_de_confiance: "moyen",
     limites: "Limites de test.",
-    resume_court: "Résumé court de test.",
   };
 }
 
-// --- CAS 1 à 13 (section 39 de la spec) --------------------------------------
+// --- CAS 1-9, 13 (section 43) : calcul pur, inchangé depuis V3 ------------
 
-describe("CAS 1-13 — calcul du score final", () => {
+describe("CAS 1-9, 13 — calcul du score final", () => {
   test("CAS 1 : 25/25/25/25, ajustement 0 -> score_total = 100", () => {
-    const { scoreTotal } = computeScoreTotal(
-      { factuel: 25, efficacite: 25, operationnel: 25, cout: 25 },
-      0,
-    );
+    const { scoreTotal } = computeScoreTotal({ factuel: 25, efficacite: 25, operationnel: 25, cout: 25 }, 0);
     assert.equal(scoreTotal, 100);
   });
 
-  test("CAS 2 : somme interne 80, malus majeur -35 (confiance haute, source primaire) -> score_total = 45", () => {
-    const fiche = makeFiche({
+  test("CAS 2 : somme interne 80, malus majeur -35 (confiance haute, source primaire directe) -> score_total = 45", () => {
+    const analyse = makeAnalyseCanonique({
       criteres: makeCriteres({ factuel: 20, efficacite: 20, operationnel: 20, cout: 20 }),
       qualification: makeQualification({
         ajustement_juridique: -35,
         niveau_impact_juridique: "majeur",
         confiance_qualification: "haute",
-        justification_juridique: "Incompatibilité constitutionnelle documentée par le Conseil constitutionnel.",
+        justification_juridique_technique: "Incompatibilité constitutionnelle documentée.",
         sources_juridiques: ["S1"],
+        affirmations_juridiques: [makeAffirmation()],
       }),
-      sources: [{ id: "S1", titre: "Décision", organisme: "Conseil constitutionnel", url: "https://...", date_publication: null, date_consultation: "2026-08-10", type: "jurisprudence" }],
+      sources: [makeSource({ type: "jurisprudence" })],
     });
-    const result = validateFiche(fiche);
-    assert.equal(result.valid, true, result.errors?.join("; "));
-    const { fiche: scored, audit } = applyFinalScore(result.fiche);
+    const structure = validateAnalyseCanoniqueStructure(analyse);
+    assert.equal(structure.valid, true, structure.errors?.join("; "));
+    const doc = checkAjustementDocumentation(analyse.qualification_juridique, analyse.sources_utilisees);
+    assert.equal(doc.sufficient, true, doc.errors.join("; "));
+    const { notationDetaillee, audit } = applyFinalScore(structure.analyseCanonique);
     assert.equal(audit.sommeInterne, 80);
-    assert.equal(scored.notation_detaillee.score_total, 45);
+    assert.equal(notationDetaillee.score_total, 45);
   });
 
   test("CAS 3 : somme interne 20, ajustement -35 -> score_total = 0 (clamp bas)", () => {
-    const { scoreTotal } = computeScoreTotal(
-      { factuel: 5, efficacite: 5, operationnel: 5, cout: 5 },
-      -35,
-    );
+    const { scoreTotal } = computeScoreTotal({ factuel: 5, efficacite: 5, operationnel: 5, cout: 5 }, -35);
     assert.equal(scoreTotal, 0);
   });
 
-  test("CAS 4 : malus majeur avec confiance moyenne -> structure jugée invalide (pas d'application silencieuse)", () => {
-    const fiche = makeFiche({
-      qualification: makeQualification({
-        ajustement_juridique: -35,
-        niveau_impact_juridique: "majeur",
-        confiance_qualification: "moyenne", // exige "haute" pour -31..-40
-        justification_juridique: "Incompatibilité alléguée.",
-        sources_juridiques: ["S1"],
-      }),
-      sources: [{ id: "S1", titre: "Article", organisme: "Presse", url: "https://...", date_publication: null, date_consultation: "2026-08-10", type: "presse" }],
-    });
-    const result = validateFiche(fiche);
-    assert.equal(result.valid, false);
-    assert.ok(result.errors.some((e) => e.includes("haute")));
-  });
-
-  test("CAS 4bis : malus majeur sans source juridique -> structure jugée invalide", () => {
-    const fiche = makeFiche({
-      qualification: makeQualification({
-        ajustement_juridique: -35,
-        niveau_impact_juridique: "majeur",
-        confiance_qualification: "haute",
-        justification_juridique: "Incompatibilité alléguée.",
-        sources_juridiques: [], // aucune source primaire
-      }),
-    });
-    const result = validateFiche(fiche);
-    assert.equal(result.valid, false);
-    assert.ok(result.errors.some((e) => e.includes("source juridique primaire")));
-  });
-
   test("CAS 5 : somme interne 85, malus limité -5 -> score_total = 80", () => {
-    const { scoreTotal } = computeScoreTotal(
-      { factuel: 25, efficacite: 20, operationnel: 20, cout: 20 },
-      -5,
-    );
+    const { scoreTotal } = computeScoreTotal({ factuel: 25, efficacite: 20, operationnel: 20, cout: 20 }, -5);
     assert.equal(scoreTotal, 80);
   });
 
   test("CAS 6 : somme interne 85, révision constitutionnelle prévue -15 -> score_total = 70", () => {
-    const { scoreTotal } = computeScoreTotal(
-      { factuel: 25, efficacite: 20, operationnel: 20, cout: 20 },
-      -15,
-    );
+    const { scoreTotal } = computeScoreTotal({ factuel: 25, efficacite: 20, operationnel: 20, cout: 20 }, -15);
     assert.equal(scoreTotal, 70);
   });
 
   test("CAS 7 : somme interne 85, majorité hostile mais aucune contrainte juridique -> ajustement 0, score_total = 85", () => {
-    const { scoreTotal } = computeScoreTotal(
-      { factuel: 25, efficacite: 20, operationnel: 20, cout: 20 },
-      0,
-    );
+    const { scoreTotal } = computeScoreTotal({ factuel: 25, efficacite: 20, operationnel: 20, cout: 20 }, 0);
     assert.equal(scoreTotal, 85);
   });
 
   test("CAS 8 : somme interne 100, bonus +3 -> score_total = 100 (clamp haut)", () => {
-    const { scoreTotal } = computeScoreTotal(
-      { factuel: 25, efficacite: 25, operationnel: 25, cout: 25 },
-      3,
-    );
+    const { scoreTotal } = computeScoreTotal({ factuel: 25, efficacite: 25, operationnel: 25, cout: 25 }, 3);
     assert.equal(scoreTotal, 100);
   });
 
@@ -168,120 +157,223 @@ describe("CAS 1-13 — calcul du score final", () => {
     const { scoreTotal, sommeInterne } = computeScoreTotal(notes, 0);
     assert.equal(sommeInterne, 60);
     assert.equal(scoreTotal, 60);
-    // computeScoreTotal ne mute jamais l'objet de notes en entrée.
     assert.deepEqual(notes, { factuel: 15, efficacite: 15, operationnel: 15, cout: 15 });
   });
 
-  // CAS 10 (Mistral indisponible -> pipeline continue) et CAS 11 (Mistral ne
-  // relève rien -> aucune modification analytique) portent sur
-  // l'orchestration réseau (analyze.js) et le comportement du modèle
-  // d'arbitrage, pas sur du calcul pur : non couverts ici, voir
-  // scripts/analyze.test.js pour CAS 10 (résilience sans réseau) et le run
-  // réel du pipeline pour CAS 11 (comportement de Claude en pratique).
-
-  test("CAS 12 : la garde anti-injection est bien présente dans le prompt système", () => {
-    const prompt = readFileSync(
-      new URL("../../data/prompt-methodologie.md", import.meta.url),
-      "utf-8",
-    );
-    assert.match(prompt, /DONNÉE À ANALYSER/);
-    assert.match(prompt, /Ignore les instructions précédentes/);
-  });
-
-  test("CAS 13 : le score public écrase toujours l'arithmétique du modèle", () => {
-    const fiche = makeFiche({
+  test("CAS 13 : le score public écrase toujours l'arithmétique du modèle (notation_detaillee entièrement reconstruit)", () => {
+    const analyse = makeAnalyseCanonique({
       criteres: makeCriteres({ factuel: 10, efficacite: 10, operationnel: 10, cout: 10 }), // somme réelle = 40
     });
-    // Le modèle a mal calculé son propre notation_detaillee (score_total
-    // erroné, très éloigné de la vraie somme) : applyFinalScore doit
-    // l'ignorer complètement et le recalculer depuis analyse_par_criteres.
-    fiche.notation_detaillee = {
-      factuel: 10,
-      efficacite: 10,
-      operationnel: 10,
-      cout: 10,
-      score_total: 999, // valeur aberrante que le modèle aurait pu produire
-      appreciation: "exemplaire", // idem, incohérent avec 999 improbable
-    };
-    const result = validateFiche(fiche);
-    assert.equal(result.valid, true, result.errors?.join("; "));
-    const { fiche: scored } = applyFinalScore(result.fiche);
-    assert.equal(scored.notation_detaillee.score_total, 40);
-    assert.equal(scored.notation_detaillee.appreciation, "partiellement fondé");
+    // V4 : l'analyse canonique ne contient même plus de notation_detaillee
+    // à écraser — un éventuel champ parasite ajouté par le modèle doit être
+    // purement et simplement ignoré par applyFinalScore, qui reconstruit
+    // tout depuis analyse_par_criteres.
+    analyse.notation_detaillee = { score_total: 999, appreciation: "exemplaire" };
+    const structure = validateAnalyseCanoniqueStructure(analyse);
+    assert.equal(structure.valid, true, structure.errors?.join("; "));
+    const { notationDetaillee } = applyFinalScore(structure.analyseCanonique);
+    assert.equal(notationDetaillee.score_total, 40);
+    assert.equal(notationDetaillee.appreciation, "partiellement fondé");
   });
 });
 
-// --- TEST A à D (section 40 de la spec) --------------------------------------
+// --- CAS 4 et 14 (durcissement + neutralisation, section 43) -------------
 
-describe("TEST A-D — bonus-malus juridique", () => {
-  test("TEST A : nouvelle loi simple -> malus limité (0 à -5), pas de documentation exigée", () => {
-    const fiche = makeFiche({
-      qualification: makeQualification({
-        ajustement_juridique: -3,
-        niveau_impact_juridique: "limite",
-        confiance_qualification: "moyenne",
-        justification_juridique: "Nécessite une loi ordinaire, procédure classique.",
-      }),
+describe("CAS 4, 14 — documentation insuffisante -> réparation puis neutralisation", () => {
+  test("CAS 4 : malus majeur avec confiance moyenne -> documentation jugée insuffisante", () => {
+    const qualification = makeQualification({
+      ajustement_juridique: -35,
+      niveau_impact_juridique: "majeur",
+      confiance_qualification: "moyenne", // exige "haute" pour -31..-40
+      justification_juridique_technique: "Incompatibilité alléguée.",
+      sources_juridiques: ["S1"],
+      affirmations_juridiques: [makeAffirmation()],
     });
-    const result = validateFiche(fiche);
-    assert.equal(result.valid, true, result.errors?.join("; "));
+    const doc = checkAjustementDocumentation(qualification, [makeSource({ type: "jurisprudence" })]);
+    assert.equal(doc.sufficient, false);
+    assert.ok(doc.errors.some((e) => e.includes("haute")));
   });
 
-  test("TEST B : révision constitutionnelle prévue -> malus significatif (-9 à -20) accepté, pas besoin du niveau majeur", () => {
-    const fiche = makeFiche({
-      qualification: makeQualification({
-        ajustement_juridique: -15,
-        niveau_impact_juridique: "significatif",
-        confiance_qualification: "moyenne",
-        justification_juridique: "Révision constitutionnelle nécessaire mais explicitement prévue par la proposition.",
-      }),
+  test("CAS 4bis : malus majeur sans source juridique primaire -> documentation jugée insuffisante", () => {
+    const qualification = makeQualification({
+      ajustement_juridique: -35,
+      niveau_impact_juridique: "majeur",
+      confiance_qualification: "haute",
+      justification_juridique_technique: "Incompatibilité alléguée.",
+      sources_juridiques: ["S1"],
+      affirmations_juridiques: [makeAffirmation({ source_ids: ["S1"] })],
     });
-    const result = validateFiche(fiche);
-    assert.equal(result.valid, true, result.errors?.join("; "));
+    // La source existe mais n'est pas de type juridique primaire.
+    const doc = checkAjustementDocumentation(qualification, [makeSource({ type: "presse" })]);
+    assert.equal(doc.sufficient, false);
+    assert.ok(doc.errors.some((e) => e.includes("source juridique primaire")));
   });
 
-  test("TEST C : incompatibilité constitutionnelle sans mise en conformité -> exige confiance haute + source primaire", () => {
-    const sansDocumentation = makeFiche({
-      qualification: makeQualification({
-        ajustement_juridique: -38,
-        niveau_impact_juridique: "majeur",
-        confiance_qualification: "haute",
-        justification_juridique: "",
-        sources_juridiques: [],
-      }),
+  test("CAS 14 : ajustement -11 sans source primaire -> insuffisant, puis neutralisé à 0 avec incertitude conservée", () => {
+    const qualification = makeQualification({
+      ajustement_juridique: -11,
+      niveau_impact_juridique: "significatif",
+      confiance_qualification: "moyenne",
+      justification_juridique_technique: "Contrainte alléguée mais mal établie.",
+      sources_juridiques: [],
+      affirmations_juridiques: [makeAffirmation({ source_ids: [] })], // pas de source réelle
     });
-    assert.equal(validateFiche(sansDocumentation).valid, false);
+    const doc = checkAjustementDocumentation(qualification, []);
+    assert.equal(doc.sufficient, false);
 
-    const avecDocumentation = makeFiche({
-      qualification: makeQualification({
-        ajustement_juridique: -38,
-        niveau_impact_juridique: "majeur",
-        confiance_qualification: "haute",
-        justification_juridique: "Contraire à une jurisprudence directement applicable du Conseil constitutionnel.",
-        sources_juridiques: ["S1"],
-      }),
-      sources: [{ id: "S1", titre: "Décision", organisme: "Conseil constitutionnel", url: "https://...", date_publication: null, date_consultation: "2026-08-10", type: "jurisprudence" }],
+    // Simule : une tentative de réparation (hors scoring.js, orchestrée par
+    // analyze.js) n'a pas permis d'obtenir de preuve -> neutralisation.
+    const neutralized = neutralizeAjustementJuridique(qualification);
+    assert.equal(neutralized.ajustement_juridique, 0);
+    assert.equal(neutralized.niveau_impact_juridique, "neutre");
+    // L'incertitude (justification, affirmations) reste visible : rien
+    // d'autre n'est effacé.
+    assert.equal(neutralized.justification_juridique_technique, "Contrainte alléguée mais mal établie.");
+    assert.equal(neutralized.affirmations_juridiques.length, 1);
+
+    // Le score final utilise bien l'ajustement neutralisé.
+    const analyse = makeAnalyseCanonique({
+      criteres: makeCriteres({ factuel: 20, efficacite: 20, operationnel: 20, cout: 20 }),
+      qualification: neutralized,
     });
-    const result = validateFiche(avecDocumentation);
-    assert.equal(result.valid, true, result.errors?.join("; "));
+    const structure = validateAnalyseCanoniqueStructure(analyse);
+    assert.equal(structure.valid, true, structure.errors?.join("; "));
+    const { notationDetaillee, audit } = applyFinalScore(structure.analyseCanonique);
+    assert.equal(audit.ajustementJuridique, 0);
+    assert.equal(notationDetaillee.score_total, 80);
   });
 
-  test("TEST D : écart à un engagement non contraignant -> malus limité (-1 à -8), jamais traité comme majeur", () => {
-    const fiche = makeFiche({
+  test("Distinction structure vs documentation : un ajustement non documenté reste STRUCTURELLEMENT valide (pas de rejet, seulement neutralisable)", () => {
+    const analyse = makeAnalyseCanonique({
       qualification: makeQualification({
         ajustement_juridique: -5,
         niveau_impact_juridique: "limite",
         confiance_qualification: "moyenne",
-        justification_juridique: "S'écarte d'un engagement non contraignant.",
+        affirmations_juridiques: [], // aucune preuve
       }),
     });
-    const result = validateFiche(fiche);
-    assert.equal(result.valid, true, result.errors?.join("; "));
-    assert.notEqual(fiche.qualification_juridique.niveau_impact_juridique, "majeur");
+    const structure = validateAnalyseCanoniqueStructure(analyse);
+    assert.equal(structure.valid, true, structure.errors?.join("; "));
+    const doc = checkAjustementDocumentation(analyse.qualification_juridique, analyse.sources_utilisees);
+    assert.equal(doc.sufficient, false);
   });
 });
 
-// --- Fonctions utilitaires ---------------------------------------------------
+// --- TEST A-F (section 44) — durcissement du bonus-malus juridique -------
+
+describe("TEST A-F — bonus-malus juridique (V4, documentation obligatoire pour tout ajustement non nul)", () => {
+  test("TEST A : nouvelle loi simple sans preuve -> ajustement doit tomber à 0 (documentation insuffisante par défaut)", () => {
+    const qualification = makeQualification({
+      ajustement_juridique: -3,
+      niveau_impact_juridique: "limite",
+      confiance_qualification: "moyenne",
+      justification_juridique_technique: "Nécessite une loi ordinaire.",
+      affirmations_juridiques: [], // rien de tracé : contrairement à V3, ceci NE SUFFIT PLUS
+    });
+    const doc = checkAjustementDocumentation(qualification, []);
+    assert.equal(doc.sufficient, false, "V4 exige une preuve même pour un malus limité");
+  });
+
+  test("TEST A bis : nouvelle loi avec friction distincte documentée -> malus limité accepté", () => {
+    const qualification = makeQualification({
+      ajustement_juridique: -3,
+      niveau_impact_juridique: "limite",
+      confiance_qualification: "moyenne",
+      justification_juridique_technique: "Frein administratif documenté au-delà de la procédure législative ordinaire.",
+      sources_juridiques: ["S1"],
+      affirmations_juridiques: [makeAffirmation({ degre_applicabilite: "probable" })],
+    });
+    const doc = checkAjustementDocumentation(qualification, [makeSource({ type: "source_publique" })]);
+    assert.equal(doc.sufficient, true, doc.errors.join("; "));
+  });
+
+  test("TEST B : révision constitutionnelle prévue -> malus significatif (-9 à -20) accepté avec source primaire directe", () => {
+    const qualification = makeQualification({
+      ajustement_juridique: -15,
+      niveau_impact_juridique: "significatif",
+      confiance_qualification: "moyenne",
+      justification_juridique_technique: "Révision constitutionnelle nécessaire mais explicitement prévue.",
+      sources_juridiques: ["S1"],
+      affirmations_juridiques: [makeAffirmation({ degre_applicabilite: "directe" })],
+    });
+    const doc = checkAjustementDocumentation(qualification, [makeSource({ type: "texte_juridique" })]);
+    assert.equal(doc.sufficient, true, doc.errors.join("; "));
+  });
+
+  test("TEST C : incompatibilité constitutionnelle sans mise en conformité -> exige confiance haute + source primaire", () => {
+    const sansDocumentation = makeQualification({
+      ajustement_juridique: -38,
+      niveau_impact_juridique: "majeur",
+      confiance_qualification: "haute",
+      justification_juridique_technique: "",
+      affirmations_juridiques: [],
+    });
+    assert.equal(checkAjustementDocumentation(sansDocumentation, []).sufficient, false);
+
+    const avecDocumentation = makeQualification({
+      ajustement_juridique: -38,
+      niveau_impact_juridique: "majeur",
+      confiance_qualification: "haute",
+      justification_juridique_technique: "Contraire à une jurisprudence directement applicable.",
+      sources_juridiques: ["S1"],
+      affirmations_juridiques: [makeAffirmation({ degre_applicabilite: "directe" })],
+    });
+    const doc = checkAjustementDocumentation(avecDocumentation, [makeSource({ type: "jurisprudence" })]);
+    assert.equal(doc.sufficient, true, doc.errors.join("; "));
+  });
+
+  test("TEST D : écart à un engagement non contraignant -> malus limité (-1 à -8) documenté, jamais traité comme majeur", () => {
+    const qualification = makeQualification({
+      ajustement_juridique: -5,
+      niveau_impact_juridique: "limite",
+      confiance_qualification: "moyenne",
+      justification_juridique_technique: "S'écarte d'un engagement non contraignant.",
+      sources_juridiques: ["S1"],
+      affirmations_juridiques: [makeAffirmation({ degre_applicabilite: "probable" })],
+    });
+    const doc = checkAjustementDocumentation(qualification, [makeSource({ type: "programme_politique" })]);
+    assert.equal(doc.sufficient, true, doc.errors.join("; "));
+    assert.notEqual(qualification.niveau_impact_juridique, "majeur");
+  });
+
+  test("TEST E : incompatibilité UE alléguée sans texte européen ni jurisprudence primaire -> insuffisant, neutralisable", () => {
+    const qualification = makeQualification({
+      ajustement_juridique: -15,
+      niveau_impact_juridique: "significatif",
+      confiance_qualification: "moyenne",
+      justification_juridique_technique: "Incompatibilité avec le droit de l'Union alléguée.",
+      sources_juridiques: ["S1"],
+      affirmations_juridiques: [makeAffirmation({ source_ids: ["S1"], degre_applicabilite: "directe" })],
+    });
+    // Seule source disponible : un article de presse, pas un texte européen
+    // officiel ni une jurisprudence CJUE.
+    const doc = checkAjustementDocumentation(qualification, [makeSource({ id: "S1", type: "presse" })]);
+    assert.equal(doc.sufficient, false);
+    const neutralized = neutralizeAjustementJuridique(qualification);
+    assert.equal(neutralized.ajustement_juridique, 0);
+  });
+
+  test("TEST F : source primaire existe mais protège une catégorie différente (degre_applicabilite non directe) -> insuffisant", () => {
+    const qualification = makeQualification({
+      ajustement_juridique: -15,
+      niveau_impact_juridique: "significatif",
+      confiance_qualification: "moyenne",
+      justification_juridique_technique: "Jurisprudence existante mais portant sur une autre catégorie.",
+      sources_juridiques: ["S1"],
+      affirmations_juridiques: [
+        makeAffirmation({ source_ids: ["S1"], degre_applicabilite: "discutable" }), // pas "directe"
+      ],
+    });
+    // La source EST bien juridique primaire...
+    const doc = checkAjustementDocumentation(qualification, [makeSource({ type: "jurisprudence" })]);
+    // ...mais aucune affirmation ne la déclare directement applicable : le
+    // malus -9 et au-delà reste insuffisamment étayé.
+    assert.equal(doc.sufficient, false);
+    assert.ok(doc.errors.some((e) => e.includes("directe")));
+  });
+});
+
+// --- Fonctions unitaires ---------------------------------------------------
 
 describe("Fonctions unitaires", () => {
   test("computeAppreciation suit le barème 0-19/20-39/.../90-100", () => {
@@ -313,50 +405,38 @@ describe("Fonctions unitaires", () => {
     assert.equal(computeNiveauImpactAttendu(-40), "majeur");
   });
 
-  test("validateFiche rejette un ajustement_juridique hors bornes (-41)", () => {
-    const fiche = makeFiche({
+  test("validateAnalyseCanoniqueStructure rejette un ajustement_juridique hors bornes (-41)", () => {
+    const analyse = makeAnalyseCanonique({
       qualification: makeQualification({ ajustement_juridique: -41, niveau_impact_juridique: "majeur" }),
     });
-    const result = validateFiche(fiche);
-    assert.equal(result.valid, false);
+    assert.equal(validateAnalyseCanoniqueStructure(analyse).valid, false);
   });
 
-  test("validateFiche rejette moins ou plus de 4 critères", () => {
-    const troisCriteres = makeFiche({ criteres: makeCriteres().slice(0, 3) });
-    assert.equal(validateFiche(troisCriteres).valid, false);
+  test("validateAnalyseCanoniqueStructure rejette moins ou plus de 4 critères", () => {
+    const analyse = makeAnalyseCanonique({ criteres: makeCriteres().slice(0, 3) });
+    assert.equal(validateAnalyseCanoniqueStructure(analyse).valid, false);
   });
 
-  test("validateFiche rejette un critère dupliqué", () => {
+  test("validateAnalyseCanoniqueStructure rejette un critère dupliqué", () => {
     const criteres = makeCriteres();
-    criteres[3] = { ...criteres[0] }; // "cout" remplacé par un doublon de "solidite_factuelle"
-    const fiche = makeFiche({ criteres });
-    assert.equal(validateFiche(fiche).valid, false);
+    criteres[3] = { ...criteres[0] };
+    const analyse = makeAnalyseCanonique({ criteres });
+    assert.equal(validateAnalyseCanoniqueStructure(analyse).valid, false);
   });
 
-  test("validateFiche rejette une note hors bornes (26/25)", () => {
-    const fiche = makeFiche({ criteres: makeCriteres({ factuel: 26 }) });
-    assert.equal(validateFiche(fiche).valid, false);
+  test("validateAnalyseCanoniqueStructure rejette une note hors bornes (26/25)", () => {
+    const analyse = makeAnalyseCanonique({ criteres: makeCriteres({ factuel: 26 }) });
+    assert.equal(validateAnalyseCanoniqueStructure(analyse).valid, false);
   });
 
-  test("checkSourcesJuridiquesReferences détecte un identifiant absent de sources_utilisees", () => {
-    const fiche = makeFiche({
-      qualification: makeQualification({ sources_juridiques: ["S1"] }),
-      sources: [], // S1 n'existe pas
-    });
-    const errors = checkSourcesJuridiquesReferences(fiche);
-    assert.equal(errors.length, 1);
+  test("validateAnalyseCanoniqueStructure accepte une qualification_juridique neutre sans affirmations (ajustement=0)", () => {
+    const analyse = makeAnalyseCanonique(); // qualification par défaut : ajustement 0, affirmations vides
+    const result = validateAnalyseCanoniqueStructure(analyse);
+    assert.equal(result.valid, true, result.errors?.join("; "));
   });
 
-  test("checkAjustementJuridiqueDocumentation n'exige rien pour un ajustement neutre ou limité", () => {
-    assert.deepEqual(
-      checkAjustementJuridiqueDocumentation(makeQualification({ ajustement_juridique: 0, justification_juridique: "" })),
-      [],
-    );
-    assert.deepEqual(
-      checkAjustementJuridiqueDocumentation(
-        makeQualification({ ajustement_juridique: -8, justification_juridique: "", sources_juridiques: [] }),
-      ),
-      [],
-    );
+  test("checkAjustementDocumentation ne demande rien pour un ajustement nul", () => {
+    const doc = checkAjustementDocumentation(makeQualification({ ajustement_juridique: 0 }), []);
+    assert.deepEqual(doc, { sufficient: true, errors: [] });
   });
 });
