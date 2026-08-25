@@ -169,6 +169,19 @@ model VoteMesure {
   createdAt DateTime @default(now())
 }
 
+// Message libre envoyé via la modale "Nous contacter" du header (suggestion,
+// question, signalement d'erreur) — sans authentification ni rattachement à
+// une fiche particulière.
+model MessageContact {
+  id Int @id @default(autoincrement())
+
+  nom     String?
+  email   String?
+  message String
+
+  createdAt DateTime @default(now())
+}
+
 model Source {
   id  Int    @id @default(autoincrement())
   nom String
