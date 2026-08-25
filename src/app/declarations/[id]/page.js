@@ -409,12 +409,21 @@ export default async function DeclarationDetailPage({ params }) {
           <div className="flex flex-col gap-6">
             {/* En-tête */}
             <div>
-              <Link
-                href="/declarations"
-                className="text-sm font-semibold text-blue-600 transition-colors hover:text-blue-800"
-              >
-                ← Retour
-              </Link>
+              <div className="flex items-center justify-between gap-3">
+                <Link
+                  href="/declarations"
+                  className="text-sm font-semibold text-blue-600 transition-colors hover:text-blue-800"
+                >
+                  ← Retour
+                </Link>
+
+                {declaration.analyse.versionMethodologie && declaration.generationDateLabel ? (
+                  <span className="text-xs text-zinc-400">
+                    Perlimpinpin {declaration.analyse.versionMethodologie} Tagadaaa · généré le{" "}
+                    {declaration.generationDateLabel}
+                  </span>
+                ) : null}
+              </div>
 
               <span className="mt-6 block text-xs font-bold uppercase tracking-widest text-red-600">
                 {declaration.theme}

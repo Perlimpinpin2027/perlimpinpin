@@ -392,6 +392,10 @@ export async function getDeclarationDetail(propositionId) {
     dateLabel: dateFormatter.format(proposition.dateDeclaration),
     candidat: proposition.candidat,
     analyse,
+    // Date de génération affichée en haut de la fiche ("Perlimpinpin
+    // {version} · généré le ..."), à partir de analyse.createdAt — distincte
+    // de dateLabel ci-dessus, qui est la date de la déclaration elle-même.
+    generationDateLabel: analyse ? dateFormatter.format(analyse.createdAt) : null,
     feedbackCounts,
     voteMesureCounts,
   };

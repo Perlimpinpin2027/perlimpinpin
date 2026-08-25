@@ -85,7 +85,18 @@ model Analyse {
   // "brouillon" | "publie"
   statut String @default("brouillon")
 
-  versionMethodologie String @default("v1.0")
+  // Valeur en dur, jamais dérivée automatiquement — à faire évoluer
+  // manuellement (1.1, 2.0...) le jour où data/prompt-methodologie.md
+  // change vraiment. Affichée sur la fiche publique.
+  versionMethodologie String @default("1.0")
+
+  // Date de dernière modification de data/prompt-methodologie.md au moment
+  // de la génération de cette analyse. Jamais affichée : sert uniquement de
+  // filet de sécurité d'audit interne — comparée à createdAt, elle permet de
+  // repérer une analyse générée après un changement de prompt dont
+  // versionMethodologie n'aurait pas été remonté manuellement. Nullable :
+  // absente pour les analyses générées avant l'ajout de ce champ.
+  promptFileModifiedAt DateTime?
 
   // Réponse JSON complète renvoyée par l'API Anthropic (sortie finale, après
   // arbitrage de l'étape 3 du pipeline)
