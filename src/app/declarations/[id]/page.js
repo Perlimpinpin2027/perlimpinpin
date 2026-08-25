@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import FeedbackWidget from "@/components/FeedbackWidget";
+import VoteMesureWidget from "@/components/VoteMesureWidget";
 import StickyScoreCard from "@/components/StickyScoreCard";
 import { getDeclarationDetail } from "@/lib/queries";
 import { getScoreBadge } from "@/lib/score";
@@ -551,6 +552,16 @@ export default async function DeclarationDetailPage({ params }) {
               </Link>
             </div>
 
+            {/* Vote sur la mesure elle-même — premier exemplaire, proche du
+                titre et du score, pour capter le lecteur qui ne lit pas
+                toute la fiche. Voir aussi le second exemplaire en bas de
+                page, à côté de FeedbackWidget. */}
+            <VoteMesureWidget
+              propositionId={declaration.id}
+              initialAccord={declaration.voteMesureCounts.accord}
+              initialDesaccord={declaration.voteMesureCounts.desaccord}
+            />
+
             {/* Extrait analysé */}
             <section className="rounded-2xl border border-zinc-200 bg-white p-6 sm:p-8">
               <div className="flex flex-wrap items-center justify-between gap-3">
@@ -677,6 +688,17 @@ export default async function DeclarationDetailPage({ params }) {
                 </div>
               ) : null}
             </div>
+
+            {/* Vote sur la mesure elle-même — second exemplaire, pour le
+                lecteur qui a lu toute la fiche (voir le premier exemplaire
+                en haut de page). Volontairement distinct visuellement du
+                like/dislike juste en dessous, qui porte sur l'analyse, pas
+                sur la mesure. */}
+            <VoteMesureWidget
+              propositionId={declaration.id}
+              initialAccord={declaration.voteMesureCounts.accord}
+              initialDesaccord={declaration.voteMesureCounts.desaccord}
+            />
 
             {/* Like / dislike, juste avant le bandeau de confiance */}
             <FeedbackWidget

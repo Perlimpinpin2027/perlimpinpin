@@ -37,7 +37,8 @@ model Proposition {
   candidatId Int
   candidat   Candidat @relation(fields: [candidatId], references: [id])
 
-  analyses Analyse[]
+  analyses     Analyse[]
+  votesMesure  VoteMesure[]
 }
 
 model Analyse {
@@ -147,6 +148,23 @@ model Feedback {
 
   // Texte libre si raison = "autre"
   raisonAutre String?
+
+  createdAt DateTime @default(now())
+}
+
+// Vote du lecteur sur la mesure politique elle-même (d'accord / pas
+// d'accord), distinct de Feedback (qui porte sur la qualité de l'analyse
+// de Perlimpinpin). Rattaché à Proposition, pas à Analyse : l'avis du
+// lecteur porte sur la mesure telle qu'annoncée, indépendamment d'une
+// éventuelle nouvelle version de l'analyse.
+model VoteMesure {
+  id Int @id @default(autoincrement())
+
+  propositionId Int
+  proposition   Proposition @relation(fields: [propositionId], references: [id])
+
+  // "accord" | "desaccord"
+  type String
 
   createdAt DateTime @default(now())
 }

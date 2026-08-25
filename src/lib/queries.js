@@ -375,6 +375,15 @@ export async function getDeclarationDetail(propositionId) {
       })()
     : { likes: 0, dislikes: 0 };
 
+  // Vote sur la mesure elle-même (d'accord / pas d'accord), distinct du
+  // feedback sur la qualité de l'analyse ci-dessus — rattaché à la
+  // Proposition, pas à l'Analyse (voir prisma/schema.prisma, VoteMesure).
+  const [accord, desaccord] = await Promise.all([
+    prisma.voteMesure.count({ where: { propositionId: proposition.id, type: "accord" } }),
+    prisma.voteMesure.count({ where: { propositionId: proposition.id, type: "desaccord" } }),
+  ]);
+  const voteMesureCounts = { accord, desaccord };
+
   return {
     id: proposition.id,
     titre: displayTitle(proposition),
@@ -384,5 +393,6 @@ export async function getDeclarationDetail(propositionId) {
     candidat: proposition.candidat,
     analyse,
     feedbackCounts,
+    voteMesureCounts,
   };
 }
