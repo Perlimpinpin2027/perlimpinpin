@@ -246,7 +246,7 @@ européen général :
 
 Tout ajustement non nul doit être sourcé et expliqué. Un ajustement `-6..-30` exige au moins une source juridique primaire directement pertinente. Un ajustement `-21..-30` exige une confiance haute.
 
-Une révision constitutionnelle juridiquement possible et explicitement prévue ne justifie pas à elle seule `-21..-30`. Une majorité parlementaire hostile ou une négociation politiquement difficile ne constitue pas un obstacle juridique.
+Une révision constitutionnelle juridiquement possible et explicitement prévue ne justifie pas à elle seule `-21..-25`. Une majorité parlementaire hostile ou une négociation politiquement difficile ne constitue pas un obstacle juridique.
 
 Ne jamais pénaliser deux fois le même obstacle. Les conséquences opérationnelles distinctes (délais, moyens, coordination) peuvent être notées séparément, mais pas la même incompatibilité normative.
 
@@ -409,7 +409,7 @@ Conserver **5 objets dans le même ordre visuel** :
 5. faisabilité juridique.
 
 Pour les quatre premiers : note `/25`.
-Pour le cinquième : conserver le **même bloc textuel juridique** dans le rendu, mais sans second score public. Il explique la situation juridique et ses conséquences concrètes. L'ajustement `-30..+5` reste interne dans `notation_detaillee`.
+Pour le cinquième : conserver le **même bloc textuel juridique** dans le rendu, mais sans second score public. Il explique la situation juridique et ses conséquences concrètes. L'ajustement `-25..+5` reste interne dans `notation_detaillee`.
 
 Chaque critère : 2 à 4 phrases maximum. 
 
@@ -504,3 +504,5 @@ Pas de tirets cadratins, peu d'abréviations.
 4. **Mistral** : utiliser `mistral-large-latest` et lire la clé depuis une variable d'environnement, jamais en dur.
 5. Recherche : loguer, pour chaque run automatisé, le nombre réel de recherches utilisées. 
 6. **Test** : lancer le pipeline sur la proposition existante et afficher `contreAvisMistral`, `auditArbitrage` et `score_total` final.
+
+
