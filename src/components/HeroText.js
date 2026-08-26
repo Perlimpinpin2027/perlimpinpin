@@ -24,7 +24,7 @@ const features = [
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
-        d="m4.5 12.75 6 6 9-13.5"
+        d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
       />
     ),
   },
@@ -66,8 +66,11 @@ export default function HeroText() {
       </span>
 
       <h1 className="mt-4 font-serif text-4xl font-bold leading-tight tracking-tight text-zinc-900 sm:text-5xl">
-        Ce que valent vraiment les promesses politiques
-        <span className="text-blue-600">.</span>
+        Ce que valent vraiment les promesses politiques{" "}
+        <span
+          className="inline-block h-2.5 w-2.5 rounded-full bg-blue-600 align-middle"
+          aria-hidden="true"
+        />
       </h1>
 
       <p className="mt-5 max-w-lg text-base leading-relaxed text-zinc-500">
@@ -77,23 +80,31 @@ export default function HeroText() {
       </p>
 
       <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-3">
-        {features.map((feature) => (
-          <div key={feature.title} className="flex items-start gap-2.5">
-            <span
-              className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${feature.bgClass}`}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={1.5}
-                className={`h-5 w-5 ${feature.iconClass}`}
-                aria-hidden="true"
+        {features.map((feature, index) => (
+          <div key={feature.title} className="flex flex-col gap-3">
+            <div className="flex items-center gap-2">
+              <span
+                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${feature.bgClass}`}
               >
-                {feature.icon}
-              </svg>
-            </span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={1.5}
+                  className={`h-5 w-5 ${feature.iconClass}`}
+                  aria-hidden="true"
+                >
+                  {feature.icon}
+                </svg>
+              </span>
+              {/* Chasse fixe "// 0X" : même traitement typographique que le
+                  mini-sommaire "Sur cette page" des pages de déclaration
+                  (voir StickyScoreCard), pour rester cohérent dans le site. */}
+              <span className="font-mono text-xs text-zinc-400">
+                {`// ${String(index + 1).padStart(2, "0")}`}
+              </span>
+            </div>
             <div>
               <p className="text-sm font-semibold text-zinc-900">
                 {feature.title}

@@ -112,10 +112,7 @@ export default function FeaturedCard({
         </div>
 
         <div className="flex flex-1 flex-col p-6 sm:p-8">
-          <span className="text-xs font-bold uppercase tracking-widest text-red-600">
-            Prix Perlimpinpin de la semaine
-          </span>
-          <p className="mt-3 text-sm font-semibold text-zinc-900">{personName}</p>
+          <p className="text-xl font-bold tracking-tight text-zinc-900">{personName}</p>
           <blockquote className="mt-2 line-clamp-3 font-serif text-2xl font-bold leading-tight text-zinc-900">
             &ldquo;{quoteText}&rdquo;
           </blockquote>
@@ -126,17 +123,25 @@ export default function FeaturedCard({
           ) : null}
 
           {/* Le score est l'info la plus importante après le titre : mis en
-              valeur juste avant le bouton, pas relégué dans une barre basse. */}
-          <div className="mt-6 flex flex-wrap items-center gap-3">
-            <span className={`text-5xl font-extrabold tracking-tight ${badge.scoreClass}`}>
-              {score}
-              <span className="text-lg font-semibold text-zinc-400">/100</span>
+              valeur juste avant le bouton, pas relégué dans une barre basse.
+              Même traitement que la carte score sticky des pages de
+              déclaration (voir StickyScoreCard), pour une identité visuelle
+              cohérente du "score Perlimpinpin" à travers le site. */}
+          <div className="mt-6 border-t border-zinc-100 pt-6">
+            <span className="text-xs font-bold uppercase tracking-widest text-zinc-500">
+              Score Perlimpinpin
             </span>
-            <span
-              className={`rounded-full px-3 py-1 text-xs font-semibold ${badge.badgeClass}`}
+            <div className="mt-2 flex items-baseline gap-1.5">
+              <span className={`text-5xl font-extrabold tracking-tight ${badge.scoreClass}`}>
+                {score}
+              </span>
+              <span className="text-lg font-semibold text-zinc-400">/100</span>
+            </div>
+            <div
+              className={`mt-3 inline-flex w-fit items-center rounded-full px-3 py-1 text-xs font-semibold ${badge.badgeClass}`}
             >
               {badge.label}
-            </span>
+            </div>
           </div>
 
           <Link
