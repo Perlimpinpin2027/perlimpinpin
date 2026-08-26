@@ -59,12 +59,17 @@ export default function Header() {
               l'image se fond dans n'importe quel fond derrière (multiply
               par blanc = identité), donc pas de rectangle visible même
               quand le header devient semi-transparent au scroll — sans
-              dépendre d'un nouvel export transparent. */}
+              dépendre d'un nouvel export transparent.
+              width/height 1877x233 : dimensions réelles du fichier recadré
+              (voir le commentaire de .header-logo dans globals.css) — le
+              fichier original 2181x721 laissait ~73% de vide vertical
+              autour du texte, ce qui rendait toute hauteur CSS visuellement
+              minuscule quel que soit le nombre de pixels demandé. */}
           <Image
             src="/logo/logo.png"
             alt="Perlimpinpin"
-            width={2181}
-            height={721}
+            width={1877}
+            height={233}
             priority
             className="header-logo mix-blend-multiply"
           />
