@@ -1,15 +1,6 @@
 import Link from "next/link";
 import { getScoreBadge, getScoreBands } from "@/lib/score";
 
-const bandDescriptions = {
-  Exemplaire: "Solidement démontré, chiffré et cohérent avec les données disponibles.",
-  "Solide et chiffré": "S'appuie sur des données publiques vérifiables et cohérentes.",
-  "Plausible sous condition": "Réaliste mais dépend de conditions ou de financements incertains.",
-  "Partiellement fondé": "Repose sur des éléments réels mais incomplets ou fragiles.",
-  Fragile: "Peu d'éléments vérifiables viennent appuyer cette déclaration.",
-  Irréaliste: "Aucune donnée publique ne permet d'établir la faisabilité.",
-};
-
 function ColumnHeader({ title, subtitle, linkLabel, linkHref, icon }) {
   return (
     <div className="mb-6 flex items-start justify-between gap-4">
@@ -142,7 +133,7 @@ function ScoreExplainerColumn() {
               </span>
             </div>
             <p className="mt-1 text-sm text-zinc-500">
-              {bandDescriptions[item.label]}
+              {item.description}
             </p>
           </div>
         ))}
