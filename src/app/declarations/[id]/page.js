@@ -49,6 +49,20 @@ const ICON_OPERATIONNEL = (
     d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
   />
 );
+const ICON_SHIELD = (
+  <path
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z"
+  />
+);
+const ICON_WARNING = (
+  <path
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"
+  />
+);
 
 // Ancien barème (5 critères à poids différents 20/20/25/20/15, addition
 // simple) : encore utilisé par les fiches produites avant le nouveau
@@ -346,6 +360,127 @@ function ScoreBar({ icon, label, note, max, isGardeFou, vetoApplique }) {
   );
 }
 
+// --- Fiabilité de l'analyse (niveau de confiance + limites) ----------------
+
+const CONFIDENCE_LEVELS = {
+  faible: { filled: 1, dotClass: "bg-red-500", label: "Faible", badgeClass: "bg-red-50 text-red-700" },
+  moyenne: { filled: 2, dotClass: "bg-orange-400", label: "Moyenne", badgeClass: "bg-orange-50 text-orange-700" },
+  elevee: { filled: 3, dotClass: "bg-emerald-500", label: "Élevée", badgeClass: "bg-emerald-50 text-emerald-700" },
+};
+
+// Bloc B (à venir) : les prochaines analyses porteront un champ structuré
+// dédié niveau_confiance_echelle ("faible"|"moyenne"|"élevée"), à préférer
+// dès qu'il existe. En attendant — et pour toutes les fiches déjà publiées,
+// qui ne l'auront jamais — on déduit le niveau par mots-clés dans le texte
+// existant de niveau_de_confiance. C'est une ESTIMATION, pas une nouvelle
+// analyse IA : aucune garantie d'exactitude parfaite sur les fiches
+// historiques, volontairement acceptée (voir la demande d'origine).
+function estimateConfidenceLevel(value) {
+  const text = Array.isArray(value) ? value.join(" ") : value;
+  if (typeof text !== "string" || text.trim().length === 0) return "moyenne";
+  const normalized = text.trim().toLowerCase();
+
+  // En pratique, le texte commence quasi systématiquement par une étiquette
+  // explicite ("Faible.", "Moyen.", "Élevé(e)...") avant l'explication en
+  // prose libre : on la préfère à un scan de mots-clés sur tout le texte,
+  // qui produit trop de faux positifs (ex. "solidement" contient "solide"
+  // et ferait basculer à tort un niveau "moyen" vers "élevée").
+  const leadingWord = normalized.match(/^[a-zéèêàâîïôûù]+/)?.[0];
+  if (leadingWord === "élevé" || leadingWord === "élevée" || leadingWord === "haute") return "elevee";
+  if (leadingWord === "moyen" || leadingWord === "moyenne") return "moyenne";
+  if (leadingWord === "faible") return "faible";
+
+  if (/(élevé|haute|solide)/.test(normalized)) return "elevee";
+  if (/(faible|insuffisant|limité)/.test(normalized)) return "faible";
+  return "moyenne";
+}
+
+// Structuré (Bloc B, futur) en priorité, sinon estimation par mots-clés.
+function resolveConfidenceLevel(contenu) {
+  const structured = contenu.niveau_confiance_echelle;
+  if (structured === "faible" || structured === "moyenne") return structured;
+  if (structured === "élevée" || structured === "elevee") return "elevee";
+  return estimateConfidenceLevel(contenu.niveau_de_confiance);
+}
+
+function ConfidenceGauge({ level }) {
+  const config = CONFIDENCE_LEVELS[level] ?? CONFIDENCE_LEVELS.moyenne;
+  return (
+    <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1" aria-hidden="true">
+        {[0, 1, 2].map((i) => (
+          <span
+            key={i}
+            className={`h-2.5 w-2.5 rounded-full ${i < config.filled ? config.dotClass : "bg-zinc-200"}`}
+          />
+        ))}
+      </div>
+      <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${config.badgeClass}`}>
+        {config.label}
+      </span>
+    </div>
+  );
+}
+
+function FiabiliteSection({ contenu }) {
+  const level = resolveConfidenceLevel(contenu);
+  return (
+    <div>
+      <span className="block text-xs font-bold uppercase tracking-widest text-zinc-500">
+        Fiabilité de l&apos;analyse
+      </span>
+      <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="rounded-2xl border border-zinc-200 bg-white p-6">
+          <div className="flex items-center gap-3">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.5}
+                className="h-4.5 w-4.5"
+                aria-hidden="true"
+              >
+                {ICON_SHIELD}
+              </svg>
+            </span>
+            <p className="text-sm font-bold text-zinc-900">Niveau de confiance</p>
+          </div>
+          <div className="mt-3">
+            <ConfidenceGauge level={level} />
+          </div>
+          <div className="mt-3 max-w-[68ch] text-sm leading-7 text-zinc-600">
+            <TextOrList value={contenu.niveau_de_confiance} />
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-zinc-200 bg-white p-6">
+          <div className="flex items-center gap-3">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.5}
+                className="h-4.5 w-4.5"
+                aria-hidden="true"
+              >
+                {ICON_WARNING}
+              </svg>
+            </span>
+            <p className="text-sm font-bold text-zinc-900">Limites identifiées</p>
+          </div>
+          <div className="mt-3 max-w-[68ch] text-sm leading-7 text-zinc-600">
+            <TextOrList value={contenu.limites} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Première phrase de resumeAccueil, pour le court commentaire sous le
 // badge dans la carte score de la sidebar (pas de nouveau champ IA).
 function firstSentence(text) {
@@ -409,23 +544,18 @@ export default async function DeclarationDetailPage({ params }) {
           <div className="flex flex-col gap-6">
             {/* En-tête */}
             <div>
-              <div className="flex items-center justify-between gap-3">
-                <Link
-                  href="/declarations"
-                  className="text-sm font-semibold text-blue-600 transition-colors hover:text-blue-800"
-                >
-                  ← Retour
-                </Link>
+              <Link
+                href="/declarations"
+                className="text-sm font-semibold text-blue-600 transition-colors hover:text-blue-800"
+              >
+                ← Retour
+              </Link>
 
-                {declaration.analyse.versionMethodologie && declaration.generationDateLabel ? (
-                  <span className="text-xs text-zinc-400">
-                    Perlimpinpin {declaration.analyse.versionMethodologie} Tagadaaa · généré le{" "}
-                    {declaration.generationDateLabel}
-                  </span>
-                ) : null}
-              </div>
-
-              <span className="mt-6 block text-xs font-bold uppercase tracking-widest text-red-600">
+              {/* Bleu sur cette page uniquement (choix délibéré propre à la
+                  fiche déclaration) — les labels de thème identiques
+                  ailleurs sur le site (accueil, à propos) restent en rouge,
+                  ne pas généraliser cette couleur. */}
+              <span className="mt-6 block text-xs font-bold uppercase tracking-widest text-blue-600">
                 {declaration.theme}
               </span>
               <h1 className="mt-2 text-[clamp(1.5rem,1.05rem+1.7vw,2.25rem)] font-serif font-bold leading-tight tracking-tight text-zinc-900">
@@ -686,16 +816,7 @@ export default async function DeclarationDetailPage({ params }) {
                 <SourcesList value={contenu.sources_utilisees} />
               </Section>
 
-              {!isV4 ? (
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                  <Section title="Niveau de confiance">
-                    <TextOrList value={contenu.niveau_de_confiance} />
-                  </Section>
-                  <Section title="Limites">
-                    <TextOrList value={contenu.limites} />
-                  </Section>
-                </div>
-              ) : null}
+              {!isV4 ? <FiabiliteSection contenu={contenu} /> : null}
             </div>
 
             {/* Vote sur la mesure elle-même — second exemplaire, pour le
