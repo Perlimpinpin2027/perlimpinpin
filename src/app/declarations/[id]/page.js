@@ -99,6 +99,23 @@ const CRITERE_ICONS = {
   juridique_garde_fou: ICON_JURIDIQUE,
 };
 
+// Traitement "verre dépoli" des deux points d'entrée clés d'une fiche
+// déclaration (résumé IA en haut, verdict final en bas du raisonnement) :
+// fond semi-transparent légèrement teinté + flou d'arrière-plan, qui laisse
+// deviner le dégradé de la page (.bg-page-gradient) en transparence.
+// backdrop-filter posé en style inline plutôt qu'en classe CSS/Tailwind :
+// une fois passé par l'autoprefixer du build (Lightning CSS, voir
+// postcss.config.mjs), la propriété ne survit pas de façon fiable dans une
+// classe globale — même problème déjà rencontré sur le header sticky, voir
+// le commentaire dans Header.js. L'inline style pose la valeur finale
+// directement dans le DOM, sans passer par cette étape.
+const GLASS_STYLE = {
+  backgroundColor: "rgba(239, 246, 255, 0.55)",
+  backdropFilter: "blur(20px) saturate(160%)",
+  WebkitBackdropFilter: "blur(20px) saturate(160%)",
+  border: "1px solid rgba(191, 219, 254, 0.5)",
+};
+
 // Sections ciblées par le mini-sommaire de navigation de la sidebar sticky
 // (voir StickyScoreCard) : chaque id doit correspondre à un ancrage posé
 // plus bas dans "Le raisonnement complet".
@@ -157,6 +174,42 @@ function TextOrList({ value }) {
     );
   }
   return <p>{renderRichText(value)}</p>;
+}
+
+// Contexte national/international arrivent souvent comme un seul long
+// paragraphe mélangeant plusieurs idées (ex. 4-6 phrases enchaînées), dur à
+// parcourir. Découpe naïve en phrases puis regroupement par lots de 3 pour
+// aérer en plusieurs paragraphes, sans toucher au texte lui-même — repérage
+// simple par ponctuation de fin de phrase, accepté comme imparfait (ex. sur
+// une abréviation ou un nombre décimal en fin de segment).
+function splitSentences(text) {
+  const trimmed = text.trim();
+  if (!trimmed) return [];
+  const matches = trimmed.match(/[^.!?]+[.!?]+(?:["'"»)\]]*)(?:\s+|$)/g);
+  return matches ? matches.map((sentence) => sentence.trim()).filter(Boolean) : [trimmed];
+}
+
+function ContextText({ value }) {
+  if (!value) return <p className="text-zinc-400">Non renseigné.</p>;
+  if (Array.isArray(value) || typeof value !== "string") {
+    return <TextOrList value={value} />;
+  }
+
+  const sentences = splitSentences(value);
+  if (sentences.length <= 3) return <p>{renderRichText(value)}</p>;
+
+  const paragraphs = [];
+  for (let i = 0; i < sentences.length; i += 3) {
+    paragraphs.push(sentences.slice(i, i + 3).join(" "));
+  }
+
+  return (
+    <div className="flex flex-col gap-3">
+      {paragraphs.map((paragraph, index) => (
+        <p key={index}>{renderRichText(paragraph)}</p>
+      ))}
+    </div>
+  );
 }
 
 // sources_utilisees : chaîne simple par élément sur les fiches antérieures
@@ -406,74 +459,77 @@ function resolveConfidenceLevel(contenu) {
 function ConfidenceGauge({ level }) {
   const config = CONFIDENCE_LEVELS[level] ?? CONFIDENCE_LEVELS.moyenne;
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-1.5">
       <div className="flex items-center gap-1" aria-hidden="true">
         {[0, 1, 2].map((i) => (
           <span
             key={i}
-            className={`h-2.5 w-2.5 rounded-full ${i < config.filled ? config.dotClass : "bg-zinc-200"}`}
+            className={`h-2 w-2 rounded-full ${i < config.filled ? config.dotClass : "bg-zinc-200"}`}
           />
         ))}
       </div>
-      <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${config.badgeClass}`}>
+      <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${config.badgeClass}`}>
         {config.label}
       </span>
     </div>
   );
 }
 
+// Volontairement plus discrète que les autres blocs de la page (fond gris
+// clair sans bordure marquée, texte plus petit, pas de carte pleine
+// largeur) : "Niveau de confiance"/"Limites identifiées" sont une
+// information secondaire/méta sur l'analyse elle-même, pas un point de
+// contenu au même niveau que le raisonnement — sinon la page accumule trop
+// de blocs identiques, surtout depuis le traitement "verre dépoli" du
+// résumé IA et du verdict (voir .card-glass).
 function FiabiliteSection({ contenu }) {
   const level = resolveConfidenceLevel(contenu);
   return (
-    <div>
-      <span className="block text-xs font-bold uppercase tracking-widest text-zinc-500">
+    <div className="rounded-xl bg-zinc-50 px-5 py-4">
+      <span className="block text-[11px] font-semibold uppercase tracking-widest text-zinc-400">
         Fiabilité de l&apos;analyse
       </span>
-      <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div className="rounded-2xl border border-zinc-200 bg-white p-6">
-          <div className="flex items-center gap-3">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={1.5}
-                className="h-4.5 w-4.5"
-                aria-hidden="true"
-              >
-                {ICON_SHIELD}
-              </svg>
-            </span>
-            <p className="text-sm font-bold text-zinc-900">Niveau de confiance</p>
-          </div>
-          <div className="mt-3">
-            <ConfidenceGauge level={level} />
-          </div>
-          <div className="mt-3 max-w-[68ch] text-sm leading-7 text-zinc-600">
-            <TextOrList value={contenu.niveau_de_confiance} />
+      <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6">
+        <div className="flex items-start gap-2.5">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={1.5}
+            className="mt-0.5 h-4 w-4 shrink-0 text-zinc-400"
+            aria-hidden="true"
+          >
+            {ICON_SHIELD}
+          </svg>
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs font-semibold text-zinc-600">Niveau de confiance</span>
+              <ConfidenceGauge level={level} />
+            </div>
+            <div className="mt-1 text-xs leading-6 text-zinc-500">
+              <TextOrList value={contenu.niveau_de_confiance} />
+            </div>
           </div>
         </div>
 
-        <div className="rounded-2xl border border-zinc-200 bg-white p-6">
-          <div className="flex items-center gap-3">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={1.5}
-                className="h-4.5 w-4.5"
-                aria-hidden="true"
-              >
-                {ICON_WARNING}
-              </svg>
-            </span>
-            <p className="text-sm font-bold text-zinc-900">Limites identifiées</p>
-          </div>
-          <div className="mt-3 max-w-[68ch] text-sm leading-7 text-zinc-600">
-            <TextOrList value={contenu.limites} />
+        <div className="flex items-start gap-2.5">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={1.5}
+            className="mt-0.5 h-4 w-4 shrink-0 text-zinc-400"
+            aria-hidden="true"
+          >
+            {ICON_WARNING}
+          </svg>
+          <div className="min-w-0">
+            <span className="text-xs font-semibold text-zinc-600">Limites identifiées</span>
+            <div className="mt-1 text-xs leading-6 text-zinc-500">
+              <TextOrList value={contenu.limites} />
+            </div>
           </div>
         </div>
       </div>
@@ -579,8 +635,11 @@ export default async function DeclarationDetailPage({ params }) {
               </div>
             </div>
 
-            {/* Le résumé de Perlimpinpin IA */}
-            <section className="rounded-2xl border border-zinc-200 bg-zinc-50 p-6 sm:p-8">
+            {/* Le résumé de Perlimpinpin IA : traitement "verre dépoli"
+                (GLASS_STYLE), en écho au Verdict final plus bas — les deux
+                points d'entrée clés de la lecture, avant/après le
+                raisonnement détaillé. */}
+            <section className="rounded-2xl p-6 sm:p-8" style={GLASS_STYLE}>
               <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-blue-700">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -770,12 +829,21 @@ export default async function DeclarationDetailPage({ params }) {
                     <TextOrList value={contenu.contexte_programme} />
                   </Section>
 
-                  <div id="contexte" className="scroll-mt-24 grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  {/* Empilé plutôt qu'en 2 colonnes : la colonne principale
+                      de cette page (2fr d'une grille 2fr/1fr, elle-même
+                      plafonnée à max-w-6xl) ne laisse qu'environ 360px par
+                      sous-colonne une fois divisée en deux — sous la barre
+                      des 65-70 caractères/ligne visée plus haut, quelle que
+                      soit la largeur d'écran (le plafond max-w-6xl ne bouge
+                      pas). Empilées, ces deux sections profitent de toute la
+                      largeur de la colonne (jusqu'à max-w-[68ch] du Section
+                      générique), donc plus lisibles que côte à côte ici. */}
+                  <div id="contexte" className="scroll-mt-24 flex flex-col gap-6">
                     <Section title="Contexte national">
-                      <TextOrList value={contenu.contexte_national} />
+                      <ContextText value={contenu.contexte_national} />
                     </Section>
                     <Section title="Contexte international">
-                      <TextOrList value={contenu.contexte_international} />
+                      <ContextText value={contenu.contexte_international} />
                     </Section>
                   </div>
                 </>
@@ -808,9 +876,15 @@ export default async function DeclarationDetailPage({ params }) {
                 </>
               ) : null}
 
-              <Section id="verdict" title="Verdict final">
-                <TextOrList value={contenu.verdict_final} />
-              </Section>
+              {/* Verdict final : même traitement "verre dépoli" que le
+                  résumé IA en haut de page (voir GLASS_STYLE) plutôt que le
+                  Section générique blanc utilisé ailleurs. */}
+              <section id="verdict" className="scroll-mt-24 rounded-2xl p-6 sm:p-8" style={GLASS_STYLE}>
+                <h2 className="text-lg font-bold text-zinc-900">Verdict final</h2>
+                <div className="mt-3 max-w-[68ch] text-sm leading-7 text-zinc-600">
+                  <TextOrList value={contenu.verdict_final} />
+                </div>
+              </section>
 
               <Section title="Sources utilisées">
                 <SourcesList value={contenu.sources_utilisees} />

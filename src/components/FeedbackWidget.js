@@ -16,6 +16,34 @@ function storageKey(analyseId) {
   return `feedback:${analyseId}`;
 }
 
+// Flèches minimalistes plutôt que des emojis 👍/👎, cohérentes avec le reste
+// de l'iconographie du site (traits fins, pas de remplissage). Même paire
+// utilisée par VoteMesureWidget, pour l'uniformité visuelle des deux
+// systèmes de vote de la page.
+function ArrowIcon({ direction }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      className="h-4 w-4"
+      aria-hidden="true"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d={
+          direction === "up"
+            ? "M12 19.5v-15m0 0-6.75 6.75M12 4.5l6.75 6.75"
+            : "M12 4.5v15m0 0-6.75-6.75M12 19.5l6.75-6.75"
+        }
+      />
+    </svg>
+  );
+}
+
 export default function FeedbackWidget({ analyseId, initialLikes, initialDislikes }) {
   const [likes, setLikes] = useState(initialLikes);
   const [dislikes, setDislikes] = useState(initialDislikes);
@@ -74,12 +102,19 @@ export default function FeedbackWidget({ analyseId, initialLikes, initialDislike
   if (voted) {
     return (
       <div className="rounded-2xl border border-zinc-200 bg-white p-6">
-        <p className="text-sm text-zinc-500">
-          Vous avez déjà donné votre avis sur cette analyse.
+        <p className="text-sm font-semibold text-zinc-900">
+          Je trouve cette analyse pertinente
         </p>
-        <div className="mt-3 flex items-center gap-4 text-sm text-zinc-400">
-          <span>👍 Utile · {likes}</span>
-          <span>👎 Pas convaincant · {dislikes}</span>
+        <p className="mt-1 text-xs text-zinc-500">
+          Votre avis sur la qualité de notre travail — pas sur la mesure elle-même.
+        </p>
+        <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-zinc-400">
+          <span className="flex items-center gap-1.5">
+            <ArrowIcon direction="up" /> Oui · {likes}
+          </span>
+          <span className="flex items-center gap-1.5">
+            <ArrowIcon direction="down" /> Non · {dislikes}
+          </span>
         </div>
       </div>
     );
@@ -88,7 +123,10 @@ export default function FeedbackWidget({ analyseId, initialLikes, initialDislike
   return (
     <div className="rounded-2xl border border-zinc-200 bg-white p-6">
       <p className="text-sm font-semibold text-zinc-900">
-        Cette analyse vous a-t-elle été utile ?
+        Je trouve cette analyse pertinente
+      </p>
+      <p className="mt-1 text-xs text-zinc-500">
+        Votre avis sur la qualité de notre travail — pas sur la mesure elle-même.
       </p>
 
       <div className="mt-3 flex flex-wrap items-center gap-3">
@@ -98,7 +136,8 @@ export default function FeedbackWidget({ analyseId, initialLikes, initialDislike
           disabled={submitting}
           className="flex items-center gap-2 rounded-full border border-zinc-200 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          👍 Utile
+          <ArrowIcon direction="up" />
+          Oui
           <span className="text-zinc-400">{likes}</span>
         </button>
 
@@ -108,7 +147,8 @@ export default function FeedbackWidget({ analyseId, initialLikes, initialDislike
           disabled={submitting}
           className="flex items-center gap-2 rounded-full border border-zinc-200 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          👎 Pas convaincant
+          <ArrowIcon direction="down" />
+          Non
           <span className="text-zinc-400">{dislikes}</span>
         </button>
       </div>
