@@ -54,13 +54,19 @@ export default function Header() {
     >
       <div className="flex items-center justify-between gap-6 px-6 py-4 sm:px-8">
         <Link href="/" className="flex shrink-0 items-center">
+          {/* mix-blend-multiply : le fichier logo.png n'a pas de fond
+              transparent (RVB plein, ~blanc). En multiply, le blanc de
+              l'image se fond dans n'importe quel fond derrière (multiply
+              par blanc = identité), donc pas de rectangle visible même
+              quand le header devient semi-transparent au scroll — sans
+              dépendre d'un nouvel export transparent. */}
           <Image
-            src="/banner-perlimpinpin.webp"
+            src="/logo/logo.png"
             alt="Perlimpinpin"
-            width={2172}
-            height={230}
+            width={2181}
+            height={721}
             priority
-            className="h-8 w-auto sm:h-9"
+            className="h-8 w-auto mix-blend-multiply sm:h-9"
           />
         </Link>
 
