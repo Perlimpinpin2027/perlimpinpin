@@ -1,5 +1,8 @@
 import Link from "next/link";
 import Header from "@/components/Header";
+import { getPublishedCountsByThemeSlug } from "@/lib/queries";
+
+export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Thèmes — Perlimpinpin",
@@ -141,7 +144,9 @@ const themes = [
   },
 ];
 
-export default function ThemesPage() {
+export default async function ThemesPage() {
+  const counts = await getPublishedCountsByThemeSlug();
+
   return (
     <div className="flex min-h-screen flex-col bg-page-gradient font-sans">
       <Header />
@@ -165,34 +170,50 @@ export default function ThemesPage() {
           </div>
 
           <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {themes.map((theme) => (
-              <Link
-                key={theme.slug}
-                href={`/themes/${theme.slug}`}
-                className="flex flex-col rounded-2xl border border-zinc-200 bg-white p-6 transition-colors hover:border-blue-300 hover:bg-blue-50/30"
-              >
-                <h2 className="text-base font-bold text-zinc-900">
-                  {theme.name}
-                </h2>
-                <p className="mt-2 text-sm leading-relaxed text-zinc-600">
-                  {theme.description}
-                </p>
+            {themes.map((theme) => {
+              const count = counts.get(theme.slug) ?? 0;
+              return (
+                <Link
+                  key={theme.slug}
+                  href={`/themes/${theme.slug}`}
+                  className="group flex flex-col rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:border-blue-300 hover:bg-blue-50/30 hover:shadow-md"
+                >
+                  <h2 className="text-base font-bold text-zinc-900">
+                    {theme.name}
+                  </h2>
+                  <p className="mt-2 text-sm leading-relaxed text-zinc-600">
+                    {theme.description}
+                  </p>
 
-                <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                  Sources clés
-                </p>
-                <div className="mt-2 flex flex-wrap gap-1.5">
-                  {theme.sources.map((source) => (
+                  <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                    Sources clés
+                  </p>
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {theme.sources.map((source) => (
+                      <span
+                        key={source}
+                        className="rounded-full bg-zinc-100 px-2.5 py-1 text-xs text-zinc-700"
+                      >
+                        {source}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="mt-4 flex items-center justify-between border-t border-zinc-100 pt-4">
+                    <p className="text-xs text-zinc-500">
+                      {count} déclaration{count > 1 ? "s" : ""} analysée
+                      {count > 1 ? "s" : ""}
+                    </p>
                     <span
-                      key={source}
-                      className="rounded-full bg-zinc-100 px-2.5 py-1 text-xs text-zinc-700"
+                      aria-hidden="true"
+                      className="text-zinc-400 transition-colors group-hover:text-blue-600"
                     >
-                      {source}
+                      →
                     </span>
-                  ))}
-                </div>
-              </Link>
-            ))}
+                  </div>
+                </Link>
+              );
+            })}
           </div>
 
           <p className="mx-auto mt-12 mb-4 max-w-3xl text-sm leading-relaxed text-zinc-500">

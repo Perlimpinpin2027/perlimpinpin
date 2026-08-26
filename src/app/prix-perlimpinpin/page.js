@@ -1,97 +1,69 @@
 import Link from "next/link";
 import Header from "@/components/Header";
-import { getFeedbackLeaderboard, getScoreExtremes } from "@/lib/queries";
+import { getScoreExtremes, getVoteMesureLeaderboard } from "@/lib/queries";
 import { getScoreBadge } from "@/lib/score";
 
 export const dynamic = "force-dynamic";
 
-const sections = [
-  { key: "general", title: "Classement général", subtitle: "Toutes périodes confondues" },
-  { key: "last30", title: "30 derniers jours", subtitle: "Votes des 30 derniers jours" },
-  { key: "last10", title: "10 derniers jours", subtitle: "Votes des 10 derniers jours" },
-];
+const ICON_FLAG = (
+  <path
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    d="M3 3v1.5M3 21v-6m0 0l2.77-.693a9 9 0 0 1 6.208.682l.108.054a9 9 0 0 0 6.086.71l3.114-.732a48.524 48.524 0 0 1-.005-10.499l-3.11.732a9 9 0 0 1-6.085-.711l-.108-.054a9 9 0 0 0-6.208-.682L3 4.5M3 15V4.5"
+  />
+);
 
-const podiumStyles = {
-  green: {
-    card: "border-2 border-green-200 bg-green-50/60 hover:border-green-300 hover:bg-green-50",
-    empty: "border-2 border-green-200 bg-green-50/60",
-  },
-  red: {
-    card: "border-2 border-red-200 bg-red-50/60 hover:border-red-300 hover:bg-red-50",
-    empty: "border-2 border-red-200 bg-red-50/60",
-  },
-};
-
-function PodiumCard({ card, tint }) {
-  const styles = podiumStyles[tint];
-
-  if (!card) {
-    return (
-      <div className={`flex h-full items-center justify-center rounded-3xl p-8 text-center ${styles.empty}`}>
-        <p className="text-sm text-zinc-500">
-          Pas encore assez de déclarations publiées.
-        </p>
-      </div>
-    );
-  }
-
-  const badge = getScoreBadge(card.score);
-
+function Tag({ children }) {
   return (
-    <Link
-      href={`/declarations/${card.propositionId}`}
-      className={`flex flex-col gap-4 rounded-3xl p-8 transition-colors ${styles.card}`}
-    >
-      <div className="flex items-center gap-3">
-        <img
-          src={card.candidatPhotoUrl || "/avatar-placeholder.svg"}
-          alt={card.candidatNom}
-          className="h-10 w-10 shrink-0 rounded-lg object-cover object-top"
-        />
-        <p className="text-sm font-semibold text-zinc-900">{card.candidatNom}</p>
-      </div>
-
-      <p className="text-lg font-semibold leading-snug text-zinc-900">
-        {card.titre}
-      </p>
-
-      {card.excerpt ? (
-        <p className="text-sm leading-relaxed text-zinc-600">{card.excerpt}</p>
-      ) : null}
-
-      <div className="mt-auto flex items-center gap-2 pt-2">
-        <span className={`text-2xl font-extrabold tracking-tight ${badge.scoreClass}`}>
-          {card.score}
-          <span className="text-sm font-semibold text-zinc-400">/100</span>
-        </span>
-        <span
-          className={`rounded-full px-2 py-0.5 text-xs font-semibold ${badge.badgeClass}`}
-        >
-          {badge.label}
-        </span>
-      </div>
-    </Link>
+    <span className="font-mono text-xs font-semibold uppercase tracking-widest text-zinc-400">
+      {children}
+    </span>
   );
 }
 
-function LeaderboardCard({ card, voteLabel, voteIcon }) {
-  if (!card) {
-    return (
-      <div className="flex h-full items-center justify-center rounded-2xl border border-zinc-200 bg-white p-6 text-center">
-        <p className="text-sm text-zinc-500">
-          Pas encore assez de votes sur cette période.
-        </p>
-      </div>
-    );
-  }
+const EXTREME_TINTS = {
+  green: { flag: "text-green-600", border: "border-l-green-500" },
+  red: { flag: "text-red-600", border: "border-l-red-500" },
+};
 
+function ExtremeCard({ label, tint, card }) {
+  const tintClasses = EXTREME_TINTS[tint];
+
+  return (
+    <div>
+      <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-zinc-500">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={1.8}
+          className={`h-3.5 w-3.5 ${tintClasses.flag}`}
+          aria-hidden="true"
+        >
+          {ICON_FLAG}
+        </svg>
+        {label}
+      </span>
+
+      {card ? (
+        <ExtremeCardContent card={card} border={tintClasses.border} />
+      ) : (
+        <div className={`mt-3 flex h-full min-h-[180px] items-center justify-center rounded-2xl border border-l-4 border-zinc-200 bg-white p-6 text-center ${tintClasses.border}`}>
+          <p className="text-sm text-zinc-500">
+            Pas encore assez de déclarations publiées.
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ExtremeCardContent({ card, border }) {
   const badge = getScoreBadge(card.score);
 
   return (
-    <Link
-      href={`/declarations/${card.propositionId}`}
-      className="flex flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-6 transition-colors hover:border-zinc-300 hover:bg-zinc-50"
-    >
+    <div className={`mt-3 rounded-2xl border border-l-4 border-zinc-200 bg-white p-6 ${border}`}>
       <div className="flex items-center gap-3">
         <img
           src={card.candidatPhotoUrl || "/avatar-placeholder.svg"}
@@ -101,38 +73,82 @@ function LeaderboardCard({ card, voteLabel, voteIcon }) {
         <p className="text-sm font-semibold text-zinc-900">{card.candidatNom}</p>
       </div>
 
-      <p className="text-base font-semibold leading-snug text-zinc-900">
+      <p className="mt-3 line-clamp-2 text-base font-semibold leading-snug text-zinc-900">
         {card.titre}
       </p>
 
-      {card.excerpt ? (
-        <p className="text-sm leading-relaxed text-zinc-500">{card.excerpt}</p>
-      ) : null}
-
-      <div className="mt-auto flex items-center justify-between border-t border-zinc-100 pt-4">
-        <div className="flex items-center gap-2">
-          <span className={`text-sm font-bold ${badge.scoreClass}`}>
-            {card.score}
-            <span className="text-xs font-medium text-zinc-400">/100</span>
-          </span>
-          <span
-            className={`rounded-full px-2 py-0.5 text-xs font-semibold ${badge.badgeClass}`}
-          >
-            {badge.label}
-          </span>
-        </div>
-        <span className="text-sm font-semibold text-zinc-600">
-          {voteIcon} {voteLabel}
+      <div className="mt-4 flex items-center gap-2">
+        <span className={`text-3xl font-extrabold tracking-tight ${badge.scoreClass}`}>
+          {card.score}
+          <span className="text-sm font-semibold text-zinc-400">/100</span>
+        </span>
+        <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${badge.badgeClass}`}>
+          {badge.label}
         </span>
       </div>
-    </Link>
+
+      <Link
+        href={`/declarations/${card.propositionId}`}
+        className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-blue-600 underline decoration-blue-200 underline-offset-2 transition-colors hover:text-blue-800"
+      >
+        Voir l&apos;analyse →
+      </Link>
+    </div>
+  );
+}
+
+function VoteColumn({ title, cards, countLabel, pctLabel }) {
+  if (cards.length === 0) {
+    return (
+      <div>
+        <p className="text-xs font-bold uppercase tracking-widest text-zinc-500">{title}</p>
+        <p className="mt-4 text-sm text-zinc-500">Pas encore assez de votes.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <p className="text-xs font-bold uppercase tracking-widest text-zinc-500">{title}</p>
+      <ol className="mt-4 flex flex-col gap-4">
+        {cards.map((card, index) => (
+          <li key={card.propositionId}>
+            <Link
+              href={`/declarations/${card.propositionId}`}
+              className="-m-2 flex items-center gap-3 rounded-xl p-2 transition-colors hover:bg-zinc-50"
+            >
+              <span className="w-5 shrink-0 text-sm font-bold text-zinc-400">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <img
+                src={card.candidatPhotoUrl || "/avatar-placeholder.svg"}
+                alt={card.candidatNom}
+                className="h-9 w-9 shrink-0 rounded-lg object-cover object-top"
+              />
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-semibold text-zinc-900">{card.candidatNom}</p>
+                <p className="truncate text-xs text-zinc-500">{card.titre}</p>
+              </div>
+              <div className="flex shrink-0 items-center gap-1.5">
+                <span className="text-sm font-semibold text-zinc-700">
+                  {countLabel(card).toLocaleString("fr-FR")}
+                </span>
+                <span className="text-xs font-medium text-zinc-400">
+                  {pctLabel(card)}%
+                </span>
+              </div>
+            </Link>
+          </li>
+        ))}
+      </ol>
+    </div>
   );
 }
 
 export default async function PrixPerlimpinpinPage() {
-  const [leaderboard, scoreExtremes] = await Promise.all([
-    getFeedbackLeaderboard(),
+  const [scoreExtremes, voteMesureLeaderboard] = await Promise.all([
     getScoreExtremes(),
+    getVoteMesureLeaderboard(),
   ]);
 
   return (
@@ -142,78 +158,64 @@ export default async function PrixPerlimpinpinPage() {
       <main className="w-full px-6 py-12 sm:px-8 sm:py-16">
         <div className="mx-auto flex w-full max-w-5xl flex-col gap-14">
           <div>
-            <span className="text-xs font-bold uppercase tracking-widest text-red-600">
-              Présidentielle 2027
-            </span>
-            <h1 className="mt-2 font-serif text-3xl font-bold leading-tight tracking-tight text-zinc-900 sm:text-4xl">
+            <Tag>// Classements</Tag>
+            <h1 className="mt-2 text-3xl font-extrabold tracking-tight text-zinc-900 sm:text-4xl">
               Prix Perlimpinpin
             </h1>
             <p className="mt-2 text-sm text-zinc-500">
-              Le classement des déclarations les plus (et les moins) plébiscitées
-              par les visiteurs.
+              Le classement des déclarations les plus (et les moins)
+              plébiscitées par les visiteurs.
             </p>
           </div>
 
-          <div className="flex flex-col gap-4">
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div className="flex flex-col gap-2">
-                <span className="text-xs font-semibold uppercase tracking-widest text-zinc-500">
-                  🏆 La plus fiable
-                </span>
-                <PodiumCard card={scoreExtremes.highest} tint="green" />
-              </div>
+          <div>
+            <Tag>// Score_perlimpinpin</Tag>
+            <h2 className="mt-2 text-2xl font-extrabold tracking-tight text-zinc-900 sm:text-3xl">
+              Les extrêmes du score
+            </h2>
 
-              <div className="flex flex-col gap-2">
-                <span className="text-xs font-semibold uppercase tracking-widest text-zinc-500">
-                  🚩 La moins fiable
-                </span>
-                <PodiumCard card={scoreExtremes.lowest} tint="red" />
+            <div className="mt-6 grid grid-cols-1 gap-6 border-b border-zinc-200 pb-8 sm:grid-cols-2">
+              <ExtremeCard label="Plus haut score" tint="green" card={scoreExtremes.highest} />
+              <ExtremeCard label="Plus bas score" tint="red" card={scoreExtremes.lowest} />
+            </div>
+          </div>
+
+          <div>
+            <Tag>// Vote_public</Tag>
+            <h2 className="mt-2 text-2xl font-extrabold tracking-tight text-zinc-900 sm:text-3xl">
+              Le choix des visiteurs
+            </h2>
+            <p className="mt-2 text-sm text-zinc-500">
+              Indépendamment du score Perlimpinpin, les visiteurs expriment
+              leur opinion.
+            </p>
+
+            <div className="mt-6 grid grid-cols-1 gap-8 sm:grid-cols-2 sm:divide-x sm:divide-zinc-200">
+              <div className="sm:pr-8">
+                <VoteColumn
+                  title="Le plus apprécié"
+                  cards={voteMesureLeaderboard.topAccord}
+                  countLabel={(card) => card.accord}
+                  pctLabel={(card) => card.accordPct}
+                />
+              </div>
+              <div className="sm:pl-8">
+                <VoteColumn
+                  title="Le plus contesté"
+                  cards={voteMesureLeaderboard.topDesaccord}
+                  countLabel={(card) => card.desaccord}
+                  pctLabel={(card) => card.desaccordPct}
+                />
               </div>
             </div>
-
-            <p className="border-b border-zinc-200 pb-6 text-center text-xs text-zinc-400">
-              Classement par score Perlimpinpin — ci-dessous, le classement par
-              votes des visiteurs
-            </p>
           </div>
 
-          {sections.map((section) => {
-            const data = leaderboard[section.key];
-            return (
-              <div key={section.key} className="flex flex-col gap-4">
-                <div>
-                  <h2 className="text-xl font-bold text-zinc-900">
-                    {section.title}
-                  </h2>
-                  <p className="text-xs text-zinc-400">{section.subtitle}</p>
-                </div>
-
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <div className="flex flex-col gap-2">
-                    <span className="text-xs font-semibold uppercase tracking-widest text-zinc-500">
-                      Le plus apprécié
-                    </span>
-                    <LeaderboardCard
-                      card={data.topLiked}
-                      voteLabel={data.topLiked?.likes ?? 0}
-                      voteIcon="👍"
-                    />
-                  </div>
-
-                  <div className="flex flex-col gap-2">
-                    <span className="text-xs font-semibold uppercase tracking-widest text-zinc-500">
-                      Le plus contesté
-                    </span>
-                    <LeaderboardCard
-                      card={data.topDisliked}
-                      voteLabel={data.topDisliked?.dislikes ?? 0}
-                      voteIcon="👎"
-                    />
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+          <p className="text-center text-xs text-zinc-400">
+            <span className="font-semibold text-zinc-500">score ≠ opinion</span>{" "}
+            — Le score Perlimpinpin évalue la solidité des déclarations
+            selon notre méthode. Les votes reflètent l&apos;opinion des
+            visiteurs.
+          </p>
         </div>
       </main>
     </div>

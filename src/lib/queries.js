@@ -136,6 +136,7 @@ export async function getPublishedDeclarations({ candidat, theme, sort } = {}) {
 
   const declarations = analyses.map((analyse) => ({
     id: analyse.proposition.id,
+    analyseId: analyse.id,
     titre: displayTitle(analyse.proposition),
     candidatNom: analyse.proposition.candidat.nom,
     candidatParti: analyse.proposition.candidat.parti,
@@ -181,6 +182,24 @@ export async function getPublishedPropositionsByThemeSlug(slug) {
       score: analyse.scoreFaisabilite,
     }))
     .sort((a, b) => b.score - a.score);
+}
+
+// Nombre de déclarations publiées par thème (slug), pour l'affichage "X
+// déclarations analysées" sur chaque carte de /themes — une seule requête
+// agrégée plutôt qu'un appel à getPublishedPropositionsByThemeSlug par
+// thème (11 thèmes, éviterait sinon 11 allers-retours en base).
+export async function getPublishedCountsByThemeSlug() {
+  const analyses = await prisma.analyse.findMany({
+    where: { statut: "publie" },
+    select: { proposition: { select: { theme: true } } },
+  });
+
+  const counts = new Map();
+  for (const analyse of analyses) {
+    const slug = slugifyTheme(analyse.proposition.theme);
+    counts.set(slug, (counts.get(slug) ?? 0) + 1);
+  }
+  return counts;
 }
 
 // Liste de tous les candidats pour la page /candidats, avec leur nombre de
@@ -343,6 +362,82 @@ export async function getScoreExtremes() {
     // même déclaration affichée deux fois — on n'affiche alors qu'une carte.
     lowest:
       lowest && lowest.id !== highest?.id ? buildAnalyseCard(lowest) : null,
+  };
+}
+
+async function getVoteMesureCountsByProposition() {
+  const rows = await prisma.voteMesure.groupBy({
+    by: ["propositionId", "type"],
+    _count: { _all: true },
+  });
+
+  const counts = new Map();
+  for (const row of rows) {
+    const entry = counts.get(row.propositionId) ?? { accord: 0, desaccord: 0 };
+    if (row.type === "accord") entry.accord = row._count._all;
+    if (row.type === "desaccord") entry.desaccord = row._count._all;
+    counts.set(row.propositionId, entry);
+  }
+  return counts;
+}
+
+// Classe les propositionId par nombre de votes décroissant pour `key`
+// ("accord"/"desaccord"), propositions sans aucun vote de ce type exclues.
+function rankVotedPropositions(counts, key, limit) {
+  return [...counts.entries()]
+    .filter(([, entry]) => entry[key] > 0)
+    .sort((a, b) => b[1][key] - a[1][key])
+    .slice(0, limit)
+    .map(([propositionId]) => propositionId);
+}
+
+async function buildVoteMesureCard(propositionId, counts) {
+  if (!propositionId) return null;
+
+  const proposition = await prisma.proposition.findUnique({
+    where: { id: propositionId },
+    include: {
+      candidat: true,
+      analyses: { where: { statut: "publie" }, orderBy: { createdAt: "desc" }, take: 1 },
+    },
+  });
+  if (!proposition || proposition.analyses.length === 0) return null;
+
+  const { accord, desaccord } = counts.get(propositionId) ?? { accord: 0, desaccord: 0 };
+  const total = accord + desaccord;
+
+  return {
+    propositionId: proposition.id,
+    titre: displayTitle(proposition),
+    candidatNom: proposition.candidat.nom,
+    candidatPhotoUrl: proposition.candidat.photoUrl,
+    score: proposition.analyses[0].scoreFaisabilite,
+    accord,
+    desaccord,
+    accordPct: total > 0 ? Math.round((accord / total) * 100) : 0,
+    desaccordPct: total > 0 ? Math.round((desaccord / total) * 100) : 0,
+  };
+}
+
+// Classement des déclarations par vote public sur la mesure elle-même
+// (d'accord / pas d'accord, voir prisma/schema.prisma VoteMesure) — distinct
+// du score Perlimpinpin et du feedback sur la qualité de l'analyse. Pour la
+// section "Le choix des visiteurs" de /prix-perlimpinpin (top 2 par
+// colonne : une même déclaration peut apparaître dans les deux classements,
+// si elle cumule beaucoup d'accord ET de désaccord).
+export async function getVoteMesureLeaderboard() {
+  const counts = await getVoteMesureCountsByProposition();
+  const topAccordIds = rankVotedPropositions(counts, "accord", 2);
+  const topDesaccordIds = rankVotedPropositions(counts, "desaccord", 2);
+
+  const [topAccord, topDesaccord] = await Promise.all([
+    Promise.all(topAccordIds.map((id) => buildVoteMesureCard(id, counts))),
+    Promise.all(topDesaccordIds.map((id) => buildVoteMesureCard(id, counts))),
+  ]);
+
+  return {
+    topAccord: topAccord.filter(Boolean),
+    topDesaccord: topDesaccord.filter(Boolean),
   };
 }
 

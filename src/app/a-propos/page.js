@@ -16,7 +16,7 @@ function Section({ title, children }) {
     <div className="pt-6">
       <hr className="border-zinc-200" />
       <div className="mt-6 flex flex-col gap-4">
-        <h2 className="border-l-2 border-red-500 pl-3 text-xl font-bold leading-tight text-zinc-900">
+        <h2 className="border-l-2 border-indigo-400 pl-3 text-xl font-bold leading-tight text-zinc-900">
           {title}
         </h2>
         {children}
@@ -126,8 +126,25 @@ export default function AProposPage() {
             </span>
 
             <h1 className="mt-4 font-serif text-4xl font-bold leading-tight tracking-tight text-zinc-900 sm:text-5xl">
-              Construire pour la démocratie
-              <span className="text-red-600">.</span>
+              {/* Petit trait décoratif (swoosh) au-dessus du C, cohérent
+                  avec le point bleu/indigo qui clôt le titre. */}
+              <span className="relative inline-block">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 12"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  strokeLinecap="round"
+                  className="absolute -top-3 left-0.5 h-3 w-6 text-indigo-400"
+                  aria-hidden="true"
+                >
+                  <path d="M2 10C7 4 15 2 22 2" />
+                </svg>
+                C
+              </span>
+              onstruire pour la démocratie
+              <span className="text-indigo-400">.</span>
             </h1>
 
             <p className="mt-4 max-w-xl text-base leading-relaxed text-zinc-500">
@@ -148,13 +165,13 @@ export default function AProposPage() {
               </a>{" "}
               et Matis Brasca
             </p>
+
+            <div className="mt-6 flex justify-center">
+              <ShareButton />
+            </div>
           </div>
 
           <hr className="mt-6 border-zinc-200" />
-
-          <div className="mt-4 flex justify-end">
-            <ShareButton />
-          </div>
 
           <div className="mx-auto mt-10 flex max-w-[68ch] flex-col gap-4">
             {introParagraphs.map((text) => (
