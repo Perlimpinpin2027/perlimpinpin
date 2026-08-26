@@ -66,7 +66,7 @@ export default function Header() {
             width={2181}
             height={721}
             priority
-            className="h-10 w-auto mix-blend-multiply sm:h-12"
+            className="header-logo mix-blend-multiply"
           />
         </Link>
 

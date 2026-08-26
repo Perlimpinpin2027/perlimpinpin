@@ -67,3 +67,18 @@ body {
 .animate-slide-in-left {
   animation: slide-in-from-left 350ms ease-out;
 }
+
+/* Logo du header : taille FIXE en pixels (pas l'échelle rem des utilitaires
+   Tailwind h-8/h-10/etc.) pour garantir la hauteur voulue quel que soit le
+   contexte — !important pour ne laisser aucune classe concurrente ou style
+   parent la réduire. 32px mobile, 40px à partir de 640px (breakpoint sm). */
+.header-logo {
+  height: 32px !important;
+  width: auto !important;
+  object-fit: contain;
+}
+@media (min-width: 640px) {
+  .header-logo {
+    height: 40px !important;
+  }
+}
