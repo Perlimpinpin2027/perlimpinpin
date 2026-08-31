@@ -1,0 +1,176 @@
+{
+  "parsed": {
+    "mesure_reformulee": {
+      "synthese": "Plafonner les prestations sociales cumulées à 70 % du Smic net par foyer, via une allocation unique.",
+      "texte": "Fusionner l'ensemble des prestations sociales non contributives dans une allocation unique, et plafonner le montant total perçu par un foyer à **70 % du Smic net**, afin de garantir un écart de revenu entre le travail et la solidarité."
+    },
+    "mesure_vers_objectif": {
+      "objectif_court": "Rendre le retour à l'emploi plus rémunérateur que l'aide sociale",
+      "categorie_objectif": "Emploi et chômage",
+      "objectif_vise": "Garantir un écart de revenu significatif entre les revenus du travail et le cumul des prestations sociales non contributives, afin de renforcer l'incitation à la reprise d'un emploi.",
+      "mecanisme_propose": "Fusion des prestations sociales non contributives (à l'exclusion des prestations contributives et de prestations spécifiques comme l'AAH, l'ASPA, l'AEEH, les allocations familiales et le complément familial) en une allocation unique, plafonnée à 70 % du Smic net par foyer, adossée à un compte social unique et à un registre national des versements s'appuyant sur le RNCPS (Répertoire national commun de la protection sociale).",
+      "lien_causal": "indirect"
+    },
+    "nature_et_existant": "La mesure n'est pas totalement inédite : le RSA intègre déjà une logique embryonnaire d'anti-cumul via le forfait logement, déduit automatiquement lorsque le foyer perçoit l'APL (78,20 € pour une personne seule, jusqu'à 193,55 € pour trois personnes et plus au 1er avril 2026). Le principe d'une allocation sociale unique a été porté par le projet avorté de Revenu Universel d'Activité (2019-2020, abandonné pour complexité technique), repris par Michel Barnier fin 2024, puis décliné par Laurent Wauquiez sous forme d'une proposition de loi LR déposée le 19 décembre 2024, examinée en commission des Affaires sociales le 24 janvier 2025 : son article central (plafond RSA + APL à 70 % du Smic) a été supprimé par un amendement socialiste (AS1) puis rétabli par un amendement du groupe Droite Républicaine, signe d'un texte encore disputé et non stabilisé à l'Assemblée. Un projet gouvernemental distinct porté par Sébastien Lecornu vise, lui, une fusion RSA/APL/prime d'activité centrée sur la lutte contre le non-recours (34 % des éligibles au RSA ne le demandent pas selon la DREES, mai 2026), sans nécessairement reprendre le plafond à 70 %. Point important pour la lecture de cette fiche : le 7 janvier 2026, Bruno Retailleau a lui-même annoncé abandonner le volet fusion de sa propre proposition, jugeant la création d'une allocation unique 'compliquée à faire' et 'de la tuyauterie technocratique', pour ne conserver que le plafonnement via un compte social unique de suivi, sans fusion des prestations. La mesure telle que formulée dans la source fournie (site des Républicains) correspond à la version fusion, antérieure à ce recul explicite du candidat.",
+    "contexte_programme": {
+      "synthese": "Cohérente avec la doctrine LR de valorisation du travail, mais en tension avec le recul récent de Retailleau.",
+      "texte": "La mesure s'inscrit dans une doctrine LR constante de conditionnalité et de valorisation du travail (proposition de loi de janvier 2025, position de Retailleau en faveur d'une obligation d'activité pour le RSA). Elle est cohérente avec cette ligne. **Une tension interne documentée existe toutefois entre la formulation évaluée ici (fusion en allocation unique) et la position la plus récente et la plus explicite du candidat lui-même (janvier 2026), qui a publiquement écarté la fusion** au profit du seul plafonnement."
+    },
+    "contexte_national": {
+      "synthese": "Vise des économies budgétaires en plafonnant environ 70 % du Smic, touchant surtout les familles nombreuses en zone tendue.",
+      "texte": "La mesure intervient dans un contexte de recherche d'économies budgétaires (**environ 44 milliards d'euros visés pour le budget 2026**). Le RSA concerne environ 1,8 million de foyers, l'APL 6,5 millions de foyers et la prime d'activité 4,1 millions de foyers ; **seule une fraction de ces foyers, ceux dont le cumul dépasse 70 % du Smic net (environ 1 035 € pour une personne seule au 1er juin 2026), serait effectivement concernée** par le plafond, principalement des familles nombreuses en zone de loyers élevés."
+    },
+    "contexte_international": {
+      "synthese": "S'inspire de l'Universal Credit britannique, dont la comparabilité avec le système français reste incertaine.",
+      "texte": "Les promoteurs de la mesure citent l'Universal Credit britannique (2012) comme précédent. **La transposabilité reste à nuancer** : les systèmes de prestations, les niveaux de plancher social et les administrations de départ diffèrent sensiblement entre la France et le Royaume-Uni ; sources insuffisantes pour trancher plus précisément ici sur la comparaison chiffrée."
+    },
+    "impact_environnement": null,
+    "analyse_longevites": {
+      "synthese": "Le dispositif serait pérenne une fois adopté, mais sa portée réelle dépend d'un décret encore non rédigé.",
+      "texte": "Le dispositif, une fois en place, serait a priori pérenne (modification du code de l'action sociale et des familles), sous réserve de la clause de modulation renvoyée à **un décret non encore rédigé**, ce qui introduit une incertitude sur sa portée réelle et sa stabilité dans le temps."
+    },
+    "impact_temporel_et_sectoriel": {
+      "synthese": "Baisse de revenu à court terme pour les familles nombreuses concernées, effet incitatif sur l'emploi non quantifié.",
+      "texte": "Court terme (0-2 ans) : **baisse de revenu disponible pour les foyers**, essentiellement des familles nombreuses en zone tendue, dont le cumul actuel dépasse 70 % du Smic net, avec un effet modéré sur leur consommation compte tenu d'une propension marginale à consommer élevée dans cette population, mais sans portée macroéconomique significative du fait du caractère ciblé de la mesure. Moyen terme (2-7 ans) : **effet incitatif hypothétique sur le taux de reprise d'emploi, non quantifié par une source officielle**. Aucun effet identifié sur l'inflation ou la stabilité bancaire."
+    },
+    "ce_qui_est_etabli": {
+      "synthese": "Retailleau a abandonné le volet fusion de sa mesure en janvier 2026, malgré une proposition de loi LR déjà déposée.",
+      "texte": "Le Smic net s'élève à 1 477,93 € au 1er juin 2026 (70 % ≈ 1 034 €). La proposition de loi LR de décembre 2024 fixe explicitement le plafond à 70 % du Smic, exclut les prestations contributives, l'AAH, l'ASPA, l'AEEH, les allocations familiales et le complément familial. L'article central du texte a été supprimé puis rétabli par amendements contradictoires en commission (janvier 2025). **Bruno Retailleau a publiquement abandonné le volet fusion de la mesure le 7 janvier 2026.**"
+    },
+    "ce_qui_est_probable": {
+      "synthese": "Les réformes depuis 2009 ont déjà réduit la plupart des trappes à inactivité visées par la mesure.",
+      "texte": "**Les réformes intervenues depuis 2009 (RSA, prime d'activité) ont déjà réduit une large part des trappes à inactivité** identifiées dans les années 1990-2000. La population effectivement concernée par un plafond à 70 % du Smic serait concentrée sur les familles nombreuses à loyers élevés plutôt que sur l'ensemble des allocataires."
+    },
+    "ce_qui_est_discutable": {
+      "synthese": "Le chiffrage des économies (12 à 34 milliards, source IFRAP) varie fortement et manque de confirmation indépendante.",
+      "texte": "L'ampleur du problème résiduel de trappe à inactivité aujourd'hui, faute de données récentes équivalentes à l'enquête DREES de 2006. **Le chiffrage des économies budgétaires (12 à 34 milliards selon l'IFRAP), dont la fourchette large et les versions concurrentes publiées par la même fondation limitent la fiabilité.**"
+    },
+    "ce_qui_est_inconnu": {
+      "synthese": "Le nombre exact de foyers concernés et le contenu du futur décret de modulation restent inconnus.",
+      "texte": "Le nombre exact de foyers aujourd'hui au-dessus du seuil de 70 % du Smic net. **Le contenu du décret de modulation selon la configuration du foyer, non encore rédigé.** Un chiffrage indépendant (Cour des comptes, DREES, France Stratégie) directement consacré à ce scénario précis à 70 %."
+    },
+    "angles_morts": {
+      "synthese": "Risque de faire basculer des familles nombreuses sous le seuil de pauvreté, sans mécanisme de compensation documenté.",
+      "texte": "**Risque de faire basculer sous le seuil de pauvreté des familles nombreuses** dont le cumul actuel dépasse le plafond, sans mécanisme de compensation documenté au-delà d'une clause de modulation renvoyée à un décret non écrit. **Risque d'aggraver le non-recours** si le registre de suivi complexifie les démarches sans que la fusion effective des prestations ne simplifie réellement le parcours administratif. Charge de mise en œuvre pour les multiples organismes payeurs (CAF, MSA, départements) tenus de déclarer sur le registre national."
+    },
+    "notation_detaillee": {
+      "operationnalite_juridique": 8,
+      "qualification_juridique": "SOLIDE",
+      "operationnalite_budgetaire": 5,
+      "qualification_budgetaire": "INCERTAIN",
+      "operationnalite_moyens_humains": 2,
+      "qualification_moyens_humains": "FRAGILE",
+      "operationnalite_moyens_total": 10,
+      "plafond_applique": true,
+      "plafond_declencheur": "moyens_humains",
+      "efficacite": 15,
+      "qualification_efficacite": "INCERTAIN",
+      "effets_rebonds_externalites": 9,
+      "qualification_effets_rebonds": "INCERTAIN",
+      "degre_preparation": 3,
+      "qualification_preparation": "INCERTAIN",
+      "alignement_logique": 5,
+      "qualification_alignement": "INCERTAIN",
+      "score_total": 42,
+      "appreciation": "partiellement fondé"
+    },
+    "verdict_final": "La mesure est légalement accessible par voie ordinaire et cohérente avec la doctrine LR de valorisation du travail. Mais son volet le plus structurant, la fusion en allocation unique, a été jugé trop complexe et abandonné par son propre auteur en janvier 2026, ce qui plafonne la note d'opérationnalité. Le chiffrage budgétaire repose sur une seule source orientée aux estimations incohérentes dans le temps. L'efficacité attendue est plausible mais concerne une population plus restreinte que ne le suggère le discours, la plupart des trappes à inactivité ayant déjà été traitées par les réformes de 2009. Un effet de bord sur les familles nombreuses est documenté, sans mécanisme de compensation encore précisé.",
+    "sources_utilisees": [
+      "https://www.assemblee-nationale.fr/dyn/17/amendements/0862/AN/4.pdf",
+      "https://www.assemblee-nationale.fr/dyn/17/amendements/0765/CION-SOC/AS1.pdf",
+      "https://questions.assemblee-nationale.fr/dyn/17/textes/l17b0692_proposition-loi.pdf",
+      "https://questions.assemblee-nationale.fr/dyn/17/textes/l17b0762_proposition-loi.pdf",
+      "https://www.info.gouv.fr/actualite/le-smic-revalorise-le-1er-juin-2026",
+      "https://www.senat.fr/rap/r04-334/r04-3349.html",
+      "https://www.aide-sociale.fr/cumul-rsa-apl/",
+      "https://www.adcf.org/allocation-sociale-unique-rsa-apl-prime-activite-2027/",
+      "https://www.adcf.org/non-recours-rsa-un-tiers-foyers-eligibles/",
+      "https://qpc360.conseil-constitutionnel.fr/commentaire-decision-2011-137-qpc",
+      "https://juridique.defenseurdesdroits.fr/doc_num.php?explnum_id=22030",
+      "https://www.ifrap.org/emploi-et-politiques-sociales/allocation-sociale-unique-les-differents-projets-sur-la-table",
+      "https://www.ifrap.org/emploi-et-politiques-sociales/12-34-milliards-deuros-deconomies-les-differents-scenarios-dun-plafonnement-dune-allocation-sociale-unique-par-rapport",
+      "https://www.ifrap.org/la-revue/110-mds-eu-de-baisses-de-depenses-publiques-pour-sauver-notre-economie",
+      "https://journal-info.fr/2025/09/17/budget-2026-vers-une-allocation-unique-plafonnee-a-70-du-smic/"
+    ],
+    "niveau_de_confiance": "Modéré. Le dossier législatif (proposition de loi, débats en commission) est bien documenté sur sources primaires. En revanche, le chiffrage budgétaire repose sur une source unique orientée non corroborée, la note de France Stratégie évoquée par la presse n'a pas pu être vérifiée sur source primaire, et le repositionnement du candidat en janvier 2026 introduit une instabilité réelle sur la version exacte de la mesure à évaluer.",
+    "limites": {
+      "synthese": "La version évaluée diffère de la position la plus récente de Retailleau, qui a abandonné le volet fusion.",
+      "texte": "La formulation évaluée ici (fusion en allocation unique) correspond à la version portée par le parti et par la proposition de loi de 2024-2025, mais pas à la position la plus récente et la plus explicite de Bruno Retailleau lui-même, qui a **publiquement écarté la fusion le 7 janvier 2026**. L'ancrage du domaine 'Emploi et chômage' dans le document de référence des objectifs par domaine est qualifié d'indirect (article L111-2-1 du code de la sécurité sociale mentionne le plein emploi comme condition de la pérennité du système de retraite, sans cadre légal propre à l'emploi aussi structuré que pour les retraites ou l'énergie). **Les données sur les trappes à inactivité utilisées (enquête DREES) datent de 2006** et pourraient ne plus refléter la situation actuelle."
+    },
+    "analyse_par_criteres": [
+      {
+        "critere": "operationnalite_moyens",
+        "titre": "Opérationnalité & Moyens",
+        "note": 10,
+        "note_max": 30,
+        "plafond_applique": true,
+        "plafond_declencheur": "moyens_humains",
+        "texte": "Un plafond s'applique ici, déclenché par les **moyens humains**, jugés très fragiles : le volet le plus structurant de la mesure, la fusion en allocation unique, a été qualifié de « tuyauterie technocratique » et **abandonné par Bruno Retailleau lui-même le 7 janvier 2026**. Le volet juridique est solide (voie législative ordinaire, sans obstacle constitutionnel identifié), mais le volet budgétaire reste incertain, appuyé sur une seule source orientée. Le précédent du Revenu Universel d'Activité, abandonné en 2020 pour la même raison de complexité administrative, renforce le doute sur la faisabilité opérationnelle réelle du dispositif de fusion tel que présenté."
+      },
+      {
+        "critere": "efficacite",
+        "titre": "Efficacité",
+        "note": 15,
+        "note_max": 30,
+        "texte": "**L'essentiel des trappes à inactivité visées a déjà été traité par les réformes de 2009** (RSA) et la prime d'activité, ce qui réduit fortement la portée du mécanisme incitatif recherché. La population réellement concernée par un plafond à 70 % du Smic serait **restreinte aux familles nombreuses en zone de loyers élevés**, et non l'ensemble des allocataires évoqués dans le discours politique. Aucune donnée récente ne permet de quantifier l'effet incitatif attendu sur le retour à l'emploi, la seule enquête disponible (DREES) datant de 2006."
+      },
+      {
+        "critere": "effets_rebonds_externalites",
+        "titre": "Effets rebonds & Externalités",
+        "note": 9,
+        "note_max": 20,
+        "texte": "**Un risque documenté de bascule sous le seuil de pauvreté pour des familles nombreuses** existe, sans mécanisme de compensation précisé au-delà d'un décret de modulation non encore rédigé. Le registre de suivi national, s'il complexifie les démarches sans simplification effective du parcours administratif, pourrait **aggraver le non-recours** plutôt que le réduire. La charge de mise en œuvre pour les organismes payeurs (CAF, MSA, départements) ajoute une incertitude opérationnelle supplémentaire."
+      },
+      {
+        "critere": "degre_preparation",
+        "titre": "Degré de préparation",
+        "note": 3,
+        "note_max": 10,
+        "texte": "Le texte est **encore disputé et non stabilisé à l'Assemblée**, son article central ayant été supprimé puis rétabli par des amendements contradictoires en commission en janvier 2025. Le décret de modulation, pourtant central pour évaluer l'impact réel sur les familles concernées, **n'est à ce jour pas rédigé**."
+      },
+      {
+        "critere": "alignement_logique",
+        "titre": "Alignement & Logique globale",
+        "note": 5,
+        "note_max": 10,
+        "texte": "La mesure est cohérente avec la doctrine LR de valorisation du travail, mais **la version évaluée ici contredit la position la plus récente de son propre promoteur**, qui a publiquement écarté la fusion en janvier 2026. Cette instabilité entre la formulation officielle du parti et la position actuelle du candidat fragilise la lecture globale de l'objectif poursuivi."
+      }
+    ],
+    "titre_fiche": "Plafonner les aides sociales à 70 % du Smic",
+    "resume_court": "Plafonner les aides sociales à 70 % du Smic net, c'est une idée qui traîne dans le débat français depuis des années, sans jamais aboutir. Juridiquement, rien n'empêche de la voter. Mais son volet le plus ambitieux, fusionner toutes les prestations en une seule allocation, a été abandonné par Bruno Retailleau lui-même début janvier 2026, jugé trop complexe à mettre en œuvre. Les économies promises, entre 12 et 34 milliards d'euros, viennent d'une seule fondation proche de la droite, sans confirmation indépendante. Et l'objectif affiché, rendre le travail plus rentable que l'assistance, est déjà largement atteint depuis les réformes de 2009. Ce qui reste, en pratique, c'est une mesure plus ciblée qu'annoncée, qui toucherait surtout des familles nombreuses en zone de loyers élevés, avec un risque de perte de revenu réel mais non chiffré.",
+    "teaser_accueil": "Plafonner les aides sociales à 70 % du Smic : une vieille idée de droite, mais son propre auteur a renoncé à sa version la plus ambitieuse début 2026. Que reste-t-il vraiment de la mesure présentée aux électeurs ?"
+  },
+  "contreAvisMistral": null,
+  "auditArbitrage": [
+    {
+      "remarque": "Contrôle Mistral absent (null)",
+      "statut": "rejetee",
+      "raison": "Aucune remarque à arbitrer ; le contenu analytique initial est conservé intégralement."
+    }
+  ],
+  "coutPipeline": {
+    "tokensEtape1": null,
+    "tokensEtape2": null,
+    "tokensEtape3": {
+      "input_tokens": 10749,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "output_tokens": 7634,
+      "service_tier": "standard",
+      "inference_geo": "global",
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      }
+    },
+    "coutEstimeParEtape": {
+      "etape2": 0,
+      "etape3": 0.1468
+    },
+    "coutEstimeTotal": 0.1468,
+    "note": "tokensEtape1 non disponible : étape 1 réalisée manuellement, hors pipeline automatisé."
+  }
+}
