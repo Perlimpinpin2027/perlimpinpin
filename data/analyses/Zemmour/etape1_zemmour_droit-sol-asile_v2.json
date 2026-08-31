@@ -1,0 +1,78 @@
+{
+  "mesure_reformulee": "Le candidat propose trois mesures distinctes en matière de droit des étrangers : (1) remplacer le droit du sol par un droit du sang strict pour l'acquisition de la nationalité française, (2) mettre fin au regroupement familial, (3) restreindre drastiquement le droit d'asile, dans le but affiché d'enrayer à la fois l'immigration légale et l'immigration illégale.",
+
+  "mesure_vers_objectif": {
+    "objectif_vise": "Réduire fortement l'immigration légale et l'immigration illégale en France.",
+    "mecanisme_propose": "Suppression du droit du sol (acquisition automatique de la nationalité), suppression du regroupement familial, restriction drastique de l'accès au droit d'asile.",
+    "lien_causal": "faible_ou_absent"
+  },
+
+  "nature_et_existant": "Mesure de nature juridique et institutionnelle, de compétence nationale pour le droit du sol (Code civil), mais encadrée par des normes constitutionnelles, internationales et européennes pour le regroupement familial et l'asile. Application du point 2bis (existant et décomposition) : les trois volets portent sur la suppression de dispositifs déjà pleinement en vigueur, non sur la création d'un mécanisme nouveau. Le droit du sol simple différé est fixé par l'article 21-7 du Code civil (résidence habituelle de 5 ans depuis l'âge de 11 ans, acquisition de plein droit à la majorité). Le regroupement familial est encadré par le CESEDA et bénéficie d'une valeur constitutionnelle reconnue par le Conseil constitutionnel dès sa décision n° 93-325 DC du 13 août 1993 (droit de mener une vie familiale normale, 10e alinéa du préambule de 1946), ainsi que d'un plancher de garanties fixé par la directive européenne 2003/86/CE. Le droit d'asile résulte du 4e alinéa du préambule de 1946, de la Convention de Genève de 1951 et de l'article 18 de la Charte des droits fondamentaux de l'UE ; il est également reconnu comme exigence constitutionnelle par la même décision de 1993.",
+
+  "contexte_programme": "Ces trois mesures s'inscrivent dans le programme de Reconquête visant à ramener l'immigration légale et illégale « à zéro » ou proche de zéro, aux côtés d'autres mesures du même bloc (suppression des aides sociales aux étrangers extra-européens, remplacement de l'AME, expulsions). Une tension interne existe entre l'objectif affiché (agir sur les deux flux, légal et illégal) et le périmètre réel des trois leviers, qui touchent presque exclusivement des statuts ou des canaux légaux.",
+
+  "contexte_national": "D'après les données DGEF/ministère de l'Intérieur, les flux d'immigration légale (premiers titres de séjour) oscillent entre 300 000 et 380 000 personnes par an, le premier motif étant l'immigration étudiante, suivi de l'immigration familiale. Le taux d'exécution des OQTF (obligations de quitter le territoire) reste inférieur à 10-15 % selon la Cour des comptes, en raison notamment de la délivrance incertaine des laissez-passer consulaires par les pays d'origine, un facteur indépendant des trois leviers ici proposés.",
+
+  "contexte_international": "Le regroupement familial est protégé en droit de l'Union par la directive 2003/86/CE, qui fixe un socle minimal de garanties que les États membres ne peuvent supprimer unilatéralement (la France n'a pas d'opt-out sur ce texte, contrairement au Royaume-Uni, à l'Irlande et au Danemark). Le droit d'asile relève à la fois de la Convention de Genève de 1951 (principe de non-refoulement, article 33) et de l'article 18 de la Charte des droits fondamentaux de l'UE. Le droit du sol relève presque exclusivement du droit interne ; son évolution touche toutefois la Convention de 1961 sur la réduction des cas d'apatridie, ratifiée par la France.",
+
+  "impact_environnement": null,
+
+  "analyse_par_criteres": "Voir notation_detaillee pour le détail chiffré par critère et sous-critère (Efficacité /30, Opérationnalité & Moyens /20 avec plafond juridique appliqué, Effets rebonds & Externalités /20, Degré de préparation /20, Alignement /10).",
+
+  "analyse_longevites": "Court terme (0-2 ans) : la suppression du droit du sol nécessiterait une loi ordinaire modifiant le Code civil, techniquement rapide mais sans effet immédiat sur les flux migratoires puisqu'elle ne concerne que le statut de personnes déjà présentes. La fin du regroupement familial et la restriction drastique de l'asile se heurteraient à un contentieux constitutionnel et européen quasi certain avant toute entrée en vigueur effective. Moyen terme (2-7 ans) : en cas de censure partielle par le Conseil constitutionnel ou la CJUE sur les volets les plus radicaux, statu quo probable sur ces deux points. Long terme (>7 ans) : la suppression du droit du sol pourrait accroître le nombre de personnes nées en France sans titre de séjour stable, un effet potentiellement inverse à l'objectif de réduction de l'irrégularité.",
+
+  "impact_temporel_et_sectoriel": null,
+
+  "ce_qui_est_etabli": "Le droit du sol simple différé est fixé par l'article 21-7 du Code civil et relève de la loi ordinaire. Le regroupement familial et le droit d'asile ont été reconnus comme ayant valeur constitutionnelle par la décision n° 93-325 DC du 13 août 1993 du Conseil constitutionnel, sur le fondement des alinéas 10 et 4 du préambule de 1946. Le regroupement familial est également encadré par un plancher de garanties fixé par la directive 2003/86/CE. Le taux d'exécution des OQTF est durablement inférieur à 10-15 % selon la Cour des comptes.",
+
+  "ce_qui_est_probable": "Une suppression totale du regroupement familial et une restriction de l'asile réduite à un contingent numérique très bas seraient très probablement censurées, en tout ou partie, par le Conseil constitutionnel et/ou jugées incompatibles avec le droit de l'Union et la Convention de Genève. La suppression du droit du sol est, elle, juridiquement plus praticable par la voie législative ordinaire, sous réserve des engagements contre l'apatridie.",
+
+  "ce_qui_est_discutable": "L'ampleur réelle de la baisse des flux migratoires qu'entraînerait chacune des trois mesures est disputée : la suppression du droit du sol ne touche pas les flux d'entrée et pourrait accroître la population en situation administrative précaire née en France ; l'effet net de la fin du regroupement familial et de la restriction de l'asile sur l'immigration irrégulière (par opposition à la seule immigration légale) n'est pas documenté par une source neutre identifiée dans cette recherche, et pourrait même jouer en sens inverse compte tenu du faible taux d'exécution des éloignements.",
+
+  "ce_qui_est_inconnu": "Le candidat ne précise pas, dans le libellé de cette mesure, le mécanisme concret de mise en œuvre de la « restriction drastique » du droit d'asile (quota chiffré, critères de sélection, procédure), ce qui limite l'évaluation de sa faisabilité opérationnelle exacte. Aucun chiffrage budgétaire n'est fourni.",
+
+  "angles_morts": "Angle mort principal : confusion entre statut (nationalité, protection) et flux (entrées sur le territoire) — la suppression du droit du sol agit sur le premier sans agir sur le second, alors que la mesure est présentée comme un levier de réduction des flux ; ce point justifie la qualification du lien causal et n'est pas repris séparément dans un autre critère pour éviter la double pénalisation. Second angle mort, distinct, traité sous Effets rebonds : restreindre l'accès à l'asile sans résoudre le très faible taux d'exécution des OQTF pourrait mécaniquement faire basculer davantage de personnes déboutées vers l'irrégularité plutôt que de réduire leur présence sur le territoire.",
+
+  "notation_detaillee": {
+    "efficacite": 6,
+    "qualification_efficacite": "FRAGILE",
+    "operationnalite_juridique": 1,
+    "qualification_juridique": "FRAGILE",
+    "operationnalite_budgetaire": 1,
+    "qualification_budgetaire": "FRAGILE",
+    "operationnalite_moyens_humains": 3,
+    "qualification_moyens_humains": "INCERTAIN",
+    "operationnalite_moyens_total": 5,
+    "plafond_juridique_applique": true,
+    "effets_rebonds_externalites": 5,
+    "qualification_effets_rebonds": "FRAGILE",
+    "degre_preparation": 4,
+    "qualification_preparation": "FRAGILE",
+    "alignement_logique": 7,
+    "qualification_alignement": "INCERTAIN",
+    "score_total": 27,
+    "appreciation": "fragile"
+  },
+
+  "verdict_final": "Le lien causal entre les leviers proposés et l'objectif affiché est faible ou absent sur au moins un des trois volets : la suppression du droit du sol ne réduit aucun flux d'entrée, elle change seulement le statut de personnes déjà nées en France. Sur le plan juridique, la fin du regroupement familial et la restriction drastique de l'asile se heurtent à une jurisprudence constitutionnelle constante depuis 1993 et à des textes européens et internationaux directement contraignants, sans voie de mise en conformité indiquée, ce qui déclenche la règle de plafond et limite fortement le score global. Le risque d'un effet inverse à l'objectif affiché est documenté : sans résoudre le très faible taux d'exécution des éloignements, restreindre l'accès à l'asile pourrait accroître la population en situation irrégulière plutôt que la réduire. Aucun chiffrage budgétaire n'accompagne la mesure.",
+
+  "sources_utilisees": [
+    "Code civil, article 21-7 (Légifrance)",
+    "Conseil constitutionnel, décision n° 93-325 DC du 13 août 1993",
+    "Directive 2003/86/CE du Conseil relative au droit au regroupement familial",
+    "Convention de Genève du 28 juillet 1951 relative au statut des réfugiés, article 33",
+    "Charte des droits fondamentaux de l'Union européenne, article 18",
+    "Convention de 1961 sur la réduction des cas d'apatridie",
+    "Cour des comptes, données sur le taux d'exécution des OQTF",
+    "DGEF / ministère de l'Intérieur, statistiques annuelles de l'immigration légale",
+    "Institut Montaigne, décryptages du programme Reconquête (suppression du droit du sol, fin du regroupement familial)"
+  ],
+
+  "niveau_de_confiance": "Élevé sur le cadre juridique (sources primaires constitutionnelles, conventionnelles et européennes convergentes). Moyen sur l'ampleur de l'effet attendu sur les flux, faute de chiffrage propre fourni par le candidat et de source neutre isolant l'effet spécifique de chacun des trois leviers.",
+
+  "limites": "Le libellé « restreindre drastiquement le droit d'asile » reste vague dans le texte transmis ; l'analyse s'appuie pour partie sur les déclarations plus détaillées du candidat en dehors de cette mesure précise pour évaluer la portée réelle de la restriction envisagée.",
+
+  "resume_court": "La mesure combine trois leviers de nature juridique très différente. Le premier, la suppression du droit du sol, est légalement praticable par une loi ordinaire, mais n'agit pas sur les flux migratoires puisqu'il concerne le statut de personnes déjà nées et résidant en France, ce qui affaiblit le lien entre ce levier et l'objectif affiché. Les deux autres, la fin du regroupement familial et la restriction drastique du droit d'asile, se heurtent à une jurisprudence constitutionnelle constante depuis 1993 et à des textes européens et internationaux contraignants, sans voie de mise en conformité identifiée, ce qui déclenche la règle de plafond juridique. Le risque d'un effet inverse à l'objectif affiché existe : sans résoudre le très faible taux d'exécution des éloignements, restreindre l'accès à l'asile pourrait accroître la population en situation irrégulière plutôt que la réduire. Aucun chiffrage budgétaire n'est fourni.",
+
+  "phrase_teasing": "Trois leviers juridiques très inégaux sont mêlés dans une même promesse. Un seul est réellement à la portée d'une loi ordinaire, quel est celui qui résiste au contrôle constitutionnel ?"
+}

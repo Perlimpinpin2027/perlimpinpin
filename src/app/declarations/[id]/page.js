@@ -49,6 +49,38 @@ const ICON_OPERATIONNEL = (
     d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
   />
 );
+// Icônes du barème 2026 (5 critères sans malus, voir data/prompt-
+// methodologie.md) : ICON_FACTUEL/ICON_JURIDIQUE/ICON_EFFICACITE/ICON_COUT/
+// ICON_OPERATIONNEL restent utilisées par les schémas antérieurs
+// (notationLabels/notationLabelsV2) ; ces trois-ci sont propres aux
+// critères qui n'existaient pas avant (Effets rebonds & Externalités,
+// Degré de préparation, Alignement & Logique globale). Formes simples
+// dessinées à la main plutôt qu'un tracé Heroicons recopié de mémoire.
+const ICON_REBONDS = (
+  <>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M3 15c1.5-2 3-2 4.5 0s3 2 4.5 0 3-2 4.5 0 3 2 4.5 0" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M3 10c1.5-2 3-2 4.5 0s3 2 4.5 0 3-2 4.5 0 3 2 4.5 0" />
+  </>
+);
+const ICON_PREPARATION = (
+  <>
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M8 3.75h6l1.5 1.5v13.5A1.25 1.25 0 0 1 14.25 20.5H8A1.25 1.25 0 0 1 6.75 19.25V5A1.25 1.25 0 0 1 8 3.75Z"
+    />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9.5 8.5h4M9.5 11.5h4" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9.25 15.25l1.5 1.5L14 13.5" />
+  </>
+);
+const ICON_ALIGNEMENT = (
+  <>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v16.5M8 3h8" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M5 8l-2.5 5a2.5 2.5 0 0 0 5 0L5 8Z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M19 8l-2.5 5a2.5 2.5 0 0 0 5 0L19 8Z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M5 8h14" />
+  </>
+);
 const ICON_SHIELD = (
   <path
     strokeLinecap="round"
@@ -88,15 +120,47 @@ const notationLabelsV2 = [
   { key: "cout", label: "Coût et soutenabilité budgétaire", max: 25, icon: ICON_COUT },
 ];
 
-// Icônes pour le tableau structuré analyse_par_criteres (étape 3, nouveau
-// barème) : les valeurs de `critere` n'utilisent pas les mêmes clés que
-// notation_detaillee (ex. "solidite_factuelle" au lieu de "factuel").
+// Barème 2026 (5 critères SANS malus, voir data/prompt-methodologie.md) :
+// remplace entièrement l'ajustement juridique bonus-malus par une RÈGLE DE
+// PLAFOND interne à Opérationnalité & Moyens (voir plafond_applique /
+// plafond_declencheur, gérés par CriteriaCard/ScoreBar directement, pas par
+// ce tableau de labels). Détecté par la présence de
+// operationnalite_moyens_total dans notation_detaillee (absent de tous les
+// schémas antérieurs), pour ne pas casser l'affichage des fiches déjà
+// publiées sous un ancien barème.
+const notationLabelsV5 = [
+  { key: "operationnalite_moyens_total", label: "Opérationnalité & Moyens", max: 30, icon: ICON_OPERATIONNEL },
+  { key: "efficacite", label: "Efficacité", max: 30, icon: ICON_EFFICACITE },
+  { key: "effets_rebonds_externalites", label: "Effets rebonds & Externalités", max: 20, icon: ICON_REBONDS },
+  { key: "degre_preparation", label: "Degré de préparation", max: 10, icon: ICON_PREPARATION },
+  { key: "alignement_logique", label: "Alignement & Logique globale", max: 10, icon: ICON_ALIGNEMENT },
+];
+
+// Libellés lisibles pour plafond_declencheur ("juridique" | "budgetaire" |
+// "moyens_humains"), utilisés par le badge de plafond sur la carte
+// "Opérationnalité & Moyens".
+const PLAFOND_DECLENCHEUR_LABELS = {
+  juridique: "faisabilité juridique",
+  budgetaire: "faisabilité budgétaire",
+  moyens_humains: "moyens humains",
+};
+
+// Icônes pour le tableau structuré analyse_par_criteres (étape 3) : les
+// valeurs de `critere` n'utilisent pas toujours les mêmes clés que
+// notation_detaillee (ex. "solidite_factuelle" au lieu de "factuel",
+// schémas antérieurs). "operationnalite_moyens", "effets_rebonds_
+// externalites", "degre_preparation" et "alignement_logique" sont les clés
+// du barème 2026 ; "efficacite" est inchangée entre les deux.
 const CRITERE_ICONS = {
   solidite_factuelle: ICON_FACTUEL,
   efficacite: ICON_EFFICACITE,
   operationnel: ICON_OPERATIONNEL,
   cout: ICON_COUT,
   juridique_garde_fou: ICON_JURIDIQUE,
+  operationnalite_moyens: ICON_OPERATIONNEL,
+  effets_rebonds_externalites: ICON_REBONDS,
+  degre_preparation: ICON_PREPARATION,
+  alignement_logique: ICON_ALIGNEMENT,
 };
 
 // Traitement "verre dépoli" des deux points d'entrée clés d'une fiche
@@ -258,13 +322,26 @@ function SourcesList({ value }) {
   );
 }
 
-// Une card de critère, partagée par les deux formats de analyse_par_criteres
-// ci-dessous (tableau structuré du nouveau barème, ou objet keyé de
-// l'ancien) : icône + titre + note/max + texte, avec un liseré distinct
-// (ambre) pour le critère juridique de garde-fou, et un badge si le veto
-// s'est déclenché (score_total plafonné à 30/100 malgré les 4 autres
-// critères).
-function CriteriaCard({ icon, label, note, max, isGardeFou, vetoApplique, texte }) {
+// Une card de critère, partagée par les formats successifs de
+// analyse_par_criteres : tableau structuré (barème 2026 ou schémas
+// antérieurs, un objet par critère dont éventuellement le juridique de
+// garde-fou), ou objet keyé (plus ancien format à 5 clés). Icône + titre +
+// note/max + texte, avec un liseré distinct (ambre) pour le critère
+// juridique de garde-fou, un badge si le veto s'est déclenché (schémas
+// antérieurs), et un badge si la RÈGLE DE PLAFOND du barème 2026 s'est
+// déclenchée sur Opérationnalité & Moyens (plafond_applique, voir
+// data/prompt-methodologie.md, section RÈGLE DE PLAFOND).
+function CriteriaCard({
+  icon,
+  label,
+  note,
+  max,
+  isGardeFou,
+  vetoApplique,
+  plafondApplique,
+  plafondDeclencheur,
+  texte,
+}) {
   return (
     <div
       className={`rounded-xl border p-4 ${
@@ -304,6 +381,11 @@ function CriteriaCard({ icon, label, note, max, isGardeFou, vetoApplique, texte 
               Veto appliqué
             </span>
           ) : null}
+          {plafondApplique ? (
+            <span className="ml-2 rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-red-700">
+              Plafonné — {PLAFOND_DECLENCHEUR_LABELS[plafondDeclencheur] ?? plafondDeclencheur ?? "?"}
+            </span>
+          ) : null}
         </p>
       </div>
       <p className="mt-3 max-w-[68ch] text-sm leading-7 text-zinc-600">{renderRichText(texte)}</p>
@@ -312,9 +394,9 @@ function CriteriaCard({ icon, label, note, max, isGardeFou, vetoApplique, texte 
 }
 
 // Bloc "Analyse par critères" : gère trois formes possibles selon la fiche —
-// tableau structuré (nouveau barème, étape 3, un objet par critère dont le
-// juridique de garde-fou), objet keyé (ancien format à 5 clés), ou simple
-// chaîne (repli générique) pour tout format non reconnu.
+// tableau structuré (barème 2026 ou schémas antérieurs, un objet par
+// critère), objet keyé (plus ancien format à 5 clés), ou simple chaîne
+// (repli générique) pour tout format non reconnu.
 function CriteresCards({ criteres, notation }) {
   if (Array.isArray(criteres)) {
     if (criteres.length === 0) return <TextOrList value={null} />;
@@ -329,6 +411,8 @@ function CriteresCards({ criteres, notation }) {
             max={item.note_max ?? 25}
             isGardeFou={Boolean(item.est_garde_fou)}
             vetoApplique={Boolean(item.veto_applique)}
+            plafondApplique={Boolean(item.plafond_applique)}
+            plafondDeclencheur={item.plafond_declencheur}
             texte={item.texte}
           />
         ))}
@@ -370,7 +454,7 @@ function scoreBarColor(pct) {
   return "bg-emerald-500";
 }
 
-function ScoreBar({ icon, label, note, max, isGardeFou, vetoApplique }) {
+function ScoreBar({ icon, label, note, max, isGardeFou, vetoApplique, plafondApplique, plafondDeclencheur }) {
   const pct = note != null ? Math.min(100, Math.max(0, (note / max) * 100)) : 0;
   return (
     <div className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
@@ -396,6 +480,11 @@ function ScoreBar({ icon, label, note, max, isGardeFou, vetoApplique }) {
           <p className="text-xs font-medium text-zinc-600">
             {label}
             {vetoApplique ? <span className="ml-1.5 font-semibold text-red-600">· veto appliqué</span> : null}
+            {plafondApplique ? (
+              <span className="ml-1.5 font-semibold text-red-600">
+                · plafonné ({PLAFOND_DECLENCHEUR_LABELS[plafondDeclencheur] ?? plafondDeclencheur ?? "?"})
+              </span>
+            ) : null}
           </p>
           <p className="shrink-0 text-sm font-bold text-zinc-900">
             {note ?? "—"}
@@ -582,6 +671,13 @@ export default async function DeclarationDetailPage({ params }) {
   // buildContenuCompletV4 dans scripts/analyze.js). La page affiche donc,
   // pour ces fiches, un résumé plus court que pour les versions antérieures.
   const isV4 = contenu.schema_version === "v4";
+  // Barème 2026 (5 critères SANS malus, voir data/prompt-methodologie.md) :
+  // détecté par operationnalite_moyens_total, absent de tous les schémas
+  // antérieurs. Remplace le malus bonus/malus (isNouveauBareme/
+  // isNouveauBaremeV3) par une RÈGLE DE PLAFOND interne à Opérationnalité &
+  // Moyens (plafond_applique/plafond_declencheur) — affichée directement
+  // par ScoreBar/CriteriaCard, pas par un bloc textuel séparé comme V3.
+  const isNouveauBaremeV5 = notation.operationnalite_moyens_total !== undefined;
   const scoreComment = firstSentence(analyse.resumeAccueil);
   const tocSections = isV4
     ? TOC_SECTIONS.filter((section) => section.id === "analyse-criteres" || section.id === "verdict")
@@ -681,13 +777,13 @@ export default async function DeclarationDetailPage({ params }) {
               </span>
 
               <div className="mt-4 flex flex-col divide-y divide-zinc-100">
-                {/* score_juridique_garde_fou (V2), qualification_juridique
-                    (V3) et schema_version "v4" désignent tous un barème à 4
-                    critères /25 ; leur absence signale une fiche à l'ancien
-                    format (5 critères additionnés), pour laquelle on garde
-                    l'affichage inchangé. */}
-                {(isNouveauBareme || isNouveauBaremeV3 || isV4 ? notationLabelsV2 : notationLabels).map(
-                  ({ key, label, max, icon }) => (
+                {isNouveauBaremeV5 ? (
+                  // Barème 2026 : 5 critères sans malus, note_max propre à
+                  // chacun (30/30/20/10/10) — voir notationLabelsV5. La
+                  // RÈGLE DE PLAFOND s'affiche directement sur la barre
+                  // "Opérationnalité & Moyens" plutôt que via un bloc
+                  // textuel séparé comme l'ancienne V3.
+                  notationLabelsV5.map(({ key, label, max, icon }) => (
                     <ScoreBar
                       key={key}
                       icon={icon}
@@ -696,20 +792,43 @@ export default async function DeclarationDetailPage({ params }) {
                       max={max}
                       isGardeFou={false}
                       vetoApplique={false}
+                      plafondApplique={key === "operationnalite_moyens_total" && Boolean(notation.plafond_applique)}
+                      plafondDeclencheur={notation.plafond_declencheur}
                     />
-                  ),
-                )}
+                  ))
+                ) : (
+                  <>
+                    {/* score_juridique_garde_fou (V2), qualification_juridique
+                        (V3) et schema_version "v4" désignent tous un barème à
+                        4 critères /25 ; leur absence signale une fiche à
+                        l'ancien format (5 critères additionnés), pour
+                        laquelle on garde l'affichage inchangé. */}
+                    {(isNouveauBareme || isNouveauBaremeV3 || isV4 ? notationLabelsV2 : notationLabels).map(
+                      ({ key, label, max, icon }) => (
+                        <ScoreBar
+                          key={key}
+                          icon={icon}
+                          label={label}
+                          note={notation[key]}
+                          max={max}
+                          isGardeFou={false}
+                          vetoApplique={false}
+                        />
+                      ),
+                    )}
 
-                {isNouveauBareme ? (
-                  <ScoreBar
-                    icon={ICON_JURIDIQUE}
-                    label="Faisabilité juridique (garde-fou)"
-                    note={notation.score_juridique_garde_fou}
-                    max={100}
-                    isGardeFou
-                    vetoApplique={Boolean(notation.veto_juridique_applique)}
-                  />
-                ) : null}
+                    {isNouveauBareme ? (
+                      <ScoreBar
+                        icon={ICON_JURIDIQUE}
+                        label="Faisabilité juridique (garde-fou)"
+                        note={notation.score_juridique_garde_fou}
+                        max={100}
+                        isGardeFou
+                        vetoApplique={Boolean(notation.veto_juridique_applique)}
+                      />
+                    ) : null}
+                  </>
+                )}
               </div>
 
               {/* V3 : l'incidence juridique n'est plus un score séparé —

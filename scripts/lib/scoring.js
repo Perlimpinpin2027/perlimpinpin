@@ -1,19 +1,24 @@
 import { z } from "zod";
 
-// Barème du pipeline à 3 étapes (voir data/prompt-methodologie.md) : 4
-// critères de 25 points + un ajustement juridique bonus-malus (-30..+5).
+// Barème 2026 du pipeline à 3 étapes (voir data/prompt-methodologie.md) : 5
+// critères SANS malus — Opérationnalité & Moyens (30, décomposée en 3
+// sous-composantes juridique/budgétaire/moyens humains notées /10 chacune),
+// Efficacité (30), Effets rebonds & Externalités (20), Degré de préparation
+// (10), Alignement & Logique globale (10). Le système de malus juridique
+// bonus-malus (-30..+5, "ajustement_juridique") est entièrement supprimé :
+// la dimension juridique est désormais une sous-composante additive de
+// l'Opérationnalité & Moyens, avec une RÈGLE DE PLAFOND dédiée (voir
+// checkNotationCoherence) plutôt qu'un ajustement séparé du score total.
 //
-// Différence de philosophie par rapport au pipeline précédent (4 étapes,
-// abandonné) : ici, "L'analyse, les notes, la qualification juridique,
-// l'arbitrage et le calcul final restent effectués par les IA. Le code
-// orchestre les appels, valide le JSON, gère la résilience et stocke les
-// résultats" (voir en-tête de data/prompt-methodologie.md). Ce module ne
-// recalcule donc JAMAIS score_total à la place du modèle — il valide
-// uniquement la STRUCTURE (types, bornes, enums) pour déclencher une
-// réparation ciblée en cas de JSON malformé, et expose une vérification de
-// cohérence arithmétique à part (checkNotationCoherence) destinée à un
-// simple avertissement en log, jamais à une correction silencieuse — même
-// principe que la revérification déjà pratiquée dans scripts/pipeline-2-3.js.
+// "L'analyse, les notes, la qualification juridique, l'arbitrage et le
+// calcul final restent effectués par les IA. Le code orchestre les appels,
+// valide le JSON, gère la résilience et stocke les résultats" (voir en-tête
+// de data/prompt-methodologie.md). Ce module ne recalcule donc JAMAIS
+// score_total à la place du modèle — il valide uniquement la STRUCTURE
+// (types, bornes, énumérations) pour déclencher une réparation ciblée en cas
+// de JSON malformé, et expose une vérification de cohérence arithmétique à
+// part (checkNotationCoherence) destinée à un simple avertissement en log,
+// jamais à une correction silencieuse.
 
 // --- Paliers d'appréciation --------------------------------------------------
 // Doit rester synchronisé avec SCORE_BANDS dans src/lib/score.js (même
@@ -35,87 +40,148 @@ export function computeAppreciation(scoreTotal) {
   return band.label;
 }
 
-// --- Critères -----------------------------------------------------------------
+// --- Qualifications ------------------------------------------------------------
+// Chaque critère et sous-critère porte une qualification choisie AVANT la
+// note numérique (voir data/prompt-methodologie.md, "BARÈME PRINCIPAL").
+const QUALIFICATION = ["SOLIDE", "INCERTAIN", "FRAGILE"];
 
-export const CRITERE_KEYS = ["solidite_factuelle", "efficacite", "operationnel", "cout"];
+// --- mesure_vers_objectif (nouveau bloc obligatoire, étape 1 point 1bis) ----
+// Liste fermée des 12 domaines couverts par data/objectifs-de-reference.md —
+// doit rester synchronisée avec ce document et avec la liste de
+// data/prompt-methodologie.md (point 1bis).
+export const CATEGORIES_OBJECTIF = [
+  "Retraites",
+  "Santé",
+  "Emploi et chômage",
+  "Éducation",
+  "Énergie et climat",
+  "Logement",
+  "Alimentation et agriculture",
+  "Fiscalité et pouvoir d'achat",
+  "Dette et finances publiques",
+  "Immigration",
+  "Sécurité et justice",
+  "Numérique et intelligence artificielle",
+];
 
-// analyse_par_criteres (étape 3) utilise "solidite_factuelle" (clé
-// descriptive), mais le champ historique notation_detaillee.factuel garde
-// son nom d'origine — cette table fait le pont entre les deux.
-export const CRITERE_TO_NOTATION_KEY = {
-  solidite_factuelle: "factuel",
-  efficacite: "efficacite",
-  operationnel: "operationnel",
-  cout: "cout",
-};
+const MesureVersObjectifSchema = z.object({
+  objectif_court: z.string().min(1),
+  categorie_objectif: z.enum(CATEGORIES_OBJECTIF).nullable(),
+  objectif_vise: z.string().min(1),
+  mecanisme_propose: z.string().min(1),
+  lien_causal: z.enum(["direct", "indirect", "faible_ou_absent"]),
+});
 
-// --- Ajustement juridique (-30..+5) -------------------------------------------
-
-const NIVEAU_IMPACT_JURIDIQUE = ["bonus", "neutre", "limite", "significatif", "severe", "majeur"];
-const CONFIANCE = ["haute", "moyenne", "faible"];
-
-// Déduit le niveau_impact_juridique attendu à partir du seul ajustement
-// numérique (voir data/prompt-methodologie.md, section AJUSTEMENT JURIDIQUE
-// INTERNE — -30 À +5) — sert uniquement à un avertissement de cohérence, ne
-// bloque jamais la validation structurelle.
-export function computeNiveauImpactAttendu(ajustement) {
-  if (ajustement >= 1) return "bonus";
-  if (ajustement === 0) return "neutre";
-  if (ajustement >= -5) return "limite";
-  if (ajustement >= -12) return "significatif";
-  if (ajustement >= -20) return "severe";
-  return "majeur";
-}
+// --- notation_detaillee ---------------------------------------------------------
+// Sous-composantes de l'Opérationnalité & Moyens (1a/1b/1c), chacune 0-10.
+const PLAFOND_DECLENCHEURS = ["juridique", "budgetaire", "moyens_humains"];
 
 const NotationDetailleeSchema = z.object({
-  factuel: z.number().int().min(0).max(25),
-  efficacite: z.number().int().min(0).max(25),
-  operationnel: z.number().int().min(0).max(25),
-  cout: z.number().int().min(0).max(25),
-  somme_4_criteres: z.number().int().min(0).max(100),
-  ajustement_juridique: z.number().int().min(-30).max(5),
-  niveau_impact_juridique: z.enum(NIVEAU_IMPACT_JURIDIQUE),
-  confiance_juridique: z.enum(CONFIANCE),
-  justification_juridique: z.string().min(1),
+  operationnalite_juridique: z.number().int().min(0).max(10),
+  qualification_juridique: z.enum(QUALIFICATION),
+  operationnalite_budgetaire: z.number().int().min(0).max(10),
+  qualification_budgetaire: z.enum(QUALIFICATION),
+  operationnalite_moyens_humains: z.number().int().min(0).max(10),
+  qualification_moyens_humains: z.enum(QUALIFICATION),
+  operationnalite_moyens_total: z.number().int().min(0).max(30),
+  plafond_applique: z.boolean(),
+  plafond_declencheur: z.enum(PLAFOND_DECLENCHEURS).nullable(),
+  efficacite: z.number().int().min(0).max(30),
+  qualification_efficacite: z.enum(QUALIFICATION),
+  effets_rebonds_externalites: z.number().int().min(0).max(20),
+  qualification_effets_rebonds: z.enum(QUALIFICATION),
+  degre_preparation: z.number().int().min(0).max(10),
+  qualification_preparation: z.enum(QUALIFICATION),
+  alignement_logique: z.number().int().min(0).max(10),
+  qualification_alignement: z.enum(QUALIFICATION),
   score_total: z.number().int().min(0).max(100),
   appreciation: z.string().min(1),
 });
 
-// Revérifie la cohérence arithmétique de notation_detaillee (somme, clamp,
-// étiquette juridique) sans jamais écraser les valeurs produites par le
-// modèle — voir l'en-tête de ce fichier. Retourne une liste d'écarts
-// destinée uniquement à un console.warn côté appelant.
+// Sous-composante la plus basse parmi celles qualifiées FRAGILE (< 3/10) —
+// c'est celle-là que plafond_declencheur doit identifier en cas d'égalité
+// ou de FRAGILE multiples (voir CALCUL, étape 2, dans
+// data/prompt-methodologie.md : "si plusieurs sous-composantes sont
+// FRAGILE, indiquer celle dont le score est le plus bas").
+function computePlafondDeclencheurAttendu({
+  operationnalite_juridique,
+  operationnalite_budgetaire,
+  operationnalite_moyens_humains,
+}) {
+  const sousComposantes = [
+    { nom: "juridique", note: operationnalite_juridique },
+    { nom: "budgetaire", note: operationnalite_budgetaire },
+    { nom: "moyens_humains", note: operationnalite_moyens_humains },
+  ];
+  const fragiles = sousComposantes.filter((item) => item.note < 3);
+  if (fragiles.length === 0) return null;
+  return fragiles.reduce((lowest, item) => (item.note < lowest.note ? item : lowest)).nom;
+}
+
+// Revérifie la cohérence arithmétique de notation_detaillee (CALCUL, voir
+// data/prompt-methodologie.md) sans jamais écraser les valeurs produites
+// par le modèle — voir l'en-tête de ce fichier. Retourne une liste d'écarts
+// destinée uniquement à un log d'avertissement côté appelant (le message
+// "INCOHÉRENCE DE CALCUL DÉTECTÉE" est affiché par l'appelant, voir
+// scripts/analyze.js, warnNotationCoherence).
 export function checkNotationCoherence(notation) {
   const errors = [];
   const {
-    factuel,
+    operationnalite_juridique,
+    operationnalite_budgetaire,
+    operationnalite_moyens_humains,
+    operationnalite_moyens_total,
+    plafond_applique,
+    plafond_declencheur,
     efficacite,
-    operationnel,
-    cout,
-    somme_4_criteres,
-    ajustement_juridique,
+    effets_rebonds_externalites,
+    degre_preparation,
+    alignement_logique,
     score_total,
-    niveau_impact_juridique,
   } = notation;
 
-  const sommeAttendue = factuel + efficacite + operationnel + cout;
-  if (sommeAttendue !== somme_4_criteres) {
+  // 1. operationnalite_moyens_total = somme des 3 sous-composantes
+  const sousTotal = operationnalite_juridique + operationnalite_budgetaire + operationnalite_moyens_humains;
+
+  // 2. RÈGLE DE PLAFOND
+  const declencheurAttendu = computePlafondDeclencheurAttendu(notation);
+  const plafondAppliqueAttendu = declencheurAttendu !== null;
+  const totalOperationnaliteAttendu = plafondAppliqueAttendu ? Math.min(sousTotal, 10) : sousTotal;
+
+  if (totalOperationnaliteAttendu !== operationnalite_moyens_total) {
     errors.push(
-      `somme_4_criteres incohérente : attendu ${sommeAttendue} (factuel+efficacite+operationnel+cout), trouvé ${somme_4_criteres}.`,
+      `operationnalite_moyens_total incohérent : attendu ${totalOperationnaliteAttendu} (somme ${sousTotal}${plafondAppliqueAttendu ? ", plafonnée à 10 (règle de plafond)" : ""}), trouvé ${operationnalite_moyens_total}.`,
+    );
+  }
+  if (plafondAppliqueAttendu !== plafond_applique) {
+    errors.push(
+      `plafond_applique incohérent : attendu ${plafondAppliqueAttendu} (sous-composante(s) FRAGILE : juridique=${operationnalite_juridique}, budgetaire=${operationnalite_budgetaire}, moyens_humains=${operationnalite_moyens_humains}), trouvé ${plafond_applique}.`,
+    );
+  }
+  if (declencheurAttendu !== plafond_declencheur) {
+    errors.push(
+      `plafond_declencheur incohérent : attendu ${JSON.stringify(declencheurAttendu)}, trouvé ${JSON.stringify(plafond_declencheur)}.`,
     );
   }
 
-  const scoreAttendu = Math.max(0, Math.min(100, somme_4_criteres + ajustement_juridique));
+  // 3. score_total = clamp(somme des 5 critères, 0, 100)
+  const scoreAttendu = Math.max(
+    0,
+    Math.min(
+      100,
+      operationnalite_moyens_total + efficacite + effets_rebonds_externalites + degre_preparation + alignement_logique,
+    ),
+  );
   if (scoreAttendu !== score_total) {
     errors.push(
-      `score_total incohérent : attendu ${scoreAttendu} (clamp(somme_4_criteres + ajustement_juridique, 0, 100)), trouvé ${score_total}.`,
+      `score_total incohérent : attendu ${scoreAttendu} (clamp(operationnalite_moyens_total + efficacite + effets_rebonds_externalites + degre_preparation + alignement_logique, 0, 100)), trouvé ${score_total}.`,
     );
   }
 
-  const niveauAttendu = computeNiveauImpactAttendu(ajustement_juridique);
-  if (niveauAttendu !== niveau_impact_juridique) {
+  const appreciationAttendue = computeAppreciation(score_total);
+  if (notation.appreciation && notation.appreciation.toLowerCase() !== appreciationAttendue) {
     errors.push(
-      `niveau_impact_juridique incohérent : ajustement_juridique=${ajustement_juridique} implique "${niveauAttendu}", trouvé "${niveau_impact_juridique}".`,
+      `appreciation incohérente : score_total=${score_total} implique "${appreciationAttendue}", trouvé "${notation.appreciation}".`,
     );
   }
 
@@ -133,6 +199,7 @@ const TextOrArray = z.union([z.string(), z.array(z.string())]);
 // plus bas) ni resume_court/phrase_teasing (absents de fiche_complete).
 const champsCommunsEtape1 = {
   mesure_reformulee: z.string().min(1),
+  mesure_vers_objectif: MesureVersObjectifSchema,
   nature_et_existant: z.string().min(1),
   contexte_programme: TextOrArray.nullable(),
   contexte_national: TextOrArray.nullable(),
@@ -177,30 +244,54 @@ export function validateEtape1Structure(raw) {
 }
 
 // Étape 3 (arbitrage + rédaction) : analyse_par_criteres devient un tableau
-// de 5 objets (4 critères notés /25 + le critère juridique, note/note_max
-// null, voir "FORMAT ÉTAPE 3 — JSON STRICT").
-const CRITERE_ETAPE3_KEYS = [...CRITERE_KEYS, "juridique"];
+// de 5 objets, un par critère du barème (voir "FORMAT ÉTAPE 3 — JSON
+// STRICT"), avec un note_max PROPRE à chaque critère (30/30/20/10/10) —
+// plus un barème uniforme /25 comme dans l'ancien schéma. Seul l'objet
+// "operationnalite_moyens" porte plafond_applique/plafond_declencheur (les
+// 4 autres ne les incluent pas, voir le gabarit).
+export const CRITERE_ETAPE3_KEYS = [
+  "operationnalite_moyens",
+  "efficacite",
+  "effets_rebonds_externalites",
+  "degre_preparation",
+  "alignement_logique",
+];
 
-const CritereEtape3Schema = z.object({
-  critere: z.enum(CRITERE_ETAPE3_KEYS),
-  titre: z.string().min(1),
-  note: z.number().int().min(0).max(25).nullable(),
-  note_max: z.number().int().nullable(),
-  est_juridique: z.boolean(),
-  texte: z.string().min(1),
-});
+export const CRITERE_NOTE_MAX = {
+  operationnalite_moyens: 30,
+  efficacite: 30,
+  effets_rebonds_externalites: 20,
+  degre_preparation: 10,
+  alignement_logique: 10,
+};
+
+const CritereEtape3Schema = z
+  .object({
+    critere: z.enum(CRITERE_ETAPE3_KEYS),
+    titre: z.string().min(1),
+    note: z.number().int().min(0).max(30).nullable(),
+    note_max: z.number().int(),
+    plafond_applique: z.boolean().optional(),
+    plafond_declencheur: z.enum(PLAFOND_DECLENCHEURS).nullable().optional(),
+    texte: z.string().min(1),
+  })
+  .refine((item) => item.note_max === CRITERE_NOTE_MAX[item.critere], (item) => ({
+    message: `note_max (${item.note_max}) ne correspond pas au barème attendu pour "${item.critere}" (${CRITERE_NOTE_MAX[item.critere]}).`,
+  }))
+  .refine((item) => item.note === null || item.note <= item.note_max, (item) => ({
+    message: `note (${item.note}) dépasse note_max (${item.note_max}) pour "${item.critere}".`,
+  }));
 
 const AnalyseParCriteresEtape3Schema = z
   .array(CritereEtape3Schema)
-  .length(5, "analyse_par_criteres (étape 3) doit contenir exactement 5 objets (4 critères + juridique).")
+  .length(5, "analyse_par_criteres (étape 3) doit contenir exactement 5 objets, un par critère du barème.")
   .refine(
     (items) => {
       const seen = new Set(items.map((item) => item.critere));
       return seen.size === 5 && CRITERE_ETAPE3_KEYS.every((key) => seen.has(key));
     },
     {
-      message:
-        "analyse_par_criteres (étape 3) doit contenir exactement les 4 critères plus juridique, sans doublon.",
+      message: "analyse_par_criteres (étape 3) doit contenir exactement les 5 critères du barème, sans doublon.",
     },
   );
 

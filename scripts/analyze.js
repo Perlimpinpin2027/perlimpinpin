@@ -459,7 +459,7 @@ Retourne uniquement le JSON corrigé, structuré exactement comme l'original (m�
 function warnNotationCoherence(notation, label) {
   const errors = checkNotationCoherence(notation);
   if (errors.length === 0) return;
-  console.error(`  ⚠️  ${label} : incohérence de calcul détectée (écrite en base telle quelle, à vérifier) :`);
+  console.error(`  ⚠️  ${label} : INCOHÉRENCE DE CALCUL DÉTECTÉE (écrite en base telle quelle, à vérifier) :`);
   for (const error of errors) console.error(`     - ${error}`);
 }
 
@@ -662,7 +662,7 @@ function loadEtape1(input) {
 async function runPipeline(etape1Input) {
   const etape1 = validateEtape1Local(loadEtape1(etape1Input), "Étape 1");
   console.log(
-    `✓ Étape 1 chargée et validée (score initial : ${etape1.notation_detaillee.score_total}/100, ajustement juridique : ${etape1.notation_detaillee.ajustement_juridique > 0 ? "+" : ""}${etape1.notation_detaillee.ajustement_juridique}).`,
+    `✓ Étape 1 chargée et validée (score initial : ${etape1.notation_detaillee.score_total}/100${etape1.notation_detaillee.plafond_applique ? `, plafond appliqué — déclencheur : ${etape1.notation_detaillee.plafond_declencheur}` : ""}).`,
   );
   console.log("");
 
@@ -696,7 +696,7 @@ async function runPipeline(etape1Input) {
     verdict_final: arbitrage3.verdict_final ?? ficheComplete.verdict_final,
   });
   console.log(
-    `  ✓ terminé (score final : ${parsed.notation_detaillee.score_total}/100, ajustement juridique : ${parsed.notation_detaillee.ajustement_juridique > 0 ? "+" : ""}${parsed.notation_detaillee.ajustement_juridique})`,
+    `  ✓ terminé (score final : ${parsed.notation_detaillee.score_total}/100${parsed.notation_detaillee.plafond_applique ? `, plafond appliqué — déclencheur : ${parsed.notation_detaillee.plafond_declencheur}` : ""})`,
   );
 
   const coutPipeline = buildCoutPipeline({
@@ -867,14 +867,16 @@ async function saveAnalysis(item, pipelineResult) {
       scoreFaisabilite: notation.score_total,
       // Colonnes historiques (Int, non lues par l'UI — la carte "Détail du
       // score" du site lit notation_detaillee directement dans
-      // contenuComplet). Barème : 4 critères /25 + un ajustement juridique
-      // bonus-malus (-30..+5) — scoreJuridique n'a donc plus la même
-      // échelle que les 3 autres colonnes /25, on y range quand même
-      // l'ajustement pour audit rapide en base.
-      scoreSolidite: notation.factuel,
-      scoreJuridique: notation.ajustement_juridique,
-      scoreOperationnel: notation.operationnel,
-      scoreBudgetaire: notation.cout,
+      // contenuComplet). Barème 2026 (5 critères sans malus, voir
+      // data/prompt-methodologie.md) : pas de correspondance 1:1 avec ces 5
+      // anciennes colonnes (le nouveau barème a 3 sous-critères
+      // d'Opérationnalité en plus des 4 autres critères) — mappage
+      // approximatif gardé pour un audit SQL rapide uniquement, jamais lu
+      // ni affiché par l'UI.
+      scoreSolidite: notation.degre_preparation,
+      scoreJuridique: notation.operationnalite_juridique,
+      scoreOperationnel: notation.operationnalite_moyens_total,
+      scoreBudgetaire: notation.operationnalite_budgetaire,
       scorePertinence: notation.efficacite,
       verdict: toText(parsed.verdict_final),
       resumeAccueil,
@@ -906,13 +908,29 @@ function printUsage(usage) {
 }
 
 function printScoreDetail(notation) {
-  console.log(`  Solidité factuelle et documentaire        : ${notation.factuel ?? "?"}/25`);
-  console.log(`  Efficacité attendue                       : ${notation.efficacite ?? "?"}/25`);
-  console.log(`  Faisabilité opérationnelle                : ${notation.operationnel ?? "?"}/25`);
-  console.log(`  Coût et soutenabilité budgétaire          : ${notation.cout ?? "?"}/25`);
-  console.log(`  Somme des 4 critères                      : ${notation.somme_4_criteres ?? "?"}/100`);
   console.log(
-    `  Ajustement juridique                      : ${notation.ajustement_juridique > 0 ? "+" : ""}${notation.ajustement_juridique} (${notation.niveau_impact_juridique}, confiance ${notation.confiance_juridique})`,
+    `  Opérationnalité & Moyens                  : ${notation.operationnalite_moyens_total ?? "?"}/30${notation.plafond_applique ? `  (PLAFOND APPLIQUÉ — déclencheur : ${notation.plafond_declencheur})` : ""}`,
+  );
+  console.log(
+    `    1a. Juridique                           : ${notation.operationnalite_juridique ?? "?"}/10 (${notation.qualification_juridique ?? "?"})`,
+  );
+  console.log(
+    `    1b. Budgétaire                          : ${notation.operationnalite_budgetaire ?? "?"}/10 (${notation.qualification_budgetaire ?? "?"})`,
+  );
+  console.log(
+    `    1c. Moyens humains                      : ${notation.operationnalite_moyens_humains ?? "?"}/10 (${notation.qualification_moyens_humains ?? "?"})`,
+  );
+  console.log(
+    `  Efficacité                                : ${notation.efficacite ?? "?"}/30 (${notation.qualification_efficacite ?? "?"})`,
+  );
+  console.log(
+    `  Effets rebonds & Externalités             : ${notation.effets_rebonds_externalites ?? "?"}/20 (${notation.qualification_effets_rebonds ?? "?"})`,
+  );
+  console.log(
+    `  Degré de préparation                      : ${notation.degre_preparation ?? "?"}/10 (${notation.qualification_preparation ?? "?"})`,
+  );
+  console.log(
+    `  Alignement & Logique globale              : ${notation.alignement_logique ?? "?"}/10 (${notation.qualification_alignement ?? "?"})`,
   );
   console.log(`  Score total (public, unique)               : ${notation.score_total ?? "?"}/100`);
   console.log(`  Appréciation                               : ${notation.appreciation ?? "?"}`);
