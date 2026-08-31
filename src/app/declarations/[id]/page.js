@@ -841,10 +841,10 @@ export default async function DeclarationDetailPage({ params }) {
               </Link>
             </div>
 
-            {/* Vote sur la mesure elle-même — premier exemplaire, proche du
-                titre et du score, pour capter le lecteur qui ne lit pas
-                toute la fiche. Voir aussi le second exemplaire en bas de
-                page, à côté de FeedbackWidget. */}
+            {/* Vote sur la mesure elle-même — proche du titre et du score,
+                pour capter le lecteur qui ne lit pas toute la fiche.
+                Instance unique (un second exemplaire existait plus bas, à
+                côté de FeedbackWidget — retiré, doublon involontaire). */}
             <VoteMesureWidget
               propositionId={declaration.id}
               initialAccord={declaration.voteMesureCounts.accord}
@@ -1021,15 +1021,6 @@ export default async function DeclarationDetailPage({ params }) {
               analyseId={analyse.id}
               initialLikes={declaration.feedbackCounts.likes}
               initialDislikes={declaration.feedbackCounts.dislikes}
-            />
-
-            {/* Vote sur la mesure elle-même — second exemplaire, pour le
-                lecteur qui a lu toute la fiche (voir le premier exemplaire
-                en haut de page). */}
-            <VoteMesureWidget
-              propositionId={declaration.id}
-              initialAccord={declaration.voteMesureCounts.accord}
-              initialDesaccord={declaration.voteMesureCounts.desaccord}
             />
 
             {/* Bandeau de confiance */}

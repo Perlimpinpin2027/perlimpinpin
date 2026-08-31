@@ -54,12 +54,12 @@ export default function Header() {
     >
       <div className="flex items-center justify-between gap-6 px-6 py-4 sm:px-8">
         <Link href="/" className="flex shrink-0 items-center">
-          {/* mix-blend-multiply : le fichier logo.png n'a pas de fond
-              transparent (RVB plein, ~blanc). En multiply, le blanc de
-              l'image se fond dans n'importe quel fond derrière (multiply
-              par blanc = identité), donc pas de rectangle visible même
-              quand le header devient semi-transparent au scroll — sans
-              dépendre d'un nouvel export transparent.
+          {/* public/logo/logo.png a un vrai canal alpha (fond transparent) :
+              retraité depuis l'export opaque d'origine (fond ~blanc uni)
+              via un alpha calculé par luminance par pixel, encre ramenée à
+              un noir pur — l'ancien contournement mix-blend-multiply
+              (fondre le blanc dans le fond au lieu d'une vraie
+              transparence) n'est plus nécessaire.
               width/height 1877x233 : dimensions réelles du fichier recadré
               (voir le commentaire de .header-logo dans globals.css) — le
               fichier original 2181x721 laissait ~73% de vide vertical
@@ -71,7 +71,7 @@ export default function Header() {
             width={1877}
             height={233}
             priority
-            className="header-logo mix-blend-multiply"
+            className="header-logo"
           />
         </Link>
 
