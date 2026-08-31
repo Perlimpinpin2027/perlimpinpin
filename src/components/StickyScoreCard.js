@@ -10,7 +10,14 @@ import Link from "next/link";
 // sentinelle posée par la page (id="resume-sentinel") au viewport, plutôt
 // qu'un IntersectionObserver — la position de scroll seule suffit ici, pas
 // besoin de dépendre du pipeline de rendu/compositing.
-export default function StickyScoreCard({ score, badge, scoreComment, sections }) {
+export default function StickyScoreCard({
+  score,
+  badge,
+  scoreComment,
+  sections,
+  versionMethodologie,
+  generationDateLabel,
+}) {
   const [scrolledPast, setScrolledPast] = useState(false);
 
   useEffect(() => {
@@ -54,26 +61,40 @@ export default function StickyScoreCard({ score, badge, scoreComment, sections }
             <a
               key={id}
               href={`#${id}`}
-              className="rounded-lg px-2 py-1.5 text-sm text-zinc-600 transition-colors hover:bg-zinc-50 hover:text-blue-700"
+              className="flex items-center gap-1.5 rounded-lg px-2 py-1.5 font-mono text-sm text-zinc-600 transition-colors hover:bg-zinc-50 hover:text-blue-700"
             >
+              <span aria-hidden="true" className="text-zinc-400">
+                &gt;
+              </span>
               {label}
             </a>
           ))}
         </nav>
-      ) : (
-        <>
-          {scoreComment ? (
-            <p className="mt-4 text-sm leading-relaxed text-zinc-500">{scoreComment}</p>
-          ) : null}
-          <Link
-            href="#raisonnement-complet"
-            className="mt-5 inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-zinc-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-zinc-800"
-          >
-            Lire l&apos;analyse détaillée
-            <span aria-hidden="true">→</span>
-          </Link>
-        </>
-      )}
+      ) : scoreComment ? (
+        <p className="mt-4 text-sm leading-relaxed text-zinc-500">{scoreComment}</p>
+      ) : null}
+
+      {/* Filet d'audit visible : mêmes champs (versionMethodologie,
+          generationDateLabel) qu'affichés en haut de fiche avant la refonte
+          du Bloc A — juste déplacés ici, dans la sidebar, plutôt que
+          disparus. "Tagadaaa" : nom de code fixe du projet, pas une valeur
+          dérivée de versionMethodologie (voir la demande d'origine). */}
+      {versionMethodologie && generationDateLabel ? (
+        <div className="mt-4 text-xs text-zinc-400">
+          <p>
+            Analyse réalisée avec Perlimpinpin {versionMethodologie} · Tagadaaa
+          </p>
+          <p className="mt-0.5">{generationDateLabel}</p>
+        </div>
+      ) : null}
+
+      <Link
+        href="#raisonnement-complet"
+        className="mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-zinc-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-zinc-800"
+      >
+        Lire l&apos;analyse détaillée
+        <span aria-hidden="true">→</span>
+      </Link>
     </div>
   );
 }

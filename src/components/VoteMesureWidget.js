@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import ArrowIcon from "./ArrowIcon";
 
 function storageKey(propositionId) {
   return `vote-mesure:${propositionId}`;
@@ -11,33 +12,6 @@ function storageKey(propositionId) {
 // à jour ?) entre les deux instances sans recharger la page, dès que l'une
 // des deux enregistre un vote.
 const VOTE_EVENT = "perlimpinpin:vote-mesure";
-
-// Flèches minimalistes plutôt que des emojis 👍/👎, cohérentes avec le reste
-// de l'iconographie du site. Même paire que FeedbackWidget, pour
-// l'uniformité visuelle des deux systèmes de vote de la page.
-function ArrowIcon({ direction }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.8}
-      className="h-4 w-4"
-      aria-hidden="true"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d={
-          direction === "up"
-            ? "M12 19.5v-15m0 0-6.75 6.75M12 4.5l6.75 6.75"
-            : "M12 4.5v15m0 0-6.75-6.75M12 19.5l6.75-6.75"
-        }
-      />
-    </svg>
-  );
-}
 
 // Widget de vote sur la MESURE POLITIQUE elle-même (d'accord / pas
 // d'accord), distinct de FeedbackWidget qui porte sur la qualité de

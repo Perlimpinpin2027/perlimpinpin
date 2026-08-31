@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Header from "@/components/Header";
+import MonoTag from "@/components/MonoTag";
 import { getAllCandidats } from "@/lib/queries";
 import { getScoreBadge } from "@/lib/score";
 
@@ -15,9 +16,7 @@ export default async function CandidatsPage() {
       <main className="w-full px-6 py-12 sm:px-8 sm:py-16">
         <div className="mx-auto flex w-full max-w-5xl flex-col gap-8">
           <div>
-            <span className="font-mono text-xs font-bold uppercase tracking-widest text-zinc-400">
-              // Candidats
-            </span>
+            <MonoTag>Candidats</MonoTag>
             <h1 className="mt-2 text-3xl font-extrabold tracking-tight text-zinc-900 sm:text-4xl">
               Les candidats
             </h1>
@@ -27,7 +26,7 @@ export default async function CandidatsPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-3">
             {candidats.map((candidat) => {
               const badge =
                 candidat.scoreMoyen == null
@@ -38,7 +37,7 @@ export default async function CandidatsPage() {
                 <Link
                   key={candidat.id}
                   href={`/candidats/${candidat.id}`}
-                  className="flex flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-6 transition-colors hover:border-zinc-300 hover:bg-zinc-50"
+                  className="flex flex-col gap-4 border-b border-zinc-200 pb-6 transition-opacity hover:opacity-70"
                 >
                   <div className="flex items-center gap-3">
                     <img

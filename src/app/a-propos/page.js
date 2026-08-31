@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Header from "@/components/Header";
 import ShareButton from "@/components/ShareButton";
+import SectionHeading from "@/components/SectionHeading";
 
 export const metadata = {
   title: "À propos — Perlimpinpin",
@@ -8,17 +9,14 @@ export const metadata = {
 };
 
 // Chaque section de l'essai : séparateur fin au-dessus pour la distinguer
-// du paragraphe précédent, puis titre avec un petit trait rouge fin à
-// gauche (accent visuel sur la seule ligne du titre, pas une bordure de
-// bloc qui engloberait aussi les paragraphes en dessous).
+// du paragraphe précédent, puis SectionHeading (accent vertical bleu/indigo,
+// composant partagé — voir Étape 0.3 de la demande d'audit).
 function Section({ title, children }) {
   return (
     <div className="pt-6">
       <hr className="border-zinc-200" />
       <div className="mt-6 flex flex-col gap-4">
-        <h2 className="border-l-2 border-indigo-400 pl-3 text-xl font-bold leading-tight text-zinc-900">
-          {title}
-        </h2>
+        <SectionHeading>{title}</SectionHeading>
         {children}
       </div>
     </div>
@@ -173,7 +171,7 @@ export default function AProposPage() {
 
           <hr className="mt-6 border-zinc-200" />
 
-          <div className="mx-auto mt-10 flex max-w-[68ch] flex-col gap-4">
+          <div className="mx-auto mt-10 mb-16 flex max-w-[68ch] flex-col gap-4">
             {introParagraphs.map((text) => (
               <Paragraph key={text.slice(0, 24)} text={text} />
             ))}
@@ -217,10 +215,6 @@ export default function AProposPage() {
               ))}
             </Section>
           </div>
-
-          <p className="mt-16 text-xs text-zinc-400">
-            Perlimpinpin est porté par une association loi 1901.
-          </p>
         </article>
       </main>
     </div>

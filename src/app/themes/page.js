@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Header from "@/components/Header";
+import MonoTag from "@/components/MonoTag";
 import { getPublishedCountsByThemeSlug } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
@@ -154,10 +155,8 @@ export default async function ThemesPage() {
       <main className="w-full px-6 py-12 sm:px-8 sm:py-16">
         <div className="mx-auto w-full max-w-[1280px]">
           <div className="mx-auto max-w-3xl">
-            <span className="text-xs font-bold uppercase tracking-widest text-red-600">
-              Thèmes
-            </span>
-            <h1 className="mt-4 font-serif text-4xl font-bold leading-tight tracking-tight text-zinc-900 sm:text-5xl">
+            <MonoTag>Thèmes</MonoTag>
+            <h1 className="mt-3 text-4xl font-extrabold tracking-tight text-zinc-900 sm:text-5xl">
               Nos thèmes d&apos;analyse
             </h1>
 
@@ -201,8 +200,9 @@ export default async function ThemesPage() {
 
                   <div className="mt-4 flex items-center justify-between border-t border-zinc-100 pt-4">
                     <p className="text-xs text-zinc-500">
-                      {count} déclaration{count > 1 ? "s" : ""} analysée
-                      {count > 1 ? "s" : ""}
+                      {count === 0
+                        ? "Aucune déclaration analysée pour l'instant"
+                        : `${count} déclaration${count > 1 ? "s" : ""} analysée${count > 1 ? "s" : ""}`}
                     </p>
                     <span
                       aria-hidden="true"

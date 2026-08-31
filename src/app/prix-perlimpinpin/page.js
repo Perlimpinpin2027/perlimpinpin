@@ -1,5 +1,7 @@
 import Link from "next/link";
 import Header from "@/components/Header";
+import MonoTag from "@/components/MonoTag";
+import ArrowIcon from "@/components/ArrowIcon";
 import { getScoreExtremes, getVoteMesureLeaderboard } from "@/lib/queries";
 import { getScoreBadge } from "@/lib/score";
 
@@ -12,14 +14,6 @@ const ICON_FLAG = (
     d="M3 3v1.5M3 21v-6m0 0l2.77-.693a9 9 0 0 1 6.208.682l.108.054a9 9 0 0 0 6.086.71l3.114-.732a48.524 48.524 0 0 1-.005-10.499l-3.11.732a9 9 0 0 1-6.085-.711l-.108-.054a9 9 0 0 0-6.208-.682L3 4.5M3 15V4.5"
   />
 );
-
-function Tag({ children }) {
-  return (
-    <span className="font-mono text-xs font-semibold uppercase tracking-widest text-zinc-400">
-      {children}
-    </span>
-  );
-}
 
 const EXTREME_TINTS = {
   green: { flag: "text-green-600", border: "border-l-green-500" },
@@ -97,7 +91,7 @@ function ExtremeCardContent({ card, border }) {
   );
 }
 
-function VoteColumn({ title, cards, countLabel, pctLabel }) {
+function VoteColumn({ title, cards, countLabel, pctLabel, direction }) {
   if (cards.length === 0) {
     return (
       <div>
@@ -129,8 +123,9 @@ function VoteColumn({ title, cards, countLabel, pctLabel }) {
                 <p className="text-sm font-semibold text-zinc-900">{card.candidatNom}</p>
                 <p className="truncate text-xs text-zinc-500">{card.titre}</p>
               </div>
-              <div className="flex shrink-0 items-center gap-1.5">
-                <span className="text-sm font-semibold text-zinc-700">
+              <div className="flex shrink-0 items-center gap-2">
+                <span className="flex items-center gap-1 text-sm font-semibold text-zinc-700">
+                  <ArrowIcon direction={direction} className="h-3.5 w-3.5 text-zinc-400" />
                   {countLabel(card).toLocaleString("fr-FR")}
                 </span>
                 <span className="text-xs font-medium text-zinc-400">
@@ -158,7 +153,7 @@ export default async function PrixPerlimpinpinPage() {
       <main className="w-full px-6 py-12 sm:px-8 sm:py-16">
         <div className="mx-auto flex w-full max-w-5xl flex-col gap-14">
           <div>
-            <Tag>// Classements</Tag>
+            <MonoTag>Classements</MonoTag>
             <h1 className="mt-2 text-3xl font-extrabold tracking-tight text-zinc-900 sm:text-4xl">
               Prix Perlimpinpin
             </h1>
@@ -169,19 +164,20 @@ export default async function PrixPerlimpinpinPage() {
           </div>
 
           <div>
-            <Tag>// Score_perlimpinpin</Tag>
+            <MonoTag>Score_perlimpinpin</MonoTag>
             <h2 className="mt-2 text-2xl font-extrabold tracking-tight text-zinc-900 sm:text-3xl">
               Les extrêmes du score
             </h2>
+            <hr className="mt-4 border-zinc-200" />
 
-            <div className="mt-6 grid grid-cols-1 gap-6 border-b border-zinc-200 pb-8 sm:grid-cols-2">
+            <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
               <ExtremeCard label="Plus haut score" tint="green" card={scoreExtremes.highest} />
               <ExtremeCard label="Plus bas score" tint="red" card={scoreExtremes.lowest} />
             </div>
           </div>
 
           <div>
-            <Tag>// Vote_public</Tag>
+            <MonoTag>Vote_public</MonoTag>
             <h2 className="mt-2 text-2xl font-extrabold tracking-tight text-zinc-900 sm:text-3xl">
               Le choix des visiteurs
             </h2>
@@ -197,6 +193,7 @@ export default async function PrixPerlimpinpinPage() {
                   cards={voteMesureLeaderboard.topAccord}
                   countLabel={(card) => card.accord}
                   pctLabel={(card) => card.accordPct}
+                  direction="up"
                 />
               </div>
               <div className="sm:pl-8">
@@ -205,13 +202,14 @@ export default async function PrixPerlimpinpinPage() {
                   cards={voteMesureLeaderboard.topDesaccord}
                   countLabel={(card) => card.desaccord}
                   pctLabel={(card) => card.desaccordPct}
+                  direction="down"
                 />
               </div>
             </div>
           </div>
 
           <p className="text-center text-xs text-zinc-400">
-            <span className="font-semibold text-zinc-500">score ≠ opinion</span>{" "}
+            <span className="font-mono font-semibold text-zinc-500">score ≠ opinion</span>{" "}
             — Le score Perlimpinpin évalue la solidité des déclarations
             selon notre méthode. Les votes reflètent l&apos;opinion des
             visiteurs.

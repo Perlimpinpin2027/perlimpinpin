@@ -1,3 +1,5 @@
+import MonoTag from "./MonoTag";
+
 const features = [
   {
     title: "Analyses assistées par l'IA",
@@ -98,12 +100,7 @@ export default function HeroText() {
                   {feature.icon}
                 </svg>
               </span>
-              {/* Chasse fixe "// 0X" : même traitement typographique que le
-                  mini-sommaire "Sur cette page" des pages de déclaration
-                  (voir StickyScoreCard), pour rester cohérent dans le site. */}
-              <span className="font-mono text-xs text-zinc-400">
-                {`// ${String(index + 1).padStart(2, "0")}`}
-              </span>
+              <MonoTag>{String(index + 1).padStart(2, "0")}</MonoTag>
             </div>
             <div>
               <p className="text-sm font-semibold text-zinc-900">

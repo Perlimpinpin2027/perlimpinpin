@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Header from "@/components/Header";
 import FilterPillGroup from "@/components/FilterPillGroup";
+import MonoTag from "@/components/MonoTag";
 import { getPublishedDeclarations } from "@/lib/queries";
 import { getScoreBadge } from "@/lib/score";
 
@@ -42,9 +43,7 @@ export default async function DeclarationsPage({ searchParams }) {
       <main className="w-full px-6 py-12 sm:px-8 sm:py-16">
         <div className="mx-auto flex w-full max-w-5xl flex-col gap-8">
           <div>
-            <span className="font-mono text-xs font-bold uppercase tracking-widest text-zinc-400">
-              // Déclarations
-            </span>
+            <MonoTag>Déclarations</MonoTag>
             <h1 className="mt-2 text-3xl font-extrabold tracking-tight text-zinc-900 sm:text-4xl">
               Déclarations analysées
             </h1>
@@ -55,7 +54,7 @@ export default async function DeclarationsPage({ searchParams }) {
             </p>
           </div>
 
-          <div className="flex flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-6">
+          <div className="flex flex-col gap-4">
             <FilterPillGroup
               label="Candidat"
               options={candidats.map((c) => ({ value: c.nom, label: c.nom }))}
@@ -92,6 +91,8 @@ export default async function DeclarationsPage({ searchParams }) {
                 ))}
               </div>
             </div>
+
+            <hr className="border-zinc-200" />
           </div>
 
           {declarations.length === 0 ? (
@@ -122,9 +123,9 @@ export default async function DeclarationsPage({ searchParams }) {
                           <p className="text-xs text-zinc-400">{d.candidatParti}</p>
                         </div>
                       </div>
-                      <span className="shrink-0 font-mono text-xs text-zinc-400">
-                        {`// ANALYSE_${String(d.analyseId).padStart(3, "0")}`}
-                      </span>
+                      <MonoTag className="shrink-0">
+                        {`ANALYSE_${String(d.analyseId).padStart(3, "0")}`}
+                      </MonoTag>
                     </div>
 
                     <p className="line-clamp-2 text-base font-semibold leading-snug text-zinc-900">

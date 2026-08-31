@@ -1019,22 +1019,23 @@ export default async function DeclarationDetailPage({ params }) {
               {!isV4 ? <FiabiliteSection contenu={contenu} /> : null}
             </div>
 
-            {/* Vote sur la mesure elle-même — second exemplaire, pour le
-                lecteur qui a lu toute la fiche (voir le premier exemplaire
-                en haut de page). Volontairement distinct visuellement du
-                like/dislike juste en dessous, qui porte sur l'analyse, pas
-                sur la mesure. */}
-            <VoteMesureWidget
-              propositionId={declaration.id}
-              initialAccord={declaration.voteMesureCounts.accord}
-              initialDesaccord={declaration.voteMesureCounts.desaccord}
-            />
-
-            {/* Like / dislike, juste avant le bandeau de confiance */}
+            {/* Ordre demandé : "Je trouve cette analyse pertinente" (qualité
+                de l'analyse) avant "Et vous, qu'en pensez-vous ?" (mesure
+                elle-même) — même mise en page et importance visuelle pour
+                les deux, juste avant le bandeau de confiance. */}
             <FeedbackWidget
               analyseId={analyse.id}
               initialLikes={declaration.feedbackCounts.likes}
               initialDislikes={declaration.feedbackCounts.dislikes}
+            />
+
+            {/* Vote sur la mesure elle-même — second exemplaire, pour le
+                lecteur qui a lu toute la fiche (voir le premier exemplaire
+                en haut de page). */}
+            <VoteMesureWidget
+              propositionId={declaration.id}
+              initialAccord={declaration.voteMesureCounts.accord}
+              initialDesaccord={declaration.voteMesureCounts.desaccord}
             />
 
             {/* Bandeau de confiance */}
@@ -1130,6 +1131,8 @@ export default async function DeclarationDetailPage({ params }) {
               badge={badge}
               scoreComment={scoreComment}
               sections={tocSections}
+              versionMethodologie={analyse.versionMethodologie}
+              generationDateLabel={declaration.generationDateLabel}
             />
           </aside>
         </div>
