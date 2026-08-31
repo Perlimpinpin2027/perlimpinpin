@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import FeedbackWidget from "@/components/FeedbackWidget";
 import VoteMesureWidget from "@/components/VoteMesureWidget";
 import StickyScoreCard from "@/components/StickyScoreCard";
+import AccordionSection from "@/components/AccordionSection";
 import { getDeclarationDetail } from "@/lib/queries";
 import { getScoreBadge } from "@/lib/score";
 
@@ -238,42 +239,6 @@ function TextOrList({ value }) {
     );
   }
   return <p>{renderRichText(value)}</p>;
-}
-
-// Contexte national/international arrivent souvent comme un seul long
-// paragraphe mélangeant plusieurs idées (ex. 4-6 phrases enchaînées), dur à
-// parcourir. Découpe naïve en phrases puis regroupement par lots de 3 pour
-// aérer en plusieurs paragraphes, sans toucher au texte lui-même — repérage
-// simple par ponctuation de fin de phrase, accepté comme imparfait (ex. sur
-// une abréviation ou un nombre décimal en fin de segment).
-function splitSentences(text) {
-  const trimmed = text.trim();
-  if (!trimmed) return [];
-  const matches = trimmed.match(/[^.!?]+[.!?]+(?:["'"»)\]]*)(?:\s+|$)/g);
-  return matches ? matches.map((sentence) => sentence.trim()).filter(Boolean) : [trimmed];
-}
-
-function ContextText({ value }) {
-  if (!value) return <p className="text-zinc-400">Non renseigné.</p>;
-  if (Array.isArray(value) || typeof value !== "string") {
-    return <TextOrList value={value} />;
-  }
-
-  const sentences = splitSentences(value);
-  if (sentences.length <= 3) return <p>{renderRichText(value)}</p>;
-
-  const paragraphs = [];
-  for (let i = 0; i < sentences.length; i += 3) {
-    paragraphs.push(sentences.slice(i, i + 3).join(" "));
-  }
-
-  return (
-    <div className="flex flex-col gap-3">
-      {paragraphs.map((paragraph, index) => (
-        <p key={index}>{renderRichText(paragraph)}</p>
-      ))}
-    </div>
-  );
 }
 
 // sources_utilisees : chaîne simple par élément sur les fiches antérieures
@@ -617,7 +582,7 @@ function FiabiliteSection({ contenu }) {
           <div className="min-w-0">
             <span className="text-xs font-semibold text-zinc-600">Limites identifiées</span>
             <div className="mt-1 text-xs leading-6 text-zinc-500">
-              <TextOrList value={contenu.limites} />
+              <AccordionSection value={contenu.limites} />
             </div>
           </div>
         </div>
@@ -948,11 +913,11 @@ export default async function DeclarationDetailPage({ params }) {
               {!isV4 ? (
                 <>
                   <Section title="Mesure reformulée">
-                    <TextOrList value={contenu.mesure_reformulee} />
+                    <AccordionSection value={contenu.mesure_reformulee} />
                   </Section>
 
                   <Section title="Mise en contexte dans le programme">
-                    <TextOrList value={contenu.contexte_programme} />
+                    <AccordionSection value={contenu.contexte_programme} />
                   </Section>
 
                   {/* Empilé plutôt qu'en 2 colonnes : la colonne principale
@@ -966,11 +931,21 @@ export default async function DeclarationDetailPage({ params }) {
                       générique), donc plus lisibles que côte à côte ici. */}
                   <div id="contexte" className="scroll-mt-24 flex flex-col gap-6">
                     <Section title="Contexte national">
-                      <ContextText value={contenu.contexte_national} />
+                      <AccordionSection value={contenu.contexte_national} splitParagraphs />
                     </Section>
                     <Section title="Contexte international">
-                      <ContextText value={contenu.contexte_international} />
+                      <AccordionSection value={contenu.contexte_international} splitParagraphs />
                     </Section>
+                    {/* impact_environnement : nullable (voir data/prompt-
+                        methodologie.md), absent jusqu'ici de tout affichage
+                        public — ajoutée ici car listée par le format
+                        accordéon, dans la même famille "mise en contexte"
+                        que les deux ci-dessus. */}
+                    {contenu.impact_environnement ? (
+                      <Section title="Impact environnemental">
+                        <AccordionSection value={contenu.impact_environnement} />
+                      </Section>
+                    ) : null}
                   </div>
                 </>
               ) : null}
@@ -979,25 +954,44 @@ export default async function DeclarationDetailPage({ params }) {
                 <CriteresCards criteres={contenu.analyse_par_criteres} notation={notation} />
               </Section>
 
+              {/* analyse_longevites (requis) et impact_temporel_et_sectoriel
+                  (nullable) : comme impact_environnement ci-dessus, ces deux
+                  champs existaient déjà côté données mais n'avaient encore
+                  aucun affichage public — ajoutés ici car listés par le
+                  format accordéon, juste après la notation puisqu'ils la
+                  prolongent dans le temps (pérennité, effets différés). */}
+              {!isV4 ? (
+                <div className="flex flex-col gap-6">
+                  <Section title="Longévité des effets">
+                    <AccordionSection value={contenu.analyse_longevites} />
+                  </Section>
+                  {contenu.impact_temporel_et_sectoriel ? (
+                    <Section title="Impact temporel et sectoriel">
+                      <AccordionSection value={contenu.impact_temporel_et_sectoriel} />
+                    </Section>
+                  ) : null}
+                </div>
+              ) : null}
+
               {!isV4 ? (
                 <>
                   <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                     <Section title="Ce qui est établi">
-                      <TextOrList value={contenu.ce_qui_est_etabli} />
+                      <AccordionSection value={contenu.ce_qui_est_etabli} />
                     </Section>
                     <Section title="Ce qui est probable">
-                      <TextOrList value={contenu.ce_qui_est_probable} />
+                      <AccordionSection value={contenu.ce_qui_est_probable} />
                     </Section>
                     <Section title="Ce qui est discutable">
-                      <TextOrList value={contenu.ce_qui_est_discutable} />
+                      <AccordionSection value={contenu.ce_qui_est_discutable} />
                     </Section>
                     <Section title="Ce qui est inconnu">
-                      <TextOrList value={contenu.ce_qui_est_inconnu} />
+                      <AccordionSection value={contenu.ce_qui_est_inconnu} />
                     </Section>
                   </div>
 
                   <Section id="angles-morts" title="Angles morts et effets de bord">
-                    <TextOrList value={contenu.angles_morts} />
+                    <AccordionSection value={contenu.angles_morts} />
                   </Section>
                 </>
               ) : null}

@@ -193,30 +193,48 @@ export function checkNotationCoherence(notation) {
 // malgré la consigne — cf. toText() dans analyze.js, permissif ici aussi.
 const TextOrArray = z.union([z.string(), z.array(z.string())]);
 
+// Sections en accordéon (voir data/prompt-methodologie.md, "SECTIONS EN
+// ACCORDÉON") : synthese = une phrase (≤20 mots visés côté prompt, 220
+// caractères en garde-fou structurel ici — le prompt gère la longueur en
+// mots, ce schéma ne fait que borner un excès manifeste), texte = contenu
+// complet inchangé (toujours permissif chaîne/tableau, cf. TextOrArray).
+const AccordionSectionSchema = z.object({
+  synthese: z.string().min(1).max(220),
+  texte: TextOrArray,
+});
+
 // Champs communs à l'étape 1 et à fiche_complete (étape 3, après arbitrage)
 // — voir "FORMAT ÉTAPE 1 — JSON STRICT" dans data/prompt-methodologie.md.
 // N'inclut PAS analyse_par_criteres (forme différente selon l'étape, voir
 // plus bas) ni resume_court/phrase_teasing (absents de fiche_complete).
+//
+// impact_environnement et impact_temporel_et_sectoriel restent les deux
+// seuls champs nullable de ce groupe (objet entier `null` si non
+// applicable) — tous les autres, y compris contexte_programme/national/
+// international qui l'étaient dans l'ancien format texte libre, sont
+// désormais requis sous forme d'objet {synthese, texte} (voir la demande
+// d'origine : seuls impact_environnement et impact_temporel_et_sectoriel
+// sont annotés "si non null").
 const champsCommunsEtape1 = {
-  mesure_reformulee: z.string().min(1),
+  mesure_reformulee: AccordionSectionSchema,
   mesure_vers_objectif: MesureVersObjectifSchema,
   nature_et_existant: z.string().min(1),
-  contexte_programme: TextOrArray.nullable(),
-  contexte_national: TextOrArray.nullable(),
-  contexte_international: TextOrArray.nullable(),
-  impact_environnement: TextOrArray.nullable(),
-  analyse_longevites: z.string().min(1),
-  impact_temporel_et_sectoriel: TextOrArray.nullable(),
-  ce_qui_est_etabli: TextOrArray,
-  ce_qui_est_probable: TextOrArray,
-  ce_qui_est_discutable: TextOrArray,
-  ce_qui_est_inconnu: TextOrArray,
-  angles_morts: TextOrArray,
+  contexte_programme: AccordionSectionSchema,
+  contexte_national: AccordionSectionSchema,
+  contexte_international: AccordionSectionSchema,
+  impact_environnement: AccordionSectionSchema.nullable(),
+  analyse_longevites: AccordionSectionSchema,
+  impact_temporel_et_sectoriel: AccordionSectionSchema.nullable(),
+  ce_qui_est_etabli: AccordionSectionSchema,
+  ce_qui_est_probable: AccordionSectionSchema,
+  ce_qui_est_discutable: AccordionSectionSchema,
+  ce_qui_est_inconnu: AccordionSectionSchema,
+  angles_morts: AccordionSectionSchema,
   notation_detaillee: NotationDetailleeSchema,
   verdict_final: z.string().min(1),
   sources_utilisees: z.array(z.any()),
   niveau_de_confiance: z.string().min(1),
-  limites: z.string().min(1),
+  limites: AccordionSectionSchema,
 };
 
 // Étape 1 : analyse_par_criteres est un texte libre unique (voir FORMAT

@@ -747,7 +747,15 @@ function parseArgs(argv) {
 
 // Le modèle renvoie parfois ces champs comme des tableaux de points plutôt
 // qu'une chaîne unique. Le schéma Prisma attend un String — on normalise.
+// Depuis le format en accordéon (voir data/prompt-methodologie.md, SECTIONS
+// EN ACCORDÉON), ce_qui_est_etabli/probable/discutable/inconnu arrivent en
+// objet {synthese, texte} : on ne garde que `texte` pour ces colonnes
+// héritées, non lues par l'UI (voir prisma/schema.prisma) mais toujours
+// NOT NULL côté base.
 function toText(value) {
+  if (value && typeof value === "object" && !Array.isArray(value) && "texte" in value) {
+    return toText(value.texte);
+  }
   if (Array.isArray(value)) {
     return value.map((item) => `• ${item}`).join("\n");
   }
@@ -766,6 +774,16 @@ function truncateTitre(text) {
   return `${cut.trimEnd()}…`;
 }
 
+// mesure_reformulee est en accordéon {synthese, texte} depuis SECTIONS EN
+// ACCORDÉON (data/prompt-methodologie.md) ; `synthese` (une phrase courte)
+// convient mieux qu'un `texte` potentiellement long pour un repli de titre.
+// Reste compatible avec l'ancien format chaîne simple (fiches antérieures).
+function extractSynthese(value) {
+  if (typeof value === "string") return value;
+  if (value && typeof value === "object" && typeof value.synthese === "string") return value.synthese;
+  return null;
+}
+
 // titre_fiche (étape 3, rédaction finale) est prioritaire : produit
 // explicitement sans nom de candidat. Repli sur resume_court/
 // mesure_reformulee si absent — jamais vide.
@@ -774,7 +792,7 @@ function buildTitre(parsed) {
     return truncateTitre(parsed.titre_fiche.trim());
   }
 
-  const candidates = [parsed.resume_court, parsed.mesure_reformulee].filter(
+  const candidates = [parsed.resume_court, extractSynthese(parsed.mesure_reformulee)].filter(
     (value) => typeof value === "string" && value.trim().length > 0,
   );
   if (candidates.length === 0) return null;

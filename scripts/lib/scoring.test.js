@@ -48,28 +48,33 @@ function makeMesureVersObjectif(overrides = {}) {
   };
 }
 
+// Section en accordéon minimale mais valide (voir AccordionSectionSchema).
+function makeAccordion(texte, synthese) {
+  return { synthese: synthese ?? `${texte} (synthèse).`, texte };
+}
+
 // Champs communs à l'étape 1 et à fiche_complete, minimaux mais complets.
 function makeChampsCommuns(overrides = {}) {
   return {
-    mesure_reformulee: "Une mesure de test.",
+    mesure_reformulee: makeAccordion("Une mesure de test."),
     mesure_vers_objectif: makeMesureVersObjectif(),
     nature_et_existant: "Nature de test.",
-    contexte_programme: "Contexte programme de test.",
-    contexte_national: "Contexte national de test.",
-    contexte_international: "Contexte international de test.",
+    contexte_programme: makeAccordion("Contexte programme de test."),
+    contexte_national: makeAccordion("Contexte national de test."),
+    contexte_international: makeAccordion("Contexte international de test."),
     impact_environnement: null,
-    analyse_longevites: "Analyse longévités de test.",
+    analyse_longevites: makeAccordion("Analyse longévités de test."),
     impact_temporel_et_sectoriel: null,
-    ce_qui_est_etabli: "Établi de test.",
-    ce_qui_est_probable: "Probable de test.",
-    ce_qui_est_discutable: "Discutable de test.",
-    ce_qui_est_inconnu: "Inconnu de test.",
-    angles_morts: "Angles morts de test.",
+    ce_qui_est_etabli: makeAccordion("Établi de test."),
+    ce_qui_est_probable: makeAccordion("Probable de test."),
+    ce_qui_est_discutable: makeAccordion("Discutable de test."),
+    ce_qui_est_inconnu: makeAccordion("Inconnu de test."),
+    angles_morts: makeAccordion("Angles morts de test."),
     notation_detaillee: makeNotation(),
     verdict_final: "Verdict de test.",
     sources_utilisees: [],
     niveau_de_confiance: "moyen",
-    limites: "Limites de test.",
+    limites: makeAccordion("Limites de test."),
     ...overrides,
   };
 }
@@ -268,6 +273,47 @@ describe("validateEtape1Structure", () => {
 
   test("rejette une qualification hors énumération SOLIDE/INCERTAIN/FRAGILE", () => {
     const analyse = makeEtape1({ champs: { notation_detaillee: makeNotation({ qualification_juridique: "MOYEN" }) } });
+    assert.equal(validateEtape1Structure(analyse).valid, false);
+  });
+
+  test("accepte impact_environnement / impact_temporel_et_sectoriel = null (non applicable)", () => {
+    const analyse = makeEtape1({
+      champs: { impact_environnement: null, impact_temporel_et_sectoriel: null },
+    });
+    assert.equal(validateEtape1Structure(analyse).valid, true);
+  });
+
+  test("accepte impact_environnement en objet {synthese, texte} quand applicable", () => {
+    const analyse = makeEtape1({
+      champs: { impact_environnement: makeAccordion("Impact environnemental de test.") },
+    });
+    assert.equal(validateEtape1Structure(analyse).valid, true);
+  });
+
+  test("rejette une section en accordéon rendue en simple chaîne (ancien format)", () => {
+    const analyse = makeEtape1({ champs: { angles_morts: "Angles morts de test." } });
+    assert.equal(validateEtape1Structure(analyse).valid, false);
+  });
+
+  test("rejette une section en accordéon sans synthese", () => {
+    const analyse = makeEtape1({ champs: { limites: { texte: "Limites de test." } } });
+    assert.equal(validateEtape1Structure(analyse).valid, false);
+  });
+
+  test("rejette une section en accordéon sans texte", () => {
+    const analyse = makeEtape1({ champs: { limites: { synthese: "Synthèse de test." } } });
+    assert.equal(validateEtape1Structure(analyse).valid, false);
+  });
+
+  test("accepte le champ texte d'une section en accordéon sous forme de tableau de points", () => {
+    const analyse = makeEtape1({
+      champs: { angles_morts: makeAccordion(["Premier angle mort.", "Second angle mort."]) },
+    });
+    assert.equal(validateEtape1Structure(analyse).valid, true);
+  });
+
+  test("rejette contexte_national en chaîne nue (n'est plus nullable ni texte libre)", () => {
+    const analyse = makeEtape1({ champs: { contexte_national: null } });
     assert.equal(validateEtape1Structure(analyse).valid, false);
   });
 

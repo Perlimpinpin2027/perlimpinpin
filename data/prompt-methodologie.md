@@ -462,7 +462,7 @@ Se relire avec cette question : **« un lecteur qui découvre cette fiche sans c
 Retourner uniquement :
 
 {
-  "mesure_reformulee": "...",
+  "mesure_reformulee": { "synthese": "...", "texte": "..." },
   "mesure_vers_objectif": {
     "objectif_court": "...",
     "categorie_objectif": "...",
@@ -471,18 +471,18 @@ Retourner uniquement :
     "lien_causal": "direct|indirect|faible_ou_absent"
   },
   "nature_et_existant": "...",
-  "contexte_programme": "...",
-  "contexte_national": "...",
-  "contexte_international": "...",
-  "impact_environnement": "... ou null",
+  "contexte_programme": { "synthese": "...", "texte": "..." },
+  "contexte_national": { "synthese": "...", "texte": "..." },
+  "contexte_international": { "synthese": "...", "texte": "..." },
+  "impact_environnement": { "synthese": "...", "texte": "..." } ou null,
   "analyse_par_criteres": "...",
-  "analyse_longevites": "...",
-  "impact_temporel_et_sectoriel": "... ou null",
-  "ce_qui_est_etabli": "...",
-  "ce_qui_est_probable": "...",
-  "ce_qui_est_discutable": "...",
-  "ce_qui_est_inconnu": "...",
-  "angles_morts": "...",
+  "analyse_longevites": { "synthese": "...", "texte": "..." },
+  "impact_temporel_et_sectoriel": { "synthese": "...", "texte": "..." } ou null,
+  "ce_qui_est_etabli": { "synthese": "...", "texte": "..." },
+  "ce_qui_est_probable": { "synthese": "...", "texte": "..." },
+  "ce_qui_est_discutable": { "synthese": "...", "texte": "..." },
+  "ce_qui_est_inconnu": { "synthese": "...", "texte": "..." },
+  "angles_morts": { "synthese": "...", "texte": "..." },
   "notation_detaillee": {
     "operationnalite_juridique": 0,
     "qualification_juridique": "SOLIDE|INCERTAIN|FRAGILE",
@@ -507,7 +507,7 @@ Retourner uniquement :
   "verdict_final": "...",
   "sources_utilisees": [],
   "niveau_de_confiance": "...",
-  "limites": "...",
+  "limites": { "synthese": "...", "texte": "..." },
   "resume_court": "...",
   "phrase_teasing": "..."
 }
@@ -582,6 +582,7 @@ CONTRÔLE MISTRAL :
 5. Si Mistral est absent ou si aucune remarque ne change le fond, conserver intégralement le contenu analytique initial.
 6. Remplir `auditArbitrage`, interne et non public.
 7. Aucun champ public ne doit mentionner Mistral, Claude, IA, contrôle qualité, arbitrage ou pipeline.
+8. Si une modification touche le `texte` d'une section en accordéon (voir SECTIONS EN ACCORDÉON ci-dessous), resynchroniser sa `synthese` pour qu'elle reste fidèle au `texte` final — ne jamais laisser une synthèse décrire un point que l'arbitrage a corrigé ou retiré.
 
 ## MISE EN TEXTE FINALE
 
@@ -611,13 +612,13 @@ teaser_accueil est limité côté base de données à 250 caractères, coupure p
 ### Analyse par critères
 
 Produire **5 objets, dans cet ordre** :
-1. Opérationnalité & Moyens (/30)
+1. Opérationnalité & moyens (/30)
 2. Efficacité (/30)
-3. Effets rebonds & Externalités (/20)
-4. Degré de préparation (/10)
-5. Alignement & Logique globale (/10)
+3. Effets rebonds & externalités (/20)
+4. Maturité (/10)
+5. Cohérence (/10)
 
-Pour l'objet "Opérationnalité & Moyens" : synthétiser en prose les trois
+Pour l'objet "Opérationnalité & moyens" : synthétiser en prose les trois
 obstacles (juridique, budgétaire, moyens humains) en 2 à 4 phrases. Si
 `plafond_applique` est `true`, le dire explicitement et en priorité dans le
 texte, avant tout autre point — préciser lequel des trois piliers
@@ -643,8 +644,7 @@ ce qui limite ce qu'on peut en déduire. L'étude Carbone4 sur le Buy European
 Sustainable Act évalue une baisse de 34 MtCO2e, mais seulement sur la
 commande publique."
 
-Mettre en gras **...** l'information qui explique le mieux pourquoi cette note a été donnée — jamais une simple référence ou un nom de texte juridique isolé, mais le résultat, le chiffre ou
-la conclusion qui en découle. Le lecteur doit comprendre la note rien qu'en lisant les segments en gras, sans lire le reste du paragraphe.
+Mettre en gras **...** l'information qui explique le mieux pourquoi cette note a été donnée — jamais une simple référence ou un nom de texte juridique isolé, mais le résultat, le chiffre ou la conclusion qui en découle. Le lecteur doit comprendre la note rien qu'en lisant les segments en gras, sans lire le reste du paragraphe.
 
 Mauvais exemple (référence isolée, sans information) : "...repose sur un
 dispositif juridique existant et documenté : le **règlement UE 2023/956**,
@@ -657,6 +657,39 @@ social n'a aucun équivalent contraignant en droit européen**."
 Jamais une phrase entière en gras, jamais plus de deux segments par critère,
 et jamais un segment qui ne serait qu'un nom propre ou une référence sans
 contexte.
+
+### Sections en accordéon (synthese + texte)
+
+Chaque section narrative de la fiche, à l'exception d'analyse_par_criteres
+(qui suit ses propres règles, voir ci-dessus) et de verdict_final (déjà
+conçu comme une conclusion courte et autonome), est produite sous la forme
+d'un objet à deux champs plutôt qu'un simple texte :
+
+{
+  "synthese": "...",
+  "texte": "..."
+}
+
+- `synthese` : une phrase unique, 20 mots maximum, qui résume le point clé
+  de la section — compréhensible isolément, sans avoir lu le reste. C'est ce
+  qui reste visible avant dépliement sur la fiche publique.
+- `texte` : le texte complet de la section, avec la même règle de mise en
+  gras que pour l'analyse par critères (voir juste au-dessus) : mettre en
+  gras **...** le fait, le chiffre ou la conclusion qui porte le plus
+  l'information — jamais une phrase entière, jamais une simple référence ou
+  un nom propre isolé sans contexte. Nombre de segments proportionnel à la
+  longueur de la section : 1 à 2 segments pour un paragraphe court, jusqu'à
+  3-4 pour une section plus longue comme contexte_national ou angles_morts.
+  Le lecteur doit pouvoir comprendre le point essentiel de chaque section
+  rien qu'en parcourant les segments en gras.
+
+Sections concernées : mesure_reformulee, contexte_programme,
+contexte_national, contexte_international, impact_environnement (objet
+entier `null` si non applicable, jamais un objet avec des champs vides),
+ce_qui_est_etabli, ce_qui_est_probable, ce_qui_est_discutable,
+ce_qui_est_inconnu, angles_morts, analyse_longevites,
+impact_temporel_et_sectoriel (objet entier `null` si non applicable),
+limites.
 
 ## TON PUBLIC OBLIGATOIRE
 
@@ -740,3 +773,4 @@ Mets en gras les phrases qui te semblent importantes ou centrales dans chaque pa
 5. **Recherche** : loguer, pour chaque run automatisé, le nombre réel de recherches utilisées.
 6. **Affichage** : le composant qui affiche `analyse_par_criteres` doit être adapté pour gérer des `note_max` différents par objet (30/30/20/10/10 au lieu de 25 partout), et afficher un badge ou une mention visuelle distincte quand `plafond_applique` est `true` sur l'objet "Opérationnalité & Moyens", en indiquant lequel des trois piliers (`plafond_declencheur`) l'a déclenché.
 7. **Test** : lancer le pipeline sur la proposition existante et afficher `contreAvisMistral`, `auditArbitrage` et `score_total` final.
+8. **Affichage — sections en accordéon** : chaque section listée dans SECTIONS EN ACCORDÉON doit être affichée en accordéon sur la fiche publique — `synthese` visible en permanence, `texte` déplié au clic, avec la même mise en gras qu'`analyse_par_criteres`. Repli obligatoire pour les fiches publiées avant ce format (champ encore une simple chaîne ou un tableau) : affichage direct, sans accordéon, jamais de crash.
