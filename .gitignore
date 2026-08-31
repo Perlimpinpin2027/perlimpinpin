@@ -46,3 +46,7 @@ next-env.d.ts
 dev.db
 
 .vercel
+
+# journaux du pipeline automatisé (scripts/analyze.js --auto) : insertions
+# et erreurs de validation, hors repo par design (voir garde-fou #4)
+/logs/

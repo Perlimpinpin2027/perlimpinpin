@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { pathToFileURL, fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { writeFileSync, readFileSync, existsSync, statSync } from "node:fs";
+import { writeFileSync, readFileSync, existsSync, statSync, mkdirSync, appendFileSync } from "node:fs";
 import { PrismaClient } from "../src/generated/prisma/client.ts";
 import { PrismaNeon } from "@prisma/adapter-neon";
 import { neonConfig } from "@neondatabase/serverless";
@@ -928,6 +928,204 @@ async function saveAnalysis(item, pipelineResult) {
   return { candidat, proposition, analyse };
 }
 
+// =============================================================================
+// Pipeline automatisé bout en bout (--auto), sans confirmation manuelle.
+// =============================================================================
+// Garde-fous volontairement plus stricts que saveAnalysis() ci-dessus, qui
+// reste inchangée et continue de servir le flux manuel habituel :
+//   1. create uniquement, jamais upsert/update, y compris pour Candidat
+//      (voir le findFirst + create dans saveAnalysisAuto plus bas —
+//      divergence assumée par rapport à saveAnalysis()).
+//   2. Validation bloquante avant toute écriture (structure + cohérence
+//      arithmétique) — pas un simple avertissement en log comme
+//      warnNotationCoherence.
+//   3. Seuil de score_total : FILTRE ÉDITORIAL/MÉTIER, pas un contrôle de
+//      qualité technique — voir le commentaire sur seuilScore plus bas.
+//   4. Toute insertion réussie est journalisée dans un fichier hors repo.
+
+const LOG_DIR = join(__dirname, "..", "logs");
+const INSERTIONS_LOG_PATH = join(LOG_DIR, "insertions.jsonl");
+const ERREURS_LOG_PATH = join(LOG_DIR, "erreurs-validation.jsonl");
+
+function appendJsonLine(path, entry) {
+  mkdirSync(dirname(path), { recursive: true });
+  appendFileSync(path, `${JSON.stringify(entry)}\n`);
+}
+
+// schema.prisma ne définit aujourd'hui AUCUNE contrainte d'unicité sur
+// Proposition ou Analyse (seul Candidat.nom l'est, voir prisma/schema.prisma)
+// — il n'existe donc pas de clé d'unicité "candidat + mesure" toute faite.
+// Un index unique en base serait la suite naturelle, mais nécessite une
+// migration Prisma, explicitement hors périmètre de cette extension (garde-
+// fou #5 : aucune commande prisma migrate, aucune modification de
+// schema.prisma ici).
+//
+// Clé retenue au niveau applicatif : (candidatId, texteOriginal) avec
+// comparaison exacte après trim() — délibérément stricte plutôt qu'une
+// normalisation plus agressive (minuscules, ponctuation...), pour ne pas
+// bloquer à tort deux mesures réellement différentes qui partageraient une
+// formulation proche. À proposer séparément comme véritable contrainte DB
+// si cette vérification applicative s'avère insuffisante en pratique.
+async function findExistingProposition(candidatId, texteOriginal) {
+  return prisma.proposition.findFirst({
+    where: { candidatId, texteOriginal: texteOriginal.trim() },
+    select: { id: true, titre: true },
+  });
+}
+
+// Validation bloquante avant écriture (garde-fou #2) : structure complète de
+// fiche_complete (tous les champs présents, note ≤ note_max par critère,
+// déjà vérifié par validateFicheCompleteStructure/CritereEtape3Schema) PUIS
+// cohérence arithmétique de la notation (plafond_applique cohérent avec
+// operationnalite_moyens_total, score_total, etc. — checkNotationCoherence).
+// Contrairement à warnNotationCoherence (utilisé par le flux manuel), une
+// incohérence détectée ici est FATALE : rien n'est écrit.
+function validateBeforeWrite(ficheCompleteCandidate) {
+  const structureCheck = validateFicheCompleteStructure(ficheCompleteCandidate);
+  if (!structureCheck.valid) {
+    return { valid: false, errors: structureCheck.errors.map((e) => `structure: ${e}`), fiche: null };
+  }
+  const coherenceErrors = checkNotationCoherence(structureCheck.fiche.notation_detaillee);
+  if (coherenceErrors.length > 0) {
+    return { valid: false, errors: coherenceErrors.map((e) => `cohérence: ${e}`), fiche: null };
+  }
+  return { valid: true, errors: [], fiche: structureCheck.fiche };
+}
+
+// Écrit Candidat/Proposition/Analyse en base pour le mode --auto, avec les
+// garde-fous #1 à #4. `seuilScore` est fourni par l'appelant (--seuil-score),
+// jamais deviné ici. Retourne { written: false, reason, scoreTotal } si rien
+// n'a été écrit (score sous le seuil), ou { written: true, candidat,
+// proposition, analyse } en cas de succès. Lève une erreur (rien écrit,
+// erreur journalisée) en cas de validation échouée ou de doublon détecté.
+async function saveAnalysisAuto(item, pipelineResult, { seuilScore, etape1SourcePath }) {
+  const sourceLabel = etape1SourcePath && existsSync(etape1SourcePath) ? etape1SourcePath : "(JSON collé)";
+
+  const validation = validateBeforeWrite(pipelineResult.parsed);
+  if (!validation.valid) {
+    appendJsonLine(ERREURS_LOG_PATH, {
+      timestamp: new Date().toISOString(),
+      type: "validation",
+      candidat: item.candidatNom,
+      theme: item.theme,
+      source: sourceLabel,
+      errors: validation.errors,
+    });
+    throw new Error(
+      `Validation bloquante échouée (${validation.errors.length} erreur(s)) — rien écrit en base. Détail dans ${ERREURS_LOG_PATH} :\n${validation.errors.join("\n")}`,
+    );
+  }
+  const fiche = validation.fiche;
+  const notation = fiche.notation_detaillee;
+
+  // Garde-fou #3, partie technique : score_total est déjà garanti requis et
+  // borné 0-100 par la validation Zod ci-dessus — ce contrôle explicite est
+  // une redondance volontaire, pas une nouvelle règle.
+  const scoreTotal = notation.score_total;
+  if (typeof scoreTotal !== "number") {
+    appendJsonLine(ERREURS_LOG_PATH, {
+      timestamp: new Date().toISOString(),
+      type: "score_total_absent",
+      candidat: item.candidatNom,
+      theme: item.theme,
+      source: sourceLabel,
+    });
+    throw new Error("score_total indisponible malgré une validation structurelle réussie — rien écrit en base.");
+  }
+
+  // Garde-fou #3, partie métier : seuilScore n'est PAS un contrôle de
+  // qualité technique — un score bas sur un JSON par ailleurs valide n'est
+  // pas une erreur. C'est un filtre éditorial (quelles fiches sont jugées
+  // assez solides pour être écrites automatiquement) : ne jamais le
+  // confondre avec validateBeforeWrite ci-dessus, et ne jamais le durcir en
+  // condition de validité du JSON.
+  if (scoreTotal < seuilScore) {
+    console.log(
+      `Score total ${scoreTotal}/100 sous le seuil éditorial ${seuilScore}/100 — fiche non écrite (filtre métier, pas une erreur de validation).`,
+    );
+    return { written: false, reason: "seuil_score", scoreTotal };
+  }
+
+  // Garde-fou #1 : create uniquement, jamais upsert/update — y compris pour
+  // Candidat (divergence assumée par rapport à saveAnalysis() ci-dessus, qui
+  // garde son candidat.upsert existant pour le flux manuel, inchangé).
+  let candidat = await prisma.candidat.findFirst({ where: { nom: item.candidatNom } });
+  if (!candidat) {
+    candidat = await prisma.candidat.create({ data: { nom: item.candidatNom, parti: "Non renseigné" } });
+  }
+
+  const existing = await findExistingProposition(candidat.id, item.source);
+  if (existing) {
+    appendJsonLine(ERREURS_LOG_PATH, {
+      timestamp: new Date().toISOString(),
+      type: "duplicate",
+      candidat: item.candidatNom,
+      theme: item.theme,
+      source: sourceLabel,
+      propositionExistanteId: existing.id,
+    });
+    throw new Error(
+      `Une proposition existe déjà pour ce candidat avec ce texteOriginal exact (proposition #${existing.id}) — rien écrit en base. Voir ${ERREURS_LOG_PATH}.`,
+    );
+  }
+
+  const titre = buildTitre(fiche);
+  const resumeAccueil = buildResumeAccueil(fiche);
+  const teaser = buildTeaser(fiche);
+
+  const proposition = await prisma.proposition.create({
+    data: {
+      titre,
+      texteOriginal: item.source,
+      theme: item.theme,
+      dateDeclaration: new Date(),
+      candidatId: candidat.id,
+    },
+  });
+
+  const analyse = await prisma.analyse.create({
+    data: {
+      propositionId: proposition.id,
+      scoreFaisabilite: notation.score_total,
+      scoreSolidite: notation.degre_preparation,
+      scoreJuridique: notation.operationnalite_juridique,
+      scoreOperationnel: notation.operationnalite_moyens_total,
+      scoreBudgetaire: notation.operationnalite_budgetaire,
+      scorePertinence: notation.efficacite,
+      verdict: toText(fiche.verdict_final),
+      resumeAccueil,
+      teaser,
+      cequiEstEtabli: toText(fiche.ce_qui_est_etabli),
+      cequiEstProbable: toText(fiche.ce_qui_est_probable),
+      cequiEstDiscutable: toText(fiche.ce_qui_est_discutable),
+      cequiEstInconnu: toText(fiche.ce_qui_est_inconnu),
+      sourcesUtilisees: toText(fiche.sources_utilisees),
+      statut: "brouillon",
+      versionMethodologie: "1.0",
+      promptFileModifiedAt: getPromptFileModifiedAt(),
+      contenuComplet: fiche,
+      contreAvisMistral: pipelineResult.contreAvisMistral,
+      auditArbitrage: pipelineResult.auditArbitrage,
+      coutPipeline: pipelineResult.coutPipeline,
+    },
+  });
+
+  // Garde-fou #4 : toute insertion réussie est journalisée hors repo (voir
+  // .gitignore) pour permettre une suppression manuelle rapide en cas
+  // d'erreur repérée après coup.
+  appendJsonLine(INSERTIONS_LOG_PATH, {
+    timestamp: new Date().toISOString(),
+    analyseId: analyse.id,
+    propositionId: proposition.id,
+    candidat: item.candidatNom,
+    theme: item.theme,
+    scoreTotal,
+    source: sourceLabel,
+  });
+
+  return { written: true, candidat, proposition, analyse };
+}
+
 function printUsage(usage) {
   console.log(`  input_tokens (non caché)      : ${usage.input_tokens ?? "?"}`);
   console.log(`  cache_creation_input_tokens   : ${usage.cache_creation_input_tokens ?? "?"}`);
@@ -999,11 +1197,26 @@ async function main() {
   // à partir de son résultat, fourni ici en chemin de fichier ou en JSON collé.
   const etape1Input = args.etape1 ?? positional[0];
   const { candidat: candidatNom, theme, source } = args;
+  // --auto : pipeline automatisé bout en bout (voir saveAnalysisAuto), avec
+  // les garde-fous #1 à #4 (create uniquement, validation bloquante, seuil
+  // éditorial, journalisation). Nécessite --seuil-score, jamais deviné ici :
+  // c'est un choix éditorial, pas une valeur technique par défaut.
+  const isAuto = Boolean(args.auto);
 
   if (!etape1Input || !candidatNom || !theme || !source) {
     console.error(
       "Usage: node scripts/analyze.js chemin/vers/analyse-etape1.json --candidat \"Nom\" --theme \"Thème\" --source \"Texte de la proposition\"\n" +
-        "   ou: node scripts/analyze.js --etape1 '{...JSON collé...}' --candidat \"Nom\" --theme \"Thème\" --source \"...\"",
+        "   ou: node scripts/analyze.js --etape1 '{...JSON collé...}' --candidat \"Nom\" --theme \"Thème\" --source \"...\"\n" +
+        "   ou (pipeline automatisé, sans confirmation manuelle) : ajouter --auto --seuil-score <0-100>",
+    );
+    process.exitCode = 1;
+    return;
+  }
+
+  if (isAuto && (args["seuil-score"] === undefined || Number.isNaN(Number(args["seuil-score"])))) {
+    console.error(
+      `--seuil-score est obligatoire et doit être un nombre avec --auto (reçu : ${JSON.stringify(args["seuil-score"])}). ` +
+        "C'est un filtre éditorial choisi au cas par cas, jamais une valeur par défaut devinée ici.",
     );
     process.exitCode = 1;
     return;
@@ -1011,6 +1224,33 @@ async function main() {
 
   const item = { candidatNom, theme, source };
   const pipelineResult = await runPipeline(etape1Input);
+
+  if (isAuto) {
+    const seuilScore = Number(args["seuil-score"]);
+    const result = await saveAnalysisAuto(item, pipelineResult, { seuilScore, etape1SourcePath: etape1Input });
+
+    console.log("");
+    if (!result.written) {
+      console.log(`Rien écrit en base : ${result.reason} (score ${result.scoreTotal}/100, seuil ${seuilScore}/100).`);
+    } else {
+      console.log(`Titre       : ${result.proposition.titre}`);
+      console.log(`Candidat    : ${result.candidat.nom} (${result.candidat.parti})`);
+      console.log(`Thème       : ${theme}`);
+      console.log(`Analyse     : #${result.analyse.id} (statut: ${result.analyse.statut})`);
+      console.log(`Score total : ${result.analyse.scoreFaisabilite}/100`);
+      console.log(`Journal     : ${INSERTIONS_LOG_PATH}`);
+    }
+
+    console.log("");
+    console.log("Score détaillé par critère :");
+    printScoreDetail(pipelineResult.parsed.notation_detaillee);
+    console.log("");
+    console.log("Coût du pipeline (coutPipeline) :");
+    printCoutPipeline(pipelineResult.coutPipeline);
+    console.log("");
+    return;
+  }
+
   const saved = await saveAnalysis(item, pipelineResult);
 
   console.log("");
