@@ -558,6 +558,16 @@ export async function callMistralQualityControl(etape1) {
 // la conversation de l'étape 1 (pas de cache partagé) : suit exactement le
 // gabarit ÉTAPE 3, qui réinjecte textuellement l'analyse initiale et le
 // contrôle Mistral via {{reponse_etape_1}} / {{reponse_etape_2_ou_null}}.
+//
+// Décision explicite (à ne pas rouvrir sans raison neuve) : le corpus
+// documentaire — dont data/objectifs-de-reference.md — n'est PAS retransmis
+// ici. L'étape 3 arbitre sur la base de l'analyse de l'étape 1, qui porte
+// déjà les conclusions tirées de ce document (voir prompt-methodologie.md,
+// point 1 ter : la consultation du corpus a lieu à l'étape 1, pour qualifier
+// le critère Efficacité). Réinjecter le corpus à l'étape 3 reviendrait à lui
+// faire refaire une partie de l'analyse, ce qui n'est pas son rôle —
+// l'arbitrage porte sur la cohérence entre l'étape 1 et le contrôle Mistral,
+// pas sur une nouvelle lecture des sources.
 async function arbitrate(etape1, mistralResult) {
   const userMessage = fillTemplate(ARBITRAGE_TEMPLATE, {
     reponse_etape_1: JSON.stringify(etape1, null, 2),

@@ -650,6 +650,13 @@ export default async function DeclarationDetailPage({ params }) {
 
   const { analyse } = declaration;
   const contenu = analyse.contenuComplet ?? {};
+  // TODO(mesure_vers_objectif) : ce bloc (objectif_court, categorie_objectif,
+  // objectif_vise, mecanisme_propose, lien_causal — voir prompt-methodologie.md,
+  // point 1 bis) est produit et stocké depuis le barème 2026 mais n'a encore
+  // aucun affichage public. Prévu : une flèche schématique en tête de fiche
+  // reliant le titre de la mesure à objectif_court (voir la description du
+  // champ dans le prompt). Décidé comme non prioritaire pour l'instant — à
+  // faire plus tard, pas oublié.
   const badge = getScoreBadge(analyse.scoreFaisabilite);
   const notation = contenu.notation_detaillee ?? {};
   const isNouveauBareme = notation.score_juridique_garde_fou !== undefined;
