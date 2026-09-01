@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 // Icônes dessinées à la main (formes simples : cercles/rects/traits) plutôt
 // que des tracés Heroicons recopiés de mémoire — plus sûr que de risquer un
@@ -38,6 +39,27 @@ const ICON_CHECK_CIRCLE = (
     <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 12.25 10.75 14.75 15.75 9.5" />
   </>
 );
+// Cause → effet : deux points reliés par une flèche, pour l'étape qui
+// vérifie le rapport de causalité entre mécanisme et objectif.
+const ICON_CAUSALITY = (
+  <>
+    <circle cx="5" cy="12" r="2.25" />
+    <circle cx="19" cy="12" r="2.25" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 12h9m0 0-2.5-2.5m2.5 2.5-2.5 2.5" />
+  </>
+);
+// Balance : même tracé qu'ICON_ALIGNEMENT sur la fiche déclaration (voir
+// src/app/declarations/[id]/page.js) — repris tel quel pour l'étape qui
+// compare la mesure à un repère neutre, même langage visuel qu'ailleurs
+// sur le site pour cette même idée d'équilibre/comparaison.
+const ICON_SCALE = (
+  <>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v16.5M8 3h8" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M5 8l-2.5 5a2.5 2.5 0 0 0 5 0L5 8Z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M19 8l-2.5 5a2.5 2.5 0 0 0 5 0L19 8Z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M5 8h14" />
+  </>
+);
 
 // Résume l'esprit de data/prompt-methodologie.md (section MÉTHODE
 // D'ANALYSE) en 5 étapes publiques, avec des noms de variables techniques
@@ -56,39 +78,58 @@ const STEPS = [
   },
   {
     id: "02",
-    icon: ICON_DATABASE,
-    cardTitle: "Rassembler les sources",
+    icon: ICON_CAUSALITY,
+    cardTitle: "Vérifier le lien de cause à effet",
     input: "declaration_reformulee",
-    output: "corpus_sources",
-    title: "Les sources sont rassemblées et vérifiées.",
-    body: "Textes de loi, données officielles, rapports — jamais une source militante comme preuve d'un fait.",
+    output: "objectif_et_mecanisme",
+    title: "L'objectif visé et le mécanisme proposé sont identifiés.",
+    body: "On vérifie s'il existe un vrai rapport de cause à effet : une mesure peut cibler le mauvais levier, même bien intentionnée.",
   },
   {
     id: "03",
+    icon: ICON_SCALE,
+    cardTitle: "Comparer à un repère neutre",
+    input: "objectif_et_mecanisme",
+    output: "mesure_vs_repere_neutre",
+    title: "La mesure est comparée à un repère neutre, pas au cadrage du candidat.",
+    body: "L'objectif que la loi ou la recherche assigne à ce domaine — pour juger deux mesures opposées à l'aune du même repère.",
+    link: { href: "/objectifs", label: "Voir nos objectifs de référence par thématique" },
+  },
+  {
+    id: "04",
+    icon: ICON_DATABASE,
+    cardTitle: "Rassembler les sources",
+    input: "mesure_vs_repere_neutre",
+    output: "corpus_sources",
+    title: "Les sources sont rassemblées et vérifiées.",
+    body: "Données publiques d'abord (Légifrance, INSEE, Cour des comptes...) — jamais une source militante comme preuve d'un fait.",
+  },
+  {
+    id: "05",
     icon: ICON_TARGET,
     cardTitle: "Situer la mesure dans son contexte",
     input: "corpus_sources",
     output: "mesure_contextualisee",
     title: "La mesure est replacée dans son contexte.",
-    body: "Dans le programme du candidat, dans le droit français, et à l'international quand c'est pertinent.",
+    body: "Dans le programme du candidat, dans la réalité française actuelle, et à l'international quand c'est pertinent.",
   },
   {
-    id: "04",
+    id: "06",
     icon: ICON_BARCHART,
     cardTitle: "Évaluer selon 5 critères",
     input: "mesure_contextualisee",
     output: "notation_detaillee",
     title: "La mesure est notée selon cinq critères indépendants.",
-    body: "Solidité factuelle, efficacité attendue, faisabilité juridique, coût, faisabilité opérationnelle : chacun noté séparément.",
+    body: "Cinq critères, chacun noté séparément, pour un total sur 100 points — détail plus bas sur cette page.",
   },
   {
-    id: "05",
+    id: "07",
     icon: ICON_CHECK_CIRCLE,
     cardTitle: "Qualifier le résultat",
     input: "notation_detaillee",
     output: "verdict_final",
-    title: "Le résultat est qualifié en un verdict clair.",
-    body: "Un score sur 100, une catégorie explicite, et les limites de l'analyse assumées plutôt que cachées.",
+    title: "Ce qui est établi, probable, discutable et inconnu est distingué explicitement.",
+    body: "Quand une source manque, on l'écrit noir sur blanc — « sources insuffisantes » — plutôt que de deviner.",
   },
 ];
 
@@ -177,6 +218,15 @@ export default function MethodeAnalysisSteps() {
           <div className="border-t border-zinc-100 pt-6 sm:border-l sm:border-t-0 sm:pl-8 sm:pt-0">
             <p className="text-lg font-bold text-zinc-900">{active.title}</p>
             <p className="mt-2 text-sm leading-relaxed text-zinc-500">{active.body}</p>
+            {active.link ? (
+              <Link
+                href={active.link.href}
+                className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 transition-colors hover:text-blue-800"
+              >
+                {active.link.label}
+                <span aria-hidden="true">→</span>
+              </Link>
+            ) : null}
           </div>
         </div>
       </div>
