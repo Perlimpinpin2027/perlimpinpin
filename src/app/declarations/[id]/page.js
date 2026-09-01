@@ -5,6 +5,7 @@ import FeedbackWidget from "@/components/FeedbackWidget";
 import VoteMesureWidget from "@/components/VoteMesureWidget";
 import StickyScoreCard from "@/components/StickyScoreCard";
 import AccordionSection from "@/components/AccordionSection";
+import MesureObjectifBanner from "@/components/MesureObjectifBanner";
 import { getDeclarationDetail } from "@/lib/queries";
 import { getScoreBadge } from "@/lib/score";
 
@@ -615,13 +616,6 @@ export default async function DeclarationDetailPage({ params }) {
 
   const { analyse } = declaration;
   const contenu = analyse.contenuComplet ?? {};
-  // TODO(mesure_vers_objectif) : ce bloc (objectif_court, categorie_objectif,
-  // objectif_vise, mecanisme_propose, lien_causal — voir prompt-methodologie.md,
-  // point 1 bis) est produit et stocké depuis le barème 2026 mais n'a encore
-  // aucun affichage public. Prévu : une flèche schématique en tête de fiche
-  // reliant le titre de la mesure à objectif_court (voir la description du
-  // champ dans le prompt). Décidé comme non prioritaire pour l'instant — à
-  // faire plus tard, pas oublié.
   const badge = getScoreBadge(analyse.scoreFaisabilite);
   const notation = contenu.notation_detaillee ?? {};
   const isNouveauBareme = notation.score_juridique_garde_fou !== undefined;
@@ -741,6 +735,16 @@ export default async function DeclarationDetailPage({ params }) {
             {/* Sentinelle invisible : observée par StickyScoreCard pour
                 savoir quand basculer du bouton vers le mini-sommaire. */}
             <div id="resume-sentinel" aria-hidden="true" />
+
+            {/* Mesure → objectif visé : absente sur les fiches antérieures
+                au barème 2026 (mesure_vers_objectif n'existait pas encore). */}
+            {contenu.mesure_vers_objectif ? (
+              <MesureObjectifBanner
+                categorieObjectif={contenu.mesure_vers_objectif.categorie_objectif}
+                titre={contenu.titre_fiche ?? declaration.titre}
+                objectifCourt={contenu.mesure_vers_objectif.objectif_court}
+              />
+            ) : null}
 
             {/* Détail du score */}
             <div className="rounded-2xl border border-zinc-200 bg-white p-6">

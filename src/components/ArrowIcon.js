@@ -1,7 +1,14 @@
+const PATHS = {
+  up: "M12 19.5v-15m0 0-6.75 6.75M12 4.5l6.75 6.75",
+  down: "M12 4.5v15m0 0-6.75-6.75M12 19.5l6.75-6.75",
+  right: "M4.5 12h15m0 0-6.75-6.75M19.5 12l-6.75 6.75",
+};
+
 // Flèche minimaliste partagée (trait fin, pas d'emoji) pour tous les
 // votes/CTA du site (↑/↓ pour les votes, → pour les CTA/liens cliquables
-// via le même tracé pivoté au besoin). Centralisée : était dupliquée à
-// l'identique dans FeedbackWidget.js et VoteMesureWidget.js.
+// et pour les bannières mesure→objectif, ↓ pour leur équivalent mobile).
+// Centralisée : était dupliquée à l'identique dans FeedbackWidget.js et
+// VoteMesureWidget.js.
 export default function ArrowIcon({ direction = "up", className = "h-4 w-4" }) {
   return (
     <svg
@@ -13,15 +20,7 @@ export default function ArrowIcon({ direction = "up", className = "h-4 w-4" }) {
       className={className}
       aria-hidden="true"
     >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d={
-          direction === "up"
-            ? "M12 19.5v-15m0 0-6.75 6.75M12 4.5l6.75 6.75"
-            : "M12 4.5v15m0 0-6.75-6.75M12 19.5l6.75-6.75"
-        }
-      />
+      <path strokeLinecap="round" strokeLinejoin="round" d={PATHS[direction]} />
     </svg>
   );
 }
