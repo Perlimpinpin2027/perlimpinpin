@@ -1,0 +1,92 @@
+{
+  "candidat_parti": "Raphaël Glucksmann (Place Publique) — remplace l'attribution PS/Echaniz de la fiche A initiale",
+  "mesure_reformulee": {
+    "synthese": "Encadrer les loyers dans les zones en forte tension immobilière pour garantir l'accès au logement aux ménages modestes.",
+    "texte": "Encadrer les loyers dans les **zones en forte tension immobilière**, pour garantir l'accès au logement aux **ménages modestes**."
+  },
+  "mesure_vers_objectif": {
+    "objectif_court": "Garantir l'accès au logement aux ménages modestes",
+    "categorie_objectif": "Logement",
+    "objectif_vise": "Garantir l'accès au logement aux ménages modestes dans les zones où la tension immobilière est la plus forte, en encadrant légalement le niveau des loyers.",
+    "mecanisme_propose": "Plafonnement légal des loyers dans les zones en forte tension immobilière. Le programme ne précise pas si ce mécanisme reprend et pérennise le dispositif expérimental actuellement en vigueur dans 72 communes (issu de la loi ÉLAN de 2018, dont l'échéance légale est fixée à novembre 2026), s'il l'étend à l'ensemble des zones tendues au sens large (environ 1 150 communes), ou s'il crée un nouveau cadre légal équivalent.",
+    "lien_causal": "direct"
+  },
+  "nature_et_existant": "Mesure législative de principe, formulée comme une ligne de programme (volet Économie du programme de Place Publique / Raphaël Glucksmann pour 2027) plutôt que comme un texte de loi précis. En l'état actuel du droit, le seul mécanisme d'encadrement des loyers en vigueur est le dispositif expérimental issu de la loi ÉLAN (2018), actif dans 72 communes et dont l'échéance légale est fixée à novembre 2026 ; une proposition de loi distincte, portée par le député socialiste Iñaki Echaniz, vise par ailleurs à le pérenniser et à l'étendre aux communes limitrophes. Le programme de Raphaël Glucksmann ne se réfère pas nommément à ce texte et ne précise ni le périmètre exact ni le calendrier de sa propre mesure.",
+  "contexte_programme": {
+    "synthese": "S'inscrit dans une ligne défendue par Glucksmann au Parlement européen : le logement comme droit fondamental et le doublement des fonds structurels européens.",
+    "texte": "S'inscrit dans une ligne plus large exprimée par Raphaël Glucksmann dans son explication de vote au Parlement européen (10 septembre 2025) sur le rapport relatif aux investissements de la politique de cohésion face à la crise du logement : il y affirme que « **le logement est un droit fondamental** », s'oppose aux « logiques purement spéculatives » et appelle à **doubler les fonds structurels européens** pour la construction, la rénovation et la lutte contre la précarité énergétique."
+  },
+  "contexte_national": {
+    "synthese": "Le dispositif actuel couvre 72 communes et s'éteint en novembre 2026 sans intervention législative ; le périmètre visé par le programme reste imprécis.",
+    "texte": "Le dispositif d'encadrement des loyers actuellement en vigueur couvre **72 communes** (Paris, une partie de l'Île-de-France, Lyon, Bordeaux, Montpellier, Lille, Grenoble, le Pays basque) et **doit s'éteindre en novembre 2026 sans intervention législative**. La notion de « zones en grande tension » utilisée par le programme est plus large que ce périmètre expérimental si elle renvoie à la catégorie légale des zones tendues (**environ 1 150 communes**), sans que le programme ne tranche ce point."
+  },
+  "contexte_international": {
+    "synthese": "Sources insuffisantes pour trancher ici : aucune comparaison internationale chiffrée n'a été identifiée pour ce mécanisme précis.",
+    "texte": "**Sources insuffisantes pour trancher ici**. Aucune comparaison internationale chiffrée et vérifiable n'a été trouvée sur ce dispositif précis, distincte de l'étude française de référence déjà mobilisée dans les autres sections."
+  },
+  "impact_environnement": null,
+  "analyse_par_criteres": "Sur le plan juridique, encadrer les loyers dans les zones tendues, que ce soit en pérennisant le dispositif expérimental existant ou en créant un cadre équivalent, relève d'une adaptation législative ordinaire, sans obstacle constitutionnel ou européen documenté. Sur le plan budgétaire, la mesure ne représente pas une dépense publique directe significative. Sur les moyens humains en revanche, l'absence de délimitation précise du périmètre visé (« zones en grande tension », plus large a priori que les 72 communes actuellement couvertes) rend incertaine l'ampleur de la montée en charge administrative nécessaire. Sur l'efficacité, le mécanisme est le même que celui déjà mesuré par l'étude de référence (Fack et Chapelle, IPP, note n°125, mai 2026), qui documente un ralentissement réel de la hausse des loyers de 2 à 5 % sur le périmètre actuellement couvert : la preuve empirique existe donc bien sur le prix, mais son extrapolation à un périmètre plus large et non précisément défini est moins directe, ce qui tempère la qualification vers l'INCERTAIN documenté plutôt que le SOLIDE. Sur les effets rebonds, un examen de la note IPP elle-même (et non des seuls résumés de presse) est décisif : la baisse d'environ 8 % du flux de nouvelles annonces de location, souvent présentée dans la presse comme une preuve de réduction de l'offre, est explicitement qualifiée par ses propres auteurs de non tranchée entre plusieurs explications concurrentes (réduction effective de l'offre, allongement de la durée d'occupation des logements, ou déplacement vers d'autres canaux), sans lien de causalité établi avec le dispositif lui-même. Ce n'est donc pas une externalité négative documentée avec confiance, mais un effet dont l'existence même comme frein à l'accès au logement reste incertaine, ce qui justifie une qualification INCERTAIN documenté plutôt que FRAGILE. Sur le degré de préparation, la mesure reste à ce stade une ligne de programme d'une phrase, sans dossier chiffré ni mécanisme légal précisé, ce qui la distingue nettement d'une proposition de loi déjà déposée et votée.",
+  "analyse_longevites": {
+    "synthese": "Pas encore traduite en texte de loi ; sa durée de vie dépendra de sa reprise dans un projet de loi et de son articulation avec le dispositif existant.",
+    "texte": "Cette ligne de programme **n'a pas encore été traduite en texte de loi**. Sa durée de vie politique dépendra de sa reprise ou non dans un projet de loi une fois le calendrier électoral fixé, et de son articulation avec le dispositif expérimental existant, **qui s'éteint par défaut en novembre 2026**."
+  },
+  "impact_temporel_et_sectoriel": {
+    "synthese": "Effets dépendant d'un périmètre et d'un calendrier encore non précisés ; leur extension à un marché plus large réduirait le degré de certitude.",
+    "texte": "Court terme (0-2 ans) : dépend de la clarification du périmètre et du calendrier législatif, **non précisés à ce stade**. Moyen terme (2-7 ans) : si le périmètre retenu dépasse les 72 communes actuelles, l'effet modérateur sur les prix comme l'effet de report sur l'offre, tous deux mesurés sur le périmètre actuel, se propageraient à un ensemble de marchés locatifs plus vaste et plus hétérogène, **avec un degré de certitude moindre**. Long terme (plus de 7 ans) : non documenté."
+  },
+  "ce_qui_est_etabli": {
+    "synthese": "Le dispositif actuel couvre 72 communes et s'éteint en novembre 2026 ; l'étude IPP documente un ralentissement des loyers de 2 à 5 %.",
+    "texte": "Raphaël Glucksmann a formulé, dans le volet Économie de son programme, la mesure : « Encadrer les loyers dans les zones en grande tension pour garantir l'accès au logement aux ménages modestes » (source : place-publique.eu, programme 2027). Il a par ailleurs affirmé au Parlement européen, dans une explication de vote du 10 septembre 2025, que le logement est un droit fondamental et s'est opposé aux logiques spéculatives. Le dispositif d'encadrement des loyers actuellement en vigueur en France couvre **72 communes** et **doit s'éteindre en novembre 2026 sans intervention législative**. **L'étude Fack et Chapelle (IPP, mai 2026) documente, sur ce périmètre, un ralentissement de la hausse des loyers de 2 à 5 % et une baisse d'environ 8 % des annonces de location**."
+  },
+  "ce_qui_est_probable": {
+    "synthese": "Si le périmètre reste proche de l'actuel, les effets déjà mesurés par l'étude de référence sont probablement transposables.",
+    "texte": "Si la mesure reprend ou prolonge le dispositif existant sur un périmètre proche de l'actuel, **les effets déjà mesurés par l'étude de référence sont probablement transposables dans des proportions comparables**."
+  },
+  "ce_qui_est_discutable": {
+    "synthese": "Le périmètre exact visé par « zones en grande tension » est discutable, surtout s'il dépasse largement les 72 communes actuelles.",
+    "texte": "Le périmètre exact visé par « zones en grande tension » est discutable : **s'il dépasse largement les 72 communes actuelles pour couvrir l'ensemble des zones tendues au sens légal**, la transposition directe des effets mesurés par l'étude de référence devient plus incertaine, ces marchés locatifs étant plus hétérogènes."
+  },
+  "ce_qui_est_inconnu": {
+    "synthese": "Le mécanisme légal précis, le périmètre exact des communes concernées, le calendrier et le chiffrage ne sont pas connus.",
+    "texte": "**Le mécanisme légal précis** (pérennisation du dispositif existant, extension, ou création d'un nouveau cadre), **le périmètre exact des communes concernées**, le calendrier et le chiffrage ne sont pas connus à ce stade."
+  },
+  "angles_morts": {
+    "synthese": "Le programme ne mentionne pas la proposition de loi Echaniz déjà adoptée en première lecture, ni son articulation avec elle.",
+    "texte": "Le programme **ne mentionne pas la proposition de loi Echaniz déjà adoptée en première lecture à l'Assemblée nationale** sur ce même sujet, ni son articulation avec elle. Le fait que « zones en grande tension » puisse être une formule d'intention plus qu'un engagement opérationnel précis **n'est pas neutre pour l'évaluation du degré de préparation**."
+  },
+  "notation_detaillee": {
+    "operationnalite_juridique": 8,
+    "qualification_juridique": "SOLIDE",
+    "operationnalite_budgetaire": 7,
+    "qualification_budgetaire": "SOLIDE",
+    "operationnalite_moyens_humains": 5,
+    "qualification_moyens_humains": "INCERTAIN",
+    "operationnalite_moyens_total": 20,
+    "plafond_applique": false,
+    "plafond_declencheur": null,
+    "efficacite": 20,
+    "qualification_efficacite": "INCERTAIN",
+    "effets_rebonds_externalites": 13,
+    "qualification_effets_rebonds": "INCERTAIN",
+    "degre_preparation": 2,
+    "qualification_preparation": "FRAGILE",
+    "alignement_logique": 8,
+    "qualification_alignement": "SOLIDE",
+    "score_total": 63,
+    "appreciation": "plausible sous condition"
+  },
+  "verdict_final": "Le principe d'encadrer les loyers dans les zones tendues ne pose pas d'obstacle juridique et repose sur un mécanisme dont l'effet modérateur sur les prix — un ralentissement réel de la hausse des loyers, de 2 à 5 % — est mesuré directement par une étude récente, sans contestation de ses propres auteurs. Le principal revers qu'on lui oppose habituellement, une baisse de 8 % des annonces de location, ne résiste pas à un examen de la note IPP elle-même : ses auteurs le qualifient explicitement de non tranché entre plusieurs explications concurrentes, et n'établissent aucune baisse confirmée du parc locatif réel. Ce n'est donc pas un coût documenté avec la même force que le bénéfice sur les prix. Ce qui reste, en revanche, documenté et pénalisant, c'est le degré de préparation : une ligne de programme d'une phrase, sans périmètre ni calendrier ni mécanisme légal précisés.",
+  "sources_utilisees": [
+    "Place Publique, programme de Raphaël Glucksmann pour 2027, volet Économie : « Encadrer les loyers dans les zones en grande tension pour garantir l'accès au logement aux ménages modestes » (place-publique.eu)",
+    "Raphaël Glucksmann, explication de vote écrite, Parlement européen, 10 septembre 2025, sur le rapport relatif aux investissements de la politique de cohésion face à la crise du logement",
+    "Guillaume Chapelle et Gabrielle Fack, Note IPP n°125, « L'encadrement des loyers : effets économiques et redistributifs », Institut des politiques publiques, mai 2026 — note technique consultée directement (ipp.eu), et non un résumé de presse, pour la qualification exacte de l'effet sur les annonces de location",
+    "Document de référence Perlimpinpin, Logement.docx (données pivots)"
+  ],
+  "niveau_de_confiance": "Haut sur l'effet-prix, mesuré sans réserve par l'étude de référence. Moyen à faible sur l'existence même d'un effet-offre négatif net, la note IPP qualifiant elle-même ce point de non tranché. Faible sur les effets concrets attendus au-delà, faute de mécanisme et de périmètre précisés par le programme.",
+  "limites": {
+    "synthese": "S'appuie sur une seule ligne de programme, plus générale que les textes de loi analysés pour d'autres candidats sur le même sujet.",
+    "texte": "Cette fiche s'appuie sur **une seule ligne de programme**, plus générale que les textes de loi analysés pour d'autres candidats sur le même sujet. Le périmètre exact visé par « zones en grande tension » n'est pas précisé par la source et a dû être discuté par hypothèse. **Attribution à vérifier** si une version plus détaillée du programme logement de Raphaël Glucksmann est publiée ultérieurement."
+  },
+  "resume_court": "Raphaël Glucksmann propose d'encadrer les loyers dans les zones en grande tension pour protéger l'accès au logement des ménages modestes. Le mécanisme visé, un plafonnement légal des loyers, est le même que celui déjà mesuré par une étude récente : un ralentissement réel de la hausse des loyers, de 2 à 5 %, non contesté. Le revers qu'on lui oppose souvent, une baisse de 8 % des annonces de location, est en réalité qualifié de non tranché par les auteurs mêmes de l'étude : il pourrait tout autant refléter un allongement de la durée d'occupation des logements qu'une vraie perte de logements disponibles. Le vrai point faible, documenté sans ambiguïté celui-là, c'est la préparation : une phrase de programme, sans périmètre, calendrier ni mécanisme légal précisés.",
+  "phrase_teasing": "Glucksmann veut encadrer les loyers dans les zones tendues. L'effet sur les prix est réel et mesuré ; le revers qu'on lui oppose l'est beaucoup moins qu'on ne le dit."
+}
