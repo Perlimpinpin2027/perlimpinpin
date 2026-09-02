@@ -13,6 +13,10 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  /* Serif éditoriale à fort contraste (Fraunces, voir layout.js) pour tous
+     les titres du site — remplace le repli générique Georgia/Times de
+     Tailwind. */
+  --font-serif: var(--font-fraunces);
 }
 
 body {

@@ -91,7 +91,7 @@ const closingSection = {
     "**La plateforme ouvre ses portes à quelques mois des grandes échéances politiques.** D'ici là, chaque mesure analysée s'ajoutera à notre base de connaissances publique, avec ses sources, son score et ses limites méthodologiques assumées.",
     "**Nous ne prétendons pas nous substituer au débat politique ou au choix des électeurs.** Nous cherchons simplement à redonner à la démocratie un socle de faits vérifiables sur lequel construire des décisions éclairées.",
     "**Notre ambition ne s'arrête pas à notre propre plateforme.** Nous considérerons la mission de Perlimpinpin accomplie si nos travaux, nos données et notre méthodologie permettent à des journalistes, des chercheurs, des associations ou de simples citoyens d'élever le niveau d'exigence du débat politique.",
-    "Nous ne cherchons pas à détenir le monopole du fait, mais à développer l'infrastructure méthodologique dont la démocratie a aujourd'hui besoin.",
+    "**Nous ne cherchons pas à détenir le monopole du fait, mais à développer l'infrastructure méthodologique dont la démocratie a aujourd'hui besoin.**",
   ],
 };
 
