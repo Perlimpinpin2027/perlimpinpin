@@ -1,6 +1,9 @@
 {
   "candidat_parti": "Rassemblement national — volet préférence nationale dans l'attribution des logements sociaux",
-  "mesure_reformulee": "Réserver prioritairement l'attribution des logements sociaux aux personnes de nationalité française, les personnes étrangères ne devenant éligibles qu'à défaut de candidature française équivalente.",
+  "mesure_reformulee": {
+    "synthese": "Réserver prioritairement les logements sociaux aux personnes de nationalité française, les étrangers n'étant éligibles qu'à défaut d'équivalent français.",
+    "texte": "Réserver prioritairement l'attribution des logements sociaux aux **personnes de nationalité française**, les personnes étrangères ne devenant éligibles **qu'à défaut de candidature française équivalente**."
+  },
   "mesure_vers_objectif": {
     "objectif_court": "Réserver le logement social aux Français",
     "categorie_objectif": "Logement",
@@ -9,18 +12,45 @@
     "lien_causal": "faible_ou_absent"
   },
   "nature_et_existant": "Mesure législative qui modifierait les critères d'attribution du logement social (code de la construction et de l'habitation). Elle s'inscrit dans un paquet logement plus large du Rassemblement national qui comprend aussi la vente annuelle d'environ 1 % du parc social (évalué à environ 5 millions de logements) et l'exemption des communes de moins de 75 000 habitants des obligations de la loi SRU ; ces deux autres mécanismes ne sont pas couverts par la présente fiche, qui porte spécifiquement sur le critère de nationalité, conformément à la règle de décomposition des mesures combinées.",
-  "contexte_programme": "S'inscrit dans la doctrine de préférence nationale que le Rassemblement national défend dans plusieurs politiques sociales, au-delà du seul logement.",
-  "contexte_national": "La France compte plus de 2,6 millions de ménages en attente d'un logement social, avec un taux de rotation historiquement bas, selon les chiffres de l'Union sociale pour l'habitat et du ministère du Logement.",
-  "contexte_international": "Le droit de l'Union européenne encadre strictement ce type de critère : un arrêt de la Cour de justice des Communautés européennes de 1988 a jugé qu'un État membre manque à ses obligations en réservant à ses seuls ressortissants l'accès à la propriété et à la location de logements construits avec des fonds publics.",
+  "contexte_programme": {
+    "synthese": "S'inscrit dans la doctrine de préférence nationale que le RN défend dans plusieurs politiques sociales, au-delà du logement.",
+    "texte": "S'inscrit dans la **doctrine de préférence nationale** que le Rassemblement national défend dans plusieurs politiques sociales, au-delà du seul logement."
+  },
+  "contexte_national": {
+    "synthese": "Plus de 2,6 millions de ménages sont en attente d'un logement social, avec un taux de rotation historiquement bas.",
+    "texte": "La France compte **plus de 2,6 millions de ménages en attente d'un logement social**, avec **un taux de rotation historiquement bas**, selon les chiffres de l'Union sociale pour l'habitat et du ministère du Logement."
+  },
+  "contexte_international": {
+    "synthese": "Un arrêt de la Cour de justice des Communautés européennes de 1988 interdit de réserver aux seuls nationaux les logements financés sur fonds publics.",
+    "texte": "Le droit de l'Union européenne encadre strictement ce type de critère : **un arrêt de la Cour de justice des Communautés européennes de 1988** a jugé qu'un État membre manque à ses obligations en **réservant à ses seuls ressortissants l'accès à la propriété et à la location de logements construits avec des fonds publics**."
+  },
   "impact_environnement": null,
   "analyse_par_criteres": "Sur le plan juridique, l'obstacle est net et documenté à plusieurs niveaux : l'arrêt de la Cour de justice de 1988 interdit de réserver aux seuls nationaux l'accès à des logements financés sur fonds publics, l'article 225-1 du code pénal interdit la discrimination fondée sur l'appartenance à une nation, et le principe constitutionnel d'égalité devant la loi va dans le même sens. Aucune voie de mise en conformité crédible n'a été identifiée tant que la France reste membre de l'Union européenne et soumise à son bloc de constitutionnalité. Sur le plan budgétaire, l'incidence directe est limitée, la mesure portant sur un critère d'attribution plutôt que sur une dépense. Sur les moyens humains, sa mise en œuvre supposerait une refonte des grilles de cotation utilisées par les commissions d'attribution, techniquement faisable mais non détaillée. Sur l'efficacité, le lien de cause à effet avec l'objectif affiché est faible ou absent : la pénurie de logements sociaux, documentée à 2,6 millions de ménages en attente, tient au nombre de logements disponibles et à leur taux de rotation, non à l'ordre des critères d'attribution entre candidats déjà en file d'attente ; le droit de référence du domaine logement (article L300-1 du code de la construction et de l'habitation) garantit au demeurant l'accès à un logement décent à toute personne résidant régulièrement en France, sans distinction de nationalité. Sur les effets rebonds, la mesure déplace la file d'attente entre catégories de demandeurs sans réduire le nombre de ménages qui y patientent, et crée une nouvelle exclusion pour des résidents réguliers non français aujourd'hui éligibles.",
-  "analyse_longevites": "Une loi instaurant ce critère serait, selon l'analyse juridique disponible, exposée à une censure du Conseil constitutionnel et à une contestation devant les juridictions européennes, ce qui limite fortement sa durée de vie probable si elle était adoptée en l'état.",
+  "analyse_longevites": {
+    "synthese": "Exposée à une censure du Conseil constitutionnel et à une contestation devant les juridictions européennes, limitant fortement sa durée de vie probable.",
+    "texte": "Une loi instaurant ce critère serait, selon l'analyse juridique disponible, **exposée à une censure du Conseil constitutionnel et à une contestation devant les juridictions européennes**, ce qui limite fortement sa durée de vie probable si elle était adoptée en l'état."
+  },
   "impact_temporel_et_sectoriel": null,
-  "ce_qui_est_etabli": "La France compte plus de 2,6 millions de ménages en attente d'un logement social. Un arrêt de la Cour de justice des Communautés européennes de 1988 interdit de réserver aux nationaux l'accès à des logements financés sur fonds publics. L'article 225-1 du code pénal interdit la discrimination fondée sur la nation. L'article L300-1 du code de la construction et de l'habitation garantit le droit au logement décent à toute personne résidant régulièrement en France.",
-  "ce_qui_est_probable": "Une loi instaurant ce critère serait probablement censurée par le Conseil constitutionnel au nom du principe d'égalité, comme le suggèrent plusieurs analyses juridiques publiées sur ce sujet.",
-  "ce_qui_est_discutable": "Le candidat pourrait faire valoir que la France devrait pouvoir s'affranchir de la jurisprudence européenne de 1988 sur ce point ; ce débat sur la primauté du droit de l'Union relève d'un choix politique plus large qui dépasse la seule mesure logement.",
-  "ce_qui_est_inconnu": "Le nombre de dossiers d'attribution qui seraient concrètement affectés par ce critère, et l'ampleur du contentieux qu'il générerait, ne sont pas chiffrés.",
-  "angles_morts": "Le document de référence du domaine logement met en garde contre les mesures qui déplacent le problème d'attribution sans agir sur le stock ou la rotation du parc social : c'est précisément le cas ici, ce qui aggrave la portée du constat d'inefficacité au-delà du seul obstacle juridique. Les autres volets du programme logement du Rassemblement national (vente de 1 % du parc social par an, exemption SRU) ne sont pas couverts par cette fiche.",
+  "ce_qui_est_etabli": {
+    "synthese": "2,6 millions de ménages attendent un logement social ; un arrêt de 1988 interdit de réserver aux nationaux les logements financés sur fonds publics.",
+    "texte": "La France compte **plus de 2,6 millions de ménages en attente d'un logement social**. Un **arrêt de la Cour de justice des Communautés européennes de 1988** interdit de réserver aux nationaux l'accès à des logements financés sur fonds publics. **L'article 225-1 du code pénal interdit la discrimination fondée sur la nation**. L'article L300-1 du code de la construction et de l'habitation **garantit le droit au logement décent à toute personne résidant régulièrement en France**."
+  },
+  "ce_qui_est_probable": {
+    "synthese": "Une loi instaurant ce critère serait probablement censurée par le Conseil constitutionnel au nom du principe d'égalité.",
+    "texte": "Une loi instaurant ce critère serait **probablement censurée par le Conseil constitutionnel au nom du principe d'égalité**, comme le suggèrent plusieurs analyses juridiques publiées sur ce sujet."
+  },
+  "ce_qui_est_discutable": {
+    "synthese": "Le débat sur la primauté du droit de l'Union européenne, que le candidat pourrait vouloir contester, dépasse la seule mesure logement.",
+    "texte": "Le candidat pourrait faire valoir que la France devrait pouvoir **s'affranchir de la jurisprudence européenne de 1988** sur ce point ; ce débat sur **la primauté du droit de l'Union** relève d'un choix politique plus large qui dépasse la seule mesure logement."
+  },
+  "ce_qui_est_inconnu": {
+    "synthese": "Le nombre de dossiers concrètement affectés par ce critère et l'ampleur du contentieux qu'il générerait ne sont pas chiffrés.",
+    "texte": "**Le nombre de dossiers d'attribution qui seraient concrètement affectés par ce critère**, et **l'ampleur du contentieux qu'il générerait**, ne sont pas chiffrés."
+  },
+  "angles_morts": {
+    "synthese": "La mesure déplace le problème d'attribution sans agir sur le stock ni la rotation du parc social, aggravant le constat d'inefficacité.",
+    "texte": "Le document de référence du domaine logement met en garde contre les mesures qui déplacent le problème d'attribution sans agir sur le stock ou la rotation du parc social : **c'est précisément le cas ici**, ce qui aggrave la portée du constat d'inefficacité au-delà du seul obstacle juridique. Les autres volets du programme logement du Rassemblement national (**vente de 1 % du parc social par an, exemption SRU**) ne sont pas couverts par cette fiche."
+  },
   "notation_detaillee": {
     "operationnalite_juridique": 1,
     "qualification_juridique": "FRAGILE",
@@ -49,7 +79,10 @@
     "Document de référence Perlimpinpin, Logement.docx (donnée pivot sur la file d'attente du logement social)"
   ],
   "niveau_de_confiance": "Haut sur l'obstacle juridique, documenté par plusieurs sources convergentes (jurisprudence européenne, code pénal, principe constitutionnel). Moyen sur l'ampleur exacte des effets pratiques, faute de chiffrage propre au candidat sur ce volet précis.",
-  "limites": "Cette fiche porte spécifiquement sur le critère de nationalité dans l'attribution des logements sociaux ; les autres volets du programme logement du Rassemblement national (vente de 1 % du parc social par an, révision de la loi SRU) relèvent de mesures distinctes non couvertes ici.",
+  "limites": {
+    "synthese": "Cette fiche porte uniquement sur le critère de nationalité ; les autres volets du programme logement du RN ne sont pas couverts ici.",
+    "texte": "Cette fiche porte spécifiquement sur **le critère de nationalité dans l'attribution des logements sociaux** ; les autres volets du programme logement du Rassemblement national (vente de 1 % du parc social par an, révision de la loi SRU) relèvent de **mesures distinctes non couvertes ici**."
+  },
   "resume_court": "Le Rassemblement national veut réserver l'attribution des logements sociaux aux personnes de nationalité française. Le droit de l'Union européenne l'interdit explicitement depuis un arrêt de 1988, qui censure toute réservation de logements financés sur fonds publics aux seuls nationaux. Le code pénal et le principe constitutionnel d'égalité pointent dans le même sens. Sur le fond, la mesure ne change ni le nombre de logements sociaux disponibles ni leur taux de rotation, qui sont la cause documentée de la pénurie. Elle ne fait donc, au mieux, que déplacer la file d'attente entre catégories de demandeurs, sans la raccourcir.",
   "phrase_teasing": "Le RN veut réserver le logement social aux Français, contre l'avis du droit européen. La mesure tient-elle face au droit, et surtout, règle-t-elle la pénurie ?"
 }
