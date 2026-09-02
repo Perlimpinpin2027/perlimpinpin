@@ -68,11 +68,14 @@ export default function HeroText() {
       </span>
 
       <h1 className="mt-4 font-serif text-4xl font-bold leading-tight tracking-tight text-zinc-900 sm:text-5xl">
-        Ce que valent vraiment les promesses politiques{" "}
-        <span
-          className="inline-block h-2.5 w-2.5 rounded-full bg-blue-600 align-middle"
-          aria-hidden="true"
-        />
+        Ce que valent vraiment les promesses{" "}
+        <span className="whitespace-nowrap">
+          politiques{" "}
+          <span
+            className="inline-block h-2.5 w-2.5 rounded-full bg-blue-600 align-middle"
+            aria-hidden="true"
+          />
+        </span>
       </h1>
 
       <p className="mt-5 max-w-lg text-base leading-relaxed text-zinc-500">
