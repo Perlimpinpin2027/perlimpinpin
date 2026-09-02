@@ -54,22 +54,19 @@ export default function Header() {
     >
       <div className="flex items-center justify-between gap-6 px-6 py-4 sm:px-8">
         <Link href="/" className="flex shrink-0 items-center">
-          {/* public/logo/logo.png a un vrai canal alpha (fond transparent) :
-              retraité depuis l'export opaque d'origine (fond ~blanc uni)
-              via un alpha calculé par luminance par pixel, encre ramenée à
-              un noir pur — l'ancien contournement mix-blend-multiply
-              (fondre le blanc dans le fond au lieu d'une vraie
-              transparence) n'est plus nécessaire.
-              width/height 1877x233 : dimensions réelles du fichier recadré
-              (voir le commentaire de .header-logo dans globals.css) — le
-              fichier original 2181x721 laissait ~73% de vide vertical
-              autour du texte, ce qui rendait toute hauteur CSS visuellement
-              minuscule quel que soit le nombre de pixels demandé. */}
+          {/* public/logo/logo.png : wordmark vectoriel (tracés de police
+              convertis en chemins SVG puis exportés en PNG), fond
+              transparent natif — pas de recadrage manuel ni de
+              retraitement d'alpha nécessaire.
+              width/height 2400x265 : dimensions réelles du fichier, déjà
+              recadré au plus près du texte (voir le commentaire de
+              .header-logo dans globals.css sur l'importance de faire
+              correspondre ces valeurs aux dimensions réelles). */}
           <Image
             src="/logo/logo.png"
             alt="Perlimpinpin"
-            width={1877}
-            height={233}
+            width={2400}
+            height={265}
             priority
             className="header-logo"
           />

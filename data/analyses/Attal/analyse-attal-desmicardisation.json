@@ -1,0 +1,93 @@
+{
+  "mesure_reformulee": {
+    "synthese": "Restructurer les allègements de cotisations patronales pour supprimer les effets de seuil qui freinent les hausses de salaire au-dessus du SMIC.",
+    "texte": "Gabriel Attal propose de restructurer les allègements de cotisations patronales pour supprimer les **effets de seuil** qui rendent aujourd'hui **coûteux, pour un employeur, le fait d'augmenter un salarié au-dessus du SMIC**."
+  },
+  "mesure_vers_objectif": {
+    "objectif_court": "réduire le coût de la hausse des salaires au-dessus du SMIC",
+    "categorie_objectif": "Emploi et chômage",
+    "objectif_vise": "Inciter les employeurs à augmenter les salaires des travailleurs rémunérés autour du SMIC, en supprimant les effets de seuil qui rendent aujourd'hui ces hausses très coûteuses pour l'entreprise par rapport au gain net perçu par le salarié.",
+    "mecanisme_propose": "Restructurer le barème des exonérations de cotisations patronales pour lisser leur dégressivité au lieu de les faire chuter brutalement à certains seuils de salaire.",
+    "lien_causal": "direct"
+  },
+  "nature_et_existant": "Le mécanisme décrit par le candidat n'est pas nouveau, il correspond très précisément à une réforme déjà entrée en vigueur. Depuis le 1er janvier 2026, la réduction générale dégressive unique (RGDU) a remplacé l'ancienne réduction Fillon, sur la base de l'article 18 de la loi de financement de la sécurité sociale pour 2025 (loi n° 2025-199 du 28 février 2025) et du décret n° 2025-887 du 4 septembre 2025. Cette réforme, issue d'un rapport commandé par le gouvernement aux économistes Antoine Bozio et Étienne Wasmer publié en octobre 2024, a précisément pour objet de lisser la dégressivité des allègements et d'étendre leur champ jusqu'à 3 SMIC contre 1,6 SMIC auparavant, afin de réduire les effets de seuil et la trappe à bas salaires (source : economie.gouv.fr). Le terme même de désmicardisation employé par le candidat est celui utilisé dans le débat public pour désigner cette réforme. L'annonce ne précise pas si le candidat propose de poursuivre ce mécanisme déjà en vigueur ou d'aller plus loin, par exemple avec un barème différent. Faute de précision, cette mesure se présente comme une nouveauté de campagne alors qu'elle recouvre, pour l'essentiel, un dispositif déjà légiféré et opérationnel depuis huit mois au moment de l'analyse.",
+  "contexte_programme": {
+    "synthese": "Probablement liée à la proposition Droit au brut du candidat ; sources insuffisantes pour préciser son articulation avec le reste du programme.",
+    "texte": "Cette mesure appartient probablement au même chantier Travail et salaires que la proposition **Droit au brut** du candidat, avec laquelle elle partage un objectif proche : rapprocher le coût du travail du salaire réellement perçu. **Sources insuffisantes** pour situer plus précisément son articulation avec le reste du programme, l'extrait fourni ne donnant que le mécanisme sans contexte supplémentaire."
+  },
+  "contexte_national": {
+    "synthese": "La réforme RGDU, en vigueur depuis janvier 2026, remplace la réduction Fillon et réduirait d'environ 10 % le coût d'une hausse de salaire.",
+    "texte": "Avant la réforme, le système d'allègements dit Fillon concentrait l'essentiel de l'exonération au niveau du SMIC puis la faisait décroître fortement jusqu'à 1,6 SMIC, ce qui créait une smicardisation documentée : **la part de salariés payés au SMIC est passée de 12 % fin 2021 à 17,3 % fin 2023**, selon les chiffres relayés par Force Ouvrière sur la base des données du PLFSS. Le rapport Bozio-Wasmer d'octobre 2024 a chiffré un exemple concret de cet effet de seuil : au niveau de 2,5 SMIC, **augmenter un salaire brut mensuel de 3803 à 3804 euros coûtait à l'employeur 2756 euros de plus par an, pour un gain net de seulement 9,50 euros par an pour le salarié**. La réforme RGDU, **entrée en vigueur le 1er janvier 2026**, répond directement à ce constat en étendant les allègements jusqu'à 3 SMIC avec une formule de dégressivité plus progressive (sources economie.gouv.fr et FNTP). Selon les estimations de son coauteur Étienne Wasmer, **cette réforme réduit d'environ 10 % le coût pour un employeur d'augmenter un salarié**."
+  },
+  "contexte_international": {
+    "synthese": "Sources insuffisantes : aucune comparaison internationale chiffrée et vérifiable n'a été trouvée sur ce dispositif précis.",
+    "texte": "**Sources insuffisantes** pour trancher ici. Aucune comparaison internationale chiffrée et vérifiable n'a été trouvée sur ce dispositif précis d'allègements dégressifs."
+  },
+  "impact_environnement": null,
+  "analyse_par_criteres": "Opérationnalité et moyens : le mécanisme repose sur une loi ordinaire déjà adoptée et un décret déjà publié, ce qui rend la faisabilité juridique solide. Sur le plan budgétaire, aucun chiffrage propre n'est fourni par le candidat pour ce qui distinguerait sa proposition du dispositif RGDU déjà en vigueur, ce qui limite la note sur ce point. Sur le plan des moyens humains et administratifs, le dispositif est déjà opérationnel et automatisé via la déclaration sociale nominative, sans obstacle identifié. Efficacité : le lien causal entre le mécanisme et l'objectif est direct, et une preuve empirique chiffrée existe, la réforme réduirait d'environ 10 % le coût d'une hausse de salaire selon les estimations de ses concepteurs. La réforme n'étant en vigueur que depuis huit mois au moment de l'analyse, aucune donnée de terrain ne permet encore de confirmer un effet réel sur les négociations salariales. Effets rebonds et externalités : la réforme allège le coût du travail au-dessus du SMIC mais l'alourdit légèrement au niveau du SMIC lui-même selon les paramètres 2025-2026, un arbitrage documenté mais dont l'ampleur reste incertaine pour les emplois les plus proches du SMIC. Degré de préparation : l'annonce du candidat ne fournit aucun chiffrage ni dossier propre, alors qu'un dispositif équivalent existe déjà avec un chiffrage officiel disponible qu'il ne reprend pas explicitement. Alignement et logique globale : la mesure est cohérente avec l'axe général du candidat sur le rapprochement entre coût du travail et rémunération perçue, sans contradiction identifiée avec le reste du programme.",
+  "analyse_longevites": {
+    "synthese": "Déjà en vigueur depuis janvier 2026, mais sans preuve encore disponible d'un effet réel sur les négociations salariales.",
+    "texte": "Court terme, 0 à 2 ans : **le mécanisme est déjà en vigueur depuis janvier 2026**, les effets immédiats sur le coût du travail sont donc déjà mesurables administrativement, mais pas encore sur les négociations salariales elles-mêmes. Moyen terme, 2 à 7 ans : si le mécanisme fonctionne comme prévu par ses concepteurs, une diminution progressive de la part de salariés bloqués au SMIC est plausible, **sans preuve encore disponible à ce stade**. Long terme : l'effet dépend du maintien du dispositif dans la durée et de son articulation avec les futures revalorisations du SMIC, qui peuvent **recréer les mêmes effets de seuil si les paramètres ne sont pas ajustés régulièrement**."
+  },
+  "impact_temporel_et_sectoriel": {
+    "synthese": "Effets potentiellement positifs sur le pouvoir d'achat et la consommation à moyen terme, mais non mesurables à ce stade faute de recul.",
+    "texte": "Effet sur l'inflation et le pouvoir d'achat : effet indirect et de moyen terme si la mesure permet réellement des hausses de salaire plus fréquentes au-dessus du SMIC, **sources insuffisantes pour quantifier cet effet à ce stade**. Effet sur la consommation des ménages : potentiellement positif à moyen terme pour les ménages concernés par une hausse de salaire, mais **non mesurable à ce stade faute de recul**. Effet sur la confiance et la stabilité du secteur bancaire : **aucun lien direct identifié** avec cette mesure."
+  },
+  "ce_qui_est_etabli": {
+    "synthese": "Le mécanisme décrit correspond à la réforme RGDU, déjà en vigueur depuis le 1er janvier 2026, et la smicardisation qu'il corrige est documentée.",
+    "texte": "Le mécanisme décrit par le candidat correspond à la **réforme RGDU, entrée en vigueur le 1er janvier 2026** sur la base de la loi du 28 février 2025 et du décret du 4 septembre 2025. La smicardisation est documentée, **17,3 % de salariés au SMIC fin 2023 contre 12 % fin 2021**. L'effet de seuil corrigé par la réforme est chiffré par le rapport Bozio-Wasmer d'octobre 2024."
+  },
+  "ce_qui_est_probable": {
+    "synthese": "Une poursuite du même mécanisme réduirait probablement le coût des hausses de salaire d'environ 10 %, dans la continuité de l'existant.",
+    "texte": "Une poursuite ou un ajustement du même mécanisme réduirait probablement, dans une mesure comparable à celle déjà estimée par ses concepteurs, **environ 10 % le coût des hausses de salaire au-dessus du SMIC**."
+  },
+  "ce_qui_est_discutable": {
+    "synthese": "Présenter comme une proposition de campagne pour 2027 un mécanisme déjà en vigueur depuis janvier 2026, sans préciser ce qui serait ajouté.",
+    "texte": "**Présenter cette mesure comme une proposition de campagne pour 2027 alors que le mécanisme central qu'elle décrit est déjà une loi en vigueur depuis janvier 2026**. Sans précision sur ce que le candidat propose d'ajouter ou de modifier par rapport à ce dispositif existant, il est difficile de distinguer la part de nouveauté réelle de la mesure."
+  },
+  "ce_qui_est_inconnu": {
+    "synthese": "Si le candidat propose de maintenir, ajuster ou étendre le dispositif RGDU existant, et selon quel chiffrage précis.",
+    "texte": "Si la proposition consiste à **maintenir le dispositif RGDU tel quel, à l'ajuster avec de nouveaux seuils ou un nouveau barème, ou à l'étendre davantage**. **Le chiffrage précis** de ce que le candidat propose au-delà de l'existant."
+  },
+  "angles_morts": {
+    "synthese": "Risque de confusion entre promesse de campagne et dispositif déjà légiféré ; aucun chiffrage propre au candidat au-delà de l'existant.",
+    "texte": "**Risque de confusion pour le lecteur entre une promesse de campagne et un dispositif déjà légiféré**, un biais de communication politique classique consistant à présenter comme futur ce qui est déjà acquis. Risque, documenté par les paramètres 2025-2026, d'**un coût légèrement accru pour l'emploi au niveau du SMIC lui-même**. **Absence de tout chiffrage propre au candidat** sur l'éventuel dépassement du dispositif existant."
+  },
+  "notation_detaillee": {
+    "operationnalite_juridique": 9,
+    "qualification_juridique": "SOLIDE",
+    "operationnalite_budgetaire": 4,
+    "qualification_budgetaire": "INCERTAIN",
+    "operationnalite_moyens_humains": 9,
+    "qualification_moyens_humains": "SOLIDE",
+    "operationnalite_moyens_total": 22,
+    "plafond_applique": false,
+    "plafond_declencheur": null,
+    "efficacite": 24,
+    "qualification_efficacite": "SOLIDE",
+    "effets_rebonds_externalites": 10,
+    "qualification_effets_rebonds": "INCERTAIN",
+    "degre_preparation": 2,
+    "qualification_preparation": "FRAGILE",
+    "alignement_logique": 8,
+    "qualification_alignement": "SOLIDE",
+    "score_total": 66,
+    "appreciation": "plausible sous condition"
+  },
+  "verdict_final": "Le diagnostic de départ est solidement établi, la smicardisation est réelle et documentée, tout comme les effets de seuil qui freinent les hausses de salaire au-dessus du SMIC. Mais le mécanisme que le candidat présente comme une mesure phare pour 2027 correspond très précisément à la réforme RGDU, déjà entrée en vigueur le 1er janvier 2026. Cette réforme a un chiffrage officiel et une efficacité technique démontrée sur le papier, mais aucune donnée de terrain ne permet encore de confirmer son effet réel sur les salaires, faute de recul. Sans précision sur ce que le candidat propose d'ajouter à l'existant, la mesure ressemble davantage à la reprise d'un acquis récent qu'à une proposition nouvelle.",
+  "sources_utilisees": [
+    "economie.gouv.fr, présentation officielle de la réduction générale dégressive unique (RGDU)",
+    "Loi n° 2025-199 du 28 février 2025 de financement de la sécurité sociale pour 2025, article 18",
+    "Décret n° 2025-887 du 4 septembre 2025",
+    "Fédération Nationale des Travaux Publics, présentation du barème RGDU 2026",
+    "Force Ouvrière, chiffres sur la part de salariés au SMIC issus du PLFSS",
+    "Europe1, relayant le rapport d'Antoine Bozio et Étienne Wasmer remis au gouvernement en octobre 2024"
+  ],
+  "niveau_de_confiance": "Élevé sur l'existence et le contenu du dispositif RGDU, appuyé sur des sources juridiques et institutionnelles directes. Moyen sur l'efficacité réelle mesurée, la réforme étant trop récente pour disposer de données de résultat sur les salaires.",
+  "limites": {
+    "synthese": "L'extrait fourni ne précise pas si la mesure va au-delà du dispositif RGDU déjà en vigueur, limitant l'analyse à une comparaison.",
+    "texte": "L'extrait fourni **ne précise pas si la mesure du candidat va au-delà du dispositif RGDU déjà en vigueur**, ce qui limite l'analyse à une comparaison avec ce dispositif existant plutôt qu'à l'évaluation d'une mesure réellement inédite."
+  },
+  "resume_court": "Attal veut restructurer les allègements de charges pour éviter que les hausses de salaire au-dessus du SMIC ne coûtent trop cher aux employeurs. Le mécanisme décrit correspond très précisément à la réforme RGDU, déjà en vigueur depuis janvier 2026.",
+  "phrase_teasing": "Une mesure phare pour 2027 qui ressemble beaucoup à une réforme déjà entrée en vigueur en janvier 2026."
+}

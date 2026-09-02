@@ -1,0 +1,77 @@
+{
+  "mesure_reformulee": "Marine Tondelier propose de porter le SMIC à 2 000 euros brut d'ici 2027, et de réduire la durée légale du travail à 32 heures pour les métiers pénibles.",
+
+  "mesure_vers_objectif": {
+    "objectif_vise": "Améliorer le pouvoir d'achat des travailleurs au SMIC et réduire l'usure professionnelle des métiers les plus pénibles.",
+    "mecanisme_propose": "Relèvement du SMIC à 2 000 euros brut d'ici 2027, combiné à une réduction du temps de travail légal à 32 heures pour les métiers pénibles.",
+    "lien_causal": "direct"
+  },
+
+  "nature_et_existant": "Mesure de nature sociale et économique, combinant deux mécanismes distincts à décomposer séparément. (1) Le relèvement du SMIC est un mécanisme déjà existant et récurrent : le SMIC est revalorisé chaque année par décret selon une formule légale (inflation et gains de salaires), avec la possibité d'un \"coup de pouce\" politique supplémentaire, un outil déjà utilisé par le passé. Ce n'est donc pas une invention, mais l'utilisation, à une ampleur plus marquée, d'un levier déjà mobilisable par tout gouvernement. (2) La réduction du temps de travail à 32 heures pour les \"métiers pénibles\" combine deux éléments existants sans les avoir jamais associés ainsi : la réduction du temps de travail légal a un précédent direct (les lois Aubry de 1998 et 2000, passage de 39 à 35 heures), et la notion de pénibilité existe déjà via le compte professionnel de prévention (C2P), mais ce dispositif fonctionne par facteurs de risque et seuils d'exposition individuels, pas par liste de \"métiers\" : il n'existe aujourd'hui aucune liste légale de métiers pénibles en tant que tels.",
+
+  "contexte_programme": "Mesure du programme de Marine Tondelier (Les Écologistes) pour la présidentielle 2027, cohérente avec l'orientation sociale du programme déjà documentée dans cette série d'analyses (conditionnalité des aides publiques aux conditions de travail, financement de la transition par la fiscalité des héritages).",
+
+  "contexte_national": "Le SMIC mensuel brut s'élève à 1 867,02 euros depuis le 1er juin 2026 (12,31 euros de l'heure). Porter le SMIC à 2 000 euros brut représente donc une hausse d'environ 7,1 %, sensiblement plus modeste que les propositions visant un SMIC à 2 000 euros net (qui impliqueraient une hausse de l'ordre de 35 %). Ce montant de 2 000 euros brut correspond à la revendication portée par la CGT lors du débat sur la revalorisation 2026. Le ratio SMIC/salaire médian français est déjà de 62,5 %, un record en Europe selon plusieurs analyses économiques, ce qui nourrit une inquiétude documentée sur le phénomène de \"smicardisation\" : 34 % des PME et TPE ont une large part de salariés proches du SMIC selon une étude de Bpifrance Le Lab et Rexecode, ce qui tasse les grilles salariales. Les exonérations de cotisations patronales sur les bas salaires, indexées sur le SMIC, coûtent environ 75 milliards d'euros par an aux finances publiques ; toute hausse du SMIC augmente mécaniquement ce coût budgétaire, un point que le débat public de 2026 a déjà mis en évidence lorsque le gouvernement a envisagé de ne pas indexer intégralement ces exonérations pour économiser 1,5 à 1,7 milliard d'euros. Sur le plan de l'efficacité économique, une note reprise par plusieurs syndicats indique qu'une hausse de 14 % du SMIC (vers un net proche de 1 600 euros) se traduirait par une hausse moyenne des coûts de production de l'ordre de 0,6 % dans les secteurs les plus concernés, un ordre de grandeur modéré. Sur le volet 32 heures, le compte professionnel de prévention (C2P), qui recense l'exposition à six facteurs de pénibilité depuis 2018 (contre dix à l'origine, quatre ayant été retirés car leur contrôle a été jugé \"inapplicable\"), souffre déjà d'une sous-déclaration massive : une étude de la DARES d'avril 2026 montre que seulement 2,8 % des salariés du secteur privé accumulent des points sur leur compte, alors que 9 % de la population salariée répondrait techniquement aux critères d'exposition. Le précédent le plus direct pour une réduction du temps de travail légal reste les lois Aubry de 1998-2000 : la DARES estime à environ 350 000 le nombre d'emplois créés ou préservés entre 1998 et 2002, pour un coût budgétaire de l'ordre de 15 milliards d'euros par an en aides aux entreprises ; un rapport sénatorial de la même période qualifie cependant cette évaluation officielle d'\"extrêmement contestable\" sur le plan méthodologique.",
+
+  "contexte_international": "Le SMIC relève d'une compétence nationale. La directive européenne 2022/2041 relative à des salaires minimaux adéquats dans l'Union européenne recommande, à titre indicatif, un salaire minimum autour de 60 % du salaire médian ; la France, à 62,5 %, dépasse déjà ce repère européen, ce qui écarte tout obstacle de droit européen à une hausse supplémentaire. Des comparaisons internationales sont mobilisées dans le débat public : l'Allemagne, l'Espagne et le Royaume-Uni ont procédé à des hausses substantielles de leur salaire minimum ces dernières années sans hausse du chômage associée selon plusieurs études citées dans la presse économique, un point qui va à l'encontre de l'argument classique de destruction d'emplois, bien que la transposition directe de ces expériences à la France demande prudence, sources insuffisantes pour trancher plus précisément ici sur la comparabilité des marchés du travail.",
+
+  "impact_environnement": null,
+
+  "analyse_par_criteres": "Voir notation_detaillee pour le détail chiffré et sourcé de chacun des cinq critères.",
+
+  "analyse_longevites": "Le relèvement du SMIC, une fois voté ou décrété, a vocation à être pérenne comme toute revalorisation passée. La réduction du temps de travail pour les \"métiers pénibles\" dépend en revanche entièrement de la capacité à définir juridiquement cette catégorie de façon stable, un chantier que l'expérience du C2P montre difficile à stabiliser dans la durée : le périmètre des facteurs de pénibilité a déjà été réduit une fois, en 2018, pour des raisons de faisabilité de contrôle.",
+
+  "impact_temporel_et_sectoriel": "Court terme (0-2 ans) : une hausse de 7,1 % du SMIC aurait un effet limité sur les coûts de production selon les ordres de grandeur disponibles, mais un effet immédiat et mécanique sur le coût des exonérations de cotisations patronales, de l'ordre de plusieurs centaines de millions à quelques milliards d'euros selon l'ampleur retenue. Moyen terme (2-7 ans) : risque de compression des grilles salariales autour du SMIC (smicardisation), un phénomène déjà documenté avant même cette mesure. Long terme : sources insuffisantes pour trancher sur l'effet cumulé d'une réduction du temps de travail ciblée sur les métiers pénibles, faute de précédent directement comparable, le précédent des lois Aubry ayant concerné l'ensemble des salariés et non un sous-ensemble ciblé par pénibilité.",
+
+  "ce_qui_est_etabli": "Le montant actuel du SMIC (1 867,02 euros brut depuis juin 2026) et l'ampleur réelle de la hausse nécessaire pour atteindre 2 000 euros brut (environ 7,1 %). Le ratio SMIC/salaire médian français, le plus élevé d'Europe. Le coût annuel des exonérations de cotisations patronales sur les bas salaires (environ 75 milliards d'euros), indexées sur le SMIC. La sous-déclaration massive et récente de la pénibilité au titre du C2P (2,8 % des salariés concernés contre 9 % techniquement éligibles, DARES avril 2026). Le bilan chiffré mais contesté des lois Aubry (environ 350 000 emplois créés ou préservés, pour un coût de l'ordre de 15 milliards d'euros par an).",
+
+  "ce_qui_est_probable": "Que le principal point de friction budgétaire ne soit pas la hausse du SMIC elle-même, mais son effet mécanique sur le coût des exonérations de cotisations patronales, un sujet déjà activement débattu en 2026 pour la revalorisation ordinaire du SMIC.",
+
+  "ce_qui_est_discutable": "L'ampleur réelle de l'effet sur l'emploi d'une hausse de cette taille, la littérature économique récente citée dans le débat public étant de plus en plus favorable à des effets faibles, mais ce point reste documenté de façon inégale et parfois orientée selon les sources.",
+
+  "ce_qui_est_inconnu": "La définition précise retenue pour les \"métiers pénibles\" concernés par le passage à 32 heures (liste de métiers, facteurs de risque, ou nouveau critère). Le chiffrage global de la mesure, en particulier l'articulation avec le barème des exonérations de cotisations patronales. Le calendrier de mise en œuvre du volet 32 heures, à la différence du volet SMIC qui a une échéance précise (2027).",
+
+  "angles_morts": "Premier angle mort : une hausse du SMIC augmente mécaniquement le coût des exonérations de cotisations patronales sur les bas salaires (75 milliards d'euros par an), un effet budgétaire indirect rarement mentionné dans la communication politique sur ce type de mesure. Deuxième angle mort, le plus structurant pour le volet 32 heures : le dispositif existant le plus proche pour identifier la pénibilité (le C2P) souffre déjà d'une sous-déclaration massive et documentée, un problème qui se poserait avec une acuité bien plus grande pour un dispositif ouvrant droit à une réduction du temps de travail légal, un enjeu financier et organisationnel plus lourd qu'un compte de points. Troisième angle mort : le seul précédent français de réduction généralisée du temps de travail, les lois Aubry, a eu un coût budgétaire significatif et contesté, alors que la version ciblée sur les métiers pénibles n'a fait l'objet d'aucun chiffrage indépendant à ce jour.",
+
+  "notation_detaillee": {
+    "efficacite": 16,
+    "qualification_efficacite": "INCERTAIN",
+    "operationnalite_juridique": 5,
+    "qualification_juridique": "INCERTAIN",
+    "operationnalite_budgetaire": 1,
+    "qualification_budgetaire": "FRAGILE",
+    "operationnalite_moyens_humains": 1,
+    "qualification_moyens_humains": "FRAGILE",
+    "operationnalite_moyens_total": 7,
+    "plafond_juridique_applique": false,
+    "effets_rebonds_externalites": 10,
+    "qualification_effets_rebonds": "INCERTAIN",
+    "degre_preparation": 7,
+    "qualification_preparation": "INCERTAIN",
+    "alignement_logique": 8,
+    "qualification_alignement": "SOLIDE",
+    "score_total": 48,
+    "appreciation": "40-59 partiellement fondé"
+  },
+
+  "verdict_final": "Le volet SMIC est le plus solide des deux : l'objectif de 2 000 euros brut représente une hausse d'environ 7,1 % par rapport au niveau actuel, plus modeste qu'il n'y paraît, et la littérature économique récente tend à relativiser son effet négatif sur l'emploi. Son vrai point faible est budgétaire : une hausse du SMIC renchérit mécaniquement les 75 milliards d'euros d'exonérations de cotisations patronales, un effet que la mesure ne chiffre pas. Le volet 32 heures pour les métiers pénibles est nettement moins abouti : il n'existe aujourd'hui aucune liste légale de métiers pénibles, et le dispositif existant le plus proche, le compte professionnel de prévention, souffre d'une sous-déclaration massive et documentée qui rend la mise en œuvre d'un droit aussi engageant qu'une réduction du temps de travail légal incertaine en l'état.",
+
+  "sources_utilisees": [
+    "info.gouv.fr, revalorisations du SMIC au 1er janvier et au 1er juin 2026",
+    "L'Essentiel de l'Éco, sur le ratio SMIC/salaire médian et le débat sur la revalorisation 2026",
+    "CGT Champagne-Reims relayant Alternatives Économiques, sur les études récentes concernant l'effet emploi des hausses de salaire minimum",
+    "Guide TNS et info.fr, sur le coût budgétaire des exonérations de cotisations patronales indexées sur le SMIC",
+    "Toutsurmesfinances.com et Previssima, sur le fonctionnement du compte professionnel de prévention (C2P) et la réduction du périmètre des facteurs de pénibilité en 2018",
+    "Éditions Tissot et Sextant Expertise, sur l'étude DARES d'avril 2026 concernant la sous-déclaration de la pénibilité",
+    "Wikipédia, Sénat et Assemblée nationale, sur le bilan chiffré et contesté des lois Aubry sur les 35 heures",
+    "DARES, publication sur les trois ans de mise en œuvre du dispositif Aubry 1"
+  ],
+
+  "niveau_de_confiance": "Élevé sur les données factuelles de contexte (montant du SMIC, coût des exonérations, sous-déclaration de la pénibilité, bilan des lois Aubry). Faible sur l'effet propre de cette version précise de la mesure, en particulier le volet 32 heures, faute de définition claire des \"métiers pénibles\" concernés et de chiffrage indépendant.",
+
+  "limites": "Le chiffrage global de la mesure (coût combiné des deux volets) n'a pas été trouvé dans les sources disponibles. La transposabilité des expériences allemande, espagnole et britannique de hausse du salaire minimum au contexte français n'a pas été approfondie dans cette analyse.",
+
+  "resume_court": "Porter le SMIC à 2 000 euros brut est une hausse plus modeste qu'elle n'y paraît, environ 7,1 % par rapport au niveau actuel, et la littérature économique récente relativise son risque sur l'emploi. Mais elle renchérit mécaniquement les 75 milliards d'euros d'exonérations de charges patronales. Le passage à 32 heures pour les métiers pénibles se heurte à un problème plus structurel : il n'existe aujourd'hui aucune liste légale de ces métiers, et le dispositif de pénibilité existant souffre déjà d'une sous-déclaration massive.",
+
+  "phrase_teasing": "Marine Tondelier veut porter le SMIC à 2 000 euros brut et réduire le temps de travail à 32 heures pour les métiers pénibles. Le premier volet est plus proche qu'on ne le pense, mais qui décide, aujourd'hui, ce qu'est un métier pénible ?"
+}
