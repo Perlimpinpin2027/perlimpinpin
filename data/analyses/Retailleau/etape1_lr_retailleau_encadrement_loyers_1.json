@@ -1,0 +1,91 @@
+{
+  "candidat_parti": "Bruno Retailleau (Les Républicains) — volet suppression de l'encadrement des loyers",
+  "mesure_reformulee": {
+    "synthese": "Supprimer l'encadrement des loyers en laissant le dispositif expérimental s'éteindre en novembre 2026, au nom de la relance de l'offre locative.",
+    "texte": "Supprimer l'encadrement des loyers dans les villes actuellement régulées, en laissant le dispositif expérimental **s'éteindre à son échéance de novembre 2026**, au nom de la **relance de l'offre locative privée**."
+  },
+  "mesure_vers_objectif": {
+    "objectif_court": "Relancer l'offre de logements locatifs privés",
+    "categorie_objectif": "Logement",
+    "objectif_vise": "Augmenter l'offre de logements à louer en supprimant une régulation présentée comme dissuasive pour les propriétaires bailleurs.",
+    "mecanisme_propose": "Non-renouvellement du dispositif expérimental d'encadrement des loyers à son terme prévu, sans pérennisation ni extension.",
+    "lien_causal": "direct"
+  },
+  "nature_et_existant": "Mesure de nature législative, mais par défaut : le dispositif d'encadrement des loyers est expérimental et doit s'éteindre en novembre 2026 sauf vote contraire. Cette mesure consiste donc à ne pas agir plutôt qu'à abroger activement un texte pérenne. Elle s'inscrit dans un paquet logement plus large du candidat (objectif d'un million de logements supplémentaires en cinq ans, suppression du dispositif ZAN, loi d'urgence sur la construction, statut du bailleur privé, fin des interdictions de location liées au DPE), dont seul le volet encadrement des loyers est examiné ici, conformément à la règle de décomposition des mesures combinées.",
+  "contexte_programme": {
+    "synthese": "S'inscrit dans une doctrine de dérégulation du marché locatif, cohérente avec les autres volets du paquet logement du candidat.",
+    "texte": "S'inscrit dans une **doctrine de dérégulation du marché locatif** pour relancer l'investissement privé, cohérente avec les autres volets du paquet logement du candidat (statut du bailleur privé, suppression de ZAN)."
+  },
+  "contexte_national": {
+    "synthese": "Le dispositif actuel couvre plus de 70 communes et sa fin est déjà programmée par la loi pour novembre 2026 ; la mesure consiste à ne pas la prolonger.",
+    "texte": "Le dispositif actuel couvre **plus de 70 communes** (Paris, Île-de-France, Lyon, Bordeaux, Montpellier, Lille, Grenoble, Pays basque). **Sa fin est déjà programmée par la loi en vigueur pour novembre 2026** ; cette mesure revient à ne pas la prolonger, à la différence d'une proposition de loi socialiste déposée pour la pérenniser et l'étendre."
+  },
+  "contexte_international": {
+    "synthese": "Sources insuffisantes pour trancher ici : aucune comparaison internationale chiffrée n'a été identifiée sur la suppression d'un encadrement des loyers.",
+    "texte": "**Sources insuffisantes pour trancher ici**. Aucune comparaison internationale chiffrée et vérifiable n'a été trouvée sur les effets de la suppression d'un encadrement des loyers, distincte de l'étude française de référence déjà mobilisée dans les autres sections."
+  },
+  "impact_environnement": null,
+  "analyse_par_criteres": "Sur le plan juridique, cette mesure est la plus simple des trois analysées sur ce sujet : elle consiste à ne pas voter la prolongation d'un dispositif expérimental, qui s'éteint alors de lui-même à la date déjà fixée par la loi. Sur le plan budgétaire, aucune dépense publique nouvelle n'est engagée, et la fin des contrôles associés réduirait plutôt une charge existante. Sur les moyens humains, aucun besoin nouveau n'est identifié. Sur l'efficacité, le raisonnement du candidat suppose que supprimer le plafond produirait l'effet inverse et symétrique de son introduction, ce que rien ne démontre, et l'examen direct de la note IPP (et non de ses seuls résumés de presse) aggrave ce constat plutôt qu'il ne le nuance. L'étude de référence (Fack et Chapelle, IPP, note n°125, mai 2026) mesure l'effet de la mise en place du dispositif, pas celui de sa suppression après plusieurs années d'ajustement du marché — un phénomène d'hystérésis reconnu dans la littérature économique sur les contrôles de prix : les bailleurs qui ont réorienté leur bien vers la location meublée ou la location courte durée pendant la période d'encadrement ne reviennent pas nécessairement sur le marché locatif classique du jour au lendemain. Mais surtout, le seul indice chiffré sur lequel s'appuie implicitement l'argument d'une offre relancée, le recul d'environ 8 % du flux de nouvelles annonces observé avec le dispositif en place, est explicitement qualifié par les auteurs mêmes de l'étude de non tranché entre plusieurs explications concurrentes (réduction réelle de l'offre, allongement de la durée d'occupation, déplacement vers d'autres canaux), sans confirmation d'une baisse du parc locatif réel. Le candidat propose donc de supprimer un dispositif pour restaurer une offre dont la perte n'est pas elle-même établie avec confiance, ce qui écarte une qualification SOLIDE et justifie, au vu du cumul des deux réserves (sens non démontré et fait générateur lui-même incertain), une qualification FRAGILE plutôt qu'INCERTAIN. Sur les effets rebonds en revanche, l'effet inverse n'a pas cette réserve méthodologique : le même rapport documente que l'encadrement ralentit la hausse des loyers de 2 à 5 %, avec une progression de 8 à 12 % entre 2020 et 2024 contre 14 à 16 % hors dispositif. Un plafond que l'on retire touche immédiatement les loyers affichés aux relocations, sans le délai d'ajustement qui affecte le volet offre : sa suppression ferait donc bien repartir les loyers à la hausse plus vite pour les locataires des 70 communes concernées, un effet direct sur l'accès financier au logement, soit le cœur même du droit protégé par l'article L300-1.",
+  "analyse_longevites": {
+    "synthese": "Ne crée rien de nouveau juridiquement ; plus réversible qu'une abrogation active, une majorité future pouvant rétablir un dispositif équivalent.",
+    "texte": "La mesure **ne crée rien de nouveau juridiquement** : elle laisse s'éteindre un dispositif déjà borné dans le temps. Sa réversibilité est donc, à l'inverse, **plus grande que celle d'une abrogation active** : une majorité future pourrait rétablir un dispositif équivalent par une nouvelle loi."
+  },
+  "impact_temporel_et_sectoriel": {
+    "synthese": "Reprise probable de la hausse des loyers à court terme (14-16 % sur quatre ans contre 8-12 % avec encadrement) ; effet sur l'offre incertain à moyen terme.",
+    "texte": "Court terme (0-2 ans) : **reprise probable de la hausse des loyers dans les 70 communes concernées**, au rythme observé avant encadrement (**14-16 % sur quatre ans contre 8-12 % avec encadrement**). Moyen terme (2-7 ans) : **effet incertain sur le volume réel de nouveaux logements mis en location**, faute de données isolant ce seul mécanisme du reste du paquet logement du candidat. Long terme (plus de 7 ans) : non documenté spécifiquement."
+  },
+  "ce_qui_est_etabli": {
+    "synthese": "Le dispositif actuel s'éteint par défaut en novembre 2026 ; l'étude Fack et Chapelle documente un ralentissement des loyers de 2 à 5 % avec encadrement.",
+    "texte": "**Le dispositif actuel s'éteint par défaut en novembre 2026 sans nouvelle loi**. L'étude Fack et Chapelle documente **une baisse d'environ 8 % des annonces de location avec encadrement** et **un ralentissement de la hausse des loyers de 2 à 5 %** dans les zones concernées."
+  },
+  "ce_qui_est_probable": {
+    "synthese": "La suppression du dispositif entraînerait probablement une reprise de la hausse des loyers, dans des proportions comparables à celles mesurées en sens inverse.",
+    "texte": "La suppression du dispositif entraînerait probablement, dans les mêmes proportions que celles mesurées en sens inverse, **une reprise de la hausse des loyers dans les communes concernées**."
+  },
+  "ce_qui_est_discutable": {
+    "synthese": "Savoir si l'offre supplémentaire bénéficierait aux ménages qui peinent à se loger ou à un segment déjà solvable reste discutable et non tranché.",
+    "texte": "Le point de savoir si l'offre supplémentaire ainsi générée **bénéficierait aux ménages qui peinent aujourd'hui à se loger, ou principalement à un segment de marché déjà solvable**, est discutable et **non tranché par l'étude de référence**."
+  },
+  "ce_qui_est_inconnu": {
+    "synthese": "Le nombre de logements supplémentaires que cette suppression remettrait effectivement sur le marché n'est pas chiffré.",
+    "texte": "**Le nombre de logements supplémentaires** que cette suppression, isolée du reste du paquet logement du candidat, remettrait effectivement sur le marché **n'est pas chiffré**."
+  },
+  "angles_morts": {
+    "synthese": "Le paquet logement plus large du candidat n'est pas inclus dans le calcul du degré de préparation de cette mesure isolée.",
+    "texte": "Le paquet logement plus large du candidat (statut du bailleur privé, objectif d'un million de logements en cinq ans) **n'a pas été inclus dans le calcul du degré de préparation de cette mesure isolée**, conformément à la règle de décomposition des mécanismes combinés ; le lecteur doit garder à l'esprit que cette fiche ne couvre pas ce paquet dans son ensemble."
+  },
+  "notation_detaillee": {
+    "operationnalite_juridique": 10,
+    "qualification_juridique": "SOLIDE",
+    "operationnalite_budgetaire": 9,
+    "qualification_budgetaire": "SOLIDE",
+    "operationnalite_moyens_humains": 9,
+    "qualification_moyens_humains": "SOLIDE",
+    "operationnalite_moyens_total": 28,
+    "plafond_applique": false,
+    "plafond_declencheur": null,
+    "efficacite": 8,
+    "qualification_efficacite": "FRAGILE",
+    "effets_rebonds_externalites": 4,
+    "qualification_effets_rebonds": "FRAGILE",
+    "degre_preparation": 5,
+    "qualification_preparation": "INCERTAIN",
+    "alignement_logique": 8,
+    "qualification_alignement": "SOLIDE",
+    "score_total": 53,
+    "appreciation": "partiellement fondé"
+  },
+  "verdict_final": "Juridiquement, rien de plus simple : il suffit de ne pas prolonger un dispositif expérimental arrivant à échéance. Mais l'argument central, une offre relancée, ne repose pas seulement sur une extrapolation non démontrée (l'étude mesure l'introduction du plafond, pas sa suppression) : un examen direct de la note IPP montre que même l'effet qu'on voudrait inverser, la baisse des annonces de location, est qualifié par ses propres auteurs de non tranché, sans lien de causalité établi avec le dispositif. Le raisonnement de la mesure retire donc un plafond au nom d'un effet dont l'étude de référence ne confirme même pas l'existence comme perte réelle d'offre. Ce qui reste, en revanche, documenté sans réserve, c'est la hausse plus rapide des loyers qui suivrait pour les locataires en place. La mesure la plus simple à exécuter est aussi, sur le fond, la moins solidement démontrée des deux options examinées sur ce levier.",
+  "sources_utilisees": [
+    "Guillaume Chapelle et Gabrielle Fack, Note IPP n°125, « L'encadrement des loyers : effets économiques et redistributifs », Institut des politiques publiques, mai 2026 — note technique consultée directement (ipp.eu), qui qualifie elle-même de non tranchée la baisse des annonces de location invoquée à l'appui de cette mesure",
+    "Le Journal de l'Agence, « Présidentielle 2027 : les propositions de Bruno Retailleau pour relancer le logement »",
+    "Document de référence Perlimpinpin, Logement.docx (données pivots)"
+  ],
+  "niveau_de_confiance": "Faible sur le gain d'offre attendu : non seulement l'étude disponible mesure l'introduction du plafond et non sa suppression, mais l'effet même qu'elle voudrait voir s'inverser n'est pas confirmé comme une perte réelle d'offre par ses propres auteurs. Haut sur le risque de hausse des loyers, mesuré directement et sans réserve par la même étude.",
+  "limites": {
+    "synthese": "Cette fiche porte uniquement sur la suppression de l'encadrement des loyers ; les autres mesures du paquet logement ne sont pas couvertes ici.",
+    "texte": "Cette fiche porte sur **le seul volet suppression de l'encadrement des loyers** ; les autres mesures du paquet logement du candidat (ZAN, statut du bailleur privé, PTZ, SRU) font l'objet de **mesures distinctes non couvertes ici**."
+  },
+  "resume_court": "Bruno Retailleau veut mettre fin à l'encadrement des loyers, dont l'extinction est de toute façon prévue en novembre 2026. Ne rien voter suffit à l'abroger, ce qui en fait la mesure la plus simple à mettre en œuvre des trois étudiées. Mais l'argument avancé, relancer l'offre locative, est plus fragile qu'il n'y paraît, et pas seulement parce que l'étude citée mesure l'introduction du plafond plutôt que sa suppression : la baisse des annonces qu'on invoque pour justifier la suppression n'est même pas confirmée comme une vraie perte d'offre par les auteurs de l'étude eux-mêmes, qui la jugent non tranchée. Ce que la mesure produirait à coup sûr, en revanche, c'est une hausse plus rapide des loyers pour les locataires déjà en place dans plus de 70 communes. Le gain espéré tient sur une base fragile, le coût pour les locataires actuels ne l'est pas.",
+  "phrase_teasing": "Retailleau veut supprimer l'encadrement des loyers au nom d'un effet que l'étude citée ne confirme même pas vraiment. Le coût pour les loyers en place, lui, ne fait aucun doute."
+}
