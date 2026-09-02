@@ -1,0 +1,95 @@
+{
+  "candidat_parti": "Marine Tondelier (Les Écologistes) — volet SMIC à 2000€ brut et compensation fiscale ciblée pour TPE/PME/associations",
+  "mesure_reformulee": {
+    "synthese": "Porter le SMIC à 2 000 € brut dès 2027, environ 7 % au-delà de l'indexation automatique, en compensant TPE/PME et associations par une baisse ciblée d'impôts.",
+    "texte": "Porter le salaire minimum interprofessionnel de croissance (SMIC) à **2 000 € brut par mois dès 2027**, soit une hausse discrétionnaire d'**environ 7 % au-delà de la seule revalorisation automatique par indexation**, en accompagnant les très petites et petites/moyennes entreprises ainsi que les associations d'un ajustement à la baisse du taux réduit de l'impôt sur les sociétés et de la taxe sur les salaires."
+  },
+  "mesure_vers_objectif": {
+    "objectif_court": "Augmenter la rémunération des smicards",
+    "categorie_objectif": "Emploi et chômage",
+    "objectif_vise": "Augmenter la rémunération des travailleurs payés au niveau du salaire minimum, tout en atténuant, par un allégement fiscal ciblé, le surcoût que cette hausse représente pour les plus petits employeurs et pour les associations.",
+    "mecanisme_propose": "Relèvement légal du montant plancher du SMIC (décision discrétionnaire dite « coup de pouce », distincte de l'indexation automatique annuelle sur l'inflation et une partie du pouvoir d'achat du salaire ouvrier), combiné à une baisse non chiffrée du taux réduit de l'impôt sur les sociétés et du taux de la taxe sur les salaires.",
+    "lien_causal": "direct"
+  },
+  "nature_et_existant": "Le SMIC fait déjà l'objet d'une indexation légale automatique annuelle sur l'inflation constatée pour les 20 % de ménages aux revenus les plus modestes et sur la moitié du gain de pouvoir d'achat du salaire horaire de base ouvrier (code du travail, articles L3231-2 et suivants) — au 1er juin 2026, cette indexation a porté le SMIC brut mensuel à 1 867,02 € (35h). La mesure proposée n'est donc pas la création d'un nouveau mécanisme mais l'ajout d'un « coup de pouce » discrétionnaire venant s'ajouter à l'indexation automatique, un type de décision déjà utilisé par le passé par plusieurs gouvernements (par exemple +2 % en 2012), pour porter le montant à 2 000 € brut, soit environ 7,1 % de plus que le niveau déjà atteint par la seule indexation. Le volet fiscal (taux réduit d'IS à 15 % jusqu'à 42 500 € de bénéfice pour les PME, taxe sur les salaires due par les employeurs non ou insuffisamment assujettis à la TVA) modifie des paramètres de dispositifs existants, sans en créer de nouveaux.",
+  "contexte_programme": {
+    "synthese": "Le montant de 2 000 € est corroboré par un traceur indépendant de programmes, mais le détail du mécanisme de compensation fiscale reste non vérifié indépendamment.",
+    "texte": "Premier volet du programme économique des Écologistes analysé dans ce lot de test, distinct du domaine Logement déjà couvert par d'autres fiches. Le montant de 2 000 € brut dès 2027 est **documenté comme une proposition de Marine Tondelier par un traceur indépendant de programmes** (poligraph.fr, qui recense 192 mesures sourcées), ce qui corrobore le cœur de la mesure. Le détail exact du mécanisme de compensation fiscale **n'a en revanche pas pu être retrouvé mot pour mot dans une source indépendante** lors de la recherche menée pour cette fiche — voir limites."
+  },
+  "contexte_national": {
+    "synthese": "Le rapport officiel 2025 sur le SMIC recommande de ne pas aller au-delà de l'indexation, documente une trappe à bas salaires sévère et un coût déjà élevé des allègements de charges.",
+    "texte": "Le rapport 2025 du Groupe d'experts sur le SMIC (France Stratégie, publié le 12 décembre 2025), l'instance officielle chargée d'éclairer chaque année le Gouvernement, **recommande explicitement de ne pas aller au-delà de cette indexation pour 2026**, en citant le ralentissement du marché du travail, la compression persistante des salaires, et **le niveau déjà élevé du SMIC français rapporté au salaire médian (62,5 %, le plus haut d'Europe)**. Ce même rapport documente **un taux marginal effectif de prélèvement pouvant dépasser 75 à 80 % entre 1,2 et 2 SMIC** (« trappe à bas salaires »), et **un coût des allègements de cotisations patronales de 75,4 milliards d'euros en 2024** (2,5 % du PIB). Sur le volet fiscal, **la taxe sur les salaires ne concerne, par construction, quasiment aucune entreprise commerciale classique assujettie à la TVA** : elle vise avant tout les associations, le secteur sanitaire et social non lucratif, et les activités financières et d'assurance."
+  },
+  "contexte_international": {
+    "synthese": "Le SMIC français est déjà le plus élevé d'Europe en proportion du salaire médian, ce qui resserre la marge de manœuvre théorique pour un relèvement discrétionnaire.",
+    "texte": "Le rapport du Groupe d'experts souligne que **le SMIC français, à 62,5 % du salaire médian, est déjà le plus élevé d'Europe** en proportion. Cette comparaison ne dit rien en elle-même de l'effet emploi d'une hausse supplémentaire (la transposabilité de comparaisons internationales sur le salaire minimum est débattue dans la littérature économique), mais elle signale que **la marge de manœuvre théorique pour un relèvement discrétionnaire est plus resserrée en France que dans la plupart des pays comparables**."
+  },
+  "impact_environnement": null,
+  "analyse_par_criteres": "Sur le plan juridique, relever le SMIC au-delà de l'indexation automatique et ajuster les paramètres du taux réduit d'IS et de la taxe sur les salaires sont des décisions ordinaires, déjà utilisées par le passé sous des formes comparables, sans obstacle constitutionnel ou européen documenté. Sur le plan budgétaire, la mesure combine deux effets qui dégradent tous deux mécaniquement les finances publiques sans que leur ampleur soit chiffrée par le programme : une hausse du SMIC au-delà de l'indexation renchérit mécaniquement le coût des allègements de cotisations patronales (déjà 75,4 milliards d'euros en 2024, avec une dynamique croissante liée au SMIC), et une baisse du taux réduit d'IS ou de la taxe sur les salaires est un manque à gagner fiscal direct ; le sens de l'effet est donc établi (dégradation nette) mais son ordre de grandeur ne peut être estimé faute de paramètres précis annoncés (nouveau taux, nouveau seuil). Sur les moyens humains, aucun obstacle administratif documenté : les services fiscaux et sociaux existants administrent déjà ces paramètres. Sur l'efficacité, le lien causal est direct sur l'objectif premier : relever légalement le SMIC augmente mécaniquement la rémunération de tous les salariés payés à ce niveau, sans incertitude possible sur ce point précis. Mais l'objectif de référence du domaine (cadre de l'OCDE pour l'emploi, qui distingue la qualité de l'emploi — dont la rémunération — et la quantité de l'emploi) impose d'examiner aussi l'effet sur le volume d'emploi, et c'est là que la preuve disponible est incomplète et contestée : l'instance officielle française chargée précisément d'évaluer ce type de décision recommande explicitement, dans son rapport le plus récent, de ne pas procéder à un tel relèvement discrétionnaire, en pointant un marché du travail déjà ralenti et un SMIC déjà au niveau relatif le plus élevé d'Europe. Le mécanisme de compensation censé neutraliser ce risque pour les petits employeurs souffre en outre d'un défaut de ciblage partiel : la taxe sur les salaires, telle que formulée dans la mesure comme un levier pour les TPE et PME, ne les concerne pour l'essentiel pas, la plupart d'entre elles étant assujetties à la TVA et donc exonérées de cette taxe — ce levier atteint en réalité sa cible sur les associations (également citées par la mesure), mais pas sur les TPE et PME, qui ne sont réellement aidées que par le second levier, le taux réduit d'IS. Sur les effets rebonds, le même rapport documente deux risques structurels que la mesure aggraverait mécaniquement sans les traiter : une compression salariale déjà à l'œuvre au voisinage du SMIC, et une trappe à bas salaires déjà documentée (taux marginaux effectifs supérieurs à 75-80 % entre 1,2 et 2 SMIC) que relever le plancher sans réformer les seuils de sortie des prestations sous conditions de ressources tendrait à élargir plutôt qu'à résorber.",
+  "analyse_longevites": {
+    "synthese": "Une hausse du SMIC est en pratique irréversible à la baisse, contrairement aux ajustements fiscaux, révisables chaque année en loi de finances.",
+    "texte": "Une revalorisation discrétionnaire du SMIC, une fois actée, est **en pratique irréversible à la baisse** (aucun précédent de baisse nominale du SMIC en France). Les ajustements de taux fiscaux (IS, taxe sur les salaires) sont en revanche **des paramètres révisables chaque année en loi de finances**, sans même nécessiter une nouvelle loi de fond."
+  },
+  "impact_temporel_et_sectoriel": {
+    "synthese": "Hausse immédiate du pouvoir d'achat à court terme ; risque de compression salariale et d'élargissement de la trappe à bas salaires à moyen terme.",
+    "texte": "Court terme (0-2 ans) : **hausse immédiate du pouvoir d'achat des smicards**, avec un effet plausible sur la consommation des ménages, et un renchérissement immédiat du coût du travail pour les employeurs, atténué par le volet fiscal pour la seule partie effectivement ciblée. Moyen terme (2-7 ans) : **risque de compression salariale croissante et d'élargissement de la trappe à bas salaires** si les seuils de sortie des prestations ne sont pas ajustés en parallèle. Effet sur l'emploi non chiffré à cet horizon. Long terme (plus de 7 ans) : non documenté."
+  },
+  "ce_qui_est_etabli": {
+    "synthese": "Le SMIC est à 1 867,02 € depuis juin 2026 ; le rapport officiel déconseille d'aller au-delà de l'indexation et documente une trappe à bas salaires sévère.",
+    "texte": "Le SMIC brut mensuel (35h) s'élève à **1 867,02 € depuis le 1er juin 2026** après indexation automatique. Le rapport 2025 du Groupe d'experts sur le SMIC **recommande de ne pas aller au-delà de cette indexation**, documente un SMIC français à **62,5 % du salaire médian (le plus haut d'Europe)**, des **taux marginaux effectifs de prélèvement dépassant 75-80 % entre 1,2 et 2 SMIC**, et **un coût des allègements de cotisations patronales de 75,4 milliards d'euros en 2024**. Le taux réduit d'IS pour les PME est de 15 % jusqu'à 42 500 € de bénéfice. **La taxe sur les salaires ne concerne pas la généralité des TPE/PME commerciales**, mais les associations, la santé, la finance et l'assurance."
+  },
+  "ce_qui_est_probable": {
+    "synthese": "La hausse augmenterait probablement le risque de compression salariale et le coût des allègements ; chaque levier fiscal profiterait à des publics différents.",
+    "texte": "Une hausse du SMIC à 2 000 € brut augmenterait probablement **le risque de compression salariale et le coût des allègements de cotisations patronales**. Le levier du taux réduit d'IS profiterait probablement en priorité aux TPE/PME éligibles, **le levier de la taxe sur les salaires en priorité aux associations et au secteur non lucratif**."
+  },
+  "ce_qui_est_discutable": {
+    "synthese": "L'ampleur de l'effet sur l'emploi reste débattue dans la littérature ; on ne sait pas si le double levier fiscal traduit une répartition volontaire ou une confusion.",
+    "texte": "L'ampleur de l'effet net sur l'emploi d'un relèvement de 7,1 % au-delà de l'indexation **reste discutable et débattue dans la littérature économique**, le rapport de référence signalant un risque sans le chiffrer pour ce scénario précis. Le point de savoir si la mention conjointe des deux leviers fiscaux traduit **une répartition volontaire et cohérente ou une confusion sur le public réellement concerné** est également discutable."
+  },
+  "ce_qui_est_inconnu": {
+    "synthese": "Le nouveau taux et seuil des leviers fiscaux, ainsi que le coût budgétaire net de l'ensemble de la mesure, ne sont pas chiffrés.",
+    "texte": "**Le nouveau taux et le nouveau seuil envisagés** pour le taux réduit d'IS et pour la taxe sur les salaires ne sont pas précisés. **Le coût budgétaire net de l'ensemble de la mesure** n'est pas chiffré par le programme ni disponible dans les sources consultées."
+  },
+  "angles_morts": {
+    "synthese": "La mesure ne mentionne aucun ajustement des seuils de sortie des prestations sociales, alors que c'est ce qui détermine si la hausse profite réellement aux ménages.",
+    "texte": "Le rapport de référence documente une trappe à bas salaires déjà sévère ; la mesure **ne mentionne aucun ajustement corrélatif des seuils de sortie des prestations sous conditions de ressources**, alors que c'est précisément cette articulation qui détermine si une hausse du SMIC se traduit par un gain réel ou par un simple déplacement de la trappe. Le volet compensatoire **ne distingue pas explicitement quel levier fiscal s'adresse à quelle population**, ce qui n'est pas neutre pour apprécier si le dispositif atteint réellement sa cible."
+  },
+  "notation_detaillee": {
+    "operationnalite_juridique": 9,
+    "qualification_juridique": "SOLIDE",
+    "operationnalite_budgetaire": 5,
+    "qualification_budgetaire": "INCERTAIN",
+    "operationnalite_moyens_humains": 8,
+    "qualification_moyens_humains": "SOLIDE",
+    "operationnalite_moyens_total": 22,
+    "plafond_applique": false,
+    "plafond_declencheur": null,
+    "efficacite": 14,
+    "qualification_efficacite": "INCERTAIN",
+    "effets_rebonds_externalites": 7,
+    "qualification_effets_rebonds": "INCERTAIN",
+    "degre_preparation": 4,
+    "qualification_preparation": "INCERTAIN",
+    "alignement_logique": 6,
+    "qualification_alignement": "INCERTAIN",
+    "score_total": 53,
+    "appreciation": "partiellement fondé"
+  },
+  "verdict_final": "Relever légalement le SMIC ne pose aucun obstacle juridique et augmente mécaniquement, sans incertitude possible, la rémunération de tous les salariés payés à ce niveau. Mais l'instance officielle française chargée précisément d'évaluer ce type de décision déconseille explicitement, dans son rapport le plus récent, d'aller au-delà de la seule indexation automatique, pointant un SMIC déjà au niveau relatif le plus élevé d'Europe et une trappe à bas salaires déjà sévère que la mesure ne traite pas. Le mécanisme censé protéger les plus petits employeurs a en outre un défaut de ciblage : la taxe sur les salaires, présentée comme un levier pour les TPE et PME, ne les concerne dans les faits presque pas. Le principe d'accompagner une hausse du SMIC par un geste fiscal est cohérent, son calibrage documenté reste à démontrer.",
+  "sources_utilisees": [
+    "poligraph.fr, fiche Marine Tondelier, mesure « Passer le salaire minimum à 2 000 euros brut par mois dès 2027 » (192 mesures sourcées)",
+    "Groupe d'experts sur le SMIC, Rapport 2025, France Stratégie, publié le 12 décembre 2025 (strategie-plan.gouv.fr)",
+    "info.gouv.fr, « Le SMIC revalorisé le 1er juin 2026 » : SMIC brut mensuel 1 867,02 €",
+    "legifiscal.fr, taux de l'impôt sur les sociétés 2026 : taux réduit 15 % jusqu'à 42 500 € de bénéfice pour les PME éligibles",
+    "impots.gouv.fr, « Mon association peut-elle être redevable de la taxe sur les salaires » : champ d'application de la taxe sur les salaires (employeurs non assujettis à la TVA sur au moins 90 % du chiffre d'affaires)",
+    "Document de référence Perlimpinpin, 0_Objectifs de politique publique.docx (section 3.3 Emploi et chômage : ancrage L111-2-1 du code de la sécurité sociale, cadre OCDE Stratégie pour l'emploi 2018)",
+    "Document de référence Perlimpinpin, Emploi & Chômage.docx (données pivots)"
+  ],
+  "niveau_de_confiance": "Haut sur le mécanisme central (montant cible du SMIC, effet mécanique sur la rémunération, recommandation officielle de prudence sur un relèvement discrétionnaire), établi par des sources primaires ou quasi primaires convergentes. Moyen sur l'attribution exacte du mécanisme de compensation fiscale : seul le montant cible de 2 000 € brut a pu être corroboré de façon indépendante (poligraph.fr) ; le détail précis du volet IS/taxe sur les salaires n'a pas été retrouvé mot pour mot dans une source indépendante lors de la recherche menée pour cette fiche et repose sur le texte transmis pour cette analyse.",
+  "limites": {
+    "synthese": "Le rapport de référence porte sur la question générale d'un relèvement discrétionnaire, pas sur ce scénario chiffré précis à 2 000 €.",
+    "texte": "Le rapport du Groupe d'experts sur le SMIC porte sur la question générale d'un relèvement discrétionnaire au-delà de l'indexation, **pas sur un scénario chiffré précis à 2 000 € combiné à une compensation fiscale** : son usage ici est un raisonnement structuré, pas une preuve empirique mesurant exactement ce scénario. Le cadre de l'OCDE pour l'emploi utilisé comme référence est lui-même **un cadre d'analyse contesté dans la littérature académique**."
+  },
+  "resume_court": "Marine Tondelier propose de porter le SMIC à 2 000 € brut dès 2027, soit environ 7 % de plus que le niveau déjà atteint par l'indexation automatique, en compensant les TPE, PME et associations par une baisse ciblée de deux prélèvements. Le principe fonctionne à coup sûr sur son objectif premier : la loi fixe le salaire minimum, donc la hausse de rémunération est mécanique. Mais l'instance officielle française qui évalue chaque année ce type de décision déconseille précisément d'aller au-delà de l'indexation, pointant un SMIC déjà le plus élevé d'Europe en proportion du salaire médian et une trappe à bas salaires déjà sévère que la mesure n'ajuste pas. Le geste fiscal censé protéger les petits employeurs vise en partie à côté de sa cible : la taxe sur les salaires, présentée pour les TPE/PME, ne concerne dans les faits presque aucune d'entre elles.",
+  "phrase_teasing": "Tondelier veut porter le SMIC à 2 000 € brut, financé par un geste fiscal pour les petites structures. L'instance officielle chargée d'évaluer ce type de hausse recommande justement de ne pas aller aussi loin."
+}
