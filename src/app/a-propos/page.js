@@ -123,7 +123,7 @@ export default function AProposPage() {
               Démocratie
             </span>
 
-            <h1 className="mt-4 font-serif text-4xl font-bold leading-tight tracking-tight text-zinc-900 sm:text-5xl">
+            <h1 className="mt-4 font-sans text-4xl font-bold leading-tight tracking-tight text-zinc-900 sm:text-5xl">
               {/* Petit trait décoratif (swoosh) au-dessus du C, cohérent
                   avec le point bleu/indigo qui clôt le titre. */}
               <span className="relative inline-block">
