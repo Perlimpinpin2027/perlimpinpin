@@ -1,0 +1,96 @@
+{
+  "candidat_parti": "Édouard Philippe (Horizons) — « pacte fiscal » de 50 milliards d'euros pour les entreprises",
+  "mesure_reformulee": {
+    "synthese": "Baisser de 50 milliards d'euros les impôts de production, financée par une économie équivalente sur les aides aux entreprises.",
+    "texte": "Réduire de 50 milliards d'euros par an, dès le premier projet de loi de finances, les impôts de production pesant sur les entreprises (notamment CVAE, C3S et cotisation foncière des entreprises), en finançant intégralement cette baisse par une réduction équivalente de 50 milliards d'euros par an des aides publiques aux entreprises jugées peu efficaces, dispersées ou mal ciblées."
+  },
+  "mesure_vers_objectif": {
+    "objectif_court": "Alléger la fiscalité de production sans creuser le déficit",
+    "categorie_objectif": "Fiscalité et pouvoir d'achat",
+    "objectif_vise": "Réduire le poids des impôts de production, jugés pénalisants pour la compétitivité et l'investissement des entreprises françaises, sans dégrader le solde public, en substituant à cette recette fiscale une économie équivalente sur les aides publiques aux entreprises jugées inefficaces.",
+    "mecanisme_propose": "Suppression ou forte réduction, en une fois, de plusieurs impôts de production pour 50 milliards d'euros par an, intégralement compensée par une réduction équivalente des aides publiques aux entreprises jugées peu efficaces.",
+    "lien_causal": "indirect"
+  },
+  "nature_et_existant": "Mesure mixte, fiscale et budgétaire, qui combine une trajectoire déjà partiellement engagée et une innovation. La suppression de la CVAE est déjà votée depuis plusieurs lois de finances successives, avec une trajectoire régulièrement reportée (actuellement annoncée jusqu'en 2030) : accélérer et achever cette suppression n'est donc pas une création ex nihilo, mais une accélération d'un mouvement déjà légiféré. La suppression ou la forte réduction de la C3S et de la CFE, en revanche, ainsi que le principe d'une bascule immédiate et intégrale « en un coup » vers une économie équivalente sur les aides aux entreprises, sont des éléments nouveaux non préfigurés par le droit existant.",
+  "contexte_programme": {
+    "synthese": "Présenté par Édouard Philippe comme un pacte équilibré : 50 Md€ de baisse financés par 50 Md€ d'économies sur les aides aux entreprises.",
+    "texte": "La mesure a été présentée publiquement par Édouard Philippe comme un « pacte » explicitement équilibré : 50 milliards d'euros de baisse d'impôts de production par an (250 milliards sur un quinquennat), intégralement financés par 50 milliards d'euros d'économies annuelles sur les aides publiques jugées « saupoudrées, complexes, incompréhensibles » ou sectorielles et improductives. Cette présentation budgétairement neutre est un choix de communication qui distingue la mesure d'une simple baisse d'impôt non financée, et structure directement l'analyse du critère Faisabilité budgétaire ci-dessous."
+  },
+  "contexte_national": {
+    "synthese": "Impôts de production à 75 Md€ en France contre 23 Md€ en Allemagne ; le chiffrage des aides publiques censées financer la baisse (211 Md€) est contesté.",
+    "texte": "Les impôts de production représentent en France environ 75 milliards d'euros par an selon les chiffres cités dans le débat public autour de cette mesure, contre environ 23 milliards en Allemagne ; une définition plus large retenue par certains instituts (incluant davantage de prélèvements assis sur l'activité et les facteurs de production) situe la France à environ 4,4 % du PIB contre 2,4 % en moyenne européenne. Sur le financement, la seule évaluation d'ensemble disponible des aides publiques aux entreprises est le rapport de la commission d'enquête du Sénat (2025), qui aboutit à un total de 211 milliards d'euros pour 2023 en additionnant quatre catégories hétérogènes : subventions budgétaires (7 Md€), interventions financières de Bpifrance essentiellement sous forme de prêts et garanties (41 Md€), dépenses fiscales (88 Md€) et réductions de cotisations sociales patronales (75 Md€). Cette méthode de calcul a été publiquement contestée, y compris par le gouvernement (l'ancien Premier ministre François Bayrou l'a critiquée en estimant qu'elle additionne des catégories disparates), et une évaluation alternative du Haut-Commissariat à la stratégie et au plan aboutit à 112 milliards d'euros seulement en excluant les réductions de cotisations sociales, considérées comme une compensation du coût du travail plutôt qu'une aide au sens strict. Le rapporteur de la commission d'enquête elle-même n'a identifié, ni recommandé de supprimer, un montant précis d'aides jugées consensuellement « improductives »."
+  },
+  "contexte_international": {
+    "synthese": "La comparaison avec l'Allemagne documente un écart réel de prélèvement mais ne prouve pas qu'une convergence rapide serait sans risque.",
+    "texte": "La comparaison avec l'Allemagne (23 Md€ d'impôts de production contre 75 Md€ en France) est fréquemment mobilisée dans le débat public pour justifier une baisse ; elle documente un écart réel de niveau de prélèvement, mais ne démontre pas à elle seule qu'une convergence rapide et intégrale serait sans risque, les deux systèmes fiscaux et sociaux différant sur de nombreux autres paramètres (financement de la protection sociale, structure du tissu productif)."
+  },
+  "impact_environnement": null,
+  "analyse_par_criteres": "Sur le plan juridique, modifier ou supprimer des impôts de production par la loi de finances est une procédure ordinaire, déjà engagée pour la CVAE ; aucun obstacle constitutionnel ou européen documenté ne s'y oppose, y compris pour une suppression accélérée. Sur le plan budgétaire en revanche, le financement affiché ne résiste pas à un examen sérieux : le sens de l'effet de la baisse d'impôts est clair et mécanique (-50 Md€ de recettes), mais la seule évaluation officielle d'ensemble des aides publiques aux entreprises censées financer cette baisse est elle-même contestée dans sa méthode par le gouvernement, varie du simple à quasiment le double selon le périmètre retenu (112 à 211 milliards d'euros), et surtout n'identifie nulle part un montant précis de 50 milliards d'euros d'aides jugées consensuellement improductives et donc sans risque à supprimer : l'auteure du rapport le plus souvent cité pour ce chiffrage s'est au contraire opposée à toute coupe dans les aides qui « servent l'emploi ». Ce n'est pas une simple absence de chiffrage du candidat : c'est l'échec, documenté par les sources disponibles elles-mêmes, de la tentative d'établir un ordre de grandeur fiable pour ce financement précis. Sur l'efficacité, le principe de réduire des impôts qui frappent l'activité avant même que l'entreprise ait dégagé un profit est soutenu par la littérature économique de référence (le Conseil d'analyse économique a recommandé la suppression de plusieurs impôts de production) et par une comparaison européenne défavorable à la France ; mais l'objectif final affiché, la compétitivité, ne s'ensuit pas mécaniquement : le document de référence Perlimpinpin sur la fiscalité rappelle, en citant les travaux du CAE, qu'une baisse d'impôt sur les entreprises se répartit de trois façons non garanties entre hausse des marges ou des dividendes, baisse des prix, et hausse des salaires ou de l'investissement, sans qu'aucun de ces canaux ne soit favorisé par construction. Sur les effets rebonds, le principal risque documenté tient à la nature même des aides les plus substantielles regroupées dans le chiffrage de référence : les réductions de cotisations sociales patronales à elles seules représentent 75 milliards d'euros, concentrées sur les bas salaires proches du SMIC ; si une partie des 50 milliards d'économies visées devait y être prélevée, cela renchérirait directement le coût du travail peu qualifié, avec un risque d'emploi documenté par ailleurs pour ce type de dispositif. Un second risque, plus immédiat, tient au calendrier : une application « en un coup, dès le premier budget » suppose que la baisse d'impôt et les économies compensatoires soient calées sur le même exercice, alors qu'identifier et documenter juridiquement 50 milliards d'aides à supprimer prend, par nature, plus de temps qu'une baisse de taux votée en loi de finances — un décalage qui se traduirait par un creusement réel et immédiat du déficit, à rebours de la présentation budgétairement neutre de la mesure.",
+  "analyse_longevites": {
+    "synthese": "Une baisse d'impôts votée est difficile à annuler, alors que les coupes dans les aides publiques sont plus facilement réversibles.",
+    "texte": "Une baisse d'impôts de production votée est, en pratique, difficile à revenir en arrière une fois les entreprises adaptées à ce nouveau niveau de charge ; à l'inverse, des coupes dans les aides publiques peuvent être plus aisément révisées d'un exercice budgétaire à l'autre, ce qui crée un risque structurel d'asymétrie dans le temps entre le coût (permanent) et son financement (plus réversible)."
+  },
+  "impact_temporel_et_sectoriel": {
+    "synthese": "Risque de creusement du déficit à court terme ; effet à moyen terme sur la compétitivité non déterminé à l'avance.",
+    "texte": "Court terme (0-2 ans) : risque de décalage entre l'entrée en vigueur immédiate de la baisse d'impôt et l'identification effective des économies compensatoires, avec un effet net probable de creusement du déficit sur cette période. Moyen terme (2-7 ans) : effet sur la compétitivité et l'investissement dépendant du canal effectivement emprunté par les entreprises (marges, prix ou salaires/investissement), non déterminé à l'avance. Long terme (plus de 7 ans) : non documenté par les sources consultées."
+  },
+  "ce_qui_est_etabli": {
+    "synthese": "Impôts de production à 75 Md€ en France contre 23 en Allemagne ; le chiffrage des aides aux entreprises varie de 112 à 211 Md€.",
+    "texte": "Les impôts de production s'élèvent à environ 75 milliards d'euros en France contre 23 milliards en Allemagne. La commission d'enquête du Sénat (2025) chiffre les aides publiques aux entreprises à 211 milliards d'euros pour 2023 en additionnant subventions, interventions de Bpifrance, dépenses fiscales et réductions de cotisations sociales (75 Md€ à elles seules). Le Haut-Commissariat à la stratégie et au plan retient une évaluation alternative de 112 milliards d'euros en excluant les réductions de cotisations. Le gouvernement a publiquement contesté la méthode de calcul du chiffre de 211 milliards. La suppression de la CVAE est déjà légiférée, avec une trajectoire régulièrement reportée jusqu'en 2030."
+  },
+  "ce_qui_est_probable": {
+    "synthese": "Une baisse de 50 Md€ améliorerait la trésorerie des entreprises, mais le partage du gain entre marges, prix et salaires reste indéterminé.",
+    "texte": "Une baisse de 50 milliards d'euros d'impôts de production améliorerait probablement, dans une mesure non déterminée à l'avance, la situation de trésorerie des entreprises concernées ; le partage de ce gain entre marges, prix et salaires ou investissement reste à ce stade indéterminé."
+  },
+  "ce_qui_est_discutable": {
+    "synthese": "Le choix des trois impôts cités ne suffit pas à expliquer la cible de 50 Md€ ; le périmètre réel reste flou.",
+    "texte": "Le choix des trois impôts nommés (CVAE, C3S, CFE) ne suffit pas, sur la base de leurs montants connus, à expliquer une cible de 50 milliards d'euros : soit le périmètre réel de la baisse dépasse ces trois seuls impôts, soit les chiffrages mobilisés dans le débat public ne sont pas pleinement cohérents entre eux, ce que les sources consultées ne permettent pas de trancher. Le point de savoir si les 50 milliards d'économies viseraient les réductions de cotisations sociales (la catégorie la plus importante du chiffrage de référence) est également discutable et non précisé par la mesure elle-même."
+  },
+  "ce_qui_est_inconnu": {
+    "synthese": "La liste précise des aides supprimées et le calendrier exact du volet financement ne sont pas connus.",
+    "texte": "La liste précise des aides publiques qui seraient supprimées ou réduites pour atteindre 50 milliards d'euros d'économies n'est pas connue. Le calendrier exact de mise en œuvre du volet financement, susceptible de ne pas coïncider avec l'entrée en vigueur immédiate de la baisse d'impôt, n'est pas précisé."
+  },
+  "angles_morts": {
+    "synthese": "Le financement s'appuie sur un chiffrage que sa propre auteure ne valide pas comme identifiant 50 Md€ d'aides improductives.",
+    "texte": "La mesure est présentée comme un pacte équilibré, ce qui la distingue favorablement d'une promesse de baisse d'impôt non financée ; mais cette présentation risque de masquer que le volet financement repose sur un chiffrage global (211 milliards d'euros) que sa propre source ne valide pas comme identifiant 50 milliards d'aides consensuellement improductives — la rapporteure de la commission d'enquête ayant elle-même défendu le maintien des aides qui soutiennent l'emploi. Le risque que les coupes visent, au moins en partie, les réductions de cotisations sociales concentrées sur les bas salaires n'est pas discuté par la mesure, alors que c'est la catégorie la plus importante du chiffrage sur lequel elle s'appuie implicitement."
+  },
+  "notation_detaillee": {
+    "operationnalite_juridique": 9,
+    "qualification_juridique": "SOLIDE",
+    "operationnalite_budgetaire": 2,
+    "qualification_budgetaire": "FRAGILE",
+    "operationnalite_moyens_humains": 8,
+    "qualification_moyens_humains": "SOLIDE",
+    "operationnalite_moyens_total": 10,
+    "plafond_applique": true,
+    "plafond_declencheur": "budgetaire",
+    "efficacite": 16,
+    "qualification_efficacite": "INCERTAIN",
+    "effets_rebonds_externalites": 8,
+    "qualification_effets_rebonds": "INCERTAIN",
+    "degre_preparation": 4,
+    "qualification_preparation": "INCERTAIN",
+    "alignement_logique": 5,
+    "qualification_alignement": "INCERTAIN",
+    "score_total": 43,
+    "appreciation": "partiellement fondé"
+  },
+  "verdict_final": "Réduire des impôts de production reconnus par la littérature économique comme pénalisants ne pose pas d'obstacle juridique et répond à un problème réel, la France se situant nettement au-dessus de ses voisins sur ce point. Mais le financement affiché, présenté comme la garantie du sérieux budgétaire de la mesure, ne résiste pas à l'examen : le chiffrage de 211 milliards d'euros d'aides aux entreprises souvent invoqué dans ce débat est contesté jusque dans les rangs du gouvernement, et sa propre auteure n'y identifie aucun montant précis d'aides consensuellement improductives, s'opposant même à ce que les aides qui soutiennent l'emploi soient supprimées. Le risque d'un decalage entre l'entrée en vigueur immédiate de la baisse d'impôt et des économies compensatoires plus difficiles à identifier et à documenter est réel et non traité par la mesure. Le principe est défendable, l'équilibre budgétaire affiché repose sur une base chiffrée qui ne tient pas encore.",
+  "sources_utilisees": [
+    "publicsenat.fr, « Entreprises : un deal à 250 milliards d'euros sur un quinquennat, que représente la proposition d'Édouard Philippe »",
+    "publicsenat.fr, « 211 milliards d'euros d'aides publiques aux entreprises : sur quoi repose le calcul de la commission d'enquête du Sénat »",
+    "Sénat, rapport de la commission d'enquête sur la transparence et l'évaluation des aides publiques aux entreprises (2025), senat.fr/rap/r24-808-1",
+    "IFRAP, « Impôts de production : 4,4 % du PIB en France contre 2,4 % en moyenne européenne »",
+    "Conseil d'analyse économique, note « Les impôts sur (ou contre) la production », cae-eco.fr",
+    "kolecto.fr, « Suppression de la CVAE : nouveau report jusqu'en 2030 »",
+    "Document de référence Perlimpinpin, Perspectives économiques, pouvoir d'achat, inflation & fiscalité.docx (donnée pivot sur l'effet de bord de la baisse des impôts sur les entreprises, études du CAE)",
+    "Document de référence Perlimpinpin, 0_Objectifs de politique publique.docx (section 3.8 Fiscalité et pouvoir d'achat, cadre Mirrlees Review, ancrage constitutionnel non vérifié)"
+  ],
+  "niveau_de_confiance": "Haut sur le montant et la formulation de la mesure elle-même (deal 50 Md€/50 Md€, sourcé par plusieurs articles de presse spécialisée convergents) et sur la contestation du chiffrage des aides publiques (documentée par des positions publiques officielles, y compris gouvernementales). Moyen sur l'objectif de référence du domaine Fiscalité et pouvoir d'achat : le document de référence Perlimpinpin signale lui-même que l'ancrage constitutionnel retenu (articles 13 et 14 de la Déclaration de 1789, principe d'égalité devant les charges publiques) n'a pas été vérifié sur sources primaires, ce qui est signalé ici conformément à la règle de confiance réduite sur ce domaine.",
+  "limites": {
+    "synthese": "La Fiscalité fait partie des domaines à ancrage juridique non vérifié ; le total des impôts de production varie selon la définition retenue.",
+    "texte": "Le domaine Fiscalité et pouvoir d'achat fait partie des trois domaines pour lesquels le document de référence Perlimpinpin signale explicitement un ancrage juridique non vérifié sur sources primaires ; l'objectif de référence utilisé ici (cadre Mirrlees Review) doit être lu comme un cadre d'analyse structurant, pas comme une norme juridique stabilisée. Le montant total des impôts de production en France varie selon la définition retenue (75 Md€ dans le débat sur cette mesure précise, contre environ 125-130 Md€ selon une définition plus large de la comptabilité nationale) ; cette fiche retient la première pour sa cohérence avec le chiffrage de la mesure elle-même, mais signale l'écart."
+  },
+  "resume_court": "Édouard Philippe propose de baisser de 50 milliards d'euros par an les impôts de production, en finançant intégralement cette baisse par une économie équivalente sur les aides publiques aux entreprises jugées improductives. Le principe de réduire ces impôts est défendable sur le plan économique : la France se situe nettement au-dessus de ses voisins européens sur ce point. Mais le financement affiché s'appuie sur un chiffrage contesté jusque dans les rangs du gouvernement, et la source la plus souvent citée pour évaluer les aides aux entreprises n'identifie nulle part 50 milliards d'euros d'aides consensuellement inefficaces ; sa propre rapporteure s'oppose même à ce que les aides qui soutiennent l'emploi soient supprimées. Le risque que la baisse d'impôt entre en vigueur avant que son financement ne soit réellement trouvé n'est pas traité par la mesure.",
+  "phrase_teasing": "Philippe promet un pacte fiscal à somme nulle pour les entreprises. Le chiffrage de la moitié qui doit payer la facture résiste-t-il vraiment à l'examen ?"
+}
