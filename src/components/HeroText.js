@@ -106,7 +106,7 @@ export default function HeroText() {
               <MonoTag>{String(index + 1).padStart(2, "0")}</MonoTag>
             </div>
             <div>
-              <p className="text-sm font-semibold text-zinc-900">
+              <p className="text-sm font-bold text-zinc-900">
                 {feature.title}
               </p>
               <p className="mt-0.5 text-xs leading-snug text-zinc-500">
