@@ -54,19 +54,21 @@ export default function Header() {
     >
       <div className="flex items-center justify-between gap-6 px-6 py-4 sm:px-8">
         <Link href="/" className="flex shrink-0 items-center">
-          {/* public/logo/logo.png : wordmark vectoriel (tracés de police
-              convertis en chemins SVG puis exportés en PNG), fond
-              transparent natif — pas de recadrage manuel ni de
-              retraitement d'alpha nécessaire.
-              width/height 2400x265 : dimensions réelles du fichier, déjà
-              recadré au plus près du texte (voir le commentaire de
-              .header-logo dans globals.css sur l'importance de faire
-              correspondre ces valeurs aux dimensions réelles). */}
+          {/* public/logo/logo.png : nouvelle version du wordmark fournie
+              directement en PNG (fond quasi blanc, sans alpha) — recadrée
+              au plus près du texte puis fond rendu transparent par alpha
+              inversée sur la luminance (texte/slash foncés → opaques, fond
+              clair → transparent), pour reproduire le rendu "fond
+              transparent natif" du fichier précédent sans halo blanc.
+              width/height 1878x236 : dimensions réelles du fichier après
+              recadrage (voir le commentaire de .header-logo dans
+              globals.css sur l'importance de faire correspondre ces
+              valeurs aux dimensions réelles). */}
           <Image
             src="/logo/logo.png"
             alt="Perlimpinpin"
-            width={2400}
-            height={265}
+            width={1878}
+            height={236}
             priority
             className="header-logo"
           />
