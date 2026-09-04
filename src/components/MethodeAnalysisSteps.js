@@ -141,7 +141,7 @@ function StepIcon({ icon, active }) {
       fill="none"
       stroke="currentColor"
       strokeWidth={1.5}
-      className={`h-5 w-5 shrink-0 ${active ? "text-blue-600" : "text-zinc-400"}`}
+      className={`h-5 w-5 shrink-0 ${active ? "text-zinc-700" : "text-zinc-400"}`}
       aria-hidden="true"
     >
       {icon}
@@ -178,13 +178,13 @@ export default function MethodeAnalysisSteps() {
             >
               <div className="flex items-center justify-between">
                 <span
-                  className={`font-mono text-xs font-semibold ${index === activeIndex ? "text-blue-600" : "text-zinc-400"}`}
+                  className={`font-mono text-xs font-semibold ${index === activeIndex ? "text-zinc-700" : "text-zinc-400"}`}
                 >
                   {`// ${step.id}`}
                 </span>
                 <StepIcon icon={step.icon} active={index === activeIndex} />
               </div>
-              <p className="text-sm font-semibold leading-snug text-zinc-900">
+              <p className="text-sm font-normal leading-snug text-zinc-900">
                 {step.cardTitle}
               </p>
             </button>
