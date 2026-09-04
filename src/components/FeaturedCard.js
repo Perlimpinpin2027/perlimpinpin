@@ -113,7 +113,7 @@ export default function FeaturedCard({
 
         <div className="flex flex-1 flex-col p-6 sm:p-8">
           <p className="text-xl font-bold tracking-tight text-zinc-900">{personName}</p>
-          <blockquote className="mt-2 line-clamp-3 font-serif text-2xl font-bold leading-tight text-zinc-900">
+          <blockquote className="mt-2 line-clamp-3 font-sans text-2xl font-bold leading-tight text-zinc-900">
             &ldquo;{quoteText}&rdquo;
           </blockquote>
           {verdictDescription ? (
@@ -128,7 +128,7 @@ export default function FeaturedCard({
               déclaration (voir StickyScoreCard), pour une identité visuelle
               cohérente du "score Perlimpinpin" à travers le site. */}
           <div className="mt-6 border-t border-zinc-100 pt-6">
-            <span className="text-xs font-bold uppercase tracking-widest text-zinc-500">
+            <span className="font-mono text-xs font-bold uppercase tracking-widest text-zinc-500">
               Score Perlimpinpin
             </span>
             <div className="mt-2 flex items-baseline gap-1.5">

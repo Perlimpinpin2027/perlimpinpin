@@ -39,7 +39,7 @@ const features = [
 export default function HeroText() {
   return (
     <div className="flex flex-col">
-      <span className="inline-flex w-fit items-center gap-1.5 rounded-full border border-red-200 bg-red-50 px-3 py-1 text-xs font-bold uppercase tracking-widest text-red-600">
+      <span className="inline-flex w-fit items-center gap-1.5 rounded-full border border-red-200 bg-red-50 px-3 py-1 font-mono text-xs font-bold uppercase tracking-widest text-red-600">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
@@ -58,7 +58,7 @@ export default function HeroText() {
         Présidentielles 2027
       </span>
 
-      <h1 className="mt-4 font-serif text-4xl font-bold leading-tight tracking-tight text-zinc-900 sm:text-5xl">
+      <h1 className="mt-4 font-sans text-4xl font-extrabold leading-tight tracking-tight text-zinc-900 sm:text-5xl">
         Ce que valent vraiment les promesses{" "}
         <span className="whitespace-nowrap">
           politiques{" "}
