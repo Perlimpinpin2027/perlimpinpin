@@ -4,11 +4,6 @@ const features = [
   {
     title: "Analyses assistées par l'IA",
     description: "Pour traiter plus de données, plus vite.",
-    // Fond pastel distinct par icône (bleu déjà utilisé comme accent
-    // principal du site, puis deux teintes complémentaires) pour donner du
-    // relief à cette rangée, plutôt que trois icônes plates identiques.
-    bgClass: "bg-blue-50",
-    iconClass: "text-blue-600",
     icon: (
       <path
         strokeLinecap="round"
@@ -20,8 +15,6 @@ const features = [
   {
     title: "Experts et journalistes",
     description: "Des analyses relues et contextualisées.",
-    bgClass: "bg-emerald-50",
-    iconClass: "text-emerald-600",
     icon: (
       <path
         strokeLinecap="round"
@@ -33,8 +26,6 @@ const features = [
   {
     title: "Sources publiques",
     description: "Toutes nos informations sont vérifiées.",
-    bgClass: "bg-violet-50",
-    iconClass: "text-violet-600",
     icon: (
       <path
         strokeLinecap="round"
@@ -88,28 +79,24 @@ export default function HeroText() {
         {features.map((feature, index) => (
           <div key={feature.title} className="flex flex-col gap-3">
             <div className="flex items-center gap-2">
-              <span
-                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${feature.bgClass}`}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.5}
+                className="h-5 w-5 shrink-0 text-zinc-700"
+                aria-hidden="true"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={1.5}
-                  className={`h-5 w-5 ${feature.iconClass}`}
-                  aria-hidden="true"
-                >
-                  {feature.icon}
-                </svg>
-              </span>
+                {feature.icon}
+              </svg>
               <MonoTag>{String(index + 1).padStart(2, "0")}</MonoTag>
             </div>
             <div>
-              <p className="text-sm font-bold text-zinc-900">
+              <p className="font-mono text-sm font-bold text-zinc-900">
                 {feature.title}
               </p>
-              <p className="mt-0.5 text-xs leading-snug text-zinc-500">
+              <p className="mt-0.5 font-mono text-xs leading-snug text-zinc-500">
                 {feature.description}
               </p>
             </div>
