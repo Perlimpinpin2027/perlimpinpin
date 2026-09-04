@@ -58,7 +58,7 @@ export default function HeroText() {
         Présidentielles 2027
       </span>
 
-      <h1 className="mt-4 font-sans text-4xl font-extrabold leading-tight tracking-tight text-zinc-900 sm:text-5xl">
+      <h1 className="mt-4 font-sans text-4xl font-black leading-tight tracking-tight text-zinc-900 sm:text-5xl">
         Ce que valent vraiment les promesses{" "}
         <span className="whitespace-nowrap">
           politiques{" "}
