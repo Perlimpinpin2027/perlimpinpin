@@ -13,7 +13,7 @@ function renderRichText(text) {
   return text.split(/(\*\*[^*]+\*\*)/g).map((part, index) => {
     const match = part.match(/^\*\*([^*]+)\*\*$/);
     return match ? (
-      <strong key={index} className="font-semibold text-zinc-900">
+      <strong key={index} className="font-semibold text-slate-700">
         {match[1]}
       </strong>
     ) : (
@@ -103,7 +103,7 @@ export default function AccordionSection({ value, splitParagraphs = false }) {
         aria-expanded={open}
         className="flex w-full items-start justify-between gap-3 text-left"
       >
-        <p className="flex-1 font-medium text-zinc-800">{renderRichText(synthese)}</p>
+        <p className="flex-1 font-medium text-slate-700">{renderRichText(synthese)}</p>
         <ArrowIcon
           direction="down"
           className={`mt-0.5 h-4 w-4 shrink-0 text-zinc-400 transition-transform ${open ? "rotate-180" : ""}`}

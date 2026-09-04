@@ -182,6 +182,31 @@ const GLASS_STYLE = {
   border: "1px solid rgba(191, 219, 254, 0.5)",
 };
 
+// Verdict final : même famille "verre dépoli" que GLASS_STYLE mais fond
+// bleu-gris plus marqué (slate-300 à 55 % plutôt que blue-50 à 55 %) — pour
+// que ce bloc de conclusion se distingue davantage du résumé IA en haut de
+// page, qui garde le fond très pâle d'origine.
+const VERDICT_GLASS_STYLE = {
+  backgroundColor: "rgba(203, 213, 225, 0.55)",
+  backdropFilter: "blur(20px) saturate(160%)",
+  WebkitBackdropFilter: "blur(20px) saturate(160%)",
+  border: "1px solid rgba(148, 163, 184, 0.55)",
+};
+
+// "Fiabilité de l'analyse" : traitement "liquid glass" distinct du blanc
+// plein utilisé par les Section génériques, pour que ce bloc de méta-
+// information ressorte visuellement — fond neutre semi-transparent (pas de
+// teinte bleue comme GLASS_STYLE, ce bloc n'est pas un point d'entrée de
+// lecture) + ombre légère portée par la classe Tailwind sur l'élément,
+// jamais dans ce style inline (voir commentaire de GLASS_STYLE sur
+// backdrop-filter).
+const FIABILITE_GLASS_STYLE = {
+  backgroundColor: "rgba(244, 244, 245, 0.55)",
+  backdropFilter: "blur(16px) saturate(140%)",
+  WebkitBackdropFilter: "blur(16px) saturate(140%)",
+  border: "1px solid rgba(228, 228, 231, 0.6)",
+};
+
 // Sections ciblées par le mini-sommaire de navigation de la sidebar sticky
 // (voir StickyScoreCard) : chaque id doit correspondre à un ancrage posé
 // plus bas dans "Le raisonnement complet".
@@ -211,7 +236,7 @@ function renderRichText(text) {
   return text.split(/(\*\*[^*]+\*\*)/g).map((part, index) => {
     const match = part.match(/^\*\*([^*]+)\*\*$/);
     return match ? (
-      <strong key={index} className="font-semibold text-zinc-900">
+      <strong key={index} className="font-semibold text-slate-700">
         {match[1]}
       </strong>
     ) : (
@@ -530,17 +555,19 @@ function ConfidenceGauge({ level }) {
   );
 }
 
-// Volontairement plus discrète que les autres blocs de la page (fond gris
-// clair sans bordure marquée, texte plus petit, pas de carte pleine
-// largeur) : "Niveau de confiance"/"Limites identifiées" sont une
-// information secondaire/méta sur l'analyse elle-même, pas un point de
-// contenu au même niveau que le raisonnement — sinon la page accumule trop
-// de blocs identiques, surtout depuis le traitement "verre dépoli" du
-// résumé IA et du verdict (voir .card-glass).
+// Traitement "liquid glass" distinct (FIABILITE_GLASS_STYLE, fond neutre —
+// pas la teinte bleue de GLASS_STYLE/VERDICT_GLASS_STYLE) : "Niveau de
+// confiance"/"Limites identifiées" sont une information secondaire/méta sur
+// l'analyse elle-même, pas un point de contenu au même niveau que le
+// raisonnement, mais doivent tout de même se détacher visuellement du reste
+// de la page (voir la demande d'origine).
 function FiabiliteSection({ contenu }) {
   const level = resolveConfidenceLevel(contenu);
   return (
-    <div className="rounded-xl bg-zinc-50 px-5 py-4">
+    <div
+      className="rounded-2xl px-5 py-4 shadow-[0_8px_30px_-8px_rgba(0,0,0,0.12)]"
+      style={FIABILITE_GLASS_STYLE}
+    >
       <span className="block text-[11px] font-semibold uppercase tracking-widest text-zinc-400">
         Fiabilité de l&apos;analyse
       </span>
@@ -1003,7 +1030,7 @@ export default async function DeclarationDetailPage({ params }) {
               {/* Verdict final : même traitement "verre dépoli" que le
                   résumé IA en haut de page (voir GLASS_STYLE) plutôt que le
                   Section générique blanc utilisé ailleurs. */}
-              <section id="verdict" className="scroll-mt-24 rounded-2xl p-6 sm:p-8" style={GLASS_STYLE}>
+              <section id="verdict" className="scroll-mt-24 rounded-2xl p-6 sm:p-8" style={VERDICT_GLASS_STYLE}>
                 <h2 className="text-lg font-bold text-zinc-900">Verdict final</h2>
                 <div className="mt-3 max-w-[68ch] text-sm leading-7 text-zinc-600">
                   <TextOrList value={contenu.verdict_final} />

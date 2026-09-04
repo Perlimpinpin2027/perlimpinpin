@@ -41,7 +41,7 @@ export default function StickyScoreCard({
         Score Perlimpinpin
       </span>
       <div className="mt-2 flex items-baseline gap-1.5">
-        <span className={`text-5xl font-extrabold tracking-tight ${badge.scoreClass}`}>
+        <span className={`text-[3.6rem] font-extrabold tracking-tight ${badge.scoreClass}`}>
           {score}
         </span>
         <span className="text-lg font-semibold text-zinc-400">/100</span>
@@ -80,7 +80,7 @@ export default function StickyScoreCard({
           disparus. "Tagadaaa" : nom de code fixe du projet, pas une valeur
           dérivée de versionMethodologie (voir la demande d'origine). */}
       {versionMethodologie && generationDateLabel ? (
-        <div className="mt-4 text-xs text-zinc-400">
+        <div className="mt-4 font-mono text-xs text-zinc-400">
           <p>
             Analyse réalisée avec Perlimpinpin {versionMethodologie} · Tagadaaa
           </p>
