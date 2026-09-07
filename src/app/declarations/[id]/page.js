@@ -847,7 +847,7 @@ export default async function DeclarationDetailPage({ params }) {
             {contenu.mesure_vers_objectif ? (
               <MesureObjectifBanner
                 categorieObjectif={contenu.mesure_vers_objectif.categorie_objectif}
-                titre={contenu.titre_fiche ?? declaration.titre}
+                titre={declaration.texteOriginal}
                 objectifCourt={contenu.mesure_vers_objectif.objectif_court}
               />
             ) : null}

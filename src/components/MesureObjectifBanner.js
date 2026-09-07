@@ -26,7 +26,7 @@ export default function MesureObjectifBanner({ categorieObjectif, titre, objecti
       >
         <div className="min-w-0 flex-1">
           <span className="text-xs font-bold uppercase tracking-widest text-zinc-500">
-            Mesure
+            Mesure initiale
           </span>
           <p className="mt-1 text-base font-bold leading-snug text-zinc-900">{titre}</p>
         </div>
