@@ -187,34 +187,23 @@ export default function MethodePage() {
     <div className="flex min-h-screen flex-col bg-page-gradient font-sans">
       <Header />
 
-      <main className="w-full px-6 py-12 sm:px-8 sm:py-16">
-        <div className="mx-auto w-full max-w-5xl">
-          {/* Notre méthode */}
+      <main className="w-full px-6 py-12 sm:px-8 sm:py-16 lg:px-[78px]">
+        <div className="mx-auto w-full max-w-[1600px]">
+          {/* Hero unique (Bloc C) : la page avait jusqu'ici deux hero
+              consécutifs ("Notre méthode" puis "Comment fonctionne une
+              analyse") — un doublon éditorial incorrect (voir la demande
+              d'origine). Un seul hero directement au-dessus du pipeline. */}
           <Tag>/ Méthode</Tag>
-          <h1 className="mt-3 text-4xl font-extrabold tracking-tight text-zinc-900 sm:text-5xl">
-            Notre méthode
+          <h1 className="mt-[25px] max-w-[520px] text-5xl font-extrabold leading-[1.08] tracking-tight text-zinc-900">
+            Comment fonctionne une analyse
           </h1>
-          <p className="mt-3 max-w-2xl text-base leading-relaxed text-zinc-500">
-            Perlimpinpin évalue les promesses politiques avec la même
-            rigueur qu&apos;on attendrait d&apos;un bon journaliste
-            économique : sourcer, distinguer les faits des opinions, et ne
-            jamais prétendre savoir ce qu&apos;on ne sait pas.
+          <p className="mt-5 max-w-[390px] text-lg leading-relaxed text-zinc-500">
+            Une chaîne de traitement transparente. Survolez une étape pour
+            voir ce qui se passe.
           </p>
 
-          {/* Comment fonctionne une analyse (Bloc C) */}
-          <div className="mt-16">
-            <Tag>// Pipeline</Tag>
-            <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-zinc-900 sm:text-4xl">
-              Comment fonctionne une analyse
-            </h2>
-            <p className="mt-3 max-w-2xl text-base leading-relaxed text-zinc-500">
-              Une chaîne de traitement transparente. Survolez une étape pour
-              voir ce qui se passe.
-            </p>
-
-            <div className="mt-8">
-              <MethodeAnalysisSteps />
-            </div>
+          <div className="mt-12">
+            <MethodeAnalysisSteps />
           </div>
 
           {/* Les cinq critères */}

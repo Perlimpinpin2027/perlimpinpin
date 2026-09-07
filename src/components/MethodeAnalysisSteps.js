@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 
 // Icônes dessinées à la main (formes simples : cercles/rects/traits) plutôt
 // que des tracés Heroicons recopiés de mémoire — plus sûr que de risquer un
@@ -39,33 +38,25 @@ const ICON_CHECK_CIRCLE = (
     <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 12.25 10.75 14.75 15.75 9.5" />
   </>
 );
-// Cause → effet : deux points reliés par une flèche, pour l'étape qui
-// vérifie le rapport de causalité entre mécanisme et objectif.
-const ICON_CAUSALITY = (
+const ICON_INFO = (
   <>
-    <circle cx="5" cy="12" r="2.25" />
-    <circle cx="19" cy="12" r="2.25" />
-    <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 12h9m0 0-2.5-2.5m2.5 2.5-2.5 2.5" />
-  </>
-);
-// Balance : même tracé qu'ICON_ALIGNEMENT sur la fiche déclaration (voir
-// src/app/declarations/[id]/page.js) — repris tel quel pour l'étape qui
-// compare la mesure à un repère neutre, même langage visuel qu'ailleurs
-// sur le site pour cette même idée d'équilibre/comparaison.
-const ICON_SCALE = (
-  <>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v16.5M8 3h8" />
-    <path strokeLinecap="round" strokeLinejoin="round" d="M5 8l-2.5 5a2.5 2.5 0 0 0 5 0L5 8Z" />
-    <path strokeLinecap="round" strokeLinejoin="round" d="M19 8l-2.5 5a2.5 2.5 0 0 0 5 0L19 8Z" />
-    <path strokeLinecap="round" strokeLinejoin="round" d="M5 8h14" />
+    <circle cx="12" cy="12" r="8.25" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 11v5.25" />
+    <circle cx="12" cy="8" r="0.1" fill="currentColor" stroke="currentColor" strokeWidth="1.8" />
   </>
 );
 
-// Résume l'esprit de data/prompt-methodologie.md (section MÉTHODE
-// D'ANALYSE) en 5 étapes publiques, avec des noms de variables techniques
-// plausibles pour le panneau "console" — ce ne sont pas les vrais noms de
-// champs du pipeline interne (voir scripts/analyze.js), volontairement,
-// pour ne jamais exposer la structure technique réelle au public.
+// 5 macro-étapes publiques, résumant l'esprit de data/prompt-methodologie.md
+// (section MÉTHODE D'ANALYSE) — représentation volontairement simplifiée du
+// pipeline réel pour l'affichage public (voir la demande d'origine : la
+// maquette cible montre 5 cartes, pas les 7 sous-étapes internes). "Vérifier
+// le lien de cause à effet" et "Comparer à un repère neutre" (étapes 1bis et
+// 1ter du prompt réel, toujours appliquées côté analyse) sont fondues dans
+// cette version publique plutôt qu'affichées comme des cartes séparées :
+// aucun impact sur le prompt IA ni sur scripts/analyze.js, uniquement sur
+// cette illustration. Noms de variables input/output plausibles pour le
+// panneau "console", pas les vrais noms de champs internes (volontaire, pour
+// ne jamais exposer la structure technique réelle au public).
 const STEPS = [
   {
     id: "01",
@@ -78,34 +69,15 @@ const STEPS = [
   },
   {
     id: "02",
-    icon: ICON_CAUSALITY,
-    cardTitle: "Vérifier le lien de cause à effet",
-    input: "declaration_reformulee",
-    output: "objectif_et_mecanisme",
-    title: "L'objectif visé et le mécanisme proposé sont identifiés.",
-    body: "On vérifie s'il existe un vrai rapport de cause à effet : une mesure peut cibler le mauvais levier, même bien intentionnée.",
-  },
-  {
-    id: "03",
-    icon: ICON_SCALE,
-    cardTitle: "Comparer à un repère neutre",
-    input: "objectif_et_mecanisme",
-    output: "mesure_vs_repere_neutre",
-    title: "La mesure est comparée à un repère neutre, pas au cadrage du candidat.",
-    body: "L'objectif que la loi ou la recherche assigne à ce domaine — pour juger deux mesures opposées à l'aune du même repère.",
-    link: { href: "/objectifs", label: "Voir nos objectifs de référence par thématique" },
-  },
-  {
-    id: "04",
     icon: ICON_DATABASE,
     cardTitle: "Rassembler les sources",
-    input: "mesure_vs_repere_neutre",
+    input: "declaration_reformulee",
     output: "corpus_sources",
     title: "Les sources sont rassemblées et vérifiées.",
     body: "Données publiques d'abord (Légifrance, INSEE, Cour des comptes...) — jamais une source militante comme preuve d'un fait.",
   },
   {
-    id: "05",
+    id: "03",
     icon: ICON_TARGET,
     cardTitle: "Situer la mesure dans son contexte",
     input: "corpus_sources",
@@ -114,7 +86,7 @@ const STEPS = [
     body: "Dans le programme du candidat, dans la réalité française actuelle, et à l'international quand c'est pertinent.",
   },
   {
-    id: "06",
+    id: "04",
     icon: ICON_BARCHART,
     cardTitle: "Évaluer selon 5 critères",
     input: "mesure_contextualisee",
@@ -123,7 +95,7 @@ const STEPS = [
     body: "Cinq critères, chacun noté séparément, pour un total sur 100 points — détail plus bas sur cette page.",
   },
   {
-    id: "07",
+    id: "05",
     icon: ICON_CHECK_CIRCLE,
     cardTitle: "Qualifier le résultat",
     input: "notation_detaillee",
@@ -141,7 +113,7 @@ function StepIcon({ icon, active }) {
       fill="none"
       stroke="currentColor"
       strokeWidth={1.5}
-      className={`h-5 w-5 shrink-0 ${active ? "text-zinc-700" : "text-zinc-400"}`}
+      className={`h-4.5 w-4.5 shrink-0 ${active ? "text-blue-500" : "text-zinc-400"}`}
       aria-hidden="true"
     >
       {icon}
@@ -149,58 +121,59 @@ function StepIcon({ icon, active }) {
   );
 }
 
-// Survol sur desktop, tap sur mobile (pas de :hover fiable au toucher) :
-// un même état `activeIndex`, mis à jour par onMouseEnter (souris) et
-// onClick (les deux, sans conflit — le clic déclenche aussi un survol sur
-// desktop, ce qui ne change rien puisque c'est déjà le même index).
+// Survol sur desktop, focus clavier (Tab) et tap sur mobile (pas de :hover
+// fiable au toucher) : un même état `activeIndex`, mis à jour par
+// onMouseEnter, onFocus et onClick — les trois ne se contredisent jamais
+// puisqu'ils pointent tous vers le même index pour un bouton donné.
 export default function MethodeAnalysisSteps() {
   const [activeIndex, setActiveIndex] = useState(0);
   const active = STEPS[activeIndex];
 
   return (
     <div>
-      {/* Empilé verticalement sous sm (une rangée de 5 cartes serait trop
-          étroite pour rester lisible/tapable sur mobile), rangée
-          horizontale à partir de sm comme sur la maquette desktop. */}
-      <div className="flex flex-col sm:flex-row sm:items-stretch">
+      {/* Empilé verticalement sous sm (5 colonnes n'ont pas la place de
+          rester lisibles avant ce point), grille de 5 colonnes égales à
+          partir de sm. Une seule ligne pointillée de fond (position
+          absolute, z-index sous les cartes) plutôt que des petits traits
+          indépendants entre chaque paire de cartes : le fond blanc de
+          chaque carte la masque naturellement là où elle passe derrière,
+          ne laissant apparaître le pointillé que dans les intervalles. */}
+      <div className="relative flex flex-col gap-3 sm:grid sm:grid-cols-5 sm:gap-6 sm:gap-y-0 lg:gap-x-16">
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-0 top-1/2 z-0 hidden border-t-2 border-dashed border-zinc-300 sm:block"
+        />
         {STEPS.map((step, index) => (
-          <div key={step.id} className="flex flex-col sm:flex-1 sm:items-stretch">
-            <button
-              type="button"
-              onMouseEnter={() => setActiveIndex(index)}
-              onClick={() => setActiveIndex(index)}
-              aria-pressed={index === activeIndex}
-              className={`flex w-full flex-col gap-4 rounded-2xl border bg-white p-4 text-left transition-colors sm:p-5 ${
-                index === activeIndex
-                  ? "border-blue-400 ring-1 ring-blue-100"
-                  : "border-zinc-200 hover:border-zinc-300"
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <span
-                  className={`font-mono text-xs font-semibold ${index === activeIndex ? "text-zinc-700" : "text-zinc-400"}`}
-                >
-                  {`// ${step.id}`}
-                </span>
-                <StepIcon icon={step.icon} active={index === activeIndex} />
-              </div>
-              <p className="text-sm font-normal leading-snug text-zinc-900">
-                {step.cardTitle}
-              </p>
-            </button>
-
-            {index < STEPS.length - 1 ? (
-              <div
-                aria-hidden="true"
-                className="mx-1 hidden shrink-0 self-center border-t-2 border-dashed border-zinc-300 sm:mx-2 sm:block sm:w-4"
-              />
-            ) : null}
-          </div>
+          <button
+            key={step.id}
+            type="button"
+            onMouseEnter={() => setActiveIndex(index)}
+            onFocus={() => setActiveIndex(index)}
+            onClick={() => setActiveIndex(index)}
+            aria-pressed={index === activeIndex}
+            className={`relative z-10 flex min-h-[88px] flex-col justify-between gap-4 rounded-[14px] border bg-white p-4 text-left transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 sm:min-h-[152px] sm:gap-0 sm:p-5 ${
+              index === activeIndex
+                ? "border-blue-400"
+                : "border-zinc-200 hover:border-zinc-300"
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <span
+                className={`font-mono text-xs font-semibold ${index === activeIndex ? "text-blue-500" : "text-zinc-400"}`}
+              >
+                {`// ${step.id}`}
+              </span>
+              <StepIcon icon={step.icon} active={index === activeIndex} />
+            </div>
+            <p className="text-[17px] leading-snug text-zinc-900">
+              {step.cardTitle}
+            </p>
+          </button>
         ))}
       </div>
 
-      <div className="mt-6 rounded-2xl border border-zinc-200 bg-white p-6 sm:p-8">
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-[minmax(0,220px)_1fr]">
+      <div className="mt-6 rounded-[14px] border border-zinc-200 bg-white p-6 sm:p-10">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-[minmax(0,265px)_1fr]">
           <div className="font-mono text-xs">
             <p className="font-semibold text-zinc-900">{`STEP_${active.id}`}</p>
             <p className="mt-2 flex items-center gap-1.5 text-zinc-500">
@@ -215,23 +188,32 @@ export default function MethodeAnalysisSteps() {
             <p className="mt-1 font-semibold text-zinc-700">{active.output}</p>
           </div>
 
-          <div className="border-t border-zinc-100 pt-6 sm:border-l sm:border-t-0 sm:pl-8 sm:pt-0">
-            <p className="text-lg font-bold text-zinc-900">{active.title}</p>
-            <p className="mt-2 text-sm leading-relaxed text-zinc-500">{active.body}</p>
-            {active.link ? (
-              <Link
-                href={active.link.href}
-                className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 transition-colors hover:text-blue-800"
-              >
-                {active.link.label}
-                <span aria-hidden="true">→</span>
-              </Link>
-            ) : null}
+          {/* Volontairement peu rempli (voir la demande d'origine : "le vide
+              fait partie du design") — pas de lien ni d'information
+              supplémentaire ajoutée ici pour combler l'espace. */}
+          <div className="border-t border-zinc-100 pt-6 sm:border-l sm:border-t-0 sm:pl-10 sm:pt-0">
+            <p className="max-w-md text-[28px] font-bold leading-snug text-zinc-900">
+              {active.title}
+            </p>
+            <p className="mt-3 max-w-md text-lg leading-relaxed text-zinc-500">
+              {active.body}
+            </p>
           </div>
         </div>
       </div>
 
-      <p className="mt-4 text-xs text-zinc-400">
+      <p className="mt-4 flex items-center gap-1.5 text-xs text-zinc-400">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={1.5}
+          className="h-3.5 w-3.5 shrink-0"
+          aria-hidden="true"
+        >
+          {ICON_INFO}
+        </svg>
         Les détails complets apparaissent au survol de chaque étape.
       </p>
     </div>

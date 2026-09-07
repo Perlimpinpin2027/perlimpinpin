@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import ContactModal from "./ContactModal";
 
 const navLinks = [
@@ -14,6 +15,7 @@ const navLinks = [
 ];
 
 export default function Header() {
+  const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isContactOpen, setIsContactOpen] = useState(false);
   // Identité stable : sinon chaque re-render du header (ex. isScrolled au
@@ -79,16 +81,24 @@ export default function Header() {
 
         <nav className="hidden md:block">
           <ul className="flex items-center gap-8 text-sm font-medium text-zinc-700">
-            {navLinks.map((link) => (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  className="transition-colors hover:text-zinc-950"
-                >
-                  {link.label}
-                </Link>
-              </li>
-            ))}
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href;
+              return (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    aria-current={isActive ? "page" : undefined}
+                    className={`border-b-2 pb-1 transition-colors hover:text-zinc-950 ${
+                      isActive
+                        ? "border-blue-600 text-zinc-950"
+                        : "border-transparent"
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </nav>
 
