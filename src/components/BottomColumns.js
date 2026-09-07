@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getScoreBadge, getScoreBands } from "@/lib/score";
+import { formatScore, getScoreBadge, getScoreBands } from "@/lib/score";
 
 function ColumnHeader({ title, subtitle, linkLabel, linkHref, icon }) {
   return (
@@ -200,7 +200,7 @@ function ReliabilityIndexColumn({ candidates }) {
                   <span
                     className={`text-sm font-bold ${getScoreBadge(candidate.avgScore).scoreClass}`}
                   >
-                    {candidate.avgScore}
+                    {formatScore(candidate.avgScore)}
                     <span className="text-xs font-medium text-zinc-400">
                       /100
                     </span>

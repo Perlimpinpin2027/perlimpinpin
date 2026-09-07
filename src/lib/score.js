@@ -101,6 +101,13 @@ const COLOR_CLASSES = {
   },
 };
 
+// Formate un score pour l'affichage : arrondi à 1 décimale max, sans
+// décimale du tout quand elle est nulle (66, pas 66.0). Le score stocké
+// en base reste inchangé, seul l'arrondi visuel est concerné.
+export function formatScore(score) {
+  return Number(score.toFixed(1));
+}
+
 export function getScoreBadge(score) {
   const band =
     SCORE_BANDS.find((entry) => score >= entry.min) ??
