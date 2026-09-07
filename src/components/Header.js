@@ -52,43 +52,29 @@ export default function Header() {
       }
     >
       <div className="flex items-center justify-between gap-6 px-6 py-4 sm:px-8">
-        {/* Logo en texte/CSS plutôt qu'en image (public/logo/logo.png,
-            retiré) : reste net à toute résolution/DPI, et chaque propriété
-            mesurée sur le fichier source fourni est directement
-            implémentable plutôt que ré-approximée par recadrage/alpha sur
-            un bitmap. aria-label porté par le Link, spans internes
-            aria-hidden pour un nom accessible unique ("Perlimpinpin") au
-            lieu de "slash P E R L I M P I N P I N" épelé par un lecteur
-            d'écran.
-            Tailles : slash et texte utilisent la même police (Geist Mono)
-            mais des tailles différentes — un "/" occupe naturellement,
-            dans cette police, une hauteur d'encre ~1.21x la hauteur de
-            capitale à taille de police égale (mesuré par bounding box sur
-            canvas) ; ×1.157 sur la taille de police du slash amène ce
-            ratio à 1.4x, la proportion mesurée sur le fichier source.
-            gap-x calé sur ce même fichier (rapport espace/hauteur de
-            capitale ≈ 0.35). Hauteur totale du slash (élément le plus
-            haut) alignée sur les 17.6px/22.4px déjà validés pour l'ancien
-            logo image (voir .header-logo, retiré de globals.css). */}
+        {/* Logo en image (public/logo/perlimpinpin-logo.png) plutôt qu'en
+            texte/CSS : les tentatives de reproduction en Geist Mono
+            n'étaient jamais fidèles au fichier source malgré les mesures
+            (graisse, largeur des traits, forme des glyphes légèrement
+            différentes de la police réellement utilisée dans le logo
+            fourni). Fichier source recadré au plus près (bounding box des
+            pixels non blancs) et fond passé en transparent ; exporté à
+            600px de large (~3x la taille d'affichage réelle) pour rester
+            net en écran retina. Hauteur alignée sur les 17.6px/22.4px déjà
+            validés pour l'ancien logo image (voir .header-logo, retiré de
+            globals.css). aria-hidden sur l'image, aria-label porté par le
+            Link pour un nom accessible propre ("Perlimpinpin"). */}
         <Link
           href="/"
           aria-label="Perlimpinpin"
-          className="flex shrink-0 items-center gap-x-[4.4px] sm:gap-x-[5.6px]"
+          className="flex shrink-0 items-center"
         >
-          <span
+          <img
+            src="/logo/perlimpinpin-logo.png"
+            alt=""
             aria-hidden="true"
-            className="font-mono text-[20.4px] font-normal leading-none sm:text-[26px]"
-            style={{ color: "#98989A" }}
-          >
-            /
-          </span>
-          <span
-            aria-hidden="true"
-            className="font-mono text-[17.65px] font-bold leading-none tracking-tight sm:text-[22.47px]"
-            style={{ color: "#1E2128" }}
-          >
-            PERLIMPINPIN
-          </span>
+            className="h-[17.6px] w-auto sm:h-[22.4px]"
+          />
         </Link>
 
         <nav className="hidden md:block">
