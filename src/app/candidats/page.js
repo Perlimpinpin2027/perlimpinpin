@@ -2,7 +2,7 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import MonoTag from "@/components/MonoTag";
 import { getAllCandidats } from "@/lib/queries";
-import { getScoreBadge } from "@/lib/score";
+import { formatScore, getScoreBadge } from "@/lib/score";
 
 export const dynamic = "force-dynamic";
 
@@ -62,7 +62,7 @@ export default async function CandidatsPage() {
                     {badge ? (
                       <div>
                         <p className={`text-3xl font-extrabold tracking-tight ${badge.scoreClass}`}>
-                          {candidat.scoreMoyen}
+                          {formatScore(candidat.scoreMoyen)}
                           <span className="text-sm font-semibold text-zinc-400">
                             /100
                           </span>

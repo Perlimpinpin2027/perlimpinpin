@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import { getCandidatDetail } from "@/lib/queries";
-import { getScoreBadge } from "@/lib/score";
+import { formatScore, getScoreBadge } from "@/lib/score";
 
 export const dynamic = "force-dynamic";
 
@@ -65,7 +65,7 @@ export default async function CandidatDetailPage({ params }) {
                       <span
                         className={`text-5xl font-extrabold tracking-tight ${badge.scoreClass}`}
                       >
-                        {Math.round(candidat.scoreMoyen)}
+                        {formatScore(candidat.scoreMoyen)}
                       </span>
                       <span className="text-lg font-semibold text-zinc-400">
                         /100
