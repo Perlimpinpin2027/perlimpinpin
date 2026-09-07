@@ -317,6 +317,11 @@ export const FicheCompleteSchema = z
   .object({
     ...champsCommunsEtape1,
     analyse_par_criteres: AnalyseParCriteresEtape3Schema,
+    // Phrase de synthèse courte du verdict (MISE EN TEXTE FINALE, voir
+    // data/prompt-methodologie.md) — optionnel : absente des fiches produites
+    // avant son introduction, jamais rendue obligatoire ici pour ne pas
+    // bloquer l'écriture automatique tant que le prompt ne la fournit pas.
+    verdict_conclusion: z.string().min(1).optional(),
   })
   .passthrough();
 

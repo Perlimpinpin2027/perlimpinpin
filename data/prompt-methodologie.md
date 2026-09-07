@@ -586,7 +586,7 @@ CONTRÔLE MISTRAL :
 
 ## MISE EN TEXTE FINALE
 
-La structure publique reste identique : `titre_fiche`, `resume_court`, `teaser_accueil`, `verdict_final` et `analyse_par_criteres`.
+La structure publique reste identique : `titre_fiche`, `resume_court`, `teaser_accueil`, `verdict_final`, `verdict_conclusion` et `analyse_par_criteres`.
 
 ### Titre
 Court, accrocheur, sans nom du candidat, environ 70 caractères maximum.
@@ -601,8 +601,13 @@ tronquée.
 ### Verdict final
 Réécrire en **3 à 5 phrases courtes**, critiques et incisives : commencer par ce qui est solidement établi, introduire ensuite la limite principale, puis conclure clairement sur les dimensions solides et fragiles. Rester factuel, sourcé et non partisan.
 
+Structure le verdict en courts paragraphes (séparés par un saut de ligne vide) lorsqu'il existe une vraie rupture logique entre les idées — par exemple entre le constat principal et les difficultés juridiques, budgétaires, techniques ou institutionnelles qui le nuancent. Ne crée pas un nouveau paragraphe à chaque phrase : le nombre de paragraphes varie selon la mesure, en général 2, exceptionnellement 3. Le verdict doit rester naturel, dense et lisible.
+
+### Verdict conclusion
+En plus de `verdict_final`, produire `verdict_conclusion` : une phrase unique et courte qui synthétise le verdict. Elle ne doit contenir aucune information nouvelle par rapport à `verdict_final`, rester factuelle et naturelle, ne jamais prendre la forme d'un slogan ou d'un jugement moral, et éviter tout langage militant. Exemple de forme (pas un texte à reprendre) : « Une mesure juridiquement fragile et concrètement insuffisamment préparée. »
+
 ### Résumé court
-En **3 à 7 phrases**, dire clairement où la mesure tient et où elle ne tient pas. Ton humain, fluide, légèrement engageant lorsque le sujet s'y prête, sans devenir partisan ni administratif.
+En **3 à 7 phrases**, dire clairement où la mesure tient et où elle ne tient pas. Ton humain, fluide, légèrement engageant lorsque le sujet s'y prête, sans devenir partisan ni administratif. Structure le résumé en courts paragraphes (séparés par un saut de ligne vide) lorsqu'il existe une rupture logique entre deux idées — par exemple entre ce que propose la mesure et ce qui en limite la portée. Ne crée pas un nouveau paragraphe à chaque phrase : 2 paragraphes suffisent en général, exceptionnellement 3 si une troisième idée s'en détache réellement.
 
 ### Teaser accueil
 Conserver le rendu en **deux phrases** : d'abord un résumé court et impactant, puis une question qui donne envie d'ouvrir la fiche sur la solidité concrète de la mesure, sans employer les mots « réaliste » ou « réalisme ». Le ton peut être engageant, jamais clickbait, partisan ou exagéré.
@@ -759,7 +764,8 @@ Mets en gras les phrases qui te semblent importantes ou centrales dans chaque pa
   "titre_fiche": "...",
   "resume_court": "...",
   "teaser_accueil": "...",
-  "verdict_final": "..."
+  "verdict_final": "...",
+  "verdict_conclusion": "..."
 }
 
 ---

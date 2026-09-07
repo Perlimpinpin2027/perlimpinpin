@@ -182,17 +182,6 @@ const GLASS_STYLE = {
   border: "1px solid rgba(191, 219, 254, 0.5)",
 };
 
-// Verdict final : même famille "verre dépoli" que GLASS_STYLE mais fond
-// bleu-gris plus marqué (slate-300 à 55 % plutôt que blue-50 à 55 %) — pour
-// que ce bloc de conclusion se distingue davantage du résumé IA en haut de
-// page, qui garde le fond très pâle d'origine.
-const VERDICT_GLASS_STYLE = {
-  backgroundColor: "rgba(203, 213, 225, 0.55)",
-  backdropFilter: "blur(20px) saturate(160%)",
-  WebkitBackdropFilter: "blur(20px) saturate(160%)",
-  border: "1px solid rgba(148, 163, 184, 0.55)",
-};
-
 // "Fiabilité de l'analyse" : traitement "liquid glass" distinct du blanc
 // plein utilisé par les Section génériques, pour que ce bloc de méta-
 // information ressorte visuellement — fond neutre semi-transparent (pas de
@@ -243,6 +232,92 @@ function renderRichText(text) {
       <span key={index}>{part}</span>
     );
   });
+}
+
+// Petits déterminants/articles qui ne doivent jamais se retrouver seuls en
+// fin de ligne pendant que le nom qu'ils introduisent passe à la ligne
+// suivante — espace insécable posée dynamiquement, aucun <br> en dur, valable
+// pour tous les résumés (pas seulement une déclaration en particulier).
+const PETITS_MOTS = [
+  "le", "la", "les", "un", "une", "des", "du", "au", "aux",
+  "ce", "cet", "cette", "ces",
+];
+const PETITS_MOTS_REGEX = new RegExp(
+  `([\\s(«"'']|^)(${PETITS_MOTS.join("|")})[ \\t]+(?=\\S)`,
+  "gi",
+);
+function attacherPetitsMots(text) {
+  if (typeof text !== "string") return text;
+  return text.replace(PETITS_MOTS_REGEX, (_match, prefix, word) => `${prefix}${word} `);
+}
+
+// Découpe un texte en paragraphes sur les lignes vides — utilisé à la fois
+// pour le résumé IA (analyse.teaser, juste en dessous) et pour le corps du
+// Verdict final (contenu.verdict_final, plus bas sur la page), qui peuvent
+// l'un comme l'autre contenir plusieurs paragraphes séparés par un saut de
+// ligne vide lorsqu'il existe une vraie rupture logique entre deux idées
+// (voir data/prompt-methodologie.md). On respecte ce découpage tel quel,
+// sans jamais le forcer mécaniquement quand il est absent (fiches
+// antérieures, ou tout texte resté en un seul bloc).
+function splitIntoParagraphs(text) {
+  if (typeof text !== "string") return [];
+  return text
+    .split(/\n{2,}/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean);
+}
+
+function TeaserParagraphs({ text }) {
+  if (typeof text !== "string" || text.trim().length === 0) {
+    return (
+      <p className="mt-3 text-lg leading-relaxed text-zinc-800 sm:text-xl">Résumé à venir.</p>
+    );
+  }
+  const paragraphs = splitIntoParagraphs(text);
+
+  return (
+    <div className="mt-3 flex flex-col gap-4 text-lg leading-relaxed text-zinc-800 sm:text-xl">
+      {paragraphs.map((paragraph, index) => (
+        <p key={index}>{renderRichText(attacherPetitsMots(paragraph))}</p>
+      ))}
+    </div>
+  );
+}
+
+// Corps du bloc Verdict final. `verdict` est en général une chaîne pouvant
+// contenir plusieurs paragraphes (voir splitIntoParagraphs) ; par
+// compatibilité avec le repli générique déjà utilisé ailleurs sur cette page
+// pour les champs texte/liste (TextOrList), un tableau est aussi accepté —
+// chaque élément est alors rendu comme un paragraphe à part entière plutôt
+// que comme une puce, plus adapté à une conclusion rédigée qu'à une liste.
+// `conclusion` (contenu.verdict_conclusion) est un champ optionnel, absent
+// des fiches produites avant son introduction : aucune fiche existante ne
+// doit casser tant qu'elle ne le fournit pas (voir data/prompt-
+// methodologie.md, section "Verdict conclusion").
+function VerdictBody({ verdict, conclusion }) {
+  const paragraphs = Array.isArray(verdict)
+    ? verdict.map((item) => (typeof item === "string" ? item.trim() : "")).filter(Boolean)
+    : splitIntoParagraphs(verdict);
+  const hasConclusion = typeof conclusion === "string" && conclusion.trim().length > 0;
+
+  if (paragraphs.length === 0 && !hasConclusion) {
+    return <p className="text-zinc-400">Non renseigné.</p>;
+  }
+
+  return (
+    <>
+      <div className="flex flex-col gap-4">
+        {paragraphs.map((paragraph, index) => (
+          <p key={index}>{renderRichText(attacherPetitsMots(paragraph))}</p>
+        ))}
+      </div>
+      {hasConclusion ? (
+        <p className="mt-6 border-t border-[#D8DEE8] pt-5 font-semibold text-zinc-900 sm:mt-8">
+          {renderRichText(attacherPetitsMots(conclusion.trim()))}
+        </p>
+      ) : null}
+    </>
+  );
 }
 
 function TextOrList({ value }) {
@@ -556,8 +631,9 @@ function ConfidenceGauge({ level }) {
 }
 
 // Traitement "liquid glass" distinct (FIABILITE_GLASS_STYLE, fond neutre —
-// pas la teinte bleue de GLASS_STYLE/VERDICT_GLASS_STYLE) : "Niveau de
-// confiance"/"Limites identifiées" sont une information secondaire/méta sur
+// pas la teinte bleue de GLASS_STYLE, ni le fond clair uni du bloc Verdict
+// final) : "Niveau de confiance"/"Limites identifiées" sont une information
+// secondaire/méta sur
 // l'analyse elle-même, pas un point de contenu au même niveau que le
 // raisonnement, mais doivent tout de même se détacher visuellement du reste
 // de la page (voir la demande d'origine).
@@ -571,45 +647,56 @@ function FiabiliteSection({ contenu }) {
       <span className="block text-[11px] font-semibold uppercase tracking-widest text-zinc-400">
         Fiabilité de l&apos;analyse
       </span>
-      <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6">
-        <div className="flex items-start gap-2.5">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={1.5}
-            className="mt-0.5 h-4 w-4 shrink-0 text-zinc-400"
-            aria-hidden="true"
-          >
-            {ICON_SHIELD}
-          </svg>
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs font-semibold text-zinc-600">Niveau de confiance</span>
+      {/* Icônes dans un badge circulaire (fond blanc, ombre légère) et
+          titres en text-base font-bold — pas de simples icônes nues text-xs
+          en ligne avec le titre : la maquette 413 montre un rond blanc
+          d'environ 48px autour de chaque icône (trait plus épais, gris
+          zinc-500) et un titre nettement plus grand/gras que le reste du
+          texte, avec la jauge de confiance sur sa propre ligne sous le
+          titre plutôt qu'à côté. */}
+      <div className="mt-4 grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6">
+        <div className="flex items-start gap-3">
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white shadow-sm">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1.5}
+              className="h-5 w-5 text-zinc-500"
+              aria-hidden="true"
+            >
+              {ICON_SHIELD}
+            </svg>
+          </span>
+          <div className="min-w-0 pt-1">
+            <span className="text-base font-bold text-zinc-900">Niveau de confiance</span>
+            <div className="mt-1.5">
               <ConfidenceGauge level={level} />
             </div>
-            <div className="mt-1 text-xs leading-6 text-zinc-500">
+            <div className="mt-2 text-sm leading-relaxed text-zinc-500">
               <TextOrList value={contenu.niveau_de_confiance} />
             </div>
           </div>
         </div>
 
-        <div className="flex items-start gap-2.5">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={1.5}
-            className="mt-0.5 h-4 w-4 shrink-0 text-zinc-400"
-            aria-hidden="true"
-          >
-            {ICON_WARNING}
-          </svg>
-          <div className="min-w-0">
-            <span className="text-xs font-semibold text-zinc-600">Limites identifiées</span>
-            <div className="mt-1 text-xs leading-6 text-zinc-500">
+        <div className="flex items-start gap-3">
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white shadow-sm">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1.5}
+              className="h-5 w-5 text-zinc-500"
+              aria-hidden="true"
+            >
+              {ICON_WARNING}
+            </svg>
+          </span>
+          <div className="min-w-0 pt-1">
+            <span className="text-base font-bold text-zinc-900">Limites identifiées</span>
+            <div className="mt-2 text-sm leading-relaxed text-zinc-500">
               <AccordionSection value={contenu.limites} />
             </div>
           </div>
@@ -617,14 +704,6 @@ function FiabiliteSection({ contenu }) {
       </div>
     </div>
   );
-}
-
-// Première phrase de resumeAccueil, pour le court commentaire sous le
-// badge dans la carte score de la sidebar (pas de nouveau champ IA).
-function firstSentence(text) {
-  if (!text) return null;
-  const match = text.match(/^.*?[.!?](?=\s|$)/);
-  return match ? match[0] : text;
 }
 
 export default async function DeclarationDetailPage({ params }) {
@@ -671,7 +750,6 @@ export default async function DeclarationDetailPage({ params }) {
   // Moyens (plafond_applique/plafond_declencheur) — affichée directement
   // par ScoreBar/CriteriaCard, pas par un bloc textuel séparé comme V3.
   const isNouveauBaremeV5 = notation.operationnalite_moyens_total !== undefined;
-  const scoreComment = firstSentence(analyse.resumeAccueil);
   const tocSections = isV4
     ? TOC_SECTIONS.filter((section) => section.id === "analyse-criteres" || section.id === "verdict")
     : TOC_SECTIONS;
@@ -703,7 +781,12 @@ export default async function DeclarationDetailPage({ params }) {
               <span className="mt-6 block text-xs font-bold uppercase tracking-widest text-blue-600">
                 {declaration.theme}
               </span>
-              <h1 className="mt-2 text-[clamp(1.5rem,1.05rem+1.7vw,2.25rem)] font-serif font-bold leading-tight tracking-tight text-zinc-900">
+              {/* font-sans, pas font-serif : la maquette de cette page (voir
+                  public/maquettes) montre un titre en sans-serif comme
+                  partout ailleurs sur le site, pas la serif éditoriale
+                  Fraunces — celle-ci ne correspond à aucune maquette fournie
+                  pour l'instant, à vérifier avant de la réutiliser ailleurs. */}
+              <h1 className="mt-2 text-[clamp(1.5rem,1.05rem+1.7vw,2.25rem)] font-sans font-bold leading-tight tracking-tight text-zinc-900">
                 {declaration.titre}
               </h1>
 
@@ -725,18 +808,19 @@ export default async function DeclarationDetailPage({ params }) {
             </div>
 
             {/* Le résumé de Perlimpinpin IA : traitement "verre dépoli"
-                (GLASS_STYLE), en écho au Verdict final plus bas — les deux
-                points d'entrée clés de la lecture, avant/après le
-                raisonnement détaillé. */}
+                (GLASS_STYLE) — l'un des deux points d'entrée clés de la
+                lecture, avant le raisonnement détaillé (l'autre étant le
+                Verdict final plus bas, qui a son propre traitement, voir
+                VerdictBody). */}
             <section className="rounded-2xl p-6 sm:p-8" style={GLASS_STYLE}>
-              <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-blue-700">
+              <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-zinc-900">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth={1.5}
-                  className="h-4 w-4"
+                  className="h-4 w-4 text-blue-500"
                   aria-hidden="true"
                 >
                   <path
@@ -747,21 +831,16 @@ export default async function DeclarationDetailPage({ params }) {
                 </svg>
                 Le résumé de Perlimpinpin IA
               </h2>
-              <p className="mt-3 text-lg leading-relaxed text-zinc-800 sm:text-xl">
-                {analyse.teaser ? renderRichText(analyse.teaser) : "Résumé à venir."}
-              </p>
+              <TeaserParagraphs text={analyse.teaser} />
               <Link
                 href="#raisonnement-complet"
-                className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 transition-colors hover:text-blue-800"
+                className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-zinc-900 transition-colors hover:text-zinc-600"
               >
                 Voir le raisonnement complet
                 <span aria-hidden="true">→</span>
               </Link>
             </section>
 
-            {/* Sentinelle invisible : observée par StickyScoreCard pour
-                savoir quand basculer du bouton vers le mini-sommaire. */}
-            <div id="resume-sentinel" aria-hidden="true" />
 
             {/* Mesure → objectif visé : absente sur les fiches antérieures
                 au barème 2026 (mesure_vers_objectif n'existait pas encore). */}
@@ -872,16 +951,6 @@ export default async function DeclarationDetailPage({ params }) {
               </Link>
             </div>
 
-            {/* Vote sur la mesure elle-même — proche du titre et du score,
-                pour capter le lecteur qui ne lit pas toute la fiche.
-                Instance unique (un second exemplaire existait plus bas, à
-                côté de FeedbackWidget — retiré, doublon involontaire). */}
-            <VoteMesureWidget
-              propositionId={declaration.id}
-              initialAccord={declaration.voteMesureCounts.accord}
-              initialDesaccord={declaration.voteMesureCounts.desaccord}
-            />
-
             {/* Extrait analysé */}
             <section className="rounded-2xl border border-zinc-200 bg-white p-6 sm:p-8">
               <div className="flex flex-wrap items-center justify-between gap-3">
@@ -930,7 +999,15 @@ export default async function DeclarationDetailPage({ params }) {
 
             {/* Raisonnement complet */}
             <div id="raisonnement-complet" className="flex scroll-mt-24 flex-col gap-6">
-              <h2 className="font-serif text-2xl font-bold text-zinc-900">
+              {/* font-sans pour la même raison que le H1 plus haut : aucune
+                  maquette fournie (voir public/maquettes) ne montre de
+                  titre en serif sur cette page ni ailleurs sur le site. Pas
+                  de capture de cette section précise dans le lot actuel,
+                  donc à revalider si une maquette de "Raisonnement complet"
+                  apparaît, mais laisser du serif ici alors que le H1
+                  au-dessus est repassé en sans créerait une incohérence
+                  visuelle sur la même page. */}
+              <h2 className="font-sans text-2xl font-bold text-zinc-900">
                 Le raisonnement complet
               </h2>
 
@@ -1027,13 +1104,21 @@ export default async function DeclarationDetailPage({ params }) {
                 </>
               ) : null}
 
-              {/* Verdict final : même traitement "verre dépoli" que le
-                  résumé IA en haut de page (voir GLASS_STYLE) plutôt que le
-                  Section générique blanc utilisé ailleurs. */}
-              <section id="verdict" className="scroll-mt-24 rounded-2xl p-6 sm:p-8" style={VERDICT_GLASS_STYLE}>
-                <h2 className="text-lg font-bold text-zinc-900">Verdict final</h2>
-                <div className="mt-3 max-w-[68ch] text-sm leading-7 text-zinc-600">
-                  <TextOrList value={contenu.verdict_final} />
+              {/* Verdict final : conclusion principale de toute l'analyse —
+                  fond quasi blanc à peine teinté + bordure fine plutôt que
+                  le "verre dépoli" utilisé ailleurs sur la page, pour rester
+                  très lumineux et éditorial (voir la demande d'origine).
+                  Padding et taille de texte nettement au-dessus du Section
+                  générique, à la mesure de l'importance de ce bloc. */}
+              <section
+                id="verdict"
+                className="scroll-mt-24 rounded-3xl border border-[#D8DEE8] bg-[#F7F9FC] p-6 sm:p-10 lg:p-16"
+              >
+                <h2 className="font-sans text-2xl font-bold leading-tight tracking-tight text-zinc-900 sm:text-3xl lg:text-[32px]">
+                  Verdict final
+                </h2>
+                <div className="mt-6 max-w-[1100px] text-[17px] leading-[1.7] text-zinc-800 sm:mt-8 sm:text-lg lg:text-xl">
+                  <VerdictBody verdict={contenu.verdict_final} conclusion={contenu.verdict_conclusion} />
                 </div>
               </section>
 
@@ -1044,10 +1129,21 @@ export default async function DeclarationDetailPage({ params }) {
               {!isV4 ? <FiabiliteSection contenu={contenu} /> : null}
             </div>
 
-            {/* Ordre demandé : "Je trouve cette analyse pertinente" (qualité
-                de l'analyse) avant "Et vous, qu'en pensez-vous ?" (mesure
-                elle-même) — même mise en page et importance visuelle pour
-                les deux, juste avant le bandeau de confiance. */}
+            {/* Vote sur la mesure elle-même, juste après la Fiabilité de
+                l'analyse — la maquette 413 (public/maquettes) montre "Et
+                vous, qu'en pensez-vous ?" immédiatement sous ce bloc, pas
+                plus haut sous "Détail du score" où il était placé avant
+                (avec un second exemplaire ici même supprimé comme
+                "doublon" — c'est en fait cette position-ci, pas l'autre,
+                qui correspond à la maquette). */}
+            <VoteMesureWidget
+              propositionId={declaration.id}
+              initialAccord={declaration.voteMesureCounts.accord}
+              initialDesaccord={declaration.voteMesureCounts.desaccord}
+            />
+
+            {/* "Je trouve cette analyse pertinente" (qualité de l'analyse),
+                distinct du vote sur la mesure elle-même ci-dessus. */}
             <FeedbackWidget
               analyseId={analyse.id}
               initialLikes={declaration.feedbackCounts.likes}
@@ -1139,13 +1235,12 @@ export default async function DeclarationDetailPage({ params }) {
             </div>
           </div>
 
-          {/* Sidebar sticky : score permanent + bouton, puis mini-sommaire
-              une fois le résumé IA dépassé (voir StickyScoreCard). */}
+          {/* Sidebar sticky : score permanent + sommaire de navigation,
+              visibles ensemble dès le chargement (voir StickyScoreCard). */}
           <aside className="lg:sticky lg:top-24">
             <StickyScoreCard
               score={analyse.scoreFaisabilite}
               badge={badge}
-              scoreComment={scoreComment}
               sections={tocSections}
               versionMethodologie={analyse.versionMethodologie}
               generationDateLabel={declaration.generationDateLabel}

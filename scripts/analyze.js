@@ -698,12 +698,18 @@ async function runPipeline(etape1Input) {
   // titre_fiche/resume_court/teaser_accueil/verdict_final sont produits à la
   // racine de la réponse d'étape 3 (rédaction finale) — verdict_final y est
   // prioritaire sur celui, potentiellement resté inchangé, de fiche_complete.
+  // verdict_conclusion (phrase de synthèse courte, voir MISE EN TEXTE FINALE
+  // dans data/prompt-methodologie.md) n'existe qu'à cette étape — absent des
+  // fiches produites avant son introduction, undefined ici disparaît
+  // simplement au JSON.stringify (cleanContenu ne le remplace pas), et le
+  // frontend le traite comme optionnel (voir DeclarationDetailPage).
   const parsed = cleanContenu({
     ...ficheComplete,
     titre_fiche: arbitrage3.titre_fiche,
     resume_court: arbitrage3.resume_court,
     teaser_accueil: arbitrage3.teaser_accueil,
     verdict_final: arbitrage3.verdict_final ?? ficheComplete.verdict_final,
+    verdict_conclusion: arbitrage3.verdict_conclusion,
   });
   console.log(
     `  ✓ terminé (score final : ${parsed.notation_detaillee.score_total}/100${parsed.notation_detaillee.plafond_applique ? `, plafond appliqué — déclencheur : ${parsed.notation_detaillee.plafond_declencheur}` : ""})`,
