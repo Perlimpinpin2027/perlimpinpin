@@ -1,0 +1,96 @@
+{
+  "mesure_reformulee": {
+    "synthese": "Rendre la cantine scolaire gratuite et bio pour tous les enfants de France, indépendamment du revenu des familles, dès 2027.",
+    "texte": "Rendre la cantine scolaire **gratuite et bio pour tous les enfants de France**, indépendamment du revenu des familles, avec un début de mise en œuvre annoncé comme **immédiat en cas d'accession à l'Élysée en 2027**."
+  },
+  "mesure_vers_objectif": {
+    "objectif_court": "Cantine gratuite et bio pour tous les enfants",
+    "categorie_objectif": "Éducation",
+    "objectif_vise": "Garantir à tous les enfants scolarisés un accès égal à une restauration scolaire de qualité, sans barrière financière liée au revenu des familles, dans une logique d'égalité des chances et de santé publique.",
+    "mecanisme_propose": "Suppression du tarif de la cantine pour toutes les familles (universalisme, sans condition de ressources) et obligation de sourcing en produits biologiques dans la restauration scolaire.",
+    "lien_causal": "direct"
+  },
+  "nature_et_existant": "La restauration scolaire est aujourd'hui une compétence des collectivités locales (communes pour le primaire, départements pour les collèges, régions pour les lycées), le plus souvent facultative et tarifée selon le quotient familial. L'État finance déjà partiellement une gratuité ciblée via le dispositif « cantine à 1 euro » de l'ANCT dans certaines communes rurales ou pauvres, mais aucune gratuité universelle nationale n'existe. Sur le volet bio, la loi EGalim de 2018 impose depuis 2022 un objectif de 20 % de produits biologiques dans la restauration collective publique ; ce taux n'est aujourd'hui que d'environ 7 % en moyenne nationale, l'objectif légal existant n'étant donc lui-même pas atteint huit ans après son adoption.",
+  "contexte_programme": {
+    "synthese": "Annoncée le 6 septembre 2026 à Lille, dans un ensemble de mesures sur le pouvoir d'achat, justifiée par une logique de santé publique.",
+    "texte": "La mesure a été **annoncée le 6 septembre 2026 lors d'un discours à la Braderie de Lille**, dans un ensemble de propositions sur le pouvoir d'achat (blocage des prix et des loyers, hausse du Smic et des « salaires intermédiaires », rétablissement d'une échelle mobile des salaires). Jean-Luc Mélenchon justifie la mesure par **une logique de santé publique**, présentée comme génératrice d'économies futures pour les comptes publics."
+  },
+  "contexte_national": {
+    "synthese": "Le HCFEA chiffre le surcoût d'une gratuité totale à 7-9 milliards d'euros ; le frein sur le bio est surtout structurel (filières insuffisantes), pas financier.",
+    "texte": "Le Haut Conseil de la famille, de l'enfance et de l'âge (HCFEA) a chiffré le coût actuel de la restauration scolaire à environ 12 milliards d'euros par an, et **le surcoût d'une gratuité totale à 7 à 9 milliards d'euros supplémentaires**. Ce chiffrage repose toutefois sur **des données de 2014 extrapolées**, le rapport reconnaissant lui-même l'absence de données exhaustives et fiables sur le sujet. Sur le volet bio, l'Agence Bio identifie **un frein principalement structurel plutôt que financier** : le surcoût d'un menu à 20 % bio est estimé modeste, mais **les filières locales d'approvisionnement bio restent insuffisamment développées** pour répondre à une demande nationale généralisée."
+  },
+  "contexte_international": {
+    "synthese": "Plusieurs pays pratiquent déjà la gratuité universelle, mais dans des systèmes de financement très différents, ce qui limite la transposabilité.",
+    "texte": "Plusieurs pays (Suède, Finlande, certaines régions d'Italie) pratiquent une **gratuité universelle de la cantine scolaire depuis longtemps**, mais dans des systèmes de financement et de fiscalité très différents du système français, ce qui **limite la transposabilité directe des retours d'expérience**."
+  },
+  "impact_environnement": {
+    "synthese": "Effet positif possible à moyen terme sur la conversion bio, mais risque à court terme de recours accru aux importations faute de capacité française suffisante.",
+    "texte": "Le développement d'un approvisionnement bio à grande échelle pourrait, à moyen et long terme, **soutenir la conversion de surfaces agricoles françaises vers l'agriculture biologique**. À court terme, l'écart entre la demande créée par la mesure et la capacité de production bio nationale **fait peser un risque de recours accru aux importations bio**, ce qui limiterait ce bénéfice environnemental et **contredirait l'objectif de souveraineté alimentaire**."
+  },
+  "analyse_par_criteres": "Opérationnalité et moyens : aucun obstacle juridique de fond, la gratuité pouvant être organisée par la loi comme une nouvelle prestation nationale ou un dispositif de compensation aux collectivités (article 72-2 de la Constitution) ; le sens et l'ordre de grandeur budgétaires sont établis par le HCFEA (7 à 9 milliards d'euros), mais cette estimation repose sur des données anciennes que le rapport qualifie lui-même de non exhaustives. Le critère est toutefois plafonné à 10/30 par un obstacle documenté sur les moyens humains et logistiques : les filières d'approvisionnement bio nécessaires pour un passage à l'échelle nationale restent, selon l'Agence Bio elle-même, insuffisamment développées huit ans après l'entrée en vigueur de la loi EGalim, ce qui rend un déploiement immédiat peu crédible sur ce volet précis, indépendamment du budget disponible. Efficacité : le mécanisme de suppression du tarif a un lien direct et documenté avec l'objectif d'égalité d'accès porté par le service public de l'éducation, la littérature de politique sociale établissant que la barrière de prix réduit le recours des familles modestes aux dispositifs tarifés. Le choix de l'universalisme plutôt que d'un ciblage sur les familles les plus modestes, déjà partiellement couvert par le quotient familial existant, reste cependant une option plus coûteuse pour un gain d'accès marginal incertain, ce qui limite la note. Effets rebonds et externalités : la mesure comporte un risque documenté de report vers les importations bio faute de filières françaises suffisamment développées, ce qui contredirait l'objectif de souveraineté alimentaire du domaine Alimentation et agriculture, sans qu'aucune mesure de compensation ne soit annoncée à ce stade. Degré de préparation : la mesure reste une annonce de meeting, sans texte, sans calendrier de montée en charge par niveau scolaire, et sans plan de financement présenté dans ce discours pour les 7 à 9 milliards d'euros identifiés. Alignement et logique globale : la mesure s'inscrit sans tension apparente dans le reste du programme de pouvoir d'achat et de santé publique présenté le même jour par le candidat.",
+  "analyse_longevites": {
+    "synthese": "La gratuité, une fois votée, serait pérenne par nature ; la montée en charge du bio prendrait plusieurs années, le temps de développer les filières.",
+    "texte": "Une gratuité universelle, une fois votée, serait **budgétairement pérenne par nature** (prestation récurrente), tandis que la montée en charge de l'approvisionnement bio **prendrait plusieurs années**, le temps de développer les filières locales identifiées comme le principal goulot d'étranglement actuel."
+  },
+  "impact_temporel_et_sectoriel": {
+    "synthese": "Hausse immédiate de la fréquentation et de la dépense à court terme, sans capacité bio suffisante ; pérennisation de la dépense à long terme.",
+    "texte": "Court terme (0-2 ans) : **hausse immédiate de la fréquentation des cantines et de la dépense publique**, sans capacité d'approvisionnement bio suffisante pour couvrir la demande créée. Moyen terme (2-7 ans) : possible développement des filières bio françaises si des investissements structurants accompagnent la mesure. Long terme (plus de 7 ans) : **pérennisation d'une dépense sociale récurrente**, dont le financement dépendra de choix fiscaux non détaillés dans ce discours."
+  },
+  "ce_qui_est_etabli": {
+    "synthese": "L'objectif légal de 20 % de bio existe depuis 2018 mais n'atteint que 7 % ; le surcoût d'une gratuité totale est chiffré à 7-9 milliards d'euros.",
+    "texte": "La restauration scolaire est une compétence des collectivités locales ; **l'objectif légal de 20 % de bio dans la restauration collective existe depuis la loi EGalim de 2018 mais n'est atteint qu'à hauteur d'environ 7 % en 2024** ; le HCFEA chiffre le coût actuel du système à 12 milliards d'euros et **le surcoût d'une gratuité totale à 7-9 milliards d'euros supplémentaires** ; la mesure a été annoncée le 6 septembre 2026 à Lille."
+  },
+  "ce_qui_est_probable": {
+    "synthese": "La gratuité augmenterait significativement la fréquentation ; un passage rapide au bio se heurterait aux mêmes limites de filières que l'objectif EGalim actuel.",
+    "texte": "Une gratuité universelle **augmenterait significativement la fréquentation des cantines**, notamment chez les familles qui évitaient le service pour des raisons de coût ; un passage rapide à un haut niveau de bio **se heurterait aux mêmes limites de filières** que celles qui expliquent la non-atteinte de l'objectif EGalim actuel."
+  },
+  "ce_qui_est_discutable": {
+    "synthese": "L'efficience d'une gratuité universelle face à un ciblage sur les familles modestes, et la part exacte de bio visée, restent discutables.",
+    "texte": "**L'efficience relative d'une gratuité universelle par rapport à un renforcement ciblé** de la gratuité pour les familles les plus modestes, pour un objectif d'égalité d'accès équivalent à moindre coût ; **la part exacte de « bio » visée par la formule du candidat** n'est pas précisée."
+  },
+  "ce_qui_est_inconnu": {
+    "synthese": "Le calendrier de mise en œuvre, le mode de financement des 7-9 milliards de surcoût, et le taux de bio exact visé.",
+    "texte": "**Le calendrier de mise en œuvre par niveau scolaire**, **le mode de financement précis des 7 à 9 milliards d'euros de surcoût** identifiés par le HCFEA, et **le taux de bio exact visé** par la mesure."
+  },
+  "angles_morts": {
+    "synthese": "La fiche n'évalue que la mesure isolée ; elle ne couvre pas les mesures de financement plus larges du programme qui pourraient changer l'appréciation budgétaire.",
+    "texte": "La fiche n'évalue que **la mesure isolée annoncée dans ce discours** ; elle ne couvre pas les mesures de financement plus larges du programme de La France insoumise, qui **pourraient, si elles étaient adoptées conjointement, changer l'appréciation de la faisabilité budgétaire**."
+  },
+  "notation_detaillee": {
+    "operationnalite_juridique": 8,
+    "qualification_juridique": "SOLIDE",
+    "operationnalite_budgetaire": 6,
+    "qualification_budgetaire": "INCERTAIN",
+    "operationnalite_moyens_humains": 2,
+    "qualification_moyens_humains": "FRAGILE",
+    "operationnalite_moyens_total": 10,
+    "plafond_applique": true,
+    "plafond_declencheur": "moyens_humains",
+    "efficacite": 14,
+    "qualification_efficacite": "INCERTAIN",
+    "effets_rebonds_externalites": 9,
+    "qualification_effets_rebonds": "INCERTAIN",
+    "degre_preparation": 2,
+    "qualification_preparation": "FRAGILE",
+    "alignement_logique": 8,
+    "qualification_alignement": "SOLIDE",
+    "score_total": 43,
+    "appreciation": "partiellement fondé"
+  },
+  "verdict_final": "La gratuité de la cantine repose sur un mécanisme direct et documenté d'amélioration de l'accès des familles modestes, mais son caractère universel plutôt que ciblé en limite l'efficience au regard de l'objectif d'égalité des chances. Le volet bio se heurte à un obstacle structurel documenté et déjà à l'œuvre : huit ans après la loi EGalim, l'objectif de 20 % de bio en restauration collective n'est atteint qu'à hauteur de 7 %, ce qui plafonne la note d'opérationnalité malgré une faisabilité juridique et un ordre de grandeur budgétaire par ailleurs établis. La mesure reste, à ce stade, une annonce de meeting sans calendrier ni financement précisé.",
+  "sources_utilisees": [
+    "Epoch Times / Head Topics, discours de Jean-Luc Mélenchon à la Braderie de Lille, 6 septembre 2026",
+    "Haut Conseil de la famille, de l'enfance et de l'âge (HCFEA), rapport sur la restauration scolaire",
+    "Fondation IFRAP, « Cantines scolaires : le mirage de la gratuité à plus de 7 milliards d'euros »",
+    "Agence Bio, « Idée fausse : 20 % de bio dans les cantines, c'est impossible, ça va faire exploser le prix des repas », 2025",
+    "Loi n°2018-938 du 30 octobre 2018 (EGalim), article 24",
+    "prompt-méthodologie Perlimpinpin, section 3.4 Éducation (0_Objectifs de politique publique.docx)"
+  ],
+  "niveau_de_confiance": "Moyen : le cadre légal existant (EGalim) et son bilan chiffré sont bien documentés et récents, mais le chiffrage du coût de la gratuité totale repose sur des données anciennes (2014) que leur propre source qualifie de non exhaustives, et la mesure elle-même n'a fait l'objet d'aucune précision de périmètre par le candidat.",
+  "limites": {
+    "synthese": "Le domaine Éducation a été retenu comme catégorie principale ; Alimentation et agriculture aurait aussi pu s'appliquer pour le seul volet bio.",
+    "texte": "Le domaine Éducation a été retenu comme catégorie d'objectif principale en raison du **caractère central de la gratuité** dans la formulation de la mesure ; le domaine Alimentation et agriculture **aurait aussi pu s'appliquer pour le seul volet bio**, et a été mobilisé ici pour qualifier les effets rebonds liés à l'approvisionnement."
+  },
+  "resume_court": "Jean-Luc Mélenchon promet une cantine gratuite et bio pour tous les enfants. La gratuité elle-même repose sur un mécanisme d'accès solide, mais son universalité coûte plus cher qu'un ciblage pour un gain d'équité incertain ; le volet bio se heurte à un problème d'approvisionnement déjà documenté sur l'objectif légal actuel, non atteint depuis 2022 — score 43/100, partiellement fondé.",
+  "phrase_teasing": "Mélenchon promet une cantine gratuite et bio pour tous les enfants. L'objectif bio existe déjà dans la loi depuis 2018 et n'est toujours pas atteint : la promesse change-t-elle vraiment la donne ?"
+}
