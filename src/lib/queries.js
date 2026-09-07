@@ -83,7 +83,18 @@ function shuffleNoAdjacentSameCandidat(items) {
     if (position >= n) position = 1;
   }
 
-  return result;
+  // Le remplissage pair-puis-impair ci-dessus place déterministiquement le
+  // groupe le plus fourni (trié en tête à la ligne précédente) en position 0
+  // dès qu'aucune égalité de taille ne le départage des autres groupes — ce
+  // qui est le cas en pratique (voir la demande d'origine : un candidat
+  // avec strictement plus de propositions publiées que tous les autres se
+  // retrouvait donc en tête à quasiment chaque chargement). Une rotation
+  // circulaire aléatoire de la séquence finale déplace le point de départ
+  // sans jamais recréer d'adjacence : le carrousel boucle (dernière carte →
+  // première), donc décaler circulairement préserve exactement les mêmes
+  // paires adjacentes, join compris.
+  const offset = Math.floor(Math.random() * n);
+  return result.slice(offset).concat(result.slice(0, offset));
 }
 
 // Toutes les analyses publiées, dans un ordre aléatoire (recalculé à
