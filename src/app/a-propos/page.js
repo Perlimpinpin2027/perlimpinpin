@@ -100,64 +100,66 @@ export default function AProposPage() {
     <div className="flex min-h-screen flex-col bg-page-gradient font-sans">
       <Header />
 
+      {/* Bandeau plein cadre propre à cet édito (pas un template réutilisé
+          par d'autres articles — /a-propos est une page dédiée) : bord à
+          bord horizontalement, aucune bordure/coin arrondi/carte visible,
+          contrairement à la première tentative. Les rubans diagonaux
+          (indigo à gauche, corail à droite) sont dessinés en SVG plutôt
+          qu'en radial-gradient CSS pour l'aspect "vagues qui se croisent"
+          de la maquette — un radial-gradient ne peut produire que des
+          taches, jamais des rubans obliques. Le fond se dilue vers le blanc
+          en bas via mask-image (dégradé noir→transparent), jamais une
+          simple coupure nette de couleur. */}
+      <div className="relative w-full overflow-hidden">
+        <div
+          className="pointer-events-none absolute inset-x-0 top-0 h-[260px] sm:h-[300px]"
+          aria-hidden="true"
+          style={{
+            maskImage: "linear-gradient(to bottom, black, transparent)",
+            WebkitMaskImage: "linear-gradient(to bottom, black, transparent)",
+          }}
+        >
+          <svg
+            viewBox="0 0 1600 320"
+            preserveAspectRatio="none"
+            className="h-full w-full"
+            aria-hidden="true"
+          >
+            <defs>
+              <filter id="apropos-banner-blur" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="28" />
+              </filter>
+            </defs>
+            <g filter="url(#apropos-banner-blur)">
+              <ellipse cx="260" cy="150" rx="430" ry="95" fill="#818cf8" opacity="0.55" transform="rotate(-18 260 150)" />
+              <ellipse cx="410" cy="55" rx="380" ry="70" fill="#a5b4fc" opacity="0.45" transform="rotate(12 410 55)" />
+              <ellipse cx="1340" cy="160" rx="430" ry="95" fill="#fb923c" opacity="0.5" transform="rotate(18 1340 160)" />
+              <ellipse cx="1220" cy="60" rx="380" ry="70" fill="#fda4af" opacity="0.4" transform="rotate(-12 1220 60)" />
+            </g>
+          </svg>
+        </div>
+
+        <div className="relative mx-auto w-full max-w-3xl px-6 pb-4 pt-14 text-center sm:px-8 sm:pt-20">
+          {/* text-4xl/sm:text-5xl était trop petit : mesuré sur la maquette
+              440, le "C" de "Construire" fait ~66px de capitale pour un
+              rendu ~1535px de large, soit un corps ~90-100px — même
+              correction que le titre héros de l'accueil (HeroText,
+              maquette 429) et celui de la page Thèmes (maquette 450). */}
+          <h1 className="font-sans text-[clamp(2.25rem,1.1rem+5.2vw,6rem)] font-bold leading-tight tracking-tight text-zinc-900">
+            Construire pour la démocratie
+            <span className="text-indigo-400">.</span>
+          </h1>
+
+          <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-zinc-500">
+            Pourquoi Perlimpinpin existe
+          </p>
+        </div>
+      </div>
+
       <main className="w-full px-6 py-12 sm:px-8 sm:py-16">
         <article className="mx-auto w-full max-w-3xl">
-          {/* Bandeau en tête de page */}
           <div className="flex flex-col items-center text-center">
-            {/* Fond décoratif abstrait propre à cet édito (bleu/indigo à
-                gauche, rouge/orange à droite, flou, contenu au strict cadre
-                du titre + sous-titre) — voir la demande d'origine et son
-                image de référence. Rien d'autre sur la page (auteurs,
-                Partager, corps du texte) n'est concerné, et aucun autre
-                édito ne partage ce bloc : /a-propos est une page dédiée,
-                pas un template réutilisé par d'autres articles. */}
-            <div className="relative w-full overflow-hidden rounded-3xl">
-              <div
-                className="absolute inset-0"
-                aria-hidden="true"
-                style={{
-                  background:
-                    "radial-gradient(40% 90% at 108% -10%, rgba(244,63,94,0.35), transparent 70%), radial-gradient(60% 130% at 106% 45%, rgba(249,115,22,0.32), transparent 70%), radial-gradient(60% 130% at -6% 35%, rgba(99,102,241,0.38), transparent 70%)",
-                  filter: "blur(48px)",
-                }}
-              />
-
-              <div className="relative px-6 py-14 sm:py-20">
-                {/* text-4xl/sm:text-5xl était trop petit : mesuré sur la
-                    maquette 440, le "C" de "Construire" fait ~66px de
-                    capitale pour un rendu ~1535px de large, soit un corps
-                    ~90-100px — même correction que le titre héros de
-                    l'accueil (HeroText, maquette 429) et celui de la page
-                    Thèmes (maquette 450). */}
-                <h1 className="font-sans text-[clamp(2.25rem,1.1rem+5.2vw,6rem)] font-bold leading-tight tracking-tight text-zinc-900">
-                  {/* Petit trait décoratif (swoosh) au-dessus du C, cohérent
-                      avec le point bleu/indigo qui clôt le titre. */}
-                  <span className="relative inline-block">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 12"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                      strokeLinecap="round"
-                      className="absolute -top-3 left-0.5 h-3 w-6 text-indigo-400"
-                      aria-hidden="true"
-                    >
-                      <path d="M2 10C7 4 15 2 22 2" />
-                    </svg>
-                    C
-                  </span>
-                  onstruire pour la démocratie
-                  <span className="text-indigo-400">.</span>
-                </h1>
-
-                <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-zinc-500">
-                  Pourquoi Perlimpinpin existe
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-6 h-px w-10 bg-zinc-300" aria-hidden="true" />
+            <div className="h-px w-10 bg-zinc-300" aria-hidden="true" />
 
             <p className="mt-6 text-sm font-medium text-zinc-500">
               Par{" "}
