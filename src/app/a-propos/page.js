@@ -104,50 +104,58 @@ export default function AProposPage() {
         <article className="mx-auto w-full max-w-3xl">
           {/* Bandeau en tête de page */}
           <div className="flex flex-col items-center text-center">
-            <span className="inline-flex w-fit items-center gap-1.5 rounded-full border border-red-200 bg-red-50 px-3 py-1 text-xs font-bold uppercase tracking-widest text-red-600">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={1.8}
-                className="h-3.5 w-3.5"
+            {/* Fond décoratif abstrait propre à cet édito (bleu/indigo à
+                gauche, rouge/orange à droite, flou, contenu au strict cadre
+                du titre + sous-titre) — voir la demande d'origine et son
+                image de référence. Rien d'autre sur la page (auteurs,
+                Partager, corps du texte) n'est concerné, et aucun autre
+                édito ne partage ce bloc : /a-propos est une page dédiée,
+                pas un template réutilisé par d'autres articles. */}
+            <div className="relative w-full overflow-hidden rounded-3xl">
+              <div
+                className="absolute inset-0"
                 aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M3 21h18M4.5 21V9.75m3.75 11.25V9.75m3.75 11.25V9.75m3.75 11.25V9.75M2.25 9.75 12 3.75l9.75 6"
-                />
-              </svg>
-              Démocratie
-            </span>
+                style={{
+                  background:
+                    "radial-gradient(40% 90% at 108% -10%, rgba(244,63,94,0.35), transparent 70%), radial-gradient(60% 130% at 106% 45%, rgba(249,115,22,0.32), transparent 70%), radial-gradient(60% 130% at -6% 35%, rgba(99,102,241,0.38), transparent 70%)",
+                  filter: "blur(48px)",
+                }}
+              />
 
-            <h1 className="mt-4 font-sans text-4xl font-bold leading-tight tracking-tight text-zinc-900 sm:text-5xl">
-              {/* Petit trait décoratif (swoosh) au-dessus du C, cohérent
-                  avec le point bleu/indigo qui clôt le titre. */}
-              <span className="relative inline-block">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 12"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                  strokeLinecap="round"
-                  className="absolute -top-3 left-0.5 h-3 w-6 text-indigo-400"
-                  aria-hidden="true"
-                >
-                  <path d="M2 10C7 4 15 2 22 2" />
-                </svg>
-                C
-              </span>
-              onstruire pour la démocratie
-              <span className="text-indigo-400">.</span>
-            </h1>
+              <div className="relative px-6 py-14 sm:py-20">
+                {/* text-4xl/sm:text-5xl était trop petit : mesuré sur la
+                    maquette 440, le "C" de "Construire" fait ~66px de
+                    capitale pour un rendu ~1535px de large, soit un corps
+                    ~90-100px — même correction que le titre héros de
+                    l'accueil (HeroText, maquette 429) et celui de la page
+                    Thèmes (maquette 450). */}
+                <h1 className="font-sans text-[clamp(2.25rem,1.1rem+5.2vw,6rem)] font-bold leading-tight tracking-tight text-zinc-900">
+                  {/* Petit trait décoratif (swoosh) au-dessus du C, cohérent
+                      avec le point bleu/indigo qui clôt le titre. */}
+                  <span className="relative inline-block">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 12"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      strokeLinecap="round"
+                      className="absolute -top-3 left-0.5 h-3 w-6 text-indigo-400"
+                      aria-hidden="true"
+                    >
+                      <path d="M2 10C7 4 15 2 22 2" />
+                    </svg>
+                    C
+                  </span>
+                  onstruire pour la démocratie
+                  <span className="text-indigo-400">.</span>
+                </h1>
 
-            <p className="mt-4 max-w-xl text-base leading-relaxed text-zinc-500">
-              Pourquoi Perlimpinpin existe
-            </p>
+                <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-zinc-500">
+                  Pourquoi Perlimpinpin existe
+                </p>
+              </div>
+            </div>
 
             <div className="mt-6 h-px w-10 bg-zinc-300" aria-hidden="true" />
 
