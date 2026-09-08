@@ -263,25 +263,60 @@ export default function MethodePage() {
               sur 100.
             </p>
 
-            <div
-              className="mt-8 flex h-24 w-full overflow-hidden rounded-2xl sm:h-32"
-              style={{
-                background:
-                  "linear-gradient(to right, #7f1d1d, #dc2626, #f97316, #facc15, #22c55e, #15803d)",
-              }}
-            >
-              {scoreBandsAsc.map((band, index) => (
-                <div
-                  key={band.label}
-                  className={`flex flex-1 items-center justify-center ${
-                    index !== 0 ? "border-l border-white/20" : ""
-                  }`}
-                >
-                  <span className="px-1 text-center text-sm font-bold text-white [text-shadow:0_1px_3px_rgba(0,0,0,0.35)] sm:text-lg">
-                    {band.min}–{band.max}
-                  </span>
-                </div>
-              ))}
+            {/* Un seul dégradé continu (7 stops) en fond, sans les bordures
+                verticales blanches qui séparaient auparavant les 6 tranches
+                (voir la demande d'origine : plus de rupture nette entre les
+                couleurs). Les libellés restent 6 colonnes flex-1 égales —
+                mêmes positions qu'avant — mais ne portent plus ni fond ni
+                bordure, seulement le texte, posées par-dessus. */}
+            <div className="relative mt-8 h-24 w-full overflow-hidden rounded-2xl sm:h-32">
+              <div
+                className="absolute inset-0"
+                style={{
+                  background:
+                    "radial-gradient(120% 140% at 52% 35%, rgba(255,255,255,0.28), transparent 60%), linear-gradient(to right, #6b1414, #dc2626 18%, #f97316 34%, #fde047 50%, #a3e635 62%, #22c55e 78%, #14532d 100%)",
+                }}
+              />
+
+              {/* Grain/bruit subtil (aspect "papier" plutôt que plat) :
+                  feTurbulence génère un bruit RGBA, feColorMatrix ne garde
+                  que l'alpha (dérivé du canal bleu) pour obtenir un voile
+                  noir à opacité variable, posé en mix-blend-overlay à faible
+                  opacité — jamais un aplat, juste une texture. seed fixe
+                  pour un rendu stable (pas de re-tirage aléatoire au
+                  re-render). */}
+              <svg
+                className="pointer-events-none absolute inset-0 h-full w-full opacity-25 mix-blend-overlay"
+                aria-hidden="true"
+              >
+                <filter id="score-bar-grain">
+                  <feTurbulence
+                    type="fractalNoise"
+                    baseFrequency="0.85"
+                    numOctaves={2}
+                    seed={7}
+                    stitchTiles="stitch"
+                  />
+                  <feColorMatrix
+                    type="matrix"
+                    values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.6 0"
+                  />
+                </filter>
+                <rect width="100%" height="100%" filter="url(#score-bar-grain)" />
+              </svg>
+
+              <div className="relative flex h-full w-full">
+                {scoreBandsAsc.map((band) => (
+                  <div
+                    key={band.label}
+                    className="flex flex-1 items-center justify-center"
+                  >
+                    <span className="px-1 text-center text-sm font-bold text-white [text-shadow:0_1px_3px_rgba(0,0,0,0.35)] sm:text-lg">
+                      {band.min}–{band.max}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
 
             <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3 lg:grid-cols-6">
