@@ -192,10 +192,10 @@ export default function MethodeAnalysisSteps() {
               fait partie du design") — pas de lien ni d'information
               supplémentaire ajoutée ici pour combler l'espace. */}
           <div className="border-t border-zinc-100 pt-6 sm:border-l sm:border-t-0 sm:pl-10 sm:pt-0">
-            <p className="max-w-md text-[28px] font-bold leading-snug text-zinc-900">
+            <p className="max-w-md text-[22.4px] font-bold leading-snug text-zinc-900">
               {active.title}
             </p>
-            <p className="mt-3 max-w-md text-lg leading-relaxed text-zinc-500">
+            <p className="mt-3 max-w-md text-[14.4px] leading-relaxed text-zinc-500">
               {active.body}
             </p>
           </div>
