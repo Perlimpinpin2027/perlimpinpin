@@ -24,11 +24,31 @@ const fraunces = Fraunces({
   style: ["normal"],
 });
 
+const DESCRIPTION =
+  "Perlimpinpin évalue le réalisme et la faisabilité des propositions politiques des candidats à la présidentielle.";
+
+// Pas de champ `images` ici : src/app/opengraph-image.png et twitter-image.png
+// (convention de fichier Next.js, + leurs .alt.txt) fournissent déjà og:image
+// et twitter:image avec une URL absolue (résolue via metadataBase) — un champ
+// `images` posé ici serait ignoré (le fichier a toujours priorité) et donc
+// une source de confusion, pas juste redondant.
 export const metadata = {
   metadataBase: new URL("https://perlimpinpin.ai"),
   title: "Perlimpinpin",
-  description:
-    "Perlimpinpin évalue le réalisme et la faisabilité des propositions politiques des candidats à la présidentielle.",
+  description: DESCRIPTION,
+  openGraph: {
+    title: "Perlimpinpin",
+    description: DESCRIPTION,
+    url: "https://perlimpinpin.ai",
+    siteName: "Perlimpinpin",
+    locale: "fr_FR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Perlimpinpin",
+    description: DESCRIPTION,
+  },
 };
 
 export default function RootLayout({ children }) {
