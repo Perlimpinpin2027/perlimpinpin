@@ -36,7 +36,7 @@ export default async function CandidatsPage() {
               return (
                 <Link
                   key={candidat.id}
-                  href={`/candidats/${candidat.id}`}
+                  href={`/declarations?candidat=${encodeURIComponent(candidat.nom)}`}
                   className="flex flex-col gap-4 border-b border-zinc-200 pb-6 transition-opacity hover:opacity-70"
                 >
                   <div className="flex items-center gap-3">
