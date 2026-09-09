@@ -1,0 +1,93 @@
+{
+  "mesure_reformulee": {
+    "synthese": "Gabriel Attal veut réduire les cotisations sociales sur les salaires, financées par des économies dans les dépenses publiques, pour qu'au moins 60 à 70 % du coût payé par l'employeur revienne net au salarié.",
+    "texte": "La proposition consiste à baisser les cotisations sociales qui pèsent sur le travail — c'est-à-dire les prélèvements que l'employeur et le salarié versent à la Sécurité sociale sur chaque salaire — afin qu'au moins 60 à 70 % du coût total payé par l'employeur pour un salarié se retrouve effectivement dans le salaire net, contre un peu plus de la moitié aujourd'hui. Cette baisse de cotisations serait financée par des économies dans les dépenses publiques, sans autre précision chiffrée à ce stade."
+  },
+  "mesure_vers_objectif": {
+    "objectif_court": "Faire remonter le salaire net vers le coût du travail",
+    "categorie_objectif": "Fiscalité et pouvoir d'achat",
+    "objectif_vise": "Réduire l'écart entre ce que paie l'employeur pour un salarié et ce que ce salarié perçoit réellement en net, pour améliorer son pouvoir d'achat.",
+    "mecanisme_propose": "Baisser les cotisations sociales sur le travail, en compensant la perte de recettes pour la Sécurité sociale par des économies dans les dépenses publiques.",
+    "lien_causal": "indirect"
+  },
+  "nature_et_existant": "Mesure fiscale et budgétaire, de nature législative ordinaire : une modification des taux de cotisations sociales relève chaque année de la loi de financement de la Sécurité sociale (LFSS). Le principe n'est pas inédit : la France a déjà pratiqué plusieurs baisses ciblées de cotisations, comme les allègements dits « Fillon » sur les bas salaires ou la bascule entre cotisations salariales et CSG en 2018. Ce qui est nouveau, c'est l'ampleur affichée de l'objectif (60 à 70 % du coût du travail reversé au salarié, contre 52,8 % actuellement) et son financement annoncé par des économies budgétaires plutôt que par un autre prélèvement de compensation, comme cela avait été le cas en 2018 avec la hausse de la CSG.",
+  "contexte_programme": {
+    "synthese": "Cette mesure s'inscrit dans l'axe « choc de salaires » du programme d'Attal, qui promet aussi un treizième mois pour les classes moyennes — deux engagements coûteux à financer simultanément.",
+    "texte": "Selon les éléments publiés par Attal Président 2027, cette mesure fait partie d'un ensemble présenté comme un « choc de salaires », qui inclut aussi la promesse d'un treizième mois pour les classes moyennes. L'objectif chiffré mis en avant est un gain net d'environ 250 euros par mois pour un salarié au salaire médian (2 200 euros). Le programme ne détaille pas, à ce stade, comment ces différents engagements coûteux — baisse de cotisations, treizième mois — s'articulent entre eux dans une même enveloppe budgétaire, ce qui alimente le critère Alignement & logique globale ci-dessous."
+  },
+  "contexte_national": {
+    "synthese": "En France, un salarié touche aujourd'hui 52,8 % du coût total payé par son employeur, contre 68 % en moyenne dans l'OCDE : l'écart que la mesure veut réduire est réel et documenté.",
+    "texte": "Selon l'OCDE (rapport Les impôts sur les salaires, édition 2025), le « coin socio-fiscal » — la part du coût total du travail absorbée par les impôts et cotisations avant que le salarié ne touche son net — s'élève à 47,2 % en France pour un salarié célibataire au salaire moyen, contre 32 % en moyenne dans les pays de l'OCDE. Autrement dit, le salarié français perçoit net 52,8 % de ce que paie son employeur, contre 68 % en moyenne ailleurs. Les cotisations sociales (part salariale et part employeur confondues) ont rapporté 554,4 milliards d'euros en 2024, soit 55,6 % du financement de la protection sociale, selon la DREES. Ce financement s'inscrit dans un système dit « assurantiel », où cotiser ouvre des droits (retraite, maladie, chômage) en contrepartie — une baisse de cotisations pose donc aussi la question du maintien de ces droits si elle n'est pas intégralement compensée."
+  },
+  "contexte_international": {
+    "synthese": "Ramener le coin socio-fiscal français au niveau de la moyenne OCDE correspondrait, à peu de chose près, à l'objectif de 60 à 70 % affiché par la mesure.",
+    "texte": "Le classement de l'OCDE place la France parmi les pays où la fiscalité du travail est la plus lourde, loin devant la moyenne des pays comparables. Rapprocher la France de la moyenne OCDE (32 % de coin socio-fiscal, soit 68 % de net) correspondrait, à peu de chose près, à l'objectif de 60 à 70 % affiché par la mesure. Cette comparaison ne dit toutefois rien de la faisabilité budgétaire d'un tel rapprochement pour la France, dont le système de protection sociale, plus généreux et plus assurantiel que la moyenne des pays de l'OCDE, explique en partie ce niveau de prélèvement plus élevé — la transposition d'un niveau moyen international ne garantit donc pas qu'il soit atteignable au même coût en France."
+  },
+  "impact_environnement": null,
+  "analyse_par_criteres": "Sur l'opérationnalité, seule la mise en œuvre juridique et administrative de la mesure est solide : baisser des cotisations passe par la loi de financement de la Sécurité sociale, un véhicule ordinaire déjà utilisé de nombreuses fois, et l'Urssaf sait déjà gérer ce type de dispositif. Mais le financement annoncé, par de simples économies de dépenses publiques, ne repose sur aucune méthode de calcul vérifiable, et l'écart à combler — de l'ordre de plusieurs dizaines à une centaine de milliards d'euros selon une estimation d'ordre de grandeur — dépasse largement les économies identifiées par les acteurs qui suivent la dépense publique, ce qui plafonne fortement la note globale de ce critère. Sur l'efficacité, le lien entre baisse de cotisations et hausse du salaire net n'est direct et automatique que pour la part payée par le salarié ; pour la part employeur, qui représente l'essentiel de la somme en jeu, l'expérience du CICE montre que les baisses de charges se traduisent surtout par de meilleures marges ou de l'emploi, et seulement partiellement par des hausses de salaire. Sur les effets de bord, le principal risque est budgétaire : si les économies promises ne se matérialisent pas intégralement, la mesure aggraverait le déficit de la Sécurité sociale, déjà annoncé à 24,5 milliards d'euros pour 2026. Enfin, le degré de préparation reste faible : aucun chiffrage global n'est publié, et l'articulation avec les autres promesses coûteuses du même programme, comme le treizième mois, n'est pas précisée.",
+  "analyse_longevites": {
+    "synthese": "À court terme, la mesure dépend d'un financement qui n'existe pas encore ; à moyen terme, son effet réel sur le salaire net dépendra de la part effectivement reversée par les employeurs.",
+    "texte": "Court terme (0-2 ans) : une baisse de cotisations peut être votée rapidement dans une loi de financement de la Sécurité sociale annuelle, mais sa mise en œuvre concrète dépend de la disponibilité effective des économies promises, qui ne sont pas documentées à ce stade. Moyen terme (2-7 ans) : si la baisse de cotisations employeur est maintenue dans la durée, une partie plus importante pourrait se répercuter sur les salaires, les entreprises ajustant progressivement leur politique salariale — c'est ce que suggèrent certaines évaluations du CICE sur des périodes longues. Long terme (plus de 7 ans) : si le financement par économies n'est pas trouvé, la mesure pourrait peser durablement sur le déficit de la Sécurité sociale et sur la trajectoire de la dette sociale, sauf réforme structurelle des dépenses concernées."
+  },
+  "impact_temporel_et_sectoriel": {
+    "synthese": "Un effet positif sur le pouvoir d'achat et la consommation des ménages est plausible si la mesure est financée, mais aucun effet n'est documenté sur la stabilité bancaire.",
+    "texte": "Pouvoir d'achat et inflation : une hausse du salaire net, si elle se concrétise, améliorerait le pouvoir d'achat des ménages concernés sans effet inflationniste direct documenté, sauf si la baisse de cotisations n'était pas financée et alimentait le déficit public de façon non maîtrisée. Consommation des ménages : un gain net de l'ordre de 250 euros par mois pour un salarié au salaire médian, si atteint, aurait un effet positif sur la consommation, en particulier pour les classes moyennes visées par la mesure. Confiance et stabilité du secteur bancaire : aucun effet documenté n'est identifié, la mesure relevant d'un ajustement redistributif entre cotisations et salaires plutôt que d'un choc monétaire ou financier."
+  },
+  "ce_qui_est_etabli": {
+    "synthese": "Le coin socio-fiscal français (47,2 %) est nettement supérieur à la moyenne OCDE (32 %), et les cotisations sociales pèsent 554,4 milliards d'euros par an.",
+    "texte": "Selon l'OCDE, un salarié français célibataire au salaire moyen touche net 52,8 % de ce que paie son employeur, contre 68 % en moyenne dans les pays de l'OCDE (rapport Les impôts sur les salaires, 2025). Les cotisations sociales, part employeur et salarié confondues, ont rapporté 554,4 milliards d'euros en 2024 et financent 55,6 % de la protection sociale française, selon la DREES. Le déficit de la Sécurité sociale est annoncé à 24,5 milliards d'euros pour 2026 dans le projet de loi de financement de la Sécurité sociale."
+  },
+  "ce_qui_est_probable": {
+    "synthese": "Une partie seulement de la baisse de cotisations employeur se traduirait par une hausse de salaire net, le reste allant probablement aux marges des entreprises.",
+    "texte": "L'évaluation du Crédit d'impôt pour la compétitivité et l'emploi (CICE), un dispositif comparable qui a réduit le coût du travail pour les entreprises, a montré par France Stratégie que seule une partie de la baisse de charges se répercute sur les salaires, en particulier dans l'industrie exposée à la concurrence internationale, où les entreprises ont plutôt reconstitué leurs marges. Il est donc probable qu'une partie significative de la baisse de cotisations côté employeur, si elle est mise en œuvre, ne se traduise pas intégralement par une hausse du salaire net des employés, contrairement à l'objectif affiché."
+  },
+  "ce_qui_est_discutable": {
+    "synthese": "Rien ne garantit que des économies de dépenses publiques d'une ampleur suffisante puissent réellement être trouvées pour financer cette baisse de cotisations.",
+    "texte": "La capacité à financer une mesure de cette ampleur par de simples économies de dépenses publiques est discutable : les dépenses sociales représentent déjà 954 milliards d'euros et ont continué à augmenter en 2024, notamment sous l'effet des dépenses de santé (+11,5 milliards d'euros sur l'année), ce qui absorbe déjà les économies ponctuelles identifiées par ailleurs (par exemple sur les aides à l'énergie, 11,5 milliards d'euros économisés mais totalement compensés par ailleurs). Rien dans les documents disponibles n'indique où seraient trouvées des économies d'une ampleur suffisante pour financer une baisse de cotisations de plusieurs dizaines, voire de plus d'une centaine de milliards d'euros."
+  },
+  "ce_qui_est_inconnu": {
+    "synthese": "Ni la répartition entre baisse de cotisations employeur et salarié, ni le coût total de la mesure, ni le détail des économies envisagées ne sont précisés.",
+    "texte": "La proposition ne précise pas si la baisse de cotisations porterait davantage sur la part employeur ou sur la part salarié — un choix pourtant déterminant pour l'efficacité réelle de la mesure. Le coût budgétaire global de la mesure n'est chiffré nulle part dans les documents disponibles, pas plus que le détail des « économies sur le modèle social » évoquées. Sources insuffisantes pour trancher ici sur ces points précis."
+  },
+  "angles_morts": {
+    "synthese": "Le principal angle mort est le risque, documenté, que la baisse de cotisations ne soit pas intégralement financée et vienne directement aggraver le déficit de la Sécurité sociale.",
+    "texte": "Si les économies promises ne se matérialisent que partiellement, la baisse de cotisations viendrait mécaniquement aggraver le déficit de la Sécurité sociale, déjà annoncé à 24,5 milliards d'euros pour 2026 selon le projet de loi de financement — un risque non chiffré ni évoqué dans les documents disponibles. La mesure touche aussi à la logique dite « assurantielle » du système français, où cotiser ouvre des droits (retraite, maladie, chômage) : une baisse de cotisations non compensée pourrait, à terme, fragiliser le financement de ces droits si elle n'était pas accompagnée d'une réforme de leur financement. Enfin, l'articulation avec les autres promesses coûteuses du même programme, notamment le treizième mois pour les classes moyennes, n'est mentionnée nulle part, ce qui laisse ouverte la question de la priorité budgétaire donnée à chacune."
+  },
+  "notation_detaillee": {
+    "operationnalite_juridique": 9,
+    "qualification_juridique": "SOLIDE",
+    "operationnalite_budgetaire": 1,
+    "qualification_budgetaire": "FRAGILE",
+    "operationnalite_moyens_humains": 8,
+    "qualification_moyens_humains": "SOLIDE",
+    "operationnalite_moyens_total": 10,
+    "plafond_applique": true,
+    "plafond_declencheur": "budgetaire",
+    "efficacite": 14,
+    "qualification_efficacite": "INCERTAIN",
+    "effets_rebonds_externalites": 5,
+    "qualification_effets_rebonds": "FRAGILE",
+    "degre_preparation": 1,
+    "qualification_preparation": "FRAGILE",
+    "alignement_logique": 5,
+    "qualification_alignement": "INCERTAIN",
+    "score_total": 35,
+    "appreciation": "fragile"
+  },
+  "verdict_final": "La mesure part d'un constat solidement établi : un salarié français touche aujourd'hui à peine plus de la moitié de ce que paie son employeur, contre les deux tiers en moyenne dans les pays comparables. Techniquement, réduire les cotisations sociales est une opération juridique et administrative bien maîtrisée, qui ne pose pas de difficulté particulière. Mais le financement annoncé, par de simples économies de dépenses publiques, ne repose sur aucun chiffrage vérifiable, alors que l'ampleur de la baisse nécessaire dépasse largement les marges d'économies identifiées à ce jour. Une partie de la baisse, si elle porte sur les cotisations employeur, risque en outre de profiter aux marges des entreprises plutôt qu'aux salaires, comme l'a montré l'expérience du CICE. Faute de financement documenté, la mesure est aussi jugée risquée pour le déficit de la Sécurité sociale.",
+  "sources_utilisees": [
+    "Attal Président 2027, \"Dans Le Télégramme : Gabriel Attal veut un choc de salaires et instaurer le droit au brut\", attalpresident.fr",
+    "OCDE, Les impôts sur les salaires 2025 (coin socio-fiscal France, salarié moyen célibataire, 2024)",
+    "DREES, La protection sociale en France et en Europe en 2024, Panoramas de la Drees, édition 2025, fiche 4 \"Le financement de la protection sociale en 2024\"",
+    "Fondation IFRAP, \"2024 : les dépenses sociales ont atteint 954 milliards\"",
+    "France Stratégie, évaluation des effets du CICE sur l'emploi et les salaires (synthèse reprise par Les clés du social)",
+    "Projet de loi de financement de la Sécurité sociale pour 2026 (déficit officiel de la Sécurité sociale)"
+  ],
+  "niveau_de_confiance": "Moyen. Le contexte chiffré (coin socio-fiscal, montant des cotisations, dépenses sociales) est bien documenté par des sources officielles convergentes. En revanche, aucun chiffrage propre à cette mesure n'a été publié par le candidat, ce qui oblige à raisonner par ordre de grandeur pour évaluer sa faisabilité budgétaire, avec les limites que cela implique.",
+  "limites": {
+    "synthese": "Le chiffrage budgétaire de cette fiche repose sur une estimation d'ordre de grandeur faite par l'analyste, faute de données chiffrées publiées par le candidat.",
+    "texte": "En l'absence de chiffrage publié par le candidat, l'ordre de grandeur du financement nécessaire (plusieurs dizaines à une centaine de milliards d'euros pour combler l'écart affiché) a été estimé par extrapolation à partir du coin socio-fiscal (47,2 %) et du montant total des cotisations sociales (554,4 milliards d'euros). Cette estimation reste approximative et devra être affinée si un chiffrage officiel est publié par le candidat. Par ailleurs, le document de référence des objectifs pour le domaine « Fiscalité et pouvoir d'achat » porte surtout sur la progressivité et la neutralité du système fiscal pris dans son ensemble (grille de la Mirrlees Review) : il n'aborde pas directement la question du partage entre coût du travail et salaire net, qui est l'angle propre de cette mesure. L'analyse s'appuie donc surtout sur des données internationales et sectorielles spécifiques (OCDE, DREES, CICE) plutôt que sur ce document de référence."
+  },
+  "resume_court": "Gabriel Attal veut qu'un salarié touche au moins 60 à 70 % de ce que paie son employeur, contre un peu plus de la moitié aujourd'hui, en baissant les cotisations sociales. Le constat de départ est solide : la France a l'un des écarts les plus élevés d'Europe entre coût du travail et salaire net. Mais la mesure ne dit pas comment cette baisse serait financée, au-delà d'une vague promesse d'économies sur le modèle social. Or l'écart à combler représente, par ordre de grandeur, plusieurs dizaines de milliards d'euros, largement au-delà des économies identifiées à ce jour dans les dépenses sociales. Une partie de la baisse pourrait aussi profiter aux marges des entreprises plutôt qu'aux salaires, comme l'a montré l'expérience du CICE. Sans financement documenté, le risque principal est un creusement du déficit de la Sécurité sociale.",
+  "phrase_teasing": "Un objectif chiffré et un constat bien réel sur l'écart entre salaire net et coût du travail en France. Mais qui va payer la facture ?"
+}
