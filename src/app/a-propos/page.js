@@ -140,12 +140,12 @@ export default function AProposPage() {
         </div>
 
         <div className="relative mx-auto w-full max-w-3xl px-6 pb-4 pt-14 text-center sm:px-8 sm:pt-20">
-          {/* text-4xl/sm:text-5xl était trop petit : mesuré sur la maquette
-              440, le "C" de "Construire" fait ~66px de capitale pour un
-              rendu ~1535px de large, soit un corps ~90-100px — même
-              correction que le titre héros de l'accueil (HeroText,
-              maquette 429) et celui de la page Thèmes (maquette 450). */}
-          <h1 className="font-sans text-[clamp(2.25rem,1.1rem+5.2vw,6rem)] font-bold leading-tight tracking-tight text-zinc-900">
+          {/* Calé à l'origine sur la maquette 440 (~90-100px de corps,
+              comme HeroText/Thèmes), puis réduit de 30% à la demande
+              explicite pour ce titre précis — les trois valeurs du clamp()
+              sont donc chacune 70% de leur valeur mesurée sur la maquette,
+              pas une nouvelle mesure. */}
+          <h1 className="font-sans text-[clamp(1.575rem,0.77rem+3.64vw,4.2rem)] font-bold leading-tight tracking-tight text-zinc-900">
             Construire pour la démocratie
             <span className="text-indigo-400">.</span>
           </h1>
