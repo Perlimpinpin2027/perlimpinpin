@@ -127,7 +127,7 @@ export async function getFeaturedRotation() {
 export async function getTopDeclarations(limit = 3) {
   const analyses = await prisma.analyse.findMany({
     where: { statut: "publie" },
-    orderBy: { createdAt: "desc" },
+    orderBy: { proposition: { dateDeclaration: "desc" } },
     take: limit,
     include: {
       proposition: { include: { candidat: true } },
