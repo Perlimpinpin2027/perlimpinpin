@@ -178,7 +178,7 @@ export async function getPublishedDeclarations({ candidat, theme, sort } = {}) {
         ? [{ scoreFaisabilite: "desc" }]
         : [{ createdAt: "desc" }];
 
-  const [analyses, allPublished] = await Promise.all([
+  const [analyses, allPublished, rankRows] = await Promise.all([
     prisma.analyse.findMany({
       where: {
         statut: "publie",
@@ -194,7 +194,23 @@ export async function getPublishedDeclarations({ candidat, theme, sort } = {}) {
       where: { statut: "publie" },
       include: { proposition: { include: { candidat: true } } },
     }),
+    // Rang chronologique global (1 = analyse publiée la plus ancienne),
+    // pour l'étiquette "ANALYSE_XXX" des cartes — l'id brut ne peut plus
+    // servir de numéro depuis la suppression des 20 premières analyses
+    // (la série recommençait à 021 au lieu de 001). Calculé par Postgres via
+    // ROW_NUMBER(), jamais en chargeant toutes les lignes pour les compter
+    // côté JS, et indépendant du filtre/tri courant de la page (le rang
+    // d'une analyse ne doit pas changer selon la vue affichée) — sur
+    // createdAt, pas sur dateDeclaration (date de la déclaration du
+    // candidat, sans rapport avec l'ordre de publication de nos analyses).
+    prisma.$queryRaw`
+      SELECT id, ROW_NUMBER() OVER (ORDER BY "createdAt" ASC) AS rang
+      FROM "Analyse"
+      WHERE statut = 'publie'
+    `,
   ]);
+
+  const rankById = new Map(rankRows.map((row) => [Number(row.id), Number(row.rang)]));
 
   const candidats = [
     ...new Map(
@@ -212,6 +228,7 @@ export async function getPublishedDeclarations({ candidat, theme, sort } = {}) {
   const declarations = analyses.map((analyse) => ({
     id: analyse.proposition.id,
     analyseId: analyse.id,
+    rang: rankById.get(analyse.id),
     titre: displayTitle(analyse.proposition),
     candidatNom: analyse.proposition.candidat.nom,
     candidatParti: analyse.proposition.candidat.parti,

@@ -124,7 +124,7 @@ export default async function DeclarationsPage({ searchParams }) {
                         </div>
                       </div>
                       <MonoTag className="shrink-0">
-                        {`ANALYSE_${String(d.analyseId).padStart(3, "0")}`}
+                        {`ANALYSE_${String(d.rang).padStart(3, "0")}`}
                       </MonoTag>
                     </div>
 
