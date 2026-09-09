@@ -4,7 +4,7 @@ const features = [
   {
     title: "Analyses générées par l'IA",
     description:
-      "Chaque mesure est analysée selon une méthodologie commune et évolutive : Perlimpinpin v1.0 — Tagadaaa.",
+      "Une méthodologie commune et évolutive, appliquée à chaque mesure.",
     icon: (
       <path
         strokeLinecap="round"
@@ -14,9 +14,8 @@ const features = [
     ),
   },
   {
-    title: "Méthodologie construite avec des experts",
-    description:
-      "Experts, économistes et journalistes contribuent à construire et améliorer le cadre d'analyse.",
+    title: "Méthodologie avec des experts",
+    description: "Construite avec économistes, experts et journalistes.",
     icon: (
       <path
         strokeLinecap="round"
@@ -27,8 +26,7 @@ const features = [
   },
   {
     title: "Sources publiques et documentées",
-    description:
-      "Les analyses s'appuient sur des données institutionnelles, rapports publics et sources de référence.",
+    description: "Données institutionnelles et sources de référence.",
     icon: (
       <path
         strokeLinecap="round"
@@ -80,7 +78,14 @@ export default function HeroText() {
 
       <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-3">
         {features.map((feature, index) => (
-          <div key={feature.title} className="flex flex-col gap-3">
+          <div
+            key={feature.title}
+            className={
+              index !== 0
+                ? "flex flex-col gap-3 sm:border-l sm:border-zinc-200 sm:pl-6"
+                : "flex flex-col gap-3"
+            }
+          >
             <div className="flex items-center gap-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
