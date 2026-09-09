@@ -2,8 +2,9 @@ import MonoTag from "./MonoTag";
 
 const features = [
   {
-    title: "Analyses assistées par l'IA",
-    description: "Pour traiter plus de données, plus vite.",
+    title: "Analyses générées par l'IA",
+    description:
+      "Chaque mesure est analysée selon une méthodologie commune et évolutive : Perlimpinpin v1.0 — Tagadaaa.",
     icon: (
       <path
         strokeLinecap="round"
@@ -13,8 +14,9 @@ const features = [
     ),
   },
   {
-    title: "Experts et journalistes",
-    description: "Des analyses relues et contextualisées.",
+    title: "Méthodologie construite avec des experts",
+    description:
+      "Experts, économistes et journalistes contribuent à construire et améliorer le cadre d'analyse.",
     icon: (
       <path
         strokeLinecap="round"
@@ -24,8 +26,9 @@ const features = [
     ),
   },
   {
-    title: "Sources publiques",
-    description: "Toutes nos informations sont vérifiées.",
+    title: "Sources publiques et documentées",
+    description:
+      "Les analyses s'appuient sur des données institutionnelles, rapports publics et sources de référence.",
     icon: (
       <path
         strokeLinecap="round"
