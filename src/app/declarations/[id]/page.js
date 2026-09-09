@@ -90,6 +90,15 @@ const ICON_SHIELD = (
     d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z"
   />
 );
+// Check-circle pour le titre "Verdict final" — distinct d'ICON_SHIELD (déjà
+// utilisé pour "Niveau de confiance" dans FiabiliteSection, plus bas sur la
+// page) pour ne pas dupliquer la même icône sur deux titres différents.
+const ICON_CHECK_CIRCLE = (
+  <>
+    <circle cx="12" cy="12" r="8.25" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 12.25 10.75 14.75 15.75 9.5" />
+  </>
+);
 const ICON_WARNING = (
   <path
     strokeLinecap="round"
@@ -294,11 +303,26 @@ function TeaserParagraphs({ text }) {
 // des fiches produites avant son introduction : aucune fiche existante ne
 // doit casser tant qu'elle ne le fournit pas (voir data/prompt-
 // methodologie.md, section "Verdict conclusion").
+//
+// Étiquettes "Ce qui tient" / "Ce qui reste flou" : uniquement quand le
+// verdict compte EXACTEMENT 2 paragraphes (constat positif puis réserves —
+// voir la demande d'origine). Vérifié sur les 14 fiches publiées au moment
+// de cette demande : 12 n'ont encore qu'un seul paragraphe (verdicts
+// antérieurs à la consigne de mise en paragraphes de data/prompt-
+// methodologie.md) et 1 en a 3 — dans tous les cas hors "exactement 2", le
+// texte s'affiche simplement, sans étiquette forcée ni troisième label
+// inventé.
+const VERDICT_LABELS = [
+  { text: "Ce qui tient", dotClass: "bg-emerald-500", textClass: "text-emerald-700" },
+  { text: "Ce qui reste flou", dotClass: "bg-amber-500", textClass: "text-amber-700" },
+];
+
 function VerdictBody({ verdict, conclusion }) {
   const paragraphs = Array.isArray(verdict)
     ? verdict.map((item) => (typeof item === "string" ? item.trim() : "")).filter(Boolean)
     : splitIntoParagraphs(verdict);
   const hasConclusion = typeof conclusion === "string" && conclusion.trim().length > 0;
+  const showLabels = paragraphs.length === 2;
 
   if (paragraphs.length === 0 && !hasConclusion) {
     return <p className="text-zinc-400">Non renseigné.</p>;
@@ -308,11 +332,24 @@ function VerdictBody({ verdict, conclusion }) {
     <>
       <div className="flex flex-col gap-4">
         {paragraphs.map((paragraph, index) => (
-          <p key={index}>{renderRichText(attacherPetitsMots(paragraph))}</p>
+          <div key={index}>
+            {showLabels ? (
+              <span
+                className={`mb-1.5 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest ${VERDICT_LABELS[index].textClass}`}
+              >
+                <span
+                  className={`h-1.5 w-1.5 rounded-full ${VERDICT_LABELS[index].dotClass}`}
+                  aria-hidden="true"
+                />
+                {VERDICT_LABELS[index].text}
+              </span>
+            ) : null}
+            <p>{renderRichText(attacherPetitsMots(paragraph))}</p>
+          </div>
         ))}
       </div>
       {hasConclusion ? (
-        <p className="mt-6 border-t border-[#D8DEE8] pt-5 font-semibold text-zinc-900 sm:mt-8">
+        <p className="mt-4 border-t border-zinc-100 pt-4 font-semibold text-zinc-900">
           {renderRichText(attacherPetitsMots(conclusion.trim()))}
         </p>
       ) : null}
@@ -1104,20 +1141,33 @@ export default async function DeclarationDetailPage({ params }) {
                 </>
               ) : null}
 
-              {/* Verdict final : conclusion principale de toute l'analyse —
-                  fond quasi blanc à peine teinté + bordure fine plutôt que
-                  le "verre dépoli" utilisé ailleurs sur la page, pour rester
-                  très lumineux et éditorial (voir la demande d'origine).
-                  Padding et taille de texte nettement au-dessus du Section
-                  générique, à la mesure de l'importance de ce bloc. */}
+              {/* Verdict final : même carte que les autres sections (Section
+                  générique, voir plus haut) plutôt que le traitement "fond
+                  clair + gros texte" d'une tentative précédente, jugé
+                  incohérent avec le reste de la page (voir la demande
+                  d'origine). Icône dans le titre comme "Le résumé de
+                  Perlimpinpin IA"/"Extrait analysé" plus haut, à l'échelle
+                  text-lg du Section générique plutôt que leur petite
+                  eyebrow uppercase. */}
               <section
                 id="verdict"
-                className="scroll-mt-24 rounded-3xl border border-[#D8DEE8] bg-[#F7F9FC] p-6 sm:p-10 lg:p-16"
+                className="scroll-mt-24 rounded-2xl border border-zinc-200 bg-white p-6"
               >
-                <h2 className="font-sans text-2xl font-bold leading-tight tracking-tight text-zinc-900 sm:text-3xl lg:text-[32px]">
+                <h2 className="flex items-center gap-2 text-lg font-bold text-zinc-900">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={1.5}
+                    className="h-5 w-5 shrink-0 text-emerald-600"
+                    aria-hidden="true"
+                  >
+                    {ICON_CHECK_CIRCLE}
+                  </svg>
                   Verdict final
                 </h2>
-                <div className="mt-6 max-w-[1100px] text-[17px] leading-[1.7] text-zinc-800 sm:mt-8 sm:text-lg lg:text-xl">
+                <div className="mt-3 max-w-[68ch] text-sm leading-7 text-zinc-600">
                   <VerdictBody verdict={contenu.verdict_final} conclusion={contenu.verdict_conclusion} />
                 </div>
               </section>
