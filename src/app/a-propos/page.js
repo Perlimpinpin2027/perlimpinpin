@@ -127,7 +127,7 @@ export default function AProposPage() {
           simple coupure nette de couleur. */}
       <div className="relative w-full overflow-hidden">
         <div
-          className="pointer-events-none absolute inset-x-0 top-0 h-[260px] sm:h-[300px]"
+          className="pointer-events-none absolute inset-x-0 top-0 hidden h-[300px] md:block"
           aria-hidden="true"
           style={{
             maskImage: "linear-gradient(to bottom, black, transparent)",
@@ -154,7 +154,7 @@ export default function AProposPage() {
           </svg>
         </div>
 
-        <div className="relative mx-auto w-full max-w-3xl px-6 pb-4 pt-14 text-center sm:px-8 sm:pt-20">
+        <div className="relative mx-auto w-full max-w-3xl px-6 pb-4 pt-10 text-center sm:px-8 md:pt-20">
           {/* Calé à l'origine sur la maquette 440 (~90-100px de corps,
               comme HeroText/Thèmes), puis réduit de 30% à la demande
               explicite pour ce titre précis — les trois valeurs du clamp()
