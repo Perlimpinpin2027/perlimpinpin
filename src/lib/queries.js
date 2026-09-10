@@ -178,7 +178,7 @@ export async function getPublishedDeclarations({ candidat, theme, sort } = {}) {
         ? [{ scoreFaisabilite: "desc" }]
         : [{ createdAt: "desc" }];
 
-  const [analyses, allPublished, rankRows] = await Promise.all([
+  const [analyses, allPublished, rankRows, allCandidats] = await Promise.all([
     prisma.analyse.findMany({
       where: {
         statut: "publie",
@@ -208,18 +208,17 @@ export async function getPublishedDeclarations({ candidat, theme, sort } = {}) {
       FROM "Analyse"
       WHERE statut = 'publie'
     `,
+    // Tous les candidats existants, pas seulement ceux ayant déjà une
+    // déclaration publiée : un candidat sans déclaration doit rester
+    // sélectionnable dans le filtre (il affichera juste "aucune déclaration
+    // ne correspond"), sinon le pill actif disparaît silencieusement quand
+    // on arrive sur /declarations?candidat=... depuis sa fiche.
+    prisma.candidat.findMany({ select: { nom: true, parti: true } }),
   ]);
 
   const rankById = new Map(rankRows.map((row) => [Number(row.id), Number(row.rang)]));
 
-  const candidats = [
-    ...new Map(
-      allPublished.map((a) => [
-        a.proposition.candidat.nom,
-        { nom: a.proposition.candidat.nom, parti: a.proposition.candidat.parti },
-      ]),
-    ).values(),
-  ].sort((a, b) => a.nom.localeCompare(b.nom, "fr"));
+  const candidats = [...allCandidats].sort((a, b) => a.nom.localeCompare(b.nom, "fr"));
 
   const themes = [...new Set(allPublished.map((a) => a.proposition.theme))].sort(
     (a, b) => a.localeCompare(b, "fr"),
