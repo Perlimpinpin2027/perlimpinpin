@@ -19,6 +19,8 @@ const candidatesData = [
   { nom: "Bruno Retailleau", parti: "Les Républicains" },
   { nom: "Éric Zemmour", parti: "Reconquête" },
   { nom: "Dominique de Villepin", parti: "La France humaniste" },
+  { nom: "David Lisnard", parti: "Nouvelle Énergie" },
+  { nom: "Fabien Roussel", parti: "Parti Communiste Français" },
 ];
 
 async function main() {
