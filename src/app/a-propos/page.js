@@ -186,7 +186,15 @@ export default function AProposPage() {
               >
                 Arno Fontaine
               </a>{" "}
-              et Matis Brasca
+              et{" "}
+              <a
+                href="https://www.linkedin.com/in/matisbrasca/?locale=fr"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold text-zinc-600 underline decoration-zinc-300 underline-offset-2 transition-colors hover:text-blue-700"
+              >
+                Matis Brasca
+              </a>
             </p>
 
             <div className="mt-6 flex justify-center">
