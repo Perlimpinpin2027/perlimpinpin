@@ -1,0 +1,94 @@
+{
+  "mesure_reformulee": {
+    "synthese": "Créer un « arsenal législatif » contre le mensonge en politique, inspiré du modèle gallois, sans « ministère de la vérité », mais sans mécanisme précisé.",
+    "texte": "Marine Tondelier propose de créer un « arsenal législatif solide » destiné à **sanctionner le mensonge en politique** et à protéger la qualité du débat public, en s'inspirant du **modèle gallois** (une loi de 2024 punissant les fausses déclarations des candidats), tout en récusant l'idée de créer un « ministère de la vérité ». **Aucun mécanisme précis** (autorité compétente, nature des sanctions, périmètre des personnes visées) n'est détaillé à ce stade."
+  },
+  "mesure_vers_objectif": {
+    "objectif_court": "Sanctionner le mensonge des responsables politiques",
+    "categorie_objectif": null,
+    "objectif_vise": "Restaurer la confiance dans la parole publique et améliorer la qualité du débat démocratique en dissuadant les responsables politiques de mentir.",
+    "mecanisme_propose": "Un dispositif législatif non précisé, inspiré d'une loi galloise de 2024, visant à sanctionner les fausses déclarations des responsables politiques.",
+    "lien_causal": "indirect"
+  },
+  "nature_et_existant": "Mesure de nature législative touchant à la liberté d'expression (article 11 de la Déclaration des droits de l'homme et du citoyen, DDHC), qui nécessiterait très probablement une modification du code électoral et/ou du code pénal. Ce n'est pas un terrain vierge : la France dispose déjà, depuis 2018, d'une loi relative à la lutte contre la manipulation de l'information, validée par le Conseil constitutionnel sous réserve d'un encadrement étroit (voir plus bas). Le « modèle gallois » cité par la candidate est l'Elections and Elected Bodies (Wales) Act 2024, qui prévoit des sanctions, pouvant aller jusqu'à la déchéance du mandat, pour les candidats ayant fait de fausses déclarations pendant une campagne électorale.",
+  "contexte_programme": {
+    "synthese": "Motivée notamment par le cas du sénateur Vincent Louault, dont les propos en séance seraient pourtant couverts par l'irresponsabilité parlementaire.",
+    "texte": "Cette déclaration s'inscrit dans un contexte où plusieurs responsables politiques ont récemment été pris en défaut de sincérité dans l'espace public, dont **le cas du sénateur Vincent Louault**, qui a reconnu avoir sciemment avancé une affirmation inexacte sur le pesticide acétamipride lors d'un débat au Sénat. Ce cas illustre un point que la proposition ne semble pas anticiper : **les propos tenus par un parlementaire en séance sont couverts par l'irresponsabilité parlementaire**, ce qui rendrait une telle loi **probablement incapable de sanctionner précisément le type d'épisode qui a motivé la proposition**."
+  },
+  "contexte_national": {
+    "synthese": "La loi de 2018 contre la manipulation de l'information n'a été validée qu'à condition d'un encadrement très strict ; l'irresponsabilité parlementaire protège les propos tenus en séance.",
+    "texte": "La loi du 22 décembre 2018 relative à la lutte contre la manipulation de l'information a été validée par le Conseil constitutionnel (décision n° 2018-773 DC) mais **en l'encadrant strictement** : elle ne s'applique que dans les trois mois précédant une élection, uniquement aux fausses informations diffusées de manière délibérée, artificielle ou massive via des plateformes en ligne, et le caractère inexact ou trompeur de l'information doit être **« manifeste »** — une exigence ajoutée par le Conseil constitutionnel lui-même. **Les simples opinions, exagérations ou approximations sont explicitement exclues** du champ de la loi. Par ailleurs, **l'article 26 de la Constitution instaure l'irresponsabilité parlementaire** : un député ou un sénateur ne peut être poursuivi pour les opinions ou votes qu'il émet dans l'exercice de ses fonctions, y compris en séance publique — **une protection qui ne peut pas être levée**."
+  },
+  "contexte_international": {
+    "synthese": "La loi galloise citée en modèle a bien été votée, mais vise un périmètre plus étroit et est critiquée par des juristes pour son flou et son risque d'effet dissuasif.",
+    "texte": "La loi galloise citée comme modèle a bel et bien été votée : l'**Elections and Elected Bodies (Wales) Act 2024** est un texte réel, adopté par le Senedd — une preuve concrète qu'une assemblée démocratique peut légiférer sur ce terrain. Son périmètre reste toutefois **plus étroit que « l'arsenal » évoqué par la candidate** : il vise les fausses déclarations de candidats pendant une campagne électorale, pas le mensonge politique en général. Le texte fait l'objet de critiques sérieuses : le professeur Jeremy Horder (LSE) a averti d'un **risque d'effet dissuasif sur la parole politique légitime**, et la commission d'examen du Senedd a jugé **« extraordinaires » les pouvoirs de restriction de la parole publique** que la loi confère, faute de définition claire. Enfin, la loi étant très récente, **elle n'a encore fait l'objet d'aucun test devant les tribunaux**."
+  },
+  "impact_environnement": null,
+  "analyse_par_criteres": "Opérationnalité et moyens (16/30) : la faisabilité juridique est incertaine, en bas de fourchette (4/10) : le modèle gallois cité par la candidate prouve réellement qu'un texte de ce type peut être voté par une démocratie comparable, ce qui écarte une note fragile par principe, mais ce précédent porte sur un périmètre plus étroit (les seules déclarations de candidats en campagne) que « l'arsenal » évoqué pour « le mensonge en politique » en général, et il n'a encore fait l'objet d'aucun test devant un tribunal — l'adoption d'une loi ne vaut pas preuve de sa robustesse juridique durable. Le seul précédent français comparable, la loi de 2018, n'a d'ailleurs été validée par le Conseil constitutionnel qu'au prix d'un encadrement très étroit (fausseté « manifeste », période électorale, plateformes en ligne). La faisabilité budgétaire, elle, est solide (7/10) : un dispositif de nature législative et judiciaire de ce type s'appuierait sur des structures déjà existantes (justice, autorités de régulation électorale), pour un coût mécaniquement modeste comparé aux budgets d'autorités comparables (quelques millions à quelques dizaines de millions d'euros par an, à titre d'ordre de grandeur). Les moyens humains restent incertains (5/10), le périmètre exact du dispositif n'étant pas connu. Aucune des trois sous-composantes n'étant fragile, la règle de plafond ne s'applique pas. Efficacité (8/30, fragile) : la théorie du changement est fragilisée par une tension non résolue — une version du dispositif assez étroite pour être constitutionnelle (sur le modèle de 2018) laisserait de côté l'essentiel du « mensonge en politique » ordinaire (exagérations, éléments de langage, contestations factuelles), tandis qu'une version large risquerait l'insécurité juridique et l'effet dissuasif déjà documentés au Pays de Galles. Effets rebonds et externalités (4/20, fragile) : risque concret et documenté d'instrumentalisation partisane (poursuites ciblant des adversaires politiques avant une élection) et de contournement par simple reformulation en opinion ou exagération, catégories explicitement exclues du champ d'un tel texte. Degré de préparation (1/10, fragile) : la proposition reste une déclaration d'intention sans aucun dispositif chiffré ni détaillé. Alignement et logique globale (4/10, incertain) : cohérente avec un objectif affiché de transparence démocratique, mais la candidate ne résout pas la contradiction, pourtant soulevée par elle-même, entre le rejet d'un « ministère de la vérité » et un dispositif dont la description partage les traits qui ont valu cette critique au modèle gallois.",
+  "analyse_longevites": {
+    "synthese": "Un encadrement étroit par le Conseil constitutionnel est probable à court terme ; l'effet réel sur la confiance démocratique reste très incertain à long terme.",
+    "texte": "Court terme (0-2 ans) : élaboration d'un texte de loi et **probable saisine du Conseil constitutionnel**, qui imposerait vraisemblablement un encadrement étroit du dispositif, comme en 2018. Moyen terme (2-7 ans) : mise à l'épreuve du dispositif par la jurisprudence et par des **tentatives de contournement** (reformulation des propos en opinions ou approximations). Long terme (plus de 7 ans) : **effet réel sur la confiance démocratique très incertain**, aucune évaluation robuste n'existant à ce jour, la loi galloise étant trop récente pour avoir produit des résultats mesurables."
+  },
+  "impact_temporel_et_sectoriel": {
+    "synthese": "Aucun effet économique direct identifié ; la mesure relève du champ institutionnel et démocratique.",
+    "texte": "**Aucun effet direct identifié** sur l'inflation, la consommation des ménages ou la stabilité du secteur bancaire ; la mesure relève du **champ institutionnel et démocratique** plutôt qu'économique."
+  },
+  "ce_qui_est_etabli": {
+    "synthese": "La loi de 2018 n'a été validée que sous encadrement strict ; l'irresponsabilité parlementaire protège les propos en séance ; le Pays de Galles a légiféré en 2024, mais de façon critiquée.",
+    "texte": "**La loi française de 2018 contre la manipulation de l'information** existe et a été validée sous réserve d'un encadrement strict (fausseté manifeste, période électorale, plateformes en ligne). **L'irresponsabilité parlementaire (article 26 de la Constitution) protège les propos tenus par un parlementaire** dans l'exercice de ses fonctions, y compris en séance, et **ne peut être levée**. Le Pays de Galles a adopté en 2024 une loi sanctionnant les fausses déclarations de candidats, **critiquée par des juristes et par la commission d'examen du Senedd pour son imprécision**."
+  },
+  "ce_qui_est_probable": {
+    "synthese": "Toute version constitutionnellement viable devrait reprendre une définition étroite du mensonge, réduisant fortement la portée affichée de la proposition.",
+    "texte": "Toute traduction concrète de l'« arsenal solide » évoqué par la candidate devra, pour espérer passer le contrôle de constitutionnalité, **reprendre une définition étroite du mensonge** proche de celle de 2018 ou du modèle gallois, ce qui **réduirait fortement sa portée** par rapport à l'ambition affichée. Le fait que le Pays de Galles ait réussi à faire voter un tel texte montre que ce n'est pas hors d'atteinte légalement, mais **rien n'indique à ce stade qu'il résisterait, une fois testé, à un recours devant une juridiction**."
+  },
+  "ce_qui_est_discutable": {
+    "synthese": "La loi galloise citée en modèle est elle-même contestée par des experts pour son manque de définition claire, un flou non traité par la candidate.",
+    "texte": "La loi galloise présentée comme modèle d'inspiration est elle-même **contestée par des experts en libertés publiques pour son manque de définition claire** de ce qu'est une déclaration « fausse ou trompeuse », un flou que **la candidate ne dit pas vouloir éviter** dans sa propre proposition."
+  },
+  "ce_qui_est_inconnu": {
+    "synthese": "Le mécanisme précis envisagé (autorité compétente, nature des sanctions, périmètre visé) n'est pas connu à ce stade.",
+    "texte": "**Le mécanisme précis envisagé** (autorité compétente, nature pénale ou civile des sanctions, périmètre des personnes et propos visés) n'est pas connu à ce stade, ce qui **limite la précision de l'évaluation** juridique et budgétaire."
+  },
+  "angles_morts": {
+    "synthese": "Le cas qui semble avoir motivé la proposition serait, par construction, hors de portée d'une telle loi à cause de l'irresponsabilité parlementaire.",
+    "texte": "Le cas qui semble avoir motivé la proposition — les propos inexacts assumés du sénateur Vincent Louault sur l'acétamipride lors d'un débat au Sénat — est précisément un cas que **l'irresponsabilité parlementaire rendrait très difficile à sanctionner** par une telle loi, la parole tenue en séance étant protégée par la Constitution. Ce paradoxe n'est pas abordé par la candidate. **Sources insuffisantes pour trancher ici** sur le mécanisme précis qu'elle envisage réellement."
+  },
+  "notation_detaillee": {
+    "operationnalite_juridique": 4,
+    "qualification_juridique": "INCERTAIN",
+    "operationnalite_budgetaire": 7,
+    "qualification_budgetaire": "SOLIDE",
+    "operationnalite_moyens_humains": 5,
+    "qualification_moyens_humains": "INCERTAIN",
+    "operationnalite_moyens_total": 16,
+    "plafond_applique": false,
+    "plafond_declencheur": null,
+    "efficacite": 8,
+    "qualification_efficacite": "FRAGILE",
+    "effets_rebonds_externalites": 4,
+    "qualification_effets_rebonds": "FRAGILE",
+    "degre_preparation": 1,
+    "qualification_preparation": "FRAGILE",
+    "alignement_logique": 4,
+    "qualification_alignement": "INCERTAIN",
+    "score_total": 33,
+    "appreciation": "fragile"
+  },
+  "verdict_final": "La proposition de Marine Tondelier reste, à ce stade, une déclaration d'intention sans dispositif défini : ni mécanisme, ni sanction, ni périmètre précisés. Le modèle gallois qu'elle cite en référence est un vrai précédent : une loi de ce type a réellement été votée, ce qui prouve que l'idée n'est pas hors d'atteinte juridiquement. Mais ce texte vise un périmètre plus étroit (les candidats en campagne) que « le mensonge en politique » en général, il est critiqué pour son imprécision par des juristes et par le Parlement gallois lui-même, et il n'a encore été testé par aucun tribunal. Le seul précédent français comparable, la loi de 2018 contre la manipulation de l'information, n'a d'ailleurs été validée par le Conseil constitutionnel qu'au prix d'un encadrement très strict. Enfin, le cas qui semble avoir inspiré la proposition — les propos inexacts d'un sénateur tenus en séance — relève de l'irresponsabilité parlementaire, une protection constitutionnelle qu'un tel texte ne pourrait pas lever. La mesure repose donc sur une tension non résolue entre l'ambition affichée et ce qu'un texte réellement viable pourrait couvrir, sans qu'aucun début de dossier ne permette de trancher laquelle des deux options la candidate privilégierait.",
+  "sources_utilisees": [
+    "Conseil constitutionnel, décision n° 2018-773 DC du 20 décembre 2018, loi relative à la lutte contre la manipulation de l'information",
+    "Sénat, note de synthèse sur la loi relative à la lutte contre la manipulation de l'information (2018)",
+    "Conseil constitutionnel, « Quel est le statut pénal d'un parlementaire ? » (irresponsabilité parlementaire, article 26 de la Constitution)",
+    "Elections and Elected Bodies (Wales) Act 2024, legislation.gov.uk",
+    "Article de presse relatant les critiques du professeur Jeremy Horder (LSE) et de la commission d'examen législatif du Senedd sur la loi galloise",
+    "France 3 Centre-Val de Loire / Franceinfo, réactions politiques après la déclaration inexacte assumée du sénateur Vincent Louault sur l'acétamipride",
+    "LCP.fr, déclarations de Marine Tondelier sur un « arsenal législatif » contre le mensonge en politique"
+  ],
+  "niveau_de_confiance": "Moyen sur le cadre juridique (le précédent de 2018 et l'irresponsabilité parlementaire sont bien établis), mais faible sur l'évaluation d'une mesure dont aucun mécanisme concret n'a été précisé par la candidate — l'essentiel de l'analyse porte donc sur ce qu'impliquerait nécessairement toute version constitutionnellement viable du projet, plutôt que sur un texte réellement défini.",
+  "limites": {
+    "synthese": "Aucune des 12 catégories d'objectifs ne couvre la qualité du débat démocratique, d'où une categorie_objectif à null ; le texte exact de la loi galloise n'a pas pu être vérifié en détail.",
+    "texte": "**Aucune des 12 catégories fermées** de la grille d'objectifs de politique publique du projet ne couvre correctement un objectif de qualité du débat démocratique et de liberté d'expression : la catégorie a donc été **fixée à null, conformément à la règle de repli de la méthodologie**, et l'efficacité a été jugée à partir de principes généraux plutôt que d'un objectif de référence légal dédié. **Le texte exact du modèle gallois n'a pas pu être vérifié dans son détail juridique précis** ; l'analyse s'appuie sur des sources secondaires convergentes plutôt que sur le texte de loi lui-même."
+  },
+  "resume_court": "Marine Tondelier veut un « arsenal législatif solide » contre le mensonge en politique, inspiré du Pays de Galles, sans vouloir de « ministère de la vérité ». Le modèle gallois est un vrai précédent : la loi a bien été votée, ce qui montre que l'idée est légalement possible. Mais ce texte vise un périmètre plus étroit (les candidats en campagne) que « le mensonge en politique » en général, il est critiqué par des juristes pour son flou et son risque de museler la parole politique légitime, et il n'a jamais été testé devant un tribunal. La France a d'ailleurs déjà tenté une loi comparable en 2018, que le Conseil constitutionnel n'a validée qu'à condition de la limiter très strictement. Et le cas qui semble avoir inspiré l'idée, celui d'un sénateur ayant reconnu avoir menti en séance, est justement protégé par l'irresponsabilité parlementaire, que la loi ne pourrait pas lever. Sans dispositif précis à ce stade, la proposition reste une intention plus qu'un projet de loi.",
+  "phrase_teasing": "Le modèle gallois que Tondelier cite en exemple a bien été voté — mais le cas qui semble l'avoir inspirée serait, par construction, hors de portée d'une telle loi."
+}

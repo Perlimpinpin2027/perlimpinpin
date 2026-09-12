@@ -69,10 +69,20 @@ Produire explicitement :
   "Éducation" | "Énergie et climat" | "Logement" | "Alimentation et
   agriculture" | "Fiscalité et pouvoir d'achat" | "Dette et finances
   publiques" | "Immigration" | "Sécurité et justice" | "Numérique et
-  intelligence artificielle". Choisir la catégorie la plus proche même si
-  elle ne correspond pas exactement au thème exact de la mesure ; ne jamais
-  en inventer une nouvelle. Si aucune catégorie ne convient raisonnablement,
-  indiquer null et le signaler dans `limites`.
+  intelligence artificielle" | "Démocratie et institutions".
+  Cette treizième catégorie couvre les mesures qui modifient le
+  fonctionnement des institutions elles-mêmes (mode de scrutin, statut et
+  immunité des élus, financement et régulation de la vie politique,
+  référendum, séparation des pouvoirs, transparence de la vie publique,
+  régulation du débat démocratique) — son objectif de référence (Constitution
+  du 4 octobre 1958, art. 3 et 4 ; DDHC 1789, art. 6, 11 et 16 ; Conseil
+  constitutionnel, décision n° 86-217 DC du 18 septembre 1986 sur le
+  pluralisme des courants d'expression socioculturels) est documenté en
+  section 3.10 de `data/objectifs-de-reference.md`.
+  Choisir la catégorie la plus proche même si elle ne correspond pas
+  exactement au thème exact de la mesure ; ne jamais en inventer une
+  nouvelle. Si aucune catégorie ne convient raisonnablement, indiquer null
+  et le signaler dans `limites`.
 - `objectif_vise` : l'objectif affiché par la mesure, reformulé simplement
   (une phrase complète, utilisée dans l'analyse du critère Efficacité).
 - `mecanisme_propose` : le levier concret utilisé pour l'atteindre.
@@ -538,7 +548,7 @@ rapport de force politique conjoncturel (une majorité parlementaire
 actuelle contraire à une mesure n'est PAS un obstacle juridique).
 
 3. **Cohérence note/texte**
-Vérifier que chacune des 5 notes (et des 3 sous-composantes d'Opérationnalité & Moyens) appartient réellement à la qualification décrite. Vérifier en particulier que `lien_causal` (dans `mesure_vers_objectif`) justifie correctement `qualification_efficacite`, et que la catégorie_objectif choisie correspond bien à une des 12 catégories de la liste fermée.
+Vérifier que chacune des 5 notes (et des 3 sous-composantes d'Opérationnalité & Moyens) appartient réellement à la qualification décrite. Vérifier en particulier que `lien_causal` (dans `mesure_vers_objectif`) justifie correctement `qualification_efficacite`, et que la catégorie_objectif choisie correspond bien à une des 13 catégories de la liste fermée.
 
 4. **Angle mort majeur**
 Signaler uniquement une omission susceptible de changer une note ou le verdict — pas un détail.

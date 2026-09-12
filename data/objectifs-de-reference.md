@@ -230,6 +230,44 @@ Une critique documentée porte sur les hypothèses des modèles : les équations
 
 **Conséquence pour l'évaluation.** Le cadre européen lui-même a abandonné le seuil unique au profit d'une analyse par pays. Une fiche qui sanctionnerait une mesure au seul motif qu'elle éloigne des 3 % appliquerait donc une règle que l'Union européenne n'applique plus elle-même sous cette forme. Le critère pertinent est la trajectoire de dépenses nettes et la soutenabilité appréciée dans la durée, pas le franchissement d'un seuil.
 
+### **3.10 Démocratie et institutions**
+
+**Ancrage juridique — Constitution du 4 octobre 1958 et Déclaration des droits de l'homme et du citoyen de 1789**
+
+Ce domaine couvre les mesures qui modifient le fonctionnement des institutions elles-mêmes plutôt qu'une politique sectorielle : réforme du mode de scrutin, statut et immunité des élus, financement et régulation de la vie politique, référendum et participation citoyenne, séparation des pouvoirs, transparence de la vie publique, régulation du débat démocratique.
+
+Plusieurs textes fondamentaux, plutôt qu'un article unique, dessinent le standard de référence :
+
+- **Article 3 de la Constitution** : la souveraineté nationale appartient au peuple, qui l'exerce par ses représentants et par la voie du référendum ; aucune section du peuple ni aucun individu ne peut s'en attribuer l'exercice.
+
+- **Article 4 de la Constitution** : les partis et groupements politiques concourent à l'expression du suffrage ; ils se forment et exercent leur activité librement, mais doivent respecter les principes de la souveraineté nationale et de la démocratie.
+
+- **Article 6 de la Déclaration de 1789** : la loi est l'expression de la volonté générale, et tous les citoyens ont le droit de concourir personnellement, ou par leurs représentants, à sa formation.
+
+- **Article 11 de la Déclaration de 1789** : la libre communication des pensées et des opinions est un des droits les plus précieux de l'homme.
+
+- **Article 16 de la Déclaration de 1789** : toute société dans laquelle la garantie des droits n'est pas assurée, ni la séparation des pouvoirs déterminée, n'a point de Constitution.
+
+Le Conseil constitutionnel a par ailleurs consacré, dès sa décision n° 86-217 DC du 18 septembre 1986 sur la loi relative à la liberté de communication, « le pluralisme des courants d'expression socioculturels » comme « objectif de valeur constitutionnelle » en lui-même — formule reprise depuis sous les expressions équivalentes de pluralisme des courants d'idées et d'opinions, ou d'expression pluraliste des courants d'opinion. *(Vérifié sur la décision elle-même, conseil-constitutionnel.fr.)*
+
+**Dimensions retenues**
+
+- **Respect de la souveraineté nationale** et du caractère représentatif ou référendaire de son exercice (art. 3).
+
+- **Loyauté du suffrage et conformité des partis aux principes démocratiques** (art. 4).
+
+- **Participation effective des citoyens à la formation de la loi**, directement ou par leurs représentants (art. 6 DDHC).
+
+- **Liberté d'expression et de communication des pensées et des opinions**, y compris en matière politique (art. 11 DDHC).
+
+- **Séparation des pouvoirs et garantie effective des droits** (art. 16 DDHC).
+
+- **Pluralisme des courants d'idées et d'opinions**, objectif de valeur constitutionnelle autonome depuis 1986.
+
+**Point d'attention pour la neutralité.** Comme pour la sécurité et la justice (4.2), la norme de référence n'est pas un objectif univoque du type « plus de transparence » ou « plus de participation » : c'est une conciliation entre plusieurs principes qui peuvent entrer en tension, par exemple liberté d'expression politique et lutte contre la désinformation, ou stabilité institutionnelle et respect du pluralisme. Une mesure qui renforce une dimension au prix d'une atteinte disproportionnée à une autre ne sert pas pleinement l'objectif de référence, même si elle atteint son but affiché.
+
+**Cadre de recherche complémentaire — à approfondir.** Des cadres internationaux d'évaluation de la qualité démocratique existent, par exemple la liste des critères de l'État de droit de la Commission de Venise du Conseil de l'Europe, ou des indices comparés de pluralisme et de séparation des pouvoirs. Cette piste n'a pas été vérifiée sur sources primaires et reste à confirmer avant usage, à l'image de la réserve déjà posée pour la fiscalité (3.8).
+
 ## **4. Les domaines longtemps sans ancrage**
 
 Les trois domaines identifiés comme lacunaires dans la première version de ce document disposent en réalité d'ancrages, dont deux sont solides. Ils appellent toutefois des précautions particulières.
@@ -424,6 +462,14 @@ Un dispositif de mesure existe : la décision (UE) 2023/1353 définit les indica
 
 - Direction du budget, présentation du programme de stabilité 2024-2027.
 
+**Démocratie et institutions**
+
+- Constitution du 4 octobre 1958, articles 3 et 4.
+
+- Déclaration des droits de l'homme et du citoyen de 1789, articles 6, 11 et 16.
+
+- Conseil constitutionnel, décision n° 86-217 DC du 18 septembre 1986, loi relative à la liberté de communication (pluralisme des courants d'expression socioculturels, objectif de valeur constitutionnelle).
+
 **Immigration**
 
 - Pacte européen sur la migration et l'asile, adopté par le Conseil le 14 mai 2024.
@@ -456,5 +502,5 @@ Un dispositif de mesure existe : la décision (UE) 2023/1353 définit les indica
 
 - Gouvernement français, *Feuille de route de la France : la décennie numérique 2024-2030*, mars 2024.
 
-*Document de travail. Les ancrages des sections 3.1 à 3.7, 3.9, 4.1, 4.2 et 4.3 ont été vérifiés sur sources primaires ou institutionnelles. La section 3.8 et les points listés en section 4 bis restent à confirmer.*
+*Document de travail. Les ancrages des sections 3.1 à 3.7, 3.9, 4.1, 4.2 et 4.3 ont été vérifiés sur sources primaires ou institutionnelles. Le volet constitutionnel français de la section 3.10 a été vérifié sur sources primaires ; son volet international (Commission de Venise) reste à confirmer, comme pour la section 3.8. La section 3.8 et les points listés en section 4 bis restent également à confirmer.*
 

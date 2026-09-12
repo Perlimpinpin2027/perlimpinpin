@@ -62,6 +62,7 @@ export const CATEGORIES_OBJECTIF = [
   "Immigration",
   "Sécurité et justice",
   "Numérique et intelligence artificielle",
+  "Démocratie et institutions",
 ];
 
 const MesureVersObjectifSchema = z.object({

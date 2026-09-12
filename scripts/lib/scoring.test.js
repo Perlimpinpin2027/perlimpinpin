@@ -415,7 +415,7 @@ describe("CRITERE_ETAPE3_KEYS / CRITERE_NOTE_MAX", () => {
 });
 
 describe("CATEGORIES_OBJECTIF", () => {
-  test("contient exactement les 12 domaines de data/objectifs-de-reference.md", () => {
-    assert.equal(CATEGORIES_OBJECTIF.length, 12);
+  test("contient exactement les 13 domaines de data/objectifs-de-reference.md", () => {
+    assert.equal(CATEGORIES_OBJECTIF.length, 13);
   });
 });

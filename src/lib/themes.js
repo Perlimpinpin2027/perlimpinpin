@@ -1,4 +1,4 @@
-// Les 11 thèmes éditoriaux du site (nom + description reprise de /themes,
+// Les 12 thèmes éditoriaux du site (nom + description reprise de /themes,
 // dont le contenu ne doit pas être modifié). Source partagée pour l'en-tête
 // de /themes/[slug].
 export const THEMES = [
@@ -66,6 +66,12 @@ export const THEMES = [
     name: "Immigration",
     description:
       "Démographie, immigration irrégulière, droit d'asile, OQTF, flux légaux.",
+  },
+  {
+    slug: "democratie-et-institutions",
+    name: "Démocratie et institutions",
+    description:
+      "Mode de scrutin, statut et immunité des élus, financement de la vie politique, référendum, séparation des pouvoirs, transparence de la vie publique.",
   },
 ];
 

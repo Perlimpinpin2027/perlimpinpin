@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Header from "@/components/Header";
-import MonoTag from "@/components/MonoTag";
 import { getPublishedCountsByThemeSlug } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
@@ -8,7 +7,7 @@ export const dynamic = "force-dynamic";
 export const metadata = {
   title: "Thèmes — Perlimpinpin",
   description:
-    "Les 11 grands thèmes d'analyse de Perlimpinpin pour la présidentielle 2027.",
+    "Les 12 grands thèmes d'analyse de Perlimpinpin pour la présidentielle 2027.",
 };
 
 const themes = [
@@ -143,6 +142,19 @@ const themes = [
       "DARES",
     ],
   },
+  {
+    slug: "democratie-et-institutions",
+    name: "Démocratie et institutions",
+    description:
+      "Mode de scrutin, statut et immunité des élus, financement de la vie politique, référendum, séparation des pouvoirs, transparence de la vie publique.",
+    sources: [
+      "Conseil constitutionnel",
+      "CNCCFP",
+      "HATVP",
+      "Sénat / Assemblée nationale (rapports institutionnels)",
+      "Conseil de l'Europe (Commission de Venise)",
+    ],
+  },
 ];
 
 export default async function ThemesPage() {
@@ -154,14 +166,20 @@ export default async function ThemesPage() {
 
       <main className="w-full px-6 py-12 sm:px-8 sm:py-16">
         <div className="mx-auto w-full max-w-[1280px]">
-          <div className="mx-auto max-w-3xl">
-            <MonoTag>Thèmes</MonoTag>
-            <h1 className="mt-3 text-4xl font-extrabold tracking-tight text-zinc-900 sm:text-5xl">
+          {/* Centré, sans eyebrow tag au-dessus du titre : la maquette 450
+              (public/maquettes) ne montre ni MonoTag ni alignement à
+              gauche — juste le titre et le paragraphe, centrés. Taille du
+              titre alignée sur celle des autres titres de page (accueil,
+              À propos) pour la même raison mesurée sur cette maquette : le
+              texte précédent (text-4xl/5xl) était environ deux fois trop
+              petit. */}
+          <div className="mx-auto max-w-3xl text-center">
+            <h1 className="text-[clamp(2.25rem,1.1rem+5.2vw,6rem)] font-extrabold tracking-tight text-zinc-900">
               Nos thèmes d&apos;analyse
             </h1>
 
             <p className="mt-6 text-base leading-relaxed text-zinc-600">
-              Perlimpinpin structure ses analyses autour de 11 grands
+              Perlimpinpin structure ses analyses autour de 12 grands
               thèmes de la présidentielle 2027. Chaque thème s&apos;appuie
               sur des sources publiques de référence et des points de
               vigilance méthodologiques propres à son domaine.
