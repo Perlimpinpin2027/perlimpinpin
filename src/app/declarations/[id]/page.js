@@ -844,6 +844,21 @@ export default async function DeclarationDetailPage({ params }) {
               </div>
             </div>
 
+            {/* Sur mobile, il n'y a pas de sidebar : la carte de score
+                (StickyScoreCard, identique à celle de l'aside plus bas)
+                est donc dupliquée ici, juste au-dessus du résumé, et
+                masquée à partir de lg. L'aside plus bas est à l'inverse
+                masqué en dessous de lg pour ne pas l'afficher deux fois. */}
+            <div className="lg:hidden">
+              <StickyScoreCard
+                score={analyse.scoreFaisabilite}
+                badge={badge}
+                sections={tocSections}
+                versionMethodologie={analyse.versionMethodologie}
+                generationDateLabel={declaration.generationDateLabel}
+              />
+            </div>
+
             {/* Le résumé de Perlimpinpin IA : traitement "verre dépoli"
                 (GLASS_STYLE) — l'un des deux points d'entrée clés de la
                 lecture, avant le raisonnement détaillé (l'autre étant le
@@ -1286,8 +1301,11 @@ export default async function DeclarationDetailPage({ params }) {
           </div>
 
           {/* Sidebar sticky : score permanent + sommaire de navigation,
-              visibles ensemble dès le chargement (voir StickyScoreCard). */}
-          <aside className="lg:sticky lg:top-24">
+              visibles ensemble dès le chargement (voir StickyScoreCard).
+              Masquée en dessous de lg : sur mobile, la même carte est
+              affichée plus haut, juste au-dessus du résumé (voir
+              l'en-tête de colonne principale). */}
+          <aside className="hidden lg:sticky lg:top-24 lg:block">
             <StickyScoreCard
               score={analyse.scoreFaisabilite}
               badge={badge}
