@@ -261,8 +261,8 @@ function attacherPetitsMots(text) {
 }
 
 // Découpe un texte en paragraphes sur les lignes vides — utilisé à la fois
-// pour le résumé IA (analyse.teaser, juste en dessous) et pour le corps du
-// Verdict final (contenu.verdict_final, plus bas sur la page), qui peuvent
+// pour le résumé IA (contenu.resume_court, juste en dessous) et pour le corps
+// du Verdict final (contenu.verdict_final, plus bas sur la page), qui peuvent
 // l'un comme l'autre contenir plusieurs paragraphes séparés par un saut de
 // ligne vide lorsqu'il existe une vraie rupture logique entre deux idées
 // (voir data/prompt-methodologie.md). On respecte ce découpage tel quel,
@@ -863,7 +863,13 @@ export default async function DeclarationDetailPage({ params }) {
                 (GLASS_STYLE) — l'un des deux points d'entrée clés de la
                 lecture, avant le raisonnement détaillé (l'autre étant le
                 Verdict final plus bas, qui a son propre traitement, voir
-                VerdictBody). */}
+                VerdictBody).
+                Texte intégral de contenu.resume_court (pas analyse.teaser,
+                qui est une version tronquée à 500 caractères + "…" dérivée
+                de resume_court pour d'autres usages — voir buildTeaser dans
+                scripts/analyze.js). Le lien "Voir le raisonnement complet"
+                sert uniquement à naviguer vers le détail plus bas sur la
+                page, jamais à masquer une partie du résumé. */}
             <section className="rounded-2xl p-6 sm:p-8" style={GLASS_STYLE}>
               <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-zinc-900">
                 <svg
@@ -883,7 +889,7 @@ export default async function DeclarationDetailPage({ params }) {
                 </svg>
                 Le résumé de Perlimpinpin IA
               </h2>
-              <TeaserParagraphs text={analyse.teaser} />
+              <TeaserParagraphs text={contenu.resume_court} />
               <Link
                 href="#raisonnement-complet"
                 className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-zinc-900 transition-colors hover:text-zinc-600"
