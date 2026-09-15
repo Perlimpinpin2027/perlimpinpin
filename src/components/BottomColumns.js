@@ -177,19 +177,24 @@ function ReliabilityIndexColumn({ candidates }) {
               <span className="w-4 shrink-0 text-sm font-semibold text-zinc-400">
                 {index + 1}
               </span>
-              <img
-                src={candidate.photoUrl || "/avatar-placeholder.svg"}
-                alt={candidate.name}
-                className="h-9 w-9 shrink-0 rounded-lg object-cover object-top"
-              />
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-semibold text-zinc-900">
-                  {candidate.name}
-                </p>
-                <p className="mt-0.5 text-xs text-zinc-400">
-                  {candidate.declarations} déclarations analysées
-                </p>
-              </div>
+              <Link
+                href={`/declarations?candidat=${encodeURIComponent(candidate.name)}`}
+                className="flex min-w-0 flex-1 items-center gap-3 transition-opacity hover:opacity-70"
+              >
+                <img
+                  src={candidate.photoUrl || "/avatar-placeholder.svg"}
+                  alt={candidate.name}
+                  className="h-9 w-9 shrink-0 rounded-lg object-cover object-top"
+                />
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-semibold text-zinc-900">
+                    {candidate.name}
+                  </p>
+                  <p className="mt-0.5 text-xs text-zinc-400">
+                    {candidate.declarations} déclarations analysées
+                  </p>
+                </div>
+              </Link>
               <div className="flex shrink-0 items-center gap-3">
                 <TrendIndicator trend={candidate.trend} delta={candidate.delta} />
                 {candidate.avgScore == null ? (
