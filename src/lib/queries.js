@@ -153,7 +153,7 @@ export async function getCandidateRanking(limit) {
     orderBy: [{ scoreMoyen: { sort: "desc", nulls: "last" } }, { nom: "asc" }],
     include: {
       propositions: {
-        include: { analyses: true },
+        include: { analyses: { where: { statut: "publie" } } },
       },
     },
   });
