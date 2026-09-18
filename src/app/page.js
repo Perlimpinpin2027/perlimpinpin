@@ -18,7 +18,7 @@ export default async function Home() {
   const [featuredRotation, topDeclarations, rankedCandidates] =
     await Promise.all([
       getFeaturedRotation(),
-      getTopDeclarations(3),
+      getTopDeclarations(6),
       getCandidateRanking(),
     ]);
 
