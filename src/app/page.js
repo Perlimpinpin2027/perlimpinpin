@@ -4,6 +4,7 @@ import HeroText from "@/components/HeroText";
 import FeaturedCarousel from "@/components/FeaturedCarousel";
 import ThemeTags from "@/components/ThemeTags";
 import BottomColumns from "@/components/BottomColumns";
+import SupportBanner from "@/components/SupportBanner";
 import {
   getFeaturedRotation,
   getTopDeclarations,
@@ -47,6 +48,8 @@ export default async function Home() {
           />
         </div>
       </section>
+
+      <SupportBanner />
 
       <section className="w-full px-6 pb-16 sm:px-8 sm:pb-20">
         <div className="mx-auto flex w-full max-w-[1280px] flex-col items-start justify-between gap-4 rounded-2xl border border-zinc-200 bg-white p-6 sm:flex-row sm:items-center sm:p-8">
