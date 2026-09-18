@@ -102,75 +102,80 @@ export default function Header() {
           </ul>
         </nav>
 
-        <Link
-          href="/newsletter"
-          aria-label="Newsletter"
-          title="Newsletter"
-          className="hidden shrink-0 items-center gap-2 text-sm font-medium text-zinc-700 transition-colors hover:text-zinc-950 lg:flex"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={1.8}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="h-5 w-5"
-            aria-hidden="true"
+        {/* Trois liens utilitaires regroupés : espacement fixe entre eux,
+            indépendant de l'espace libre que justify-between répartit entre
+            logo, nav et ce groupe. */}
+        <div className="hidden shrink-0 items-center gap-6 lg:flex xl:gap-8">
+          <Link
+            href="/newsletter"
+            aria-label="Newsletter"
+            title="Newsletter"
+            className="flex shrink-0 items-center gap-2 text-sm font-medium text-zinc-700 transition-colors hover:text-zinc-950"
           >
-            <rect x="3" y="5" width="18" height="14" rx="2" />
-            <path d="m3 7 9 6 9-6" />
-          </svg>
-          <span className="hidden xl:inline">Newsletter</span>
-        </Link>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1.8}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-5 w-5"
+              aria-hidden="true"
+            >
+              <rect x="3" y="5" width="18" height="14" rx="2" />
+              <path d="m3 7 9 6 9-6" />
+            </svg>
+            <span className="hidden xl:inline">Newsletter</span>
+          </Link>
 
-        {/* Accès réservé à l'équipe éditoriale : /live redirige vers
-            /live/login (proxy) si la personne n'est pas connectée. */}
-        <Link
-          href="/live"
-          aria-label="Journalistes"
-          title="Journalistes"
-          className="hidden shrink-0 items-center gap-2 text-sm font-medium text-zinc-700 transition-colors hover:text-zinc-950 lg:flex"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={1.8}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="h-5 w-5"
-            aria-hidden="true"
+          {/* Accès réservé à l'équipe éditoriale : /live redirige vers
+              /live/login (proxy) si la personne n'est pas connectée. */}
+          <Link
+            href="/live"
+            aria-label="Journalistes"
+            title="Journalistes"
+            className="flex shrink-0 items-center gap-2 text-sm font-medium text-zinc-700 transition-colors hover:text-zinc-950"
           >
-            <path d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 0 1-2.25 2.25M16.5 7.5V18a2.25 2.25 0 0 0 2.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 0 0 2.25 2.25h13.5M6 7.5h3v3H6v-3Z" />
-          </svg>
-          <span className="hidden xl:inline">Journalistes</span>
-        </Link>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1.8}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-5 w-5"
+              aria-hidden="true"
+            >
+              <path d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 0 1-2.25 2.25M16.5 7.5V18a2.25 2.25 0 0 0 2.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 0 0 2.25 2.25h13.5M6 7.5h3v3H6v-3Z" />
+            </svg>
+            <span className="hidden xl:inline">Journalistes</span>
+          </Link>
 
-        <button
-          type="button"
-          onClick={() => setIsContactOpen(true)}
-          aria-label="Nous contacter"
-          title="Nous contacter"
-          className="hidden shrink-0 items-center gap-2 text-sm font-medium text-zinc-700 transition-colors hover:text-zinc-950 lg:flex"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={1.8}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="h-5 w-5"
-            aria-hidden="true"
+          <button
+            type="button"
+            onClick={() => setIsContactOpen(true)}
+            aria-label="Nous contacter"
+            title="Nous contacter"
+            className="flex shrink-0 items-center gap-2 text-sm font-medium text-zinc-700 transition-colors hover:text-zinc-950"
           >
-            <path d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" />
-          </svg>
-          <span className="hidden xl:inline">Nous contacter</span>
-        </button>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1.8}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-5 w-5"
+              aria-hidden="true"
+            >
+              <path d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" />
+            </svg>
+            <span className="hidden xl:inline">Nous contacter</span>
+          </button>
+        </div>
 
         <button
           type="button"
