@@ -162,8 +162,8 @@ function ReliabilityIndexColumn({ candidates }) {
   return (
     <div className="rounded-2xl border border-zinc-200 bg-white p-6">
       <ColumnHeader
-        title="Indice de fiabilité des candidats"
-        subtitle="Score moyen évolutif sur les 30 derniers jours"
+        title="Score moyen des propositions des candidats"
+        subtitle="Ce score est une moyenne arithmétique des mesures actuellement analysées par l’outil. Il ne constitue ni un jugement sur la personne, ni un indice général de crédibilité politique, et évolue au fur et à mesure des analyses."
         linkLabel="Voir tous les candidats →"
         linkHref="/candidats"
       />
