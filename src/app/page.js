@@ -19,7 +19,7 @@ export default async function Home() {
     await Promise.all([
       getFeaturedRotation(),
       getTopDeclarations(3),
-      getCandidateRanking(7),
+      getCandidateRanking(),
     ]);
 
   return (

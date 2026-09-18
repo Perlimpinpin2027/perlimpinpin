@@ -145,9 +145,11 @@ export async function getTopDeclarations(limit = 3) {
   }));
 }
 
-export async function getCandidateRanking(limit = 7) {
+export async function getCandidateRanking(limit) {
   const candidats = await prisma.candidat.findMany({
-    take: limit,
+    // Sans limite : tous les candidats sont affichés, y compris ceux pas
+    // encore analysés (scoreMoyen null, tri "nulls last" -> en bas de liste).
+    ...(limit ? { take: limit } : {}),
     orderBy: [{ scoreMoyen: { sort: "desc", nulls: "last" } }, { nom: "asc" }],
     include: {
       propositions: {
