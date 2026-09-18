@@ -77,7 +77,7 @@ const MesureVersObjectifSchema = z.object({
 // Sous-composantes de l'Opérationnalité & Moyens (1a/1b/1c), chacune 0-10.
 const PLAFOND_DECLENCHEURS = ["juridique", "budgetaire", "moyens_humains"];
 
-const NotationDetailleeSchema = z.object({
+export const NotationDetailleeSchema = z.object({
   operationnalite_juridique: z.number().int().min(0).max(10),
   qualification_juridique: z.enum(QUALIFICATION),
   operationnalite_budgetaire: z.number().int().min(0).max(10),
