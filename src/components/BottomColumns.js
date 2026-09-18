@@ -162,8 +162,8 @@ function ReliabilityIndexColumn({ candidates }) {
   return (
     <div className="rounded-2xl border border-zinc-200 bg-white p-6">
       <ColumnHeader
-        title="Score moyen des propositions des candidats"
-        subtitle="Ce score est une moyenne arithmétique des mesures actuellement analysées par l’outil. Il ne constitue ni un jugement sur la personne, ni un indice général de crédibilité politique, et évolue au fur et à mesure des analyses."
+        title="Indice de fiabilité des candidats"
+        subtitle="Moyenne arithmétique des propositions des candidats"
         linkLabel="Voir tous les candidats →"
         linkHref="/candidats"
       />
@@ -216,6 +216,13 @@ function ReliabilityIndexColumn({ candidates }) {
           ))}
         </ol>
       )}
+
+      <p className="mt-6 border-t border-zinc-100 pt-4 text-xs leading-relaxed text-zinc-400">
+        Ce score est une moyenne arithmétique des mesures actuellement
+        analysées par l&rsquo;outil. Il ne constitue ni un jugement sur la
+        personne, ni un indice général de crédibilité politique, et évolue
+        au fur et à mesure des analyses.
+      </p>
     </div>
   );
 }
