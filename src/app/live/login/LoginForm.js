@@ -1,10 +1,16 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { login } from "./actions";
 
 export default function LoginForm() {
   const [state, formAction, pending] = useActionState(login, null);
+
+  // Connexion réussie : le cookie est posé, on charge /live par une vraie
+  // navigation de page (le proxy voit alors le cookie sur une requête normale).
+  useEffect(() => {
+    if (state?.ok) window.location.assign("/live");
+  }, [state]);
 
   return (
     <form action={formAction} className="flex flex-col gap-4">
@@ -31,7 +37,7 @@ export default function LoginForm() {
 
       <button
         type="submit"
-        disabled={pending}
+        disabled={pending || state?.ok}
         className="mt-1 rounded-full bg-zinc-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-40"
       >
         {pending ? "Connexion…" : "Se connecter"}

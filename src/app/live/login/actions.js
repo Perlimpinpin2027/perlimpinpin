@@ -1,7 +1,6 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import {
   LIVE_COOKIE_NAME,
   LIVE_SESSION_MAX_AGE_SECONDS,
@@ -30,5 +29,8 @@ export async function login(_previousState, formData) {
     maxAge: LIVE_SESSION_MAX_AGE_SECONDS,
   });
 
-  redirect("/live");
+  // Pas de redirect() ici : c'est le client qui charge /live par une navigation
+  // de page complète (voir LoginForm), pour ne dépendre ni du rechargement
+  // interne de la cible par Next ni de la navigation RSC côté client.
+  return { ok: true };
 }
