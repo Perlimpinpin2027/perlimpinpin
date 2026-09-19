@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { LIVE_THEME_SLUGS, liveThemeLabel } from "@/lib/live-themes";
 
 // Persistance et lecture des analyses lancées depuis /live (table
 // LiveAnalyse). Distinct du pipeline public (Proposition/Analyse) : rien
@@ -34,6 +35,7 @@ export async function saveLiveAnalyse({ declaration, resultat, candidatId }) {
         titre: shorten(mesures[0].mesure_reformulee, TITRE_MAX_LENGTH),
         score,
         nbMesures: mesures.length,
+        theme: LIVE_THEME_SLUGS.includes(resultat.theme) ? resultat.theme : "autre",
         resultat,
         candidatId: candidatId ?? null,
       },
@@ -45,9 +47,14 @@ export async function saveLiveAnalyse({ declaration, resultat, candidatId }) {
   }
 }
 
-// Dernières analyses live, les plus récentes en premier.
-export async function getRecentLiveAnalyses(limit) {
+// Dernières analyses live, les plus récentes en premier. Filtres facultatifs :
+// un dossier (slug de thème) ou les favoris seulement.
+export async function getRecentLiveAnalyses(limit, { theme, favoris } = {}) {
   const rows = await prisma.liveAnalyse.findMany({
+    where: {
+      ...(theme ? { theme } : {}),
+      ...(favoris ? { favori: true } : {}),
+    },
     orderBy: { createdAt: "desc" },
     take: limit,
     select: {
@@ -55,6 +62,8 @@ export async function getRecentLiveAnalyses(limit) {
       titre: true,
       score: true,
       nbMesures: true,
+      theme: true,
+      favori: true,
       createdAt: true,
       candidat: { select: { nom: true, photoUrl: true } },
     },
@@ -65,6 +74,9 @@ export async function getRecentLiveAnalyses(limit) {
     titre: row.titre,
     score: row.score,
     nbMesures: row.nbMesures,
+    themeSlug: row.theme,
+    themeLabel: liveThemeLabel(row.theme),
+    favori: row.favori,
     dateLabel: dateFormatter.format(row.createdAt),
     candidatNom: row.candidat?.nom ?? null,
     candidatPhotoUrl: row.candidat?.photoUrl ?? null,
@@ -77,4 +89,28 @@ export async function getCandidatsForSelect() {
     select: { id: true, nom: true },
     orderBy: { nom: "asc" },
   });
+}
+
+// Dossiers : regroupement automatique par thème, un par thème présent en
+// base, du plus fourni au moins fourni.
+export async function getLiveDossiers() {
+  const groups = await prisma.liveAnalyse.groupBy({ by: ["theme"], _count: { _all: true } });
+  return groups
+    .map((group) => ({ slug: group.theme, label: liveThemeLabel(group.theme), count: group._count._all }))
+    .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label, "fr"));
+}
+
+// Bascule le favori d'une analyse. Met à jour CE SEUL champ (jamais le
+// contenu de l'analyse). Retourne null si l'analyse n'existe pas.
+export async function setLiveFavori(id, favori) {
+  try {
+    return await prisma.liveAnalyse.update({
+      where: { id },
+      data: { favori },
+      select: { id: true, favori: true },
+    });
+  } catch (error) {
+    if (error.code === "P2025") return null;
+    throw error;
+  }
 }

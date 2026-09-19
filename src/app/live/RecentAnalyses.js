@@ -1,16 +1,26 @@
+import FavoriteButton from "./FavoriteButton";
 import { Avatar, ScoreBadge } from "./ui";
 
-// Cartes des dernières analyses enregistrées (table LiveAnalyse).
-export default function RecentAnalyses({ analyses }) {
+// Cartes d'analyses enregistrées (table LiveAnalyse). Sert aux analyses
+// récentes, au filtrage par dossier et à la vue Favoris.
+export default function RecentAnalyses({
+  analyses,
+  titre = "Analyses récentes",
+  vide = "Aucune analyse pour le moment. Lancez-en une ci-dessus : elle apparaîtra ici.",
+  action = null,
+}) {
   return (
     <section aria-labelledby="live-recentes" className="mt-10">
-      <h2 id="live-recentes" className="text-lg font-bold text-zinc-900">
-        Analyses récentes
-      </h2>
+      <div className="flex items-baseline justify-between gap-4">
+        <h2 id="live-recentes" className="text-lg font-bold text-zinc-900">
+          {titre}
+        </h2>
+        {action}
+      </div>
 
       {analyses.length === 0 ? (
         <p className="mt-3 rounded-xl border border-dashed border-zinc-300 px-4 py-6 text-center text-sm text-zinc-500">
-          Aucune analyse pour le moment. Lancez-en une ci-dessus : elle apparaîtra ici.
+          {vide}
         </p>
       ) : (
         <ul className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -23,10 +33,16 @@ export default function RecentAnalyses({ analyses }) {
                     {analyse.candidatNom ?? "Candidat non précisé"}
                   </p>
                 </div>
-                <ScoreBadge score={analyse.score} />
+                <div className="flex shrink-0 items-center gap-1">
+                  <ScoreBadge score={analyse.score} />
+                  <FavoriteButton id={analyse.id} favori={analyse.favori} />
+                </div>
               </div>
               <p className="line-clamp-3 text-sm font-medium leading-snug text-zinc-900">{analyse.titre}</p>
               <p className="mt-auto text-xs text-zinc-400">
+                <span className="rounded bg-zinc-100 px-1.5 py-0.5 font-medium text-zinc-500">
+                  {analyse.themeLabel}
+                </span>{" "}
                 {analyse.dateLabel}
                 {analyse.nbMesures > 1 ? ` · ${analyse.nbMesures} mesures (score moyen)` : ""}
               </p>

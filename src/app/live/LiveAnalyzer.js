@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { getScoreBadge } from "@/lib/score";
+import { liveThemeLabel } from "@/lib/live-themes";
 import { ComingSoon, Icon } from "./ui";
 
 const DECLARATION_MAX_LENGTH = 20000;
@@ -219,6 +220,7 @@ export default function LiveAnalyzer({ candidats = [] }) {
             <strong className="text-zinc-800">Estimation préliminaire.</strong>{" "}
             Réalisée sans recherche externe, à partir
             de la seule déclaration : à vérifier avant toute diffusion. Elle est enregistrée dans l&apos;historique de l&apos;équipe.
+            {result.mesures.length > 0 && <> Dossier : <strong className="text-zinc-800">{liveThemeLabel(result.theme)}</strong>.</>}
           </p>
 
           {result.mesures.length === 0 && (

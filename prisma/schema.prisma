@@ -227,6 +227,15 @@ model LiveAnalyse {
   // pouvoir la ré-afficher plus tard
   resultat Json
 
+  // Dossier : slug de l'un des thèmes du site (src/lib/themes.js) ou "autre",
+  // choisi par l'analyse. Les dossiers de /live sont ce regroupement
+  // automatique, jamais une entité gérée à la main.
+  theme String @default("autre")
+
+  // Favori de l'équipe éditoriale. Seul champ mis à jour après création
+  // (table propre à /live, distincte des fiches publiques create-only).
+  favori Boolean @default(false)
+
   candidatId Int?
   candidat   Candidat? @relation(fields: [candidatId], references: [id])
 
