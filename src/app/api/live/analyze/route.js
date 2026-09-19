@@ -6,6 +6,7 @@ import {
   LiveAnalyseError,
   analyseDeclaration,
 } from "@/lib/live-analyse";
+import { saveLiveAnalyse } from "@/lib/live-history";
 
 // Génération non streamée d'une dizaine à une soixantaine de secondes.
 export const maxDuration = 90;
@@ -27,8 +28,14 @@ export async function POST(request) {
     );
   }
 
+  // Candidat facultatif (sélecteur du formulaire) : entier positif ou rien.
+  const candidatId = Number.isInteger(body?.candidatId) && body.candidatId > 0 ? body.candidatId : null;
+
   try {
-    return Response.json(await analyseDeclaration(declaration));
+    const resultat = await analyseDeclaration(declaration);
+    // Sauvegarde pour l'historique ; ne bloque ni ne fait échouer l'analyse.
+    await saveLiveAnalyse({ declaration, resultat, candidatId });
+    return Response.json(resultat);
   } catch (error) {
     if (error instanceof LiveAnalyseError) {
       return Response.json({ error: error.message }, { status: error.status });

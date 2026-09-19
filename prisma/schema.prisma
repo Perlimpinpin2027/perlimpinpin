@@ -21,6 +21,7 @@ model Candidat {
   createdAt  DateTime @default(now())
 
   propositions Proposition[]
+  liveAnalyses LiveAnalyse[]
 }
 
 model Proposition {
@@ -202,4 +203,34 @@ model Source {
   type String
 
   createdAt DateTime @default(now())
+}
+
+// Analyse lancée depuis l'espace /live (PerlimpinpinGo, équipe éditoriale) :
+// texte collé, estimation préliminaire produite par l'Étape 1 allégée.
+// Distincte de Proposition/Analyse (pipeline public) : jamais publiée, sans
+// lien avec les fiches du site. Le candidat est facultatif (choisi à la main
+// dans le formulaire ; l'analyse ne l'identifie pas elle-même).
+model LiveAnalyse {
+  id Int @id @default(autoincrement())
+
+  // Texte de la déclaration collé par la rédaction
+  declaration String
+
+  // Titre court : reformulation de la première mesure analysée
+  titre String
+
+  // Score moyen des mesures analysées (0-100, arrondi) et leur nombre
+  score     Int
+  nbMesures Int
+
+  // Réponse complète de l'analyse (mesures, remarque, avertissements), pour
+  // pouvoir la ré-afficher plus tard
+  resultat Json
+
+  candidatId Int?
+  candidat   Candidat? @relation(fields: [candidatId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
 }

@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { getScoreBadge } from "@/lib/score";
+import { ComingSoon, Icon } from "./ui";
 
 const DECLARATION_MAX_LENGTH = 20000;
 
@@ -90,7 +92,16 @@ function MesureCard({ mesure, index }) {
   );
 }
 
-export default function LiveAnalyzer() {
+// Entrées prévues plus tard (fichier, URL, transcript) : affichées, inactives.
+const FUTURE_INPUTS = [
+  { icon: "file", label: "Fichier" },
+  { icon: "link", label: "URL" },
+  { icon: "transcript", label: "Transcript" },
+];
+
+export default function LiveAnalyzer({ candidats = [] }) {
+  const router = useRouter();
+  const [candidatId, setCandidatId] = useState("");
   const [declaration, setDeclaration] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -106,7 +117,7 @@ export default function LiveAnalyzer() {
       const response = await fetch("/api/live/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ declaration }),
+        body: JSON.stringify({ declaration, candidatId: candidatId ? Number(candidatId) : undefined }),
       });
       if (response.status === 401) {
         window.location.href = "/live/login";
@@ -118,6 +129,8 @@ export default function LiveAnalyzer() {
         return;
       }
       setResult(data);
+      // L'analyse est enregistrée côté serveur : recharge historique et cartes.
+      router.refresh();
     } catch {
       setError("Connexion impossible. Vérifiez votre réseau et réessayez.");
     } finally {
@@ -133,6 +146,7 @@ export default function LiveAnalyzer() {
             <label htmlFor="live-declaration" className="text-sm font-medium text-zinc-700">
               Déclaration du candidat
             </label>
+            <div className="mt-1.5 flex flex-col gap-3 sm:flex-row">
             <textarea
               id="live-declaration"
               required
@@ -142,8 +156,43 @@ export default function LiveAnalyzer() {
               maxLength={DECLARATION_MAX_LENGTH}
               disabled={loading}
               placeholder="Collez ou tapez la déclaration à analyser…"
-              className="mt-1.5 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm leading-relaxed text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-200 disabled:opacity-60"
+              className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm leading-relaxed text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-200 disabled:opacity-60"
             />
+            <div className="flex shrink-0 flex-row gap-2 sm:flex-col">
+              {FUTURE_INPUTS.map((input) => (
+                <ComingSoon key={input.label}>
+                  <button
+                    type="button"
+                    disabled
+                    className="flex w-full cursor-not-allowed items-center gap-2 rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm font-medium text-zinc-400"
+                  >
+                    <Icon name={input.icon} className="h-4 w-4" />
+                    {input.label}
+                  </button>
+                </ComingSoon>
+              ))}
+            </div>
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="live-candidat" className="text-sm font-medium text-zinc-700">
+              Candidat <span className="font-normal text-zinc-400">(facultatif)</span>
+            </label>
+            <select
+              id="live-candidat"
+              value={candidatId}
+              onChange={(event) => setCandidatId(event.target.value)}
+              disabled={loading}
+              className="mt-1.5 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-blue-200 disabled:opacity-60 sm:w-72"
+            >
+              <option value="">Non précisé</option>
+              {candidats.map((candidat) => (
+                <option key={candidat.id} value={candidat.id}>
+                  {candidat.nom}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="flex items-center gap-4">
@@ -169,7 +218,7 @@ export default function LiveAnalyzer() {
           <p className="rounded-lg border border-zinc-200 bg-white/70 px-4 py-3 text-sm text-zinc-600">
             <strong className="text-zinc-800">Estimation préliminaire.</strong>{" "}
             Réalisée sans recherche externe, à partir
-            de la seule déclaration : à vérifier avant toute diffusion. Rien n&apos;est enregistré.
+            de la seule déclaration : à vérifier avant toute diffusion. Elle est enregistrée dans l&apos;historique de l&apos;équipe.
           </p>
 
           {result.mesures.length === 0 && (
