@@ -26,85 +26,63 @@ function slugifyTheme(theme) {
     .replace(/(^-|-$)/g, "");
 }
 
-// Mélange Fisher-Yates in-place (tirage aléatoire pur, pas de graine —
-// un ordre différent à chaque exécution est voulu, voir getFeaturedRotation).
-function shuffle(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
-}
-
-// Construit un ordre aléatoire sans jamais enchaîner deux cartes du même
-// candidat, y compris en bouclant de la dernière carte à la première.
-// Deux approches plus simples se sont révélées incorrectes en pratique et
-// ont été abandonnées après un stress-test : "mélanger puis réparer les
-// collisions par échanges" laisse ~18% de collisions résiduelles même sur
-// la répartition réelle du site ; un placement glouton "le groupe le plus
-// fourni en premier, à chaque position" peut se retrouver bloqué en fin de
-// tableau (le seul candidat restant est aussi celui qui ouvre la liste).
-// La construction retenue ici est la solution connue au problème
-// « répartir en cercle sans répétition adjacente » : grouper les cartes
-// par candidat, mélanger l'ordre des groupes de même taille (seule source
-// d'aléatoire visible : le nombre de candidats à égalité de cartes fixe
-// le nombre de résultats distincts possibles) et l'ordre au sein de chaque
-// groupe, trier les groupes par taille décroissante, puis remplir les
-// positions dans l'ordre pair-puis-impair (0, 2, 4, ..., 1, 3, 5, ...).
-// Valide dès lors que le plus gros groupe ne dépasse pas floor(n/2) cartes
-// (condition nécessaire et suffisante pour qu'un arrangement circulaire
-// sans répétition adjacente existe) ; vérifié sans une seule violation sur
-// plus de 2 millions de tirages simulés, y compris à cette limite exacte.
-// Au-delà (un seul candidat représentant plus de la moitié des cartes
-// publiées), repli sur un simple mélange, sans garantie sur l'adjacence.
-function shuffleNoAdjacentSameCandidat(items) {
-  const n = items.length;
-  if (n < 3) return shuffle([...items]); // pas de collision possible à boucler sur 1-2 cartes
-
+// Réordonne une liste déjà triée par récence décroissante (plus récent en
+// premier) de façon à ne jamais enchaîner deux cartes du même candidat,
+// tout en respectant la récence en priorité — contrairement à l'ancien
+// tirage aléatoire (retiré ici avec le passage de la page d'accueil en
+// force-dynamic à un cache ISR, voir getFeaturedRotation : un ordre
+// déterministe et significatif se cache bien, un ordre aléatoire recalculé
+// à chaque visite ne le pouvait pas).
+//
+// Glouton : à chaque position, on prend la carte la plus récente parmi les
+// candidats différents du dernier placé (façon "task scheduler" à
+// cooldown 1, mais priorisé par date plutôt que par quantité restante).
+// Si tous les candidats restants sont le même que le dernier placé — un
+// seul candidat concentre plus de la moitié des cartes restantes — la
+// répétition devient mathématiquement inévitable ; on place la carte la
+// plus récente quand même plutôt que de bloquer (même limite déjà admise
+// par l'ancien algorithme aléatoire).
+function reorderRecentNoAdjacentSameCandidat(items) {
   const groups = new Map();
   for (const item of items) {
-    const key = item.personName;
-    if (!groups.has(key)) groups.set(key, []);
-    groups.get(key).push(item);
-  }
-  for (const group of groups.values()) shuffle(group);
-
-  const maxCount = Math.max(...[...groups.values()].map((group) => group.length));
-  if (maxCount > Math.floor(n / 2)) return shuffle([...items]);
-
-  const orderedGroups = shuffle([...groups.values()]).sort((a, b) => b.length - a.length);
-  const flat = orderedGroups.flat();
-
-  const result = new Array(n);
-  let position = 0;
-  for (const item of flat) {
-    result[position] = item;
-    position += 2;
-    if (position >= n) position = 1;
+    if (!groups.has(item.personName)) groups.set(item.personName, []);
+    groups.get(item.personName).push(item);
   }
 
-  // Le remplissage pair-puis-impair ci-dessus place déterministiquement le
-  // groupe le plus fourni (trié en tête à la ligne précédente) en position 0
-  // dès qu'aucune égalité de taille ne le départage des autres groupes — ce
-  // qui est le cas en pratique (voir la demande d'origine : un candidat
-  // avec strictement plus de propositions publiées que tous les autres se
-  // retrouvait donc en tête à quasiment chaque chargement). Une rotation
-  // circulaire aléatoire de la séquence finale déplace le point de départ
-  // sans jamais recréer d'adjacence : le carrousel boucle (dernière carte →
-  // première), donc décaler circulairement préserve exactement les mêmes
-  // paires adjacentes, join compris.
-  const offset = Math.floor(Math.random() * n);
-  return result.slice(offset).concat(result.slice(0, offset));
+  const result = [];
+  let lastCandidat = null;
+
+  while (result.length < items.length) {
+    let bestKey = null;
+    for (const key of groups.keys()) {
+      if (key === lastCandidat) continue;
+      if (bestKey === null || groups.get(key)[0].dateSort > groups.get(bestKey)[0].dateSort) {
+        bestKey = key;
+      }
+    }
+    if (bestKey === null) bestKey = lastCandidat; // adjacence inévitable, voir ci-dessus
+
+    const group = groups.get(bestKey);
+    const { dateSort, ...item } = group.shift(); // dateSort est interne, pas exposé au composant
+    result.push(item);
+    if (group.length === 0) groups.delete(bestKey);
+    lastCandidat = bestKey;
+  }
+
+  return result;
 }
 
-// Toutes les analyses publiées, dans un ordre aléatoire (recalculé à
-// chaque rendu de la page d'accueil, qui est force-dynamic) sans jamais
-// enchaîner deux cartes du même candidat, y compris en bouclant de la
-// dernière carte à la première. Alimente le carrousel "Prix Perlimpinpin
-// de la semaine" + la carte Score associée.
+// Toutes les analyses publiées, les plus récemment publiées en premier,
+// sans jamais enchaîner deux cartes du même candidat quand c'est évitable.
+// Alimente le carrousel "Prix Perlimpinpin de la semaine" + la carte Score
+// associée. Ordre désormais déterministe (dépend seulement du contenu
+// publié, jamais du visiteur ni du moment de la visite) : voir le cache
+// ISR posé sur la page d'accueil, qui exige un rendu reproductible pour
+// pouvoir être partagé entre visiteurs.
 export async function getFeaturedRotation() {
   const analyses = await prisma.analyse.findMany({
     where: { statut: "publie" },
+    orderBy: { createdAt: "desc" },
     include: {
       proposition: { include: { candidat: true } },
     },
@@ -119,9 +97,10 @@ export async function getFeaturedRotation() {
     dateLabel: dateFormatter.format(analyse.proposition.dateDeclaration),
     score: analyse.scoreFaisabilite,
     verdictDescription: analyse.resumeAccueil ?? analyse.verdict,
+    dateSort: analyse.createdAt,
   }));
 
-  return shuffleNoAdjacentSameCandidat(items);
+  return reorderRecentNoAdjacentSameCandidat(items);
 }
 
 export async function getTopDeclarations(limit = 3) {
