@@ -1,11 +1,12 @@
+import { SearchTrigger } from "./LiveSearch";
 import { ComingSoon, Icon } from "./ui";
 
-// Suggestions qui seront branchées plus tard (Phase 6) : affichées mais
-// inactives pour l'instant.
+// Suggestions du panneau. « Rechercher un sujet » ouvre le champ de recherche ;
+// les autres seront branchées plus tard : affichées mais inactives.
 const SUGGESTIONS = [
   { icon: "microphone", label: "Préparer une interview" },
   { icon: "compare", label: "Comparer des déclarations" },
-  { icon: "search", label: "Rechercher un sujet" },
+  { icon: "search", label: "Rechercher un sujet", active: true },
 ];
 
 export default function LiveAside() {
@@ -23,6 +24,12 @@ export default function LiveAside() {
       <ul className="flex flex-col gap-2">
         {SUGGESTIONS.map((suggestion) => (
           <li key={suggestion.label}>
+            {suggestion.active ? (
+              <SearchTrigger className="flex w-full items-center gap-3 rounded-xl border border-zinc-200 bg-white px-4 py-3 text-left text-sm font-medium text-zinc-800 transition-colors hover:border-zinc-300 hover:bg-zinc-50">
+                <Icon name={suggestion.icon} className="h-5 w-5 text-indigo-500" />
+                <span className="flex-1">{suggestion.label}</span>
+              </SearchTrigger>
+            ) : (
             <ComingSoon className="w-full">
               <button
                 type="button"
@@ -36,6 +43,7 @@ export default function LiveAside() {
                 </span>
               </button>
             </ComingSoon>
+            )}
           </li>
         ))}
       </ul>

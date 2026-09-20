@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { LIVE_THEME_SLUGS, liveThemeLabel } from "@/lib/live-themes";
+import { LIVE_THEMES, LIVE_THEME_SLUGS, liveThemeLabel } from "@/lib/live-themes";
 
 // Persistance et lecture des analyses lancées depuis /live (table
 // LiveAnalyse). Distinct du pipeline public (Proposition/Analyse) : rien
@@ -47,29 +47,21 @@ export async function saveLiveAnalyse({ declaration, resultat, candidatId }) {
   }
 }
 
-// Dernières analyses live, les plus récentes en premier. Filtres facultatifs :
-// un dossier (slug de thème) ou les favoris seulement.
-export async function getRecentLiveAnalyses(limit, { theme, favoris } = {}) {
-  const rows = await prisma.liveAnalyse.findMany({
-    where: {
-      ...(theme ? { theme } : {}),
-      ...(favoris ? { favori: true } : {}),
-    },
-    orderBy: { createdAt: "desc" },
-    take: limit,
-    select: {
-      id: true,
-      titre: true,
-      score: true,
-      nbMesures: true,
-      theme: true,
-      favori: true,
-      createdAt: true,
-      candidat: { select: { nom: true, photoUrl: true } },
-    },
-  });
+// Champs lus pour afficher une analyse sous forme de carte (historique,
+// analyses récentes, favoris, résultats de recherche).
+const CARD_SELECT = {
+  id: true,
+  titre: true,
+  score: true,
+  nbMesures: true,
+  theme: true,
+  favori: true,
+  createdAt: true,
+  candidat: { select: { nom: true, photoUrl: true } },
+};
 
-  return rows.map((row) => ({
+function toCard(row) {
+  return {
     id: row.id,
     titre: row.titre,
     score: row.score,
@@ -80,7 +72,71 @@ export async function getRecentLiveAnalyses(limit, { theme, favoris } = {}) {
     dateLabel: dateFormatter.format(row.createdAt),
     candidatNom: row.candidat?.nom ?? null,
     candidatPhotoUrl: row.candidat?.photoUrl ?? null,
-  }));
+  };
+}
+
+// Dernières analyses live, les plus récentes en premier. Filtres facultatifs :
+// un dossier (slug de thème) ou les favoris seulement.
+export async function getRecentLiveAnalyses(limit, { theme, favoris } = {}) {
+  const rows = await prisma.liveAnalyse.findMany({
+    where: {
+      ...(theme ? { theme } : {}),
+      ...(favoris ? { favori: true } : {}),
+    },
+    orderBy: { createdAt: "desc" },
+    take: limit,
+    select: CARD_SELECT,
+  });
+  return rows.map(toCard);
+}
+
+// --- Recherche ---------------------------------------------------------------
+
+export const SEARCH_MIN_LENGTH = 2;
+export const SEARCH_MAX_LENGTH = 100;
+const SEARCH_LIMIT = 50;
+
+// Minuscules sans accents : sert uniquement à retrouver les thèmes (le thème est
+// stocké sous forme de slug, ex. "sante", alors qu'on tape "santé").
+function foldAccents(text) {
+  return text.toLowerCase().normalize("NFD").replace(/\p{M}/gu, "");
+}
+
+// Prisma n'échappe pas les jokers SQL LIKE dans `contains` : sans cela, chercher
+// « % » ou « _ » renverrait toutes les analyses. Le caractère d'échappement par
+// défaut de PostgreSQL est l'antislash.
+function escapeLike(text) {
+  return text.replace(/[\\%_]/g, "\\$&");
+}
+
+// Recherche simple (aucune IA) dans les analyses live, insensible à la casse :
+// nom du candidat, thème (dossier), texte de la déclaration analysée et titre
+// de l'analyse. Retourne { query, total, analyses } — les SEARCH_LIMIT plus
+// récentes, le total permettant d'indiquer s'il y en a davantage.
+export async function searchLiveAnalyses(rawQuery) {
+  const query = String(rawQuery ?? "").trim().slice(0, SEARCH_MAX_LENGTH);
+  if (query.length < SEARCH_MIN_LENGTH) return { query: "", total: 0, analyses: [] };
+
+  const pattern = escapeLike(query);
+  const folded = foldAccents(query);
+  const themeSlugs = LIVE_THEMES.filter(
+    (theme) => foldAccents(theme.label).includes(folded) || theme.slug.includes(folded),
+  ).map((theme) => theme.slug);
+
+  const where = {
+    OR: [
+      { declaration: { contains: pattern, mode: "insensitive" } },
+      { titre: { contains: pattern, mode: "insensitive" } },
+      { candidat: { nom: { contains: pattern, mode: "insensitive" } } },
+      ...(themeSlugs.length > 0 ? [{ theme: { in: themeSlugs } }] : []),
+    ],
+  };
+
+  const [rows, total] = await Promise.all([
+    prisma.liveAnalyse.findMany({ where, orderBy: { createdAt: "desc" }, take: SEARCH_LIMIT, select: CARD_SELECT }),
+    prisma.liveAnalyse.count({ where }),
+  ]);
+  return { query, total, analyses: rows.map(toCard), limit: SEARCH_LIMIT };
 }
 
 // Candidats proposés dans le sélecteur facultatif du formulaire.

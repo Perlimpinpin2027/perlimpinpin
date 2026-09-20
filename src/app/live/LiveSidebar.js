@@ -1,5 +1,6 @@
 import Link from "next/link";
 import FavoriteButton from "./FavoriteButton";
+import { SearchTrigger } from "./LiveSearch";
 import { Avatar, Icon } from "./ui";
 
 // Logo PERLIMPINPIN GO + badge PRO (partagé entre la barre latérale desktop
@@ -14,6 +15,20 @@ export function LiveBrand() {
         Pro
       </span>
     </div>
+  );
+}
+
+// Icône de recherche (barre latérale et barre du haut mobile) : ouvre le champ
+// de recherche, le même que celui de la carte « Rechercher un sujet ».
+export function LiveSearchIcon() {
+  return (
+    <SearchTrigger
+      aria-label="Rechercher dans les analyses"
+      title="Rechercher dans les analyses"
+      className="rounded-md p-1.5 text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-900"
+    >
+      <Icon name="search" className="h-5 w-5" />
+    </SearchTrigger>
   );
 }
 
@@ -69,8 +84,9 @@ export function LiveMobileNav({ vue }) {
 export default function LiveSidebar({ historique, vue, dossierLabel = null }) {
   return (
     <aside className="hidden flex-col border-r border-zinc-200 bg-white lg:sticky lg:top-0 lg:flex lg:h-screen">
-      <div className="px-5 py-5">
+      <div className="flex items-center justify-between gap-2 px-5 py-5">
         <LiveBrand />
+        <LiveSearchIcon />
       </div>
 
       <nav aria-label="Navigation PerlimpinpinGo" className="px-3">

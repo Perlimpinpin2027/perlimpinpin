@@ -25,7 +25,7 @@ export default function RecentAnalyses({
       ) : (
         <ul className="mt-4 grid gap-3 sm:grid-cols-2">
           {analyses.map((analyse) => (
-            <li key={analyse.id} className="flex flex-col gap-3 rounded-xl border border-zinc-200 bg-white p-4">
+            <li key={analyse.id} className="flex min-w-0 flex-col gap-3 rounded-xl border border-zinc-200 bg-white p-4">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex min-w-0 items-center gap-2.5">
                   <Avatar nom={analyse.candidatNom} photoUrl={analyse.candidatPhotoUrl} size={32} />
