@@ -4,9 +4,13 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getScoreBadge } from "@/lib/score";
 import { liveThemeLabel } from "@/lib/live-themes";
+import ProgressBar from "./ProgressBar";
 import { ComingSoon, Icon } from "./ui";
 
 const DECLARATION_MAX_LENGTH = 20000;
+// La route d'analyse s'arrête à 90 s (maxDuration) : au-delà de 100 s côté
+// navigateur, plus aucune réponse n'est à attendre.
+const ANALYSE_TIMEOUT_MS = 100_000;
 
 const PILIERS = { juridique: "juridique", budgetaire: "budgétaire", moyens_humains: "moyens humains" };
 
@@ -114,6 +118,8 @@ export default function LiveAnalyzer({ candidats = [] }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [result, setResult] = useState(null);
+  // Résultat déjà reçu, affiché une fois la barre de progression complétée
+  const [finishing, setFinishing] = useState(null);
 
   // Récupération de texte depuis un fichier ou une URL (Phase 5a)
   const [urlOpen, setUrlOpen] = useState(false);
@@ -222,30 +228,51 @@ export default function LiveAnalyzer({ candidats = [] }) {
     setLoading(true);
     setError(null);
     setResult(null);
+    setFinishing(null);
+
+    // Délai maximal : sans réponse, on arrête la barre et on affiche une erreur
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), ANALYSE_TIMEOUT_MS);
 
     try {
       const response = await fetch("/api/live/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ declaration, candidatId: candidatId ? Number(candidatId) : undefined }),
+        signal: controller.signal,
       });
       if (response.status === 401) {
         window.location.href = "/live/login";
         return;
       }
       const data = await response.json().catch(() => null);
-      if (!response.ok) {
+      if (!response.ok || !data) {
         setError(data?.error ?? "L'analyse a échoué. Réessayez.");
+        setLoading(false);
         return;
       }
-      setResult(data);
-      // L'analyse est enregistrée côté serveur : recharge historique et cartes.
-      router.refresh();
-    } catch {
-      setError("Connexion impossible. Vérifiez votre réseau et réessayez.");
-    } finally {
+      // Réponse arrivée : la barre se complète à 100 %, puis handleFinished
+      // affiche le résultat.
+      setFinishing(data);
+    } catch (caught) {
+      setError(
+        caught?.name === "AbortError"
+          ? "L'analyse prend trop de temps. Réessayez, éventuellement avec un extrait plus court."
+          : "Connexion impossible. Vérifiez votre réseau et réessayez.",
+      );
       setLoading(false);
+    } finally {
+      clearTimeout(timer);
     }
+  }
+
+  // Appelé par la barre une fois à 100 % : on montre le résultat
+  function handleFinished() {
+    setResult(finishing);
+    setFinishing(null);
+    setLoading(false);
+    // L'analyse est enregistrée côté serveur : recharge historique et cartes.
+    router.refresh();
   }
 
   return (
@@ -406,13 +433,20 @@ export default function LiveAnalyzer({ candidats = [] }) {
             >
               {loading ? "Analyse en cours…" : "Analyser"}
             </button>
-            {loading && <p className="text-sm text-zinc-500">Comptez 20 à 60 secondes.</p>}
             {error && (
               <p role="alert" className="text-sm text-red-600">
                 {error}
               </p>
             )}
           </div>
+
+          {loading && (
+            <ProgressBar
+              label="Analyse en cours"
+              finished={finishing !== null}
+              onFinished={handleFinished}
+            />
+          )}
         </form>
       </div>
 
