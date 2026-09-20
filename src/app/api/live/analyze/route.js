@@ -34,8 +34,10 @@ export async function POST(request) {
   try {
     const resultat = await analyseDeclaration(declaration);
     // Sauvegarde pour l'historique ; ne bloque ni ne fait échouer l'analyse.
-    await saveLiveAnalyse({ declaration, resultat, candidatId });
-    return Response.json(resultat);
+    const saved = await saveLiveAnalyse({ declaration, resultat, candidatId });
+    // `id` : identifiant de la page dédiée /live/analyses/[id] (null si l'analyse
+    // n'a pas pu être enregistrée, ex. aucune mesure analysable).
+    return Response.json({ ...resultat, id: saved?.id ?? null });
   } catch (error) {
     if (error instanceof LiveAnalyseError) {
       return Response.json({ error: error.message }, { status: error.status });

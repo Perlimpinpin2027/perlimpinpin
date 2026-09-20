@@ -1,3 +1,4 @@
+import Link from "next/link";
 import FavoriteButton from "./FavoriteButton";
 import { Avatar, ScoreBadge } from "./ui";
 
@@ -25,7 +26,7 @@ export default function RecentAnalyses({
       ) : (
         <ul className="mt-4 grid gap-3 sm:grid-cols-2">
           {analyses.map((analyse) => (
-            <li key={analyse.id} className="flex min-w-0 flex-col gap-3 rounded-xl border border-zinc-200 bg-white p-4">
+            <li key={analyse.id} className="relative flex min-w-0 flex-col gap-3 rounded-xl border border-zinc-200 bg-white p-4 transition-colors hover:border-zinc-300">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex min-w-0 items-center gap-2.5">
                   <Avatar nom={analyse.candidatNom} photoUrl={analyse.candidatPhotoUrl} size={32} />
@@ -33,12 +34,20 @@ export default function RecentAnalyses({
                     {analyse.candidatNom ?? "Candidat non précisé"}
                   </p>
                 </div>
-                <div className="flex shrink-0 items-center gap-1">
+                <div className="relative z-10 flex shrink-0 items-center gap-1">
                   <ScoreBadge score={analyse.score} />
                   <FavoriteButton id={analyse.id} favori={analyse.favori} />
                 </div>
               </div>
-              <p className="line-clamp-3 text-sm font-medium leading-snug text-zinc-900">{analyse.titre}</p>
+              {/* Lien étendu à toute la carte (after:inset-0) ; l'étoile reste cliquable (z-10) */}
+              <p className="line-clamp-3 text-sm font-medium leading-snug text-zinc-900">
+                <Link
+                  href={`/live/analyses/${analyse.id}`}
+                  className="after:absolute after:inset-0 after:rounded-xl hover:underline"
+                >
+                  {analyse.titre}
+                </Link>
+              </p>
               <p className="mt-auto text-xs text-zinc-400">
                 <span className="rounded bg-zinc-100 px-1.5 py-0.5 font-medium text-zinc-500">
                   {analyse.themeLabel}

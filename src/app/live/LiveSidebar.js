@@ -81,7 +81,7 @@ export function LiveMobileNav({ vue }) {
   );
 }
 
-export default function LiveSidebar({ historique, vue, dossierLabel = null }) {
+export default function LiveSidebar({ historique, vue, dossierLabel = null, currentId = null }) {
   return (
     <aside className="hidden flex-col border-r border-zinc-200 bg-white lg:sticky lg:top-0 lg:flex lg:h-screen">
       <div className="flex items-center justify-between gap-2 px-5 py-5">
@@ -109,16 +109,27 @@ export default function LiveSidebar({ historique, vue, dossierLabel = null }) {
         ) : (
           <ul className="mt-2 flex flex-col gap-0.5 overflow-y-auto">
             {historique.map((item) => (
-              <li key={item.id} className="flex items-start gap-2 rounded-lg px-3 py-2">
+              <li
+                key={item.id}
+                className={`relative flex items-start gap-2 rounded-lg px-3 py-2 transition-colors ${
+                  item.id === currentId ? "bg-zinc-100" : "hover:bg-zinc-50"
+                }`}
+              >
                 <Avatar nom={item.candidatNom} photoUrl={item.candidatPhotoUrl} size={28} />
                 <div className="min-w-0 flex-1">
-                  <p className="line-clamp-2 text-sm leading-snug text-zinc-800">{item.titre}</p>
+                  <p className="line-clamp-2 text-sm leading-snug text-zinc-800">
+                    <Link href={`/live/analyses/${item.id}`} className="after:absolute after:inset-0 after:rounded-lg">
+                      {item.titre}
+                    </Link>
+                  </p>
                   <p className="mt-0.5 truncate text-xs text-zinc-400">
                     {item.candidatNom ? `${item.candidatNom} · ` : ""}
                     {item.dateLabel}
                   </p>
                 </div>
-                <FavoriteButton id={item.id} favori={item.favori} />
+                <span className="relative z-10">
+                  <FavoriteButton id={item.id} favori={item.favori} />
+                </span>
               </li>
             ))}
           </ul>

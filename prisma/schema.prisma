@@ -236,6 +236,31 @@ model LiveAnalyse {
   // (table propre à /live, distincte des fiches publiques create-only).
   favori Boolean @default(false)
 
+  // --- Structure enrichie (page dédiée /live/analyses/[id]) ---
+  // Toutes nullables : les analyses créées avant cet ajout n'ont pas ces
+  // champs et s'affichent en version simplifiée. Le champ `titre` ci-dessus
+  // reçoit désormais un titre court généré quand il est disponible.
+
+  // Synthèse d'ensemble (1 à 2 phrases)
+  syntheseGlobale String?
+
+  // Une phrase par axe : Chiffrage, Faisabilité, Impact
+  syntheseChiffrage   String?
+  syntheseFaisabilite String?
+  syntheseImpact      String?
+
+  // "élevé" | "moyen" | "faible"
+  confiance String?
+
+  // [{ texte, verdict, sources: [id, …] }] — verdict parmi Cohérent, Plutôt
+  // cohérent, Incertain, Non étayé, Contredit. null = analyse antérieure au
+  // format enrichi ([] = format enrichi sans affirmation extraite).
+  affirmations Json?
+
+  // [{ id, nom, date, url }] — références connues du modèle (l'analyse live
+  // n'effectue pas de recherche web) : à vérifier avant diffusion.
+  sources Json?
+
   candidatId Int?
   candidat   Candidat? @relation(fields: [candidatId], references: [id])
 

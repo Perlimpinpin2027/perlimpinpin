@@ -13,6 +13,15 @@ const dateFormatter = new Intl.DateTimeFormat("fr-FR", {
 
 const TITRE_MAX_LENGTH = 120;
 
+const longDateFormatter = new Intl.DateTimeFormat("fr-FR", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+});
+
+// Chaîne vide -> null : une synthèse absente n'est pas un texte vide à afficher.
+const orNull = (text) => (typeof text === "string" && text.trim() ? text.trim() : null);
+
 function shorten(text, max) {
   return text.length > max ? `${text.slice(0, max - 1).trimEnd()}…` : text;
 }
@@ -32,11 +41,21 @@ export async function saveLiveAnalyse({ declaration, resultat, candidatId }) {
     return await prisma.liveAnalyse.create({
       data: {
         declaration,
-        titre: shorten(mesures[0].mesure_reformulee, TITRE_MAX_LENGTH),
+        // Titre court généré ; à défaut, reformulation de la première mesure
+        titre: shorten(orNull(resultat.titre_court) ?? mesures[0].mesure_reformulee, TITRE_MAX_LENGTH),
         score,
         nbMesures: mesures.length,
         theme: LIVE_THEME_SLUGS.includes(resultat.theme) ? resultat.theme : "autre",
         resultat,
+        // Structure enrichie (page dédiée). Les listes sont toujours écrites
+        // (éventuellement vides) : null signale une analyse antérieure.
+        syntheseGlobale: orNull(resultat.synthese_globale),
+        syntheseChiffrage: orNull(resultat.syntheses?.chiffrage),
+        syntheseFaisabilite: orNull(resultat.syntheses?.faisabilite),
+        syntheseImpact: orNull(resultat.syntheses?.impact),
+        confiance: orNull(resultat.niveau_confiance),
+        affirmations: resultat.affirmations ?? [],
+        sources: resultat.sources ?? [],
         candidatId: candidatId ?? null,
       },
       select: { id: true },
@@ -169,4 +188,62 @@ export async function setLiveFavori(id, favori) {
     if (error.code === "P2025") return null;
     throw error;
   }
+}
+
+// Détail complet d'une analyse pour la page /live/analyses/[id]. Compatible
+// avec les analyses créées avant la structure enrichie : leurs champs
+// enrichis sont null en base, et `enrichi` vaut alors false (la page affiche
+// une version simplifiée). Retourne null si l'analyse n'existe pas.
+export async function getLiveAnalyseDetail(id) {
+  const row = await prisma.liveAnalyse.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      declaration: true,
+      titre: true,
+      score: true,
+      nbMesures: true,
+      theme: true,
+      favori: true,
+      createdAt: true,
+      resultat: true,
+      syntheseGlobale: true,
+      syntheseChiffrage: true,
+      syntheseFaisabilite: true,
+      syntheseImpact: true,
+      confiance: true,
+      affirmations: true,
+      sources: true,
+      candidat: { select: { nom: true, parti: true, photoUrl: true } },
+    },
+  });
+  if (!row) return null;
+
+  const enrichi = Array.isArray(row.affirmations);
+  return {
+    id: row.id,
+    declaration: row.declaration,
+    titre: row.titre,
+    score: row.score,
+    nbMesures: row.nbMesures,
+    themeSlug: row.theme,
+    themeLabel: liveThemeLabel(row.theme),
+    favori: row.favori,
+    dateLabel: longDateFormatter.format(row.createdAt),
+    mesures: Array.isArray(row.resultat?.mesures) ? row.resultat.mesures : [],
+    remarque: typeof row.resultat?.remarque === "string" ? row.resultat.remarque : null,
+    enrichi,
+    syntheseGlobale: row.syntheseGlobale,
+    syntheses: {
+      chiffrage: row.syntheseChiffrage,
+      faisabilite: row.syntheseFaisabilite,
+      impact: row.syntheseImpact,
+    },
+    confiance: row.confiance,
+    affirmations: enrichi ? row.affirmations : [],
+    sources: Array.isArray(row.sources) ? row.sources : [],
+    candidat: row.candidat
+      ? { nom: row.candidat.nom, parti: row.candidat.parti, photoUrl: row.candidat.photoUrl }
+      : null,
+  };
 }
