@@ -28,6 +28,12 @@ const TONE_STYLES = {
   neutral: "bg-zinc-100 text-zinc-400",
 };
 
+const CONFIANCE_DOT = {
+  "élevé": "bg-emerald-500",
+  moyen: "bg-amber-400",
+  faible: "bg-red-500",
+};
+
 const AXES = [
   { key: "chiffrage", label: "Chiffrage", icon: "banknotes" },
   { key: "faisabilite", label: "Faisabilité", icon: "scale" },
@@ -68,10 +74,25 @@ function SynthesePanel({ analyse, onShowAffirmations }) {
 
   return (
     <div className="flex flex-col gap-5">
-      <p className="rounded-lg border border-zinc-200 bg-white/70 px-4 py-3 text-sm text-zinc-600">
-        <strong className="text-zinc-800">Estimation préliminaire.</strong>{" "}
-        {"Réalisée sans recherche externe, à partir de la seule déclaration : à vérifier avant toute diffusion."}
-      </p>
+      {analyse.mode === "approfondie" ? (
+        // Analyse avec recherche web : pas de bandeau « estimation préliminaire », le
+        // niveau de confiance en tient lieu.
+        <p className="flex flex-wrap items-center gap-x-2 gap-y-1 rounded-lg border border-zinc-200 bg-white/70 px-4 py-3 text-sm text-zinc-600">
+          <strong className="text-zinc-800">Analyse approfondie.</strong>
+          <span>Réalisée avec une recherche de sources externes.</span>
+          {analyse.confiance && (
+            <span className="inline-flex items-center gap-1.5">
+              <span aria-hidden="true" className={`h-2.5 w-2.5 rounded-full ${CONFIANCE_DOT[analyse.confiance] ?? "bg-zinc-300"}`} />
+              Niveau de confiance : <strong className="text-zinc-800">{analyse.confiance}</strong>
+            </span>
+          )}
+        </p>
+      ) : (
+        <p className="rounded-lg border border-zinc-200 bg-white/70 px-4 py-3 text-sm text-zinc-600">
+          <strong className="text-zinc-800">Estimation préliminaire.</strong>{" "}
+          {"Réalisée sans recherche externe, à partir de la seule déclaration : à vérifier avant toute diffusion."}
+        </p>
+      )}
 
       <section aria-labelledby="evaluation-globale" className="rounded-2xl border border-zinc-200 bg-white p-5 sm:p-6">
         <h2 id="evaluation-globale" className="text-lg font-bold text-zinc-900">
@@ -227,11 +248,15 @@ function SourcesPanel({ analyse }) {
   return (
     <div className="flex flex-col gap-4">
       <p className="rounded-lg bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-900">
-        {"Pistes de vérification issues des connaissances de l'analyse (institutions, textes officiels) : elle n'effectue aucune recherche web et ne lit pas ces sources. À consulter et à vérifier avant toute diffusion."}
+        {analyse.mode === "approfondie"
+          ? "Sources trouvées par la recherche web lors de l'analyse. Une source de plaidoyer n'est jamais retenue seule pour appuyer un fait. Relisez les sources clés avant toute diffusion."
+          : "Pistes de vérification issues des connaissances de l'analyse (institutions, textes officiels) : elle n'effectue aucune recherche web et ne lit pas ces sources. À consulter et à vérifier avant toute diffusion."}
       </p>
       {analyse.sources.length === 0 ? (
         <Notice>
-          {"Aucune source n'a pu être identifiée avec certitude pour cette déclaration. Vérifiez les chiffres et les textes cités auprès de sources officielles."}
+          {analyse.mode === "approfondie"
+            ? "La recherche n'a pas permis d'identifier de source fiable pour cette déclaration. Vérifiez les chiffres et les textes cités auprès de sources officielles."
+            : "Aucune source n'a pu être identifiée avec certitude pour cette déclaration. Vérifiez les chiffres et les textes cités auprès de sources officielles."}
         </Notice>
       ) : (
         <ol className="flex flex-col gap-2">

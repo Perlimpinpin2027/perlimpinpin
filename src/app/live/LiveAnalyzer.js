@@ -4,14 +4,30 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { liveThemeLabel } from "@/lib/live-themes";
 import { MesureCard } from "./MesureDetail";
-import ProgressBar from "./ProgressBar";
+import ProgressBar, { DEEP_MESSAGES } from "./ProgressBar";
 import { ComingSoon, Icon } from "./ui";
 import { loginUrl } from "@/lib/live-redirect";
 
 const DECLARATION_MAX_LENGTH = 20000;
-// La route d'analyse s'arrête à 90 s (maxDuration) : au-delà de 100 s côté
-// navigateur, plus aucune réponse n'est à attendre.
-const ANALYSE_TIMEOUT_MS = 100_000;
+// Mode d'analyse, choisi avant « Analyser » et valable pour toutes les saisies
+// (texte, fichier, URL). Le serveur borne l'analyse rapide à 90 s et l'approfondie à
+// 270 s : au-delà de ces délais (+ marge) côté navigateur, plus rien à attendre.
+const ANALYSE_MODES = [
+  {
+    value: "rapide",
+    label: "Analyse rapide",
+    duration: "~15 à 20 secondes",
+    description: "À partir du texte de la déclaration seule. Estimation à vérifier avant diffusion.",
+    timeoutMs: 100_000,
+  },
+  {
+    value: "approfondie",
+    label: "Analyse approfondie",
+    duration: "~1 à 3 minutes",
+    description: "Recherche de sources externes pour une analyse sourcée et vérifiée.",
+    timeoutMs: 290_000,
+  },
+];
 
 // Entrée prévue plus tard : affichée, inactive.
 const FUTURE_INPUTS = [{ icon: "transcript", label: "Transcript" }];
@@ -29,6 +45,7 @@ const SOURCE_BUTTON_CLASS =
 export default function LiveAnalyzer({ candidats = [] }) {
   const router = useRouter();
   const fileInputRef = useRef(null);
+  const [mode, setMode] = useState("rapide");
   const [candidatId, setCandidatId] = useState("");
   const [sourceUrl, setSourceUrl] = useState("");
   const [declaration, setDeclaration] = useState("");
@@ -149,7 +166,7 @@ export default function LiveAnalyzer({ candidats = [] }) {
 
     // Délai maximal : sans réponse, on arrête la barre et on affiche une erreur
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), ANALYSE_TIMEOUT_MS);
+    const timer = setTimeout(() => controller.abort(), ANALYSE_MODES.find((option) => option.value === mode).timeoutMs);
 
     try {
       const response = await fetch("/api/live/analyze", {
@@ -157,6 +174,7 @@ export default function LiveAnalyzer({ candidats = [] }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           declaration,
+          mode,
           candidatId: candidatId ? Number(candidatId) : undefined,
           sourceUrl: sourceUrl.trim() || undefined,
         }),
@@ -178,7 +196,9 @@ export default function LiveAnalyzer({ candidats = [] }) {
     } catch (caught) {
       setError(
         caught?.name === "AbortError"
-          ? "L'analyse prend trop de temps. Réessayez, éventuellement avec un extrait plus court."
+          ? mode === "approfondie"
+            ? "L'analyse approfondie prend trop de temps. Réessayez, ou lancez une analyse rapide."
+            : "L'analyse prend trop de temps. Réessayez, éventuellement avec un extrait plus court."
           : "Connexion impossible. Vérifiez votre réseau et réessayez.",
       );
       setLoading(false);
@@ -371,6 +391,39 @@ export default function LiveAnalyzer({ candidats = [] }) {
             </p>
           </div>
 
+          <fieldset disabled={loading} className="min-w-0">
+            <legend className="text-sm font-medium text-zinc-700">Type d&apos;analyse</legend>
+            <div className="mt-1.5 grid gap-2 sm:grid-cols-2">
+              {ANALYSE_MODES.map((option) => {
+                const selected = mode === option.value;
+                return (
+                  <label
+                    key={option.value}
+                    className={`flex cursor-pointer gap-3 rounded-xl border px-4 py-3 transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-blue-200 has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-60 ${
+                      selected ? "border-zinc-900 bg-zinc-50" : "border-zinc-200 bg-white hover:border-zinc-300"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="live-mode"
+                      value={option.value}
+                      checked={selected}
+                      onChange={() => setMode(option.value)}
+                      className="mt-1 h-4 w-4 shrink-0 accent-zinc-900"
+                    />
+                    <span className="min-w-0">
+                      <span className="flex flex-wrap items-baseline gap-x-2">
+                        <span className="text-sm font-semibold text-zinc-900">{option.label}</span>
+                        <span className="text-xs text-zinc-500">{option.duration}</span>
+                      </span>
+                      <span className="mt-0.5 block text-xs leading-relaxed text-zinc-500">{option.description}</span>
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
+          </fieldset>
+
           <div className="flex items-center gap-4">
             <button
               type="submit"
@@ -387,11 +440,21 @@ export default function LiveAnalyzer({ candidats = [] }) {
           </div>
 
           {loading && (
-            <ProgressBar
-              label="Analyse en cours"
-              finished={finishing !== null}
-              onFinished={handleFinished}
-            />
+            <div>
+              <ProgressBar
+                key={mode}
+                label={mode === "approfondie" ? "Analyse approfondie en cours" : "Analyse en cours"}
+                profile={mode}
+                {...(mode === "approfondie" ? { messages: DEEP_MESSAGES } : {})}
+                finished={finishing !== null}
+                onFinished={handleFinished}
+              />
+              {mode === "approfondie" && finishing === null && (
+                <p className="mt-1 text-xs text-zinc-400">
+                  La recherche de sources prend de 1 à 3 minutes. Gardez cette page ouverte.
+                </p>
+              )}
+            </div>
           )}
         </form>
       </div>
@@ -399,9 +462,18 @@ export default function LiveAnalyzer({ candidats = [] }) {
       {result && (
         <section className="mt-8 flex flex-col gap-4" aria-live="polite">
           <p className="rounded-lg border border-zinc-200 bg-white/70 px-4 py-3 text-sm text-zinc-600">
-            <strong className="text-zinc-800">Estimation préliminaire.</strong>{" "}
-            Réalisée sans recherche externe, à partir
-            de la seule déclaration : à vérifier avant toute diffusion. {result.id ? "Elle est enregistrée dans l'historique de l'équipe." : "Elle n'a pas été enregistrée dans l'historique."}
+            {result.mode === "approfondie" ? (
+              <>
+                <strong className="text-zinc-800">Analyse approfondie.</strong> Réalisée avec une recherche de sources externes
+                {result.niveau_confiance && <> (niveau de confiance : <strong className="text-zinc-800">{result.niveau_confiance}</strong>)</>}.
+              </>
+            ) : (
+              <>
+                <strong className="text-zinc-800">Estimation préliminaire.</strong> Réalisée sans recherche externe, à partir
+                de la seule déclaration : à vérifier avant toute diffusion.
+              </>
+            )}{" "}
+            {result.id ? "Elle est enregistrée dans l'historique de l'équipe." : "Elle n'a pas été enregistrée dans l'historique."}
             {result.mesures.length > 0 && <> Dossier : <strong className="text-zinc-800">{liveThemeLabel(result.theme)}</strong>.</>}
           </p>
 

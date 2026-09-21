@@ -248,6 +248,8 @@ export async function getLiveAnalyseDetail(id) {
     dateLabel: longDateFormatter.format(row.createdAt),
     mesures: Array.isArray(row.resultat?.mesures) ? row.resultat.mesures : [],
     remarque: typeof row.resultat?.remarque === "string" ? row.resultat.remarque : null,
+    // Mode d'analyse (stocké dans le résultat) ; les analyses antérieures sont « rapide »
+    mode: row.resultat?.mode === "approfondie" ? "approfondie" : "rapide",
     enrichi,
     syntheseGlobale: row.syntheseGlobale,
     syntheses: {

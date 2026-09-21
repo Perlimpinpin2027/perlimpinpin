@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { messageIndex, simulatedProgress } from "@/lib/live-progress";
+import { PROGRESS_PROFILES, messageIndex, simulatedProgress } from "@/lib/live-progress";
 
 // Barre de progression SIMULÉE, réutilisable pour toute action IA de /live
 // (analyse, questions d'interview, segmentation de transcript…). Elle ne mesure
@@ -28,11 +28,28 @@ export const DEFAULT_MESSAGES = [
   "Finalisation…",
 ];
 
+// Messages de l'analyse approfondie (recherche web) : rotation plus lente, adaptée à
+// un temps d'attente de 1 à 3 minutes. Comme les autres, non liés à de vraies étapes.
+export const DEEP_MESSAGES = [
+  "Lecture de la déclaration…",
+  "Identification des mesures…",
+  "Recherche de sources externes…",
+  "Lecture des sources trouvées…",
+  "Croisement des chiffres et des textes…",
+  "Analyse des critères…",
+  "Vérification des points sensibles…",
+  "Calcul du score…",
+  "Finalisation…",
+];
+
+// `profile` : rythme de la simulation ("rapide" par défaut, "approfondie" pour une
+// attente de plusieurs minutes).
 export default function ProgressBar({
   finished = false,
   onFinished,
   messages = DEFAULT_MESSAGES,
   label = "Traitement en cours",
+  profile = "rapide",
 }) {
   const [progress, setProgress] = useState(0);
   const [seconds, setSeconds] = useState(0);
@@ -49,7 +66,7 @@ export default function ProgressBar({
       const start = Date.now();
       const id = setInterval(() => {
         const elapsed = (Date.now() - start) / 1000;
-        progressRef.current = simulatedProgress(elapsed);
+        progressRef.current = simulatedProgress(elapsed, profile);
         setProgress(progressRef.current);
         setSeconds(elapsed);
       }, TICK_MS);
@@ -72,9 +89,10 @@ export default function ProgressBar({
       clearInterval(id);
       clearTimeout(hold);
     };
-  }, [finished]);
+  }, [finished, profile]);
 
-  const message = finished ? messages[messages.length - 1] : messages[messageIndex(seconds, messages.length)];
+  const messageEvery = (PROGRESS_PROFILES[profile] ?? PROGRESS_PROFILES.rapide).messageEvery;
+  const message = finished ? messages[messages.length - 1] : messages[messageIndex(seconds, messages.length, messageEvery)];
 
   return (
     <div className="w-full">

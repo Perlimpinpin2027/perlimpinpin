@@ -5,12 +5,16 @@ import {
   DECLARATION_MIN_LENGTH,
   LiveAnalyseError,
   analyseDeclaration,
+  normalizeMode,
 } from "@/lib/live-analyse";
 import { saveLiveAnalyse } from "@/lib/live-history";
 import { normalizeSourceUrl } from "@/lib/live-video";
 
-// Génération non streamée d'une dizaine à une soixantaine de secondes.
-export const maxDuration = 90;
+// Mode « rapide » : génération non streamée d'une dizaine à une soixantaine de
+// secondes. Mode « approfondie » : recherche web, 1 à 3 minutes (budget interne de
+// 270 s dans live-analyse.js). La durée maximale s'applique à la route entière ;
+// au-delà de 60 s, elle suppose le Fluid Compute (ou un plan Pro) sur Vercel.
+export const maxDuration = 300;
 
 export async function POST(request) {
   // Le proxy ne couvre que /live : cette route API revérifie elle-même la
@@ -27,6 +31,13 @@ export async function POST(request) {
       { error: `La déclaration doit faire entre ${DECLARATION_MIN_LENGTH} et ${DECLARATION_MAX_LENGTH} caractères.` },
       { status: 400 },
     );
+  }
+
+  // Mode d'analyse : "rapide" (par défaut si absent) ou "approfondie". Toute autre
+  // valeur est refusée avant l'appel payant.
+  const mode = normalizeMode(body?.mode);
+  if (!mode) {
+    return Response.json({ error: "Mode d'analyse inconnu : « rapide » ou « approfondie »." }, { status: 400 });
   }
 
   // Candidat facultatif (sélecteur du formulaire) : entier positif ou rien.
@@ -46,7 +57,7 @@ export async function POST(request) {
   }
 
   try {
-    const resultat = await analyseDeclaration(declaration);
+    const resultat = await analyseDeclaration(declaration, { mode });
     // Sauvegarde pour l'historique ; ne bloque ni ne fait échouer l'analyse.
     const saved = await saveLiveAnalyse({ declaration, resultat, candidatId, sourceUrl });
     // `id` : identifiant de la page dédiée /live/analyses/[id] (null si l'analyse
