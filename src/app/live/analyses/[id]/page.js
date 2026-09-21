@@ -3,10 +3,11 @@ import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { LIVE_COOKIE_NAME, verifySessionToken } from "@/lib/live-session";
 import { getLiveAnalyseDetail, getRecentLiveAnalyses } from "@/lib/live-history";
+import { getLiveChatMessages } from "@/lib/live-chat-db";
 import AnalysisActions from "../../AnalysisActions";
 import AnalysisAside from "../../AnalysisAside";
 import AnalysisView from "../../AnalysisView";
-import AskBar from "../../AskBar";
+import AnalysisChat from "../../AnalysisChat";
 import { LiveSearchProvider, SearchBar } from "../../LiveSearch";
 import LiveSidebar, { LiveBrand, LiveMobileNav, LiveSearchIcon } from "../../LiveSidebar";
 import VideoSource from "../../VideoSource";
@@ -35,7 +36,11 @@ export default async function AnalysePage({ params }) {
   const id = Number(rawId);
   if (!Number.isInteger(id) || id <= 0) notFound();
 
-  const [analyse, historique] = await Promise.all([getLiveAnalyseDetail(id), getRecentLiveAnalyses(SIDEBAR_COUNT)]);
+  const [analyse, historique, messages] = await Promise.all([
+    getLiveAnalyseDetail(id),
+    getRecentLiveAnalyses(SIDEBAR_COUNT),
+    getLiveChatMessages(id),
+  ]);
   if (!analyse) notFound();
 
   const candidatNom = analyse.candidat?.nom ?? null;
@@ -114,7 +119,8 @@ export default async function AnalysePage({ params }) {
               <AnalysisView key={analyse.id} analyse={analyse} />
             </div>
 
-            <AskBar />
+            {/* Conversation avec l'analyse : l'historique enregistré est rechargé à chaque ouverture */}
+            <AnalysisChat key={analyse.id} analyseId={analyse.id} initialMessages={messages} />
           </div>
         </main>
 

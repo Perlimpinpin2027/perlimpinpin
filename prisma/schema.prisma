@@ -276,10 +276,33 @@ model LiveAnalyse {
   sourceUrl   String?
   sourceVideo String?
 
+  // Conversation « Posez une question sur cette analyse » (LiveChatMessage)
+  messages LiveChatMessage[]
+
   candidatId Int?
   candidat   Candidat? @relation(fields: [candidatId], references: [id])
 
   createdAt DateTime @default(now())
 
   @@index([createdAt])
+}
+
+// Messages du chat d'une analyse live (« Posez une question sur cette analyse »).
+// INSERTION SEULE, comme les autres tables de /live : une question et sa réponse
+// sont ajoutées ensemble (deux lignes) ; jamais modifiées ni supprimées. Le code
+// d'accès (src/lib/live-chat-db.js) n'expose que create et la lecture.
+model LiveChatMessage {
+  id Int @id @default(autoincrement())
+
+  analyseId Int
+  analyse   LiveAnalyse @relation(fields: [analyseId], references: [id])
+
+  // "user" (la question du journaliste) | "assistant" (la réponse)
+  role String
+
+  content String
+
+  createdAt DateTime @default(now())
+
+  @@index([analyseId, createdAt])
 }
