@@ -5,14 +5,68 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import ContactModal from "./ContactModal";
 
+// Onglets du centre de la barre (maquette : Déclarations, Candidats,
+// Méthode, À propos) + Thèmes, conservé à la demande. "Prix Perlimpinpin"
+// n'apparaît plus dans la barre (la page /prix-perlimpinpin existe toujours).
 const navLinks = [
   { label: "Déclarations", href: "/declarations" },
   { label: "Candidats", href: "/candidats" },
   { label: "Thèmes", href: "/themes" },
-  { label: "Prix Perlimpinpin", href: "/prix-perlimpinpin" },
   { label: "Méthode", href: "/methode" },
   { label: "À propos", href: "/a-propos" },
 ];
+
+// Icônes en SVG inline (trait 1.8, comme avant). Définies une seule fois ici
+// pour ne pas les recopier entre la barre desktop et le menu mobile.
+function IconBase({ className = "h-5 w-5", children }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      {children}
+    </svg>
+  );
+}
+
+function MailIcon() {
+  return (
+    <IconBase>
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <path d="m3 7 9 6 9-6" />
+    </IconBase>
+  );
+}
+
+// Avion en papier du bouton "Go!" (remplace l'ancien lien "Journalistes").
+function SendIcon() {
+  return (
+    <IconBase>
+      <path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z" />
+      <path d="m21.854 2.147-10.94 10.939" />
+    </IconBase>
+  );
+}
+
+function ChatIcon({ className }) {
+  return (
+    <IconBase className={className}>
+      <path d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" />
+    </IconBase>
+  );
+}
+
+// Petit trait vertical entre les trois actions de droite (maquette).
+function Divider() {
+  return <span aria-hidden="true" className="h-5 w-px bg-zinc-300/80" />;
+}
 
 export default function Header() {
   const pathname = usePathname();
@@ -22,9 +76,8 @@ export default function Header() {
   // scroll) recrée cette fonction et redéclenche l'effet de fermeture
   // automatique de ContactModal, qui l'a en dépendance.
   const closeContact = useCallback(() => setIsContactOpen(false), []);
-  // Fond flouté/semi-transparent + ombre uniquement une fois la page
-  // scrollée, pour distinguer le header sticky du contenu qui défile
-  // dessous sans l'alourdir visuellement quand on est tout en haut.
+  // Ombre un peu plus marquée une fois la page scrollée, pour bien détacher
+  // la barre flottante du contenu qui défile dessous.
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -35,37 +88,32 @@ export default function Header() {
   }, []);
 
   return (
-    <header
-      className={`sticky top-0 z-30 w-full border-b transition-colors duration-200 ${
-        isScrolled
-          ? "border-zinc-200/70 bg-background/80"
-          : "border-transparent bg-background"
-      }`}
-      // box-shadow/backdrop-filter posés en style inline plutôt qu'en
-      // classes Tailwind (shadow-sm/backdrop-blur-md) : ces utilitaires
-      // composent leur valeur via des custom properties CSS (--tw-shadow,
-      // --tw-backdrop-blur) qui, sur ce site, ne se résolvent pas de façon
-      // fiable sur un header déjà monté — l'inline style pose la valeur
-      // finale directement, sans cette indirection.
-      style={
-        isScrolled
-          ? { boxShadow: "0 1px 3px 0 rgb(0 0 0 / 0.1)", backdropFilter: "blur(12px)" }
-          : undefined
-      }
-    >
-      <div className="flex items-center justify-between gap-6 px-6 py-4 sm:px-8">
+    // Le <header> reste sticky mais devient transparent : c'est la "pilule"
+    // blanche à l'intérieur qui flotte, avec une marge autour (maquette). Le
+    // dégradé de la page (bg-page-gradient) passe donc derrière la barre.
+    <header className="sticky top-0 z-30 w-full px-4 pt-3 sm:px-8 sm:pt-4 lg:px-12">
+      {/* box-shadow/backdrop-filter posés en style inline plutôt qu'en
+          classes Tailwind (shadow-sm/backdrop-blur-md) : ces utilitaires
+          composent leur valeur via des custom properties CSS (--tw-shadow,
+          --tw-backdrop-blur) qui, sur ce site, ne se résolvent pas de façon
+          fiable sur un header déjà monté — l'inline style pose la valeur
+          finale directement, sans cette indirection. */}
+      <div
+        className="flex items-center justify-between gap-6 rounded-full border border-zinc-200/60 bg-white/85 px-6 py-3 sm:px-8"
+        style={{
+          boxShadow: isScrolled
+            ? "0 8px 30px rgb(0 0 0 / 0.10)"
+            : "0 4px 20px rgb(0 0 0 / 0.05)",
+          backdropFilter: "blur(12px)",
+        }}
+      >
         {/* Logo en image (public/logo/perlimpinpin-logo.png) plutôt qu'en
             texte/CSS : les tentatives de reproduction en Geist Mono
-            n'étaient jamais fidèles au fichier source malgré les mesures
-            (graisse, largeur des traits, forme des glyphes légèrement
-            différentes de la police réellement utilisée dans le logo
-            fourni). Fichier source recadré au plus près (bounding box des
-            pixels non blancs) et fond passé en transparent ; exporté à
-            600px de large (~3x la taille d'affichage réelle) pour rester
-            net en écran retina. Hauteur alignée sur les 17.6px/22.4px déjà
-            validés pour l'ancien logo image (voir .header-logo, retiré de
-            globals.css). aria-hidden sur l'image, aria-label porté par le
-            Link pour un nom accessible propre ("Perlimpinpin"). */}
+            n'étaient jamais fidèles au fichier source. Fichier recadré au
+            plus près et fond transparent ; exporté à 600px de large (~3x la
+            taille d'affichage) pour rester net en écran retina. aria-hidden
+            sur l'image, aria-label porté par le Link pour un nom accessible
+            propre ("Perlimpinpin"). */}
         <Link
           href="/"
           aria-label="Perlimpinpin"
@@ -102,78 +150,44 @@ export default function Header() {
           </ul>
         </nav>
 
-        {/* Trois liens utilitaires regroupés : espacement fixe entre eux,
-            indépendant de l'espace libre que justify-between répartit entre
-            logo, nav et ce groupe. */}
-        <div className="hidden shrink-0 items-center gap-6 lg:flex xl:gap-8">
+        {/* Groupe de droite (maquette) : Newsletter | Go! | bulle de contact,
+            séparés par de petits traits verticaux. */}
+        <div className="hidden shrink-0 items-center gap-4 lg:flex xl:gap-5">
           <Link
             href="/newsletter"
             aria-label="Newsletter"
             title="Newsletter"
             className="flex shrink-0 items-center gap-2 text-sm font-medium text-zinc-700 transition-colors hover:text-zinc-950"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={1.8}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="h-5 w-5"
-              aria-hidden="true"
-            >
-              <rect x="3" y="5" width="18" height="14" rx="2" />
-              <path d="m3 7 9 6 9-6" />
-            </svg>
+            <MailIcon />
             <span className="hidden xl:inline">Newsletter</span>
           </Link>
+
+          <Divider />
 
           {/* Accès réservé à l'équipe éditoriale : /live redirige vers
               /live/login (proxy) si la personne n'est pas connectée. */}
           <Link
             href="/live"
-            aria-label="Journalistes"
-            title="Journalistes"
+            aria-label="Go!"
+            title="Go!"
             className="flex shrink-0 items-center gap-2 text-sm font-medium text-zinc-700 transition-colors hover:text-zinc-950"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={1.8}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="h-5 w-5"
-              aria-hidden="true"
-            >
-              <path d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 0 1-2.25 2.25M16.5 7.5V18a2.25 2.25 0 0 0 2.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 0 0 2.25 2.25h13.5M6 7.5h3v3H6v-3Z" />
-            </svg>
-            <span className="hidden xl:inline">Journalistes</span>
+            <SendIcon />
+            <span>Go!</span>
           </Link>
 
+          <Divider />
+
+          {/* Contact : icône seule, ouvre la fenêtre de contact. */}
           <button
             type="button"
             onClick={() => setIsContactOpen(true)}
             aria-label="Nous contacter"
             title="Nous contacter"
-            className="flex shrink-0 items-center gap-2 text-sm font-medium text-zinc-700 transition-colors hover:text-zinc-950"
+            className="flex shrink-0 items-center text-zinc-700 transition-colors hover:text-zinc-950"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={1.8}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="h-5 w-5"
-              aria-hidden="true"
-            >
-              <path d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" />
-            </svg>
-            <span className="hidden xl:inline">Nous contacter</span>
+            <ChatIcon />
           </button>
         </div>
 
@@ -182,25 +196,15 @@ export default function Header() {
           onClick={() => setIsMenuOpen((open) => !open)}
           aria-expanded={isMenuOpen}
           aria-label={isMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-zinc-700 transition-colors hover:bg-zinc-100 lg:hidden"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-zinc-700 transition-colors hover:bg-zinc-100 lg:hidden"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={1.8}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="h-6 w-6"
-            aria-hidden="true"
-          >
+          <IconBase className="h-6 w-6">
             {isMenuOpen ? (
               <path d="M6 6l12 12M18 6L6 18" />
             ) : (
               <path d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5" />
             )}
-          </svg>
+          </IconBase>
         </button>
       </div>
 
@@ -211,7 +215,9 @@ export default function Header() {
             aria-hidden="true"
             onClick={() => setIsMenuOpen(false)}
           />
-          <div className="absolute left-0 right-0 top-full z-30 border-b border-zinc-200 bg-background px-6 py-4 shadow-lg lg:hidden">
+          {/* Menu mobile : carte arrondie qui s'ouvre sous la pilule, avec la
+              même marge latérale qu'elle. */}
+          <div className="absolute left-4 right-4 top-full z-30 mt-2 rounded-3xl border border-zinc-200 bg-white px-6 py-4 shadow-lg sm:left-8 sm:right-8 lg:hidden">
             <nav>
               <ul className="flex flex-col divide-y divide-zinc-100">
                 {navLinks.map((link) => (
@@ -231,20 +237,7 @@ export default function Header() {
                     onClick={() => setIsMenuOpen(false)}
                     className="flex items-center gap-2 py-3 text-base font-medium text-zinc-700 transition-colors hover:text-zinc-950"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth={1.8}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="h-5 w-5"
-                      aria-hidden="true"
-                    >
-                      <rect x="3" y="5" width="18" height="14" rx="2" />
-                      <path d="m3 7 9 6 9-6" />
-                    </svg>
+                    <MailIcon />
                     Newsletter
                   </Link>
                 </li>
@@ -254,20 +247,8 @@ export default function Header() {
                     onClick={() => setIsMenuOpen(false)}
                     className="flex items-center gap-2 py-3 text-base font-medium text-zinc-700 transition-colors hover:text-zinc-950"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth={1.8}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="h-5 w-5"
-                      aria-hidden="true"
-                    >
-                      <path d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 0 1-2.25 2.25M16.5 7.5V18a2.25 2.25 0 0 0 2.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 0 0 2.25 2.25h13.5M6 7.5h3v3H6v-3Z" />
-                    </svg>
-                    Journalistes
+                    <SendIcon />
+                    Go!
                   </Link>
                 </li>
                 <li>
@@ -279,19 +260,7 @@ export default function Header() {
                     }}
                     className="flex w-full items-center gap-2 py-3 text-base font-medium text-zinc-700 transition-colors hover:text-zinc-950"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth={1.8}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="h-5 w-5"
-                      aria-hidden="true"
-                    >
-                      <path d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" />
-                    </svg>
+                    <ChatIcon />
                     Nous contacter
                   </button>
                 </li>
