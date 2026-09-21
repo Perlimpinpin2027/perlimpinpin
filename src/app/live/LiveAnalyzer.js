@@ -29,6 +29,7 @@ export default function LiveAnalyzer({ candidats = [] }) {
   const router = useRouter();
   const fileInputRef = useRef(null);
   const [candidatId, setCandidatId] = useState("");
+  const [sourceUrl, setSourceUrl] = useState("");
   const [declaration, setDeclaration] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -153,7 +154,11 @@ export default function LiveAnalyzer({ candidats = [] }) {
       const response = await fetch("/api/live/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ declaration, candidatId: candidatId ? Number(candidatId) : undefined }),
+        body: JSON.stringify({
+          declaration,
+          candidatId: candidatId ? Number(candidatId) : undefined,
+          sourceUrl: sourceUrl.trim() || undefined,
+        }),
         signal: controller.signal,
       });
       if (response.status === 401) {
@@ -345,6 +350,24 @@ export default function LiveAnalyzer({ candidats = [] }) {
                 </option>
               ))}
             </select>
+          </div>
+
+          <div>
+            <label htmlFor="live-source-url" className="text-sm font-medium text-zinc-700">
+              Lien de la source <span className="font-normal text-zinc-400">(facultatif)</span>
+            </label>
+            <input
+              id="live-source-url"
+              type="url"
+              value={sourceUrl}
+              onChange={(event) => setSourceUrl(event.target.value)}
+              disabled={loading}
+              placeholder="https://… (article, vidéo YouTube, Dailymotion, X, France TV)"
+              className="mt-1.5 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-200 disabled:opacity-60"
+            />
+            <p className="mt-1 text-xs text-zinc-400">
+              Pour une vidéo, un lecteur s&apos;affichera sur la page de l&apos;analyse.
+            </p>
           </div>
 
           <div className="flex items-center gap-4">

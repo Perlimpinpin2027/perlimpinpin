@@ -268,6 +268,14 @@ model LiveAnalyse {
   // affirmations). null = analyse antérieure ou aucune question générée.
   questions Json?
 
+  // Lien de la source d'origine, saisi (facultatif) à l'analyse : article, vidéo…
+  // sourceVideo = plateforme vidéo reconnue à partir de ce lien ("youtube",
+  // "dailymotion", "x", "francetv") ; null pour toute autre source (texte, fichier,
+  // article). L'adresse du lecteur intégré n'est jamais stockée : elle est
+  // reconstruite à l'affichage (src/lib/live-video.js).
+  sourceUrl   String?
+  sourceVideo String?
+
   candidatId Int?
   candidat   Candidat? @relation(fields: [candidatId], references: [id])
 

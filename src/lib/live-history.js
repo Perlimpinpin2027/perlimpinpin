@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { LIVE_THEMES, LIVE_THEME_SLUGS, liveThemeLabel } from "@/lib/live-themes";
 import { countQuestions, parseStoredQuestions } from "@/lib/live-questions";
+import { detectVideoSource, normalizeSourceUrl, sourceLabel } from "@/lib/live-video";
 
 // Persistance et lecture des analyses lancées depuis /live (table
 // LiveAnalyse). Distinct du pipeline public (Proposition/Analyse) : rien
@@ -31,7 +32,7 @@ function shorten(text, max) {
 // rien si aucune mesure n'a été analysée (rien à afficher dans
 // l'historique). Ne lève jamais : un échec de sauvegarde ne doit pas
 // empêcher l'équipe de voir l'analyse déjà produite.
-export async function saveLiveAnalyse({ declaration, resultat, candidatId }) {
+export async function saveLiveAnalyse({ declaration, resultat, candidatId, sourceUrl }) {
   try {
     const { mesures } = resultat;
     if (mesures.length === 0) return null;
@@ -61,6 +62,10 @@ export async function saveLiveAnalyse({ declaration, resultat, candidatId }) {
         // laissée à NULL quand aucune question exploitable n'a été produite.
         questions: countQuestions(resultat.questions) > 0 ? { ...resultat.questions, etendu: false } : undefined,
         candidatId: candidatId ?? null,
+        // Lien de la source (déjà validé par la route) et indicateur vidéo ;
+        // undefined = colonnes laissées à NULL.
+        sourceUrl: sourceUrl ?? undefined,
+        sourceVideo: (sourceUrl && detectVideoSource(sourceUrl)?.platform) || undefined,
       },
       select: { id: true },
     });
@@ -93,6 +98,8 @@ function toCard(row) {
     themeLabel: liveThemeLabel(row.theme),
     favori: row.favori,
     dateLabel: dateFormatter.format(row.createdAt),
+    // Instant exact (ISO) : sert au regroupement « Aujourd'hui / Cette semaine / Plus ancien »
+    createdAt: row.createdAt.toISOString(),
     candidatNom: row.candidat?.nom ?? null,
     candidatPhotoUrl: row.candidat?.photoUrl ?? null,
   };
@@ -219,12 +226,16 @@ export async function getLiveAnalyseDetail(id) {
       affirmations: true,
       sources: true,
       questions: true,
+      sourceUrl: true,
       candidat: { select: { nom: true, parti: true, photoUrl: true } },
     },
   });
   if (!row) return null;
 
   const enrichi = Array.isArray(row.affirmations);
+  // Lien de la source re-validé à la lecture (défense en profondeur : une valeur
+  // invalide en base n'est jamais renvoyée à l'affichage).
+  const sourceUrl = row.sourceUrl ? normalizeSourceUrl(row.sourceUrl) : null;
   return {
     id: row.id,
     declaration: row.declaration,
@@ -249,6 +260,11 @@ export async function getLiveAnalyseDetail(id) {
     sources: Array.isArray(row.sources) ? row.sources : [],
     // Questions d'interview : listes vides pour une analyse antérieure ou sans question
     questions: parseStoredQuestions(row.questions),
+    // Source d'origine. Le lecteur vidéo est reconstruit ici depuis le lien stocké
+    // (jamais lu tel quel en base) ; null pour une source qui n'est pas une vidéo.
+    sourceUrl,
+    sourceLabel: sourceUrl ? sourceLabel(sourceUrl) : null,
+    video: sourceUrl ? detectVideoSource(sourceUrl) : null,
     candidat: row.candidat
       ? { nom: row.candidat.nom, parti: row.candidat.parti, photoUrl: row.candidat.photoUrl }
       : null,

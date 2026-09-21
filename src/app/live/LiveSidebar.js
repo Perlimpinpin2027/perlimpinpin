@@ -1,5 +1,6 @@
 import Link from "next/link";
 import FavoriteButton from "./FavoriteButton";
+import { groupByPeriod } from "@/lib/live-periods";
 import { SearchTrigger } from "./LiveSearch";
 import { Avatar, Icon } from "./ui";
 
@@ -81,7 +82,37 @@ export function LiveMobileNav({ vue }) {
   );
 }
 
+// Une analyse de l'historique : lien étendu à toute la ligne, étoile cliquable.
+function HistoryItem({ item, currentId }) {
+  return (
+    <li
+      className={`relative flex items-start gap-2 rounded-lg px-3 py-2 transition-colors ${
+        item.id === currentId ? "bg-zinc-100" : "hover:bg-zinc-50"
+      }`}
+    >
+      <Avatar nom={item.candidatNom} photoUrl={item.candidatPhotoUrl} size={28} />
+      <div className="min-w-0 flex-1">
+        <p className="line-clamp-2 text-sm leading-snug text-zinc-800">
+          <Link href={`/live/analyses/${item.id}`} className="after:absolute after:inset-0 after:rounded-lg">
+            {item.titre}
+          </Link>
+        </p>
+        <p className="mt-0.5 truncate text-xs text-zinc-400">
+          {item.candidatNom ? `${item.candidatNom} · ` : ""}
+          {item.dateLabel}
+        </p>
+      </div>
+      <span className="relative z-10">
+        <FavoriteButton id={item.id} favori={item.favori} />
+      </span>
+    </li>
+  );
+}
+
 export default function LiveSidebar({ historique, vue, dossierLabel = null, currentId = null }) {
+  // Historique regroupé : Aujourd'hui / Cette semaine / Plus ancien (jours calendaires de Paris)
+  const groupes = groupByPeriod(historique);
+
   return (
     <aside className="hidden flex-col border-r border-zinc-200 bg-white lg:sticky lg:top-0 lg:flex lg:h-screen">
       <div className="flex items-center justify-between gap-2 px-5 py-5">
@@ -107,32 +138,18 @@ export default function LiveSidebar({ historique, vue, dossierLabel = null, curr
         {historique.length === 0 ? (
           <p className="mt-3 px-3 text-sm text-zinc-400">Aucune analyse pour le moment.</p>
         ) : (
-          <ul className="mt-2 flex flex-col gap-0.5 overflow-y-auto">
-            {historique.map((item) => (
-              <li
-                key={item.id}
-                className={`relative flex items-start gap-2 rounded-lg px-3 py-2 transition-colors ${
-                  item.id === currentId ? "bg-zinc-100" : "hover:bg-zinc-50"
-                }`}
-              >
-                <Avatar nom={item.candidatNom} photoUrl={item.candidatPhotoUrl} size={28} />
-                <div className="min-w-0 flex-1">
-                  <p className="line-clamp-2 text-sm leading-snug text-zinc-800">
-                    <Link href={`/live/analyses/${item.id}`} className="after:absolute after:inset-0 after:rounded-lg">
-                      {item.titre}
-                    </Link>
-                  </p>
-                  <p className="mt-0.5 truncate text-xs text-zinc-400">
-                    {item.candidatNom ? `${item.candidatNom} · ` : ""}
-                    {item.dateLabel}
-                  </p>
-                </div>
-                <span className="relative z-10">
-                  <FavoriteButton id={item.id} favori={item.favori} />
-                </span>
-              </li>
+          <div className="mt-2 flex flex-col gap-3 overflow-y-auto">
+            {groupes.map((groupe) => (
+              <section key={groupe.id} aria-label={groupe.label}>
+                <h3 className="px-3 text-[11px] font-medium text-zinc-400">{groupe.label}</h3>
+                <ul className="mt-1 flex flex-col gap-0.5">
+                  {groupe.items.map((item) => (
+                    <HistoryItem key={item.id} item={item} currentId={currentId} />
+                  ))}
+                </ul>
+              </section>
             ))}
-          </ul>
+          </div>
         )}
       </div>
 

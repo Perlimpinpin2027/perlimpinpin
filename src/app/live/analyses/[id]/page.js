@@ -3,12 +3,14 @@ import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { LIVE_COOKIE_NAME, verifySessionToken } from "@/lib/live-session";
 import { getLiveAnalyseDetail, getRecentLiveAnalyses } from "@/lib/live-history";
+import AnalysisActions from "../../AnalysisActions";
 import AnalysisAside from "../../AnalysisAside";
 import AnalysisView from "../../AnalysisView";
 import AskBar from "../../AskBar";
 import { LiveSearchProvider, SearchBar } from "../../LiveSearch";
 import LiveSidebar, { LiveBrand, LiveMobileNav, LiveSearchIcon } from "../../LiveSidebar";
-import { Avatar, ComingSoon, Icon } from "../../ui";
+import VideoSource from "../../VideoSource";
+import { Avatar, Icon } from "../../ui";
 
 export const metadata = {
   title: "Analyse — PerlimpinpinGo",
@@ -38,6 +40,9 @@ export default async function AnalysePage({ params }) {
 
   const candidatNom = analyse.candidat?.nom ?? null;
   const citation = excerpt(analyse.declaration);
+  const sourceLibelle = analyse.video
+    ? `Vidéo ${analyse.video.label}`
+    : (analyse.sourceLabel ?? "Déclaration collée par l'équipe");
   const declarationLongue = analyse.declaration.replace(/\s+/g, " ").trim().length > QUOTE_LENGTH;
 
   return (
@@ -58,7 +63,7 @@ export default async function AnalysePage({ params }) {
           <div className="mx-auto max-w-3xl">
             <SearchBar key="" />
 
-            {/* Fil d'Ariane et actions (à brancher en Phase 10 : affichées, inactives) */}
+            {/* Fil d'Ariane et actions (Partager, Exporter) */}
             <div className="flex items-center justify-between gap-4">
               <nav aria-label="Fil d'Ariane" className="flex min-w-0 items-center gap-1.5 text-sm text-zinc-500">
                 <Link href="/live" className="shrink-0 hover:text-zinc-900 hover:underline">
@@ -69,48 +74,17 @@ export default async function AnalysePage({ params }) {
                   {analyse.titre}
                 </span>
               </nav>
-              <div className="flex shrink-0 items-center gap-2">
-                <ComingSoon>
-                  <button
-                    type="button"
-                    disabled
-                    className="flex cursor-not-allowed items-center gap-1.5 rounded-lg px-2.5 py-2 text-sm font-medium text-zinc-400"
-                  >
-                    <Icon name="share" className="h-4 w-4" />
-                    <span className="hidden sm:inline">Partager</span>
-                  </button>
-                </ComingSoon>
-                <ComingSoon>
-                  <button
-                    type="button"
-                    disabled
-                    aria-label="Plus d'actions"
-                    className="cursor-not-allowed rounded-lg px-2 py-2 text-zinc-400"
-                  >
-                    <Icon name="dots" className="h-4 w-4" />
-                  </button>
-                </ComingSoon>
-                <ComingSoon>
-                  <button
-                    type="button"
-                    disabled
-                    className="flex cursor-not-allowed items-center gap-1.5 rounded-lg bg-zinc-300 px-3 py-2 text-sm font-semibold text-white"
-                  >
-                    Exporter
-                    <Icon name="download" className="h-4 w-4" />
-                  </button>
-                </ComingSoon>
-              </div>
+              <AnalysisActions analyseId={analyse.id} />
             </div>
 
-            {/* En-tête : candidat, date, source, titre généré et citation.
-                Pas de lecteur vidéo (aucune source vidéo ; prévu en Phase 10). */}
+            {/* En-tête : candidat, date, source, titre généré et citation. Le bloc vidéo
+                n'existe que si la source est une vidéo reconnue (YouTube, Dailymotion, X, France TV). */}
             <header className="mt-6 flex items-start gap-4 sm:gap-5">
               <Avatar nom={candidatNom} photoUrl={analyse.candidat?.photoUrl ?? null} size={88} rounded="rounded-xl" />
               <div className="min-w-0">
                 <p className="text-sm font-medium text-zinc-800">{candidatNom ?? "Candidat non précisé"}</p>
                 <p className="mt-0.5 text-xs text-zinc-400">
-                  {analyse.dateLabel} · Déclaration collée par l&apos;équipe · {analyse.themeLabel}
+                  {analyse.dateLabel} · {sourceLibelle} · {analyse.themeLabel}
                 </p>
                 <h1 className="mt-2 font-serif text-3xl font-bold leading-tight text-zinc-900 sm:text-4xl">
                   {analyse.titre}
@@ -129,6 +103,12 @@ export default async function AnalysePage({ params }) {
                 </details>
               )}
             </blockquote>
+
+            {analyse.video && (
+              <div className="mt-4">
+                <VideoSource video={analyse.video} sourceUrl={analyse.sourceUrl} titre={analyse.titre} />
+              </div>
+            )}
 
             <div className="mt-8">
               <AnalysisView key={analyse.id} analyse={analyse} />

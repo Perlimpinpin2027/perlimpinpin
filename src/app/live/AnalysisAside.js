@@ -9,7 +9,15 @@ const CONFIANCE_DOT = {
   faible: "bg-red-500",
 };
 
+// Adresse cliquable : http(s) uniquement (déjà validée à l'enregistrement)
+function safeHref(url) {
+  return typeof url === "string" && /^https?:\/\/\S+$/i.test(url) ? url : null;
+}
+
 export default function AnalysisAside({ analyse }) {
+  const origine = analyse.video ? `Vidéo ${analyse.video.label}` : (analyse.sourceLabel ?? "Déclaration collée");
+  const lien = safeHref(analyse.sourceUrl);
+
   return (
     <aside className="flex flex-col gap-5 border-t border-zinc-200 bg-white px-5 py-6 lg:border-l lg:border-t-0 lg:px-6 lg:py-8">
       <section aria-labelledby="source-origine" className="rounded-xl border border-zinc-200 p-4">
@@ -21,10 +29,21 @@ export default function AnalysisAside({ analyse }) {
             <Icon name="document" className="h-5 w-5" />
           </span>
           <div className="min-w-0">
-            <p className="text-sm font-medium text-zinc-800">Déclaration collée</p>
+            <p className="truncate text-sm font-medium text-zinc-800">{origine}</p>
             <p className="text-xs text-zinc-400">Ajoutée le {analyse.dateLabel}</p>
           </div>
         </div>
+        {lien && (
+          <a
+            href={lien}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-indigo-600 hover:underline"
+          >
+            Voir la source
+            <Icon name="external" className="h-3 w-3" />
+          </a>
+        )}
 
         <ul className="mt-4 flex flex-col gap-2.5 border-t border-zinc-100 pt-4 text-sm text-zinc-600">
           {analyse.enrichi ? (
