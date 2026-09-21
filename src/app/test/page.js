@@ -3,6 +3,8 @@ import Header from "@/components/Header";
 import MonoTag from "@/components/MonoTag";
 import { prisma } from "@/lib/prisma";
 import { formatScore, getScoreBadge } from "@/lib/score";
+import { editionConfiguree, isEditor } from "@/lib/test-auth";
+import EditorBar from "./EditorBar";
 
 // Toujours recalculée à chaque visite : on veut voir les brouillons du moment,
 // pas une copie mise en cache (même choix que les autres pages du site).
@@ -77,6 +79,13 @@ export default async function TestPage() {
               nulle part sur le site public. Cette page sert à les relire avant
               publication.
             </p>
+            {/* Mode édition : n'apparaît que si le code d'édition est configuré
+                sur ce serveur. */}
+            {editionConfiguree() ? (
+              <div className="mt-4 text-zinc-700">
+                <EditorBar editeur={await isEditor()} />
+              </div>
+            ) : null}
           </div>
 
           {brouillons.length === 0 ? (
