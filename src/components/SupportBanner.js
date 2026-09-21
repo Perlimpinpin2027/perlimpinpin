@@ -17,76 +17,87 @@ const BADGES = [
   },
 ];
 
-// Motif de points rouge de marque, estompé vers le blanc (masque dégradé) :
-// vertical en mobile (bandeau en haut de carte), horizontal dès md.
-const dotsStyle = (direction) => ({
-  backgroundImage:
-    "radial-gradient(circle, #dc2626 1.6px, transparent 1.9px)",
-  backgroundSize: "11px 11px",
-  maskImage: `linear-gradient(to ${direction}, #000, transparent)`,
-  WebkitMaskImage: `linear-gradient(to ${direction}, #000, transparent)`,
-});
+// Le "/" du logo Perlimpinpin (tracé repris de app/sources/icon-monogram.svg,
+// sans le "P"), affiché dans la pastille grise à gauche du bandeau.
+const SLASH_PATH =
+  "M517 647C517 672 494 695 467 695C443 695 432 684 416 651L95 -27C86 -45 83 -55 83 -65C83 -90 107 -113 133 -113C158 -113 169 -103 185 -69L505 610C514 630 517 636 517 647Z";
 
 export default function SupportBanner() {
   return (
     <section className="w-full px-6 pb-6 sm:px-8">
-      <div className="mx-auto flex w-full max-w-[1280px] flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm md:flex-row">
-        <div
-          aria-hidden="true"
-          className="h-16 shrink-0 md:hidden"
-          style={dotsStyle("bottom")}
-        />
-        <div
-          aria-hidden="true"
-          className="hidden shrink-0 md:block md:w-[18%]"
-          style={dotsStyle("right")}
-        />
-
-        <div className="flex flex-1 flex-col gap-6 p-6 sm:p-8 md:flex-row md:items-center md:justify-between md:gap-8">
+      <div className="mx-auto flex w-full max-w-[1280px] flex-col gap-4 rounded-2xl border border-zinc-200 bg-white px-5 py-4 shadow-sm lg:flex-row lg:items-center lg:gap-6 lg:px-6">
+        {/* Pastille "/" + titre */}
+        <div className="flex items-center gap-4 lg:gap-5">
+          <div
+            aria-hidden="true"
+            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-zinc-100 text-zinc-800"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="70 -705 460 830"
+              className="h-6 w-auto"
+              fill="currentColor"
+            >
+              <g transform="scale(1,-1)">
+                <path d={SLASH_PATH} />
+              </g>
+            </svg>
+          </div>
+          <div
+            aria-hidden="true"
+            className="hidden h-12 w-px shrink-0 bg-zinc-200 lg:block"
+          />
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-rose-600">
+            <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-zinc-400">
               Soutenir Perlimpinpin
             </p>
-            <h2 className="mt-2 font-serif text-3xl font-bold leading-tight tracking-tight text-zinc-900 sm:text-4xl">
+            <h2 className="mt-0.5 text-xl font-semibold leading-tight tracking-tight text-zinc-900">
               Faites la différence<span className="text-red-600">.</span>
             </h2>
-            <p className="mt-2 max-w-md text-sm leading-relaxed text-zinc-500">
-              Une association indépendante, pour une information plus claire.
-            </p>
-          </div>
-
-          <div className="flex shrink-0 flex-col items-start gap-4 md:items-end">
-            <a
-              href={HELLOASSO_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-zinc-900 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-zinc-700"
-            >
-              Soutenir sur HelloAsso →
-            </a>
-            <ul className="flex flex-col items-start gap-2 sm:flex-row sm:flex-wrap sm:gap-4 md:justify-end">
-              {BADGES.map(({ label, d }) => (
-                <li
-                  key={label}
-                  className="flex items-center gap-1.5 text-xs font-medium text-zinc-500"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={1.5}
-                    className="h-4 w-4 shrink-0 text-red-600"
-                    aria-hidden="true"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" d={d} />
-                  </svg>
-                  {label}
-                </li>
-              ))}
-            </ul>
           </div>
         </div>
+
+        <div
+          aria-hidden="true"
+          className="hidden h-12 w-px shrink-0 bg-zinc-200 lg:block"
+        />
+
+        {/* Texte d'accompagnement + badges */}
+        <div className="flex flex-1 flex-col gap-2">
+          <p className="text-xs leading-relaxed text-zinc-500">
+            Une association indépendante, pour une information plus claire.
+          </p>
+          <ul className="flex flex-wrap items-center gap-x-4 gap-y-1">
+            {BADGES.map(({ label, d }) => (
+              <li
+                key={label}
+                className="flex items-center gap-1.5 text-xs font-medium text-zinc-500"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={1.5}
+                  className="h-3.5 w-3.5 shrink-0 text-red-600"
+                  aria-hidden="true"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d={d} />
+                </svg>
+                {label}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <a
+          href={HELLOASSO_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex shrink-0 items-center justify-center gap-2 sm:self-start lg:self-auto whitespace-nowrap rounded-full bg-zinc-900 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-zinc-700"
+        >
+          Soutenir sur HelloAsso →
+        </a>
       </div>
     </section>
   );
