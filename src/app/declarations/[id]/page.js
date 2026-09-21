@@ -763,7 +763,10 @@ function FiabiliteSection({ contenu }) {
   );
 }
 
-export default async function DeclarationDetailPage({ params }) {
+// `preview` : utilisé par /test/[id] pour relire un brouillon. On y masque les
+// blocs qui écrivent en base (vote, feedback) et le lien de retour pointe vers
+// la liste des brouillons. Sur le site public, `preview` reste faux : rien ne change.
+export default async function DeclarationDetailPage({ params, preview = false }) {
   const { id } = await params;
   const propositionId = Number(id);
 
@@ -825,7 +828,7 @@ export default async function DeclarationDetailPage({ params }) {
             {/* En-tête */}
             <div>
               <Link
-                href="/declarations"
+                href={preview ? "/test" : "/declarations"}
                 className="text-sm font-semibold text-blue-600 transition-colors hover:text-blue-800"
               >
                 ← Retour
@@ -1227,19 +1230,23 @@ export default async function DeclarationDetailPage({ params }) {
                 (avec un second exemplaire ici même supprimé comme
                 "doublon" — c'est en fait cette position-ci, pas l'autre,
                 qui correspond à la maquette). */}
-            <VoteMesureWidget
-              propositionId={declaration.id}
-              initialAccord={declaration.voteMesureCounts.accord}
-              initialDesaccord={declaration.voteMesureCounts.desaccord}
-            />
+            {!preview ? (
+              <VoteMesureWidget
+                propositionId={declaration.id}
+                initialAccord={declaration.voteMesureCounts.accord}
+                initialDesaccord={declaration.voteMesureCounts.desaccord}
+              />
+            ) : null}
 
             {/* "Je trouve cette analyse pertinente" (qualité de l'analyse),
                 distinct du vote sur la mesure elle-même ci-dessus. */}
-            <FeedbackWidget
-              analyseId={analyse.id}
-              initialLikes={declaration.feedbackCounts.likes}
-              initialDislikes={declaration.feedbackCounts.dislikes}
-            />
+            {!preview ? (
+              <FeedbackWidget
+                analyseId={analyse.id}
+                initialLikes={declaration.feedbackCounts.likes}
+                initialDislikes={declaration.feedbackCounts.dislikes}
+              />
+            ) : null}
 
             {/* Bandeau de confiance : voir TRUST_ITEMS plus haut. */}
             <div className="grid grid-cols-1 gap-6 rounded-2xl border border-zinc-200 bg-white p-6 sm:grid-cols-3 sm:p-8">
