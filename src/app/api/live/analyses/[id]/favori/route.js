@@ -1,15 +1,13 @@
-import { cookies } from "next/headers";
-import { LIVE_COOKIE_NAME, verifySessionToken } from "@/lib/live-session";
+import { getLiveUser, sessionExpiredResponse } from "@/lib/live-auth";
 import { setLiveFavori } from "@/lib/live-history";
 
 // PATCH /api/live/analyses/:id/favori  { "favori": true | false }
-// Ne modifie que le champ `favori` de l'analyse.
+// Ajoute ou retire l'analyse des favoris du journaliste connecté (favoris personnels :
+// ceux des autres ne sont jamais touchés).
 export async function PATCH(request, { params }) {
   // Le proxy ne couvre que /live : cette route revérifie la session.
-  const token = (await cookies()).get(LIVE_COOKIE_NAME)?.value;
-  if (!verifySessionToken(token)) {
-    return Response.json({ error: "Session expirée. Reconnectez-vous." }, { status: 401 });
-  }
+  const user = await getLiveUser();
+  if (!user) return sessionExpiredResponse();
 
   const { id: rawId } = await params;
   const id = Number(rawId);
@@ -23,7 +21,7 @@ export async function PATCH(request, { params }) {
   }
 
   try {
-    const updated = await setLiveFavori(id, body.favori);
+    const updated = await setLiveFavori(user.id, id, body.favori);
     if (!updated) return Response.json({ error: "Analyse introuvable." }, { status: 404 });
     return Response.json(updated);
   } catch (error) {

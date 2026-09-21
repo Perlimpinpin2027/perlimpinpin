@@ -1,5 +1,4 @@
-import { cookies } from "next/headers";
-import { LIVE_COOKIE_NAME, verifySessionToken } from "@/lib/live-session";
+import { getLiveUser, sessionExpiredResponse } from "@/lib/live-auth";
 import { MAX_FILE_BYTES, extractFromFile } from "@/lib/live-extract";
 import { ExtractError } from "@/lib/live-url";
 
@@ -9,10 +8,8 @@ export const maxDuration = 30;
 // extrait d'un PDF, DOCX ou TXT. Aucune analyse ni écriture en base.
 export async function POST(request) {
   // Le proxy ne couvre que /live : cette route revérifie la session.
-  const token = (await cookies()).get(LIVE_COOKIE_NAME)?.value;
-  if (!verifySessionToken(token)) {
-    return Response.json({ error: "Session expirée. Reconnectez-vous." }, { status: 401 });
-  }
+  const user = await getLiveUser();
+  if (!user) return sessionExpiredResponse();
 
   let file;
   try {

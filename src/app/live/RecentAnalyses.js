@@ -9,6 +9,7 @@ export default function RecentAnalyses({
   titre = "Analyses récentes",
   vide = "Aucune analyse pour le moment. Lancez-en une ci-dessus : elle apparaîtra ici.",
   action = null,
+  showAuthor = false,
 }) {
   return (
     <section aria-labelledby="live-recentes" className="mt-10">
@@ -55,6 +56,7 @@ export default function RecentAnalyses({
                 {analyse.dateLabel}
                 {analyse.nbMesures > 1 ? ` · ${analyse.nbMesures} mesures (score moyen)` : ""}
               </p>
+              {showAuthor && <p className="-mt-2 text-xs text-zinc-400">Par {analyse.auteurLabel}</p>}
             </li>
           ))}
         </ul>

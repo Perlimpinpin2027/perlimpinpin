@@ -38,8 +38,8 @@ model Proposition {
   candidatId Int
   candidat   Candidat @relation(fields: [candidatId], references: [id])
 
-  analyses     Analyse[]
-  votesMesure  VoteMesure[]
+  analyses    Analyse[]
+  votesMesure VoteMesure[]
 }
 
 model Analyse {
@@ -232,8 +232,10 @@ model LiveAnalyse {
   // automatique, jamais une entité gérée à la main.
   theme String @default("autre")
 
-  // Favori de l'équipe éditoriale. Seul champ mis à jour après création
-  // (table propre à /live, distincte des fiches publiques create-only).
+  // OBSOLÈTE : ancien favori partagé par toute l'équipe (avant les comptes individuels).
+  // Plus lu ni écrit par l'application : les favoris sont désormais personnels
+  // (table LiveFavori). Colonne conservée pour ne perdre aucune donnée ; à supprimer
+  // dans une migration ultérieure, une fois les comptes validés en production.
   favori Boolean @default(false)
 
   // --- Structure enrichie (page dédiée /live/analyses/[id]) ---
@@ -279,12 +281,54 @@ model LiveAnalyse {
   // Conversation « Posez une question sur cette analyse » (LiveChatMessage)
   messages LiveChatMessage[]
 
+  // Journaliste qui a lancé l'analyse. NULL pour les analyses créées avant les comptes
+  // individuels (affichées comme « Équipe éditoriale (historique) »).
+  auteurId Int?
+  auteur   LiveUser? @relation(fields: [auteurId], references: [id])
+
+  // Favoris personnels : un journaliste par ligne
+  favoris LiveFavori[]
+
   candidatId Int?
   candidat   Candidat? @relation(fields: [candidatId], references: [id])
 
   createdAt DateTime @default(now())
 
   @@index([createdAt])
+  @@index([auteurId, createdAt])
+}
+
+// Compte individuel d'un journaliste de /live. Pas d'auto-inscription : les comptes
+// sont créés en ligne de commande (scripts/create-live-user.js). Le mot de passe n'est
+// jamais stocké en clair : uniquement son hachage bcrypt.
+model LiveUser {
+  id Int @id @default(autoincrement())
+
+  // Adresse e-mail, toujours en minuscules (identifiant de connexion)
+  email String @unique
+
+  nom String
+
+  motDePasseHash String
+
+  createdAt DateTime @default(now())
+
+  analyses LiveAnalyse[]
+  favoris  LiveFavori[]
+}
+
+// Favori personnel : un journaliste a mis une analyse en favori. La ligne existe tant
+// que l'analyse est en favori (création à l'ajout, suppression au retrait).
+model LiveFavori {
+  userId    Int
+  user      LiveUser    @relation(fields: [userId], references: [id])
+  analyseId Int
+  analyse   LiveAnalyse @relation(fields: [analyseId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@id([userId, analyseId])
+  @@index([analyseId])
 }
 
 // Messages du chat d'une analyse live (« Posez une question sur cette analyse »).

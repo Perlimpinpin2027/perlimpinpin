@@ -1,5 +1,7 @@
 import Link from "next/link";
 import FavoriteButton from "./FavoriteButton";
+import LogoutButton from "./LogoutButton";
+import ScopeToggle from "./ScopeToggle";
 import { groupByPeriod } from "@/lib/live-periods";
 import { SearchTrigger } from "./LiveSearch";
 import { Avatar, Icon } from "./ui";
@@ -30,6 +32,23 @@ export function LiveSearchIcon() {
     >
       <Icon name="search" className="h-5 w-5" />
     </SearchTrigger>
+  );
+}
+
+// Initiale du prénom/nom pour la pastille de profil
+function initialOf(nom) {
+  return (nom?.trim()?.[0] ?? "?").toUpperCase();
+}
+
+// Journaliste connecté, dans la barre du haut mobile (la barre latérale est masquée sous lg)
+export function LiveMobileUser({ user }) {
+  return (
+    <div className="mt-3 flex items-center justify-between gap-3 text-xs text-zinc-500">
+      <span className="min-w-0 truncate">
+        Connecté : <span className="font-medium text-zinc-800">{user.nom}</span>
+      </span>
+      <LogoutButton className="shrink-0" />
+    </div>
   );
 }
 
@@ -83,7 +102,7 @@ export function LiveMobileNav({ vue }) {
 }
 
 // Une analyse de l'historique : lien étendu à toute la ligne, étoile cliquable.
-function HistoryItem({ item, currentId }) {
+function HistoryItem({ item, currentId, showAuthor }) {
   return (
     <li
       className={`relative flex items-start gap-2 rounded-lg px-3 py-2 transition-colors ${
@@ -101,6 +120,7 @@ function HistoryItem({ item, currentId }) {
           {item.candidatNom ? `${item.candidatNom} · ` : ""}
           {item.dateLabel}
         </p>
+        {showAuthor && <p className="truncate text-[11px] text-zinc-400">Par {item.auteurLabel}</p>}
       </div>
       <span className="relative z-10">
         <FavoriteButton id={item.id} favori={item.favori} />
@@ -109,7 +129,7 @@ function HistoryItem({ item, currentId }) {
   );
 }
 
-export default function LiveSidebar({ historique, vue, dossierLabel = null, currentId = null }) {
+export default function LiveSidebar({ historique, vue, user, scope, dossierLabel = null, currentId = null }) {
   // Historique regroupé : Aujourd'hui / Cette semaine / Plus ancien (jours calendaires de Paris)
   const groupes = groupByPeriod(historique);
 
@@ -132,11 +152,16 @@ export default function LiveSidebar({ historique, vue, dossierLabel = null, curr
         <h2 className="px-3 font-mono text-[11px] font-semibold uppercase tracking-widest text-zinc-400">
           Historique
         </h2>
+        <div className="mt-2 px-3">
+          <ScopeToggle scope={scope} />
+        </div>
         {dossierLabel && (
           <p className="mt-1 px-3 text-xs text-indigo-600">Dossier : {dossierLabel}</p>
         )}
         {historique.length === 0 ? (
-          <p className="mt-3 px-3 text-sm text-zinc-400">Aucune analyse pour le moment.</p>
+          <p className="mt-3 px-3 text-sm text-zinc-400">
+            {scope === "toutes" ? "Aucune analyse pour le moment." : "Vous n'avez pas encore lancé d'analyse."}
+          </p>
         ) : (
           <div className="mt-2 flex flex-col gap-3 overflow-y-auto">
             {groupes.map((groupe) => (
@@ -144,7 +169,7 @@ export default function LiveSidebar({ historique, vue, dossierLabel = null, curr
                 <h3 className="px-3 text-[11px] font-medium text-zinc-400">{groupe.label}</h3>
                 <ul className="mt-1 flex flex-col gap-0.5">
                   {groupe.items.map((item) => (
-                    <HistoryItem key={item.id} item={item} currentId={currentId} />
+                    <HistoryItem key={item.id} item={item} currentId={currentId} showAuthor={scope === "toutes"} />
                   ))}
                 </ul>
               </section>
@@ -157,13 +182,15 @@ export default function LiveSidebar({ historique, vue, dossierLabel = null, curr
         <div className="flex items-center gap-3">
           <span
             aria-hidden="true"
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-xs font-bold text-indigo-700"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-bold text-indigo-700"
           >
-            É
+            {initialOf(user.nom)}
           </span>
-          <div>
-            <p className="text-sm font-medium text-zinc-800">Équipe éditoriale</p>
-            <p className="text-xs text-zinc-400">Accès partagé</p>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-medium text-zinc-800" title={user.email}>
+              {user.nom}
+            </p>
+            <LogoutButton />
           </div>
         </div>
       </div>

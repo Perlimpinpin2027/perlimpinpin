@@ -1,5 +1,4 @@
-import { cookies } from "next/headers";
-import { LIVE_COOKIE_NAME, verifySessionToken } from "@/lib/live-session";
+import { getLiveUser, sessionExpiredResponse } from "@/lib/live-auth";
 import { LiveAnalyseError } from "@/lib/live-analyse";
 import { getLiveAnalyseDetail, setLiveQuestions } from "@/lib/live-history";
 import { genererInterviewComplete } from "@/lib/live-interview";
@@ -12,10 +11,8 @@ export const maxDuration = 90;
 // affirmations ; seul le champ `questions` de l'enregistrement est mis à jour.
 export async function POST(request, { params }) {
   // Le proxy ne couvre que /live : cette route (appel payant) revérifie la session.
-  const token = (await cookies()).get(LIVE_COOKIE_NAME)?.value;
-  if (!verifySessionToken(token)) {
-    return Response.json({ error: "Session expirée. Reconnectez-vous." }, { status: 401 });
-  }
+  const user = await getLiveUser();
+  if (!user) return sessionExpiredResponse();
 
   const { id: rawId } = await params;
   const id = Number(rawId);

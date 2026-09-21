@@ -16,6 +16,21 @@ export default function LoginForm({ next = "/live" }) {
     <form action={formAction} className="flex flex-col gap-4">
       <input type="hidden" name="next" value={next} />
       <div>
+        <label htmlFor="live-email" className="text-sm font-medium text-zinc-700">
+          Adresse e-mail
+        </label>
+        <input
+          id="live-email"
+          name="email"
+          type="email"
+          required
+          autoFocus
+          defaultValue={state?.email ?? ""}
+          autoComplete="username"
+          className="mt-1.5 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-200"
+        />
+      </div>
+      <div>
         <label htmlFor="live-password" className="text-sm font-medium text-zinc-700">
           Mot de passe
         </label>
@@ -24,7 +39,6 @@ export default function LoginForm({ next = "/live" }) {
           name="password"
           type="password"
           required
-          autoFocus
           autoComplete="current-password"
           className="mt-1.5 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-200"
         />

@@ -1,7 +1,6 @@
-import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { getScoreBadge } from "@/lib/score";
-import { LIVE_COOKIE_NAME, verifySessionToken } from "@/lib/live-session";
+import { getLiveUser } from "@/lib/live-auth";
 import { getLiveAnalyseDetail } from "@/lib/live-history";
 import { MesureCard } from "../../../MesureDetail";
 import PrintControls from "../../../PrintControls";
@@ -66,14 +65,14 @@ function QuestionList({ titre, questions }) {
 
 export default async function ImprimerPage({ params, searchParams }) {
   // Le proxy filtre déjà /live/* ; on revérifie ici, au plus près du contenu.
-  const token = (await cookies()).get(LIVE_COOKIE_NAME)?.value;
-  if (!verifySessionToken(token)) redirect("/live/login");
+  const user = await getLiveUser();
+  if (!user) redirect("/live/login");
 
   const { id: rawId } = await params;
   const id = Number(rawId);
   if (!Number.isInteger(id) || id <= 0) notFound();
 
-  const analyse = await getLiveAnalyseDetail(id);
+  const analyse = await getLiveAnalyseDetail(id, { userId: user.id });
   if (!analyse) notFound();
 
   const query = await searchParams;

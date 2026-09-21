@@ -1,15 +1,16 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
-import { LIVE_COOKIE_NAME, verifySessionToken } from "@/lib/live-session";
+import { getLiveUser } from "@/lib/live-auth";
 import { getLiveAnalyseDetail, getRecentLiveAnalyses } from "@/lib/live-history";
 import { getLiveChatMessages } from "@/lib/live-chat-db";
+import { SCOPE_COOKIE_NAME, normalizeScope } from "@/lib/live-scope";
 import AnalysisActions from "../../AnalysisActions";
 import AnalysisAside from "../../AnalysisAside";
 import AnalysisView from "../../AnalysisView";
 import AnalysisChat from "../../AnalysisChat";
 import { LiveSearchProvider, SearchBar } from "../../LiveSearch";
-import LiveSidebar, { LiveBrand, LiveMobileNav, LiveSearchIcon } from "../../LiveSidebar";
+import LiveSidebar, { LiveBrand, LiveMobileNav, LiveMobileUser, LiveSearchIcon } from "../../LiveSidebar";
 import VideoSource from "../../VideoSource";
 import { Avatar, Icon } from "../../ui";
 
@@ -29,16 +30,19 @@ function excerpt(text) {
 
 export default async function AnalysePage({ params }) {
   // Le proxy filtre déjà /live/* ; on revérifie ici, au plus près du contenu.
-  const token = (await cookies()).get(LIVE_COOKIE_NAME)?.value;
-  if (!verifySessionToken(token)) redirect("/live/login");
+  const user = await getLiveUser();
+  if (!user) redirect("/live/login");
 
   const { id: rawId } = await params;
   const id = Number(rawId);
   if (!Number.isInteger(id) || id <= 0) notFound();
 
+  // Toute analyse de l'équipe reste consultable par lien, quelle que soit la portée
+  // choisie pour les listes (l'historique de la barre latérale, lui, la suit).
+  const scope = normalizeScope((await cookies()).get(SCOPE_COOKIE_NAME)?.value);
   const [analyse, historique, messages] = await Promise.all([
-    getLiveAnalyseDetail(id),
-    getRecentLiveAnalyses(SIDEBAR_COUNT),
+    getLiveAnalyseDetail(id, { userId: user.id }),
+    getRecentLiveAnalyses(SIDEBAR_COUNT, { userId: user.id, scope }),
     getLiveChatMessages(id),
   ]);
   if (!analyse) notFound();
@@ -53,7 +57,7 @@ export default async function AnalysePage({ params }) {
   return (
     <LiveSearchProvider query="">
       <div className="min-h-screen bg-background font-sans lg:grid lg:grid-cols-[288px_minmax(0,1fr)_320px]">
-        <LiveSidebar historique={historique} vue="analyses" currentId={analyse.id} />
+        <LiveSidebar historique={historique} vue="analyses" user={user} scope={scope} currentId={analyse.id} />
 
         {/* Barre du haut, mobile uniquement (la barre latérale est masquée sous lg) */}
         <div className="border-b border-zinc-200 bg-white px-5 py-4 lg:hidden">
@@ -62,6 +66,7 @@ export default async function AnalysePage({ params }) {
             <LiveSearchIcon />
           </div>
           <LiveMobileNav vue="analyses" />
+          <LiveMobileUser user={user} />
         </div>
 
         <main className="min-w-0 px-5 py-8 sm:px-8 lg:py-10">
@@ -89,7 +94,7 @@ export default async function AnalysePage({ params }) {
               <div className="min-w-0">
                 <p className="text-sm font-medium text-zinc-800">{candidatNom ?? "Candidat non précisé"}</p>
                 <p className="mt-0.5 text-xs text-zinc-400">
-                  {analyse.dateLabel} · {sourceLibelle} · {analyse.themeLabel}
+                  {analyse.dateLabel} · {sourceLibelle} · {analyse.themeLabel} · Par {analyse.auteurLabel}
                 </p>
                 <h1 className="mt-2 font-serif text-3xl font-bold leading-tight text-zinc-900 sm:text-4xl">
                   {analyse.titre}

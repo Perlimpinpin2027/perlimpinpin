@@ -1,4 +1,6 @@
+import { redirect } from "next/navigation";
 import Header from "@/components/Header";
+import { getLiveUser } from "@/lib/live-auth";
 import { postLoginPath } from "@/lib/live-redirect";
 import LoginForm from "./LoginForm";
 
@@ -12,6 +14,9 @@ export default async function LiveLoginPage({ searchParams }) {
   const { next } = await searchParams;
   const redirectTo = postLoginPath(typeof next === "string" ? next : null);
 
+  // Déjà connecté : pas de formulaire, on va directement à la page demandée
+  if (await getLiveUser()) redirect(redirectTo);
+
   return (
     <div className="flex min-h-screen flex-col bg-page-gradient font-sans">
       <Header />
@@ -20,7 +25,7 @@ export default async function LiveLoginPage({ searchParams }) {
         <h1 className="font-serif text-3xl font-bold leading-tight text-zinc-900">
           Décryptage en direct
         </h1>
-        <p className="mt-2 text-sm text-zinc-500">Accès réservé à l&apos;équipe éditoriale.</p>
+        <p className="mt-2 text-sm text-zinc-500">Accès réservé à l&apos;équipe éditoriale. Connectez-vous avec votre compte personnel.</p>
 
         <div className="mt-8 rounded-2xl border border-zinc-200 bg-white p-6">
           <LoginForm next={redirectTo} />

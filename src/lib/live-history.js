@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { LIVE_THEMES, LIVE_THEME_SLUGS, liveThemeLabel } from "@/lib/live-themes";
 import { countQuestions, parseStoredQuestions } from "@/lib/live-questions";
 import { detectVideoSource, normalizeSourceUrl, sourceLabel } from "@/lib/live-video";
+import { authorLabel, scopeWhere } from "@/lib/live-scope";
 
 // Persistance et lecture des analyses lancées depuis /live (table
 // LiveAnalyse). Distinct du pipeline public (Proposition/Analyse) : rien
@@ -32,7 +33,7 @@ function shorten(text, max) {
 // rien si aucune mesure n'a été analysée (rien à afficher dans
 // l'historique). Ne lève jamais : un échec de sauvegarde ne doit pas
 // empêcher l'équipe de voir l'analyse déjà produite.
-export async function saveLiveAnalyse({ declaration, resultat, candidatId, sourceUrl }) {
+export async function saveLiveAnalyse({ declaration, resultat, candidatId, sourceUrl, auteurId }) {
   try {
     const { mesures } = resultat;
     if (mesures.length === 0) return null;
@@ -62,6 +63,8 @@ export async function saveLiveAnalyse({ declaration, resultat, candidatId, sourc
         // laissée à NULL quand aucune question exploitable n'a été produite.
         questions: countQuestions(resultat.questions) > 0 ? { ...resultat.questions, etendu: false } : undefined,
         candidatId: candidatId ?? null,
+        // Journaliste connecté qui a lancé l'analyse
+        auteurId: auteurId ?? null,
         // Lien de la source (déjà validé par la route) et indicateur vidéo ;
         // undefined = colonnes laissées à NULL.
         sourceUrl: sourceUrl ?? undefined,
@@ -77,16 +80,20 @@ export async function saveLiveAnalyse({ declaration, resultat, candidatId, sourc
 
 // Champs lus pour afficher une analyse sous forme de carte (historique,
 // analyses récentes, favoris, résultats de recherche).
-const CARD_SELECT = {
-  id: true,
-  titre: true,
-  score: true,
-  nbMesures: true,
-  theme: true,
-  favori: true,
-  createdAt: true,
-  candidat: { select: { nom: true, photoUrl: true } },
-};
+// `favoris` : uniquement la ligne du journaliste connecté (favoris personnels).
+function cardSelect(userId) {
+  return {
+    id: true,
+    titre: true,
+    score: true,
+    nbMesures: true,
+    theme: true,
+    createdAt: true,
+    candidat: { select: { nom: true, photoUrl: true } },
+    auteur: { select: { nom: true } },
+    favoris: { where: { userId }, select: { userId: true } },
+  };
+}
 
 function toCard(row) {
   return {
@@ -96,7 +103,9 @@ function toCard(row) {
     nbMesures: row.nbMesures,
     themeSlug: row.theme,
     themeLabel: liveThemeLabel(row.theme),
-    favori: row.favori,
+    // Favori DU journaliste connecté
+    favori: row.favoris.length > 0,
+    auteurLabel: authorLabel(row.auteur),
     dateLabel: dateFormatter.format(row.createdAt),
     // Instant exact (ISO) : sert au regroupement « Aujourd'hui / Cette semaine / Plus ancien »
     createdAt: row.createdAt.toISOString(),
@@ -105,17 +114,22 @@ function toCard(row) {
   };
 }
 
-// Dernières analyses live, les plus récentes en premier. Filtres facultatifs :
-// un dossier (slug de thème) ou les favoris seulement.
-export async function getRecentLiveAnalyses(limit, { theme, favoris } = {}) {
+// Dernières analyses live, les plus récentes en premier, pour le journaliste `userId`.
+// `scope` : "mes" (défaut : ses propres analyses) ou "toutes" (celles de l'équipe).
+// Filtres facultatifs : un dossier (slug de thème) ou les favoris seulement — les favoris
+// sont ceux du journaliste, quelle que soit la portée.
+export async function getRecentLiveAnalyses(limit, { userId, scope, theme, favoris } = {}) {
+  // Lève une erreur sans identifiant valide : jamais de liste « ouverte » par défaut
+  const portee = scopeWhere(scope, userId);
+  const where = {
+    ...(favoris ? { favoris: { some: { userId } } } : portee),
+    ...(theme ? { theme } : {}),
+  };
   const rows = await prisma.liveAnalyse.findMany({
-    where: {
-      ...(theme ? { theme } : {}),
-      ...(favoris ? { favori: true } : {}),
-    },
+    where,
     orderBy: { createdAt: "desc" },
     take: limit,
-    select: CARD_SELECT,
+    select: cardSelect(userId),
   });
   return rows.map(toCard);
 }
@@ -143,7 +157,7 @@ function escapeLike(text) {
 // nom du candidat, thème (dossier), texte de la déclaration analysée et titre
 // de l'analyse. Retourne { query, total, analyses } — les SEARCH_LIMIT plus
 // récentes, le total permettant d'indiquer s'il y en a davantage.
-export async function searchLiveAnalyses(rawQuery) {
+export async function searchLiveAnalyses(rawQuery, { userId, scope } = {}) {
   const query = String(rawQuery ?? "").trim().slice(0, SEARCH_MAX_LENGTH);
   if (query.length < SEARCH_MIN_LENGTH) return { query: "", total: 0, analyses: [] };
 
@@ -154,16 +168,21 @@ export async function searchLiveAnalyses(rawQuery) {
   ).map((theme) => theme.slug);
 
   const where = {
-    OR: [
-      { declaration: { contains: pattern, mode: "insensitive" } },
-      { titre: { contains: pattern, mode: "insensitive" } },
-      { candidat: { nom: { contains: pattern, mode: "insensitive" } } },
-      ...(themeSlugs.length > 0 ? [{ theme: { in: themeSlugs } }] : []),
+    AND: [
+      scopeWhere(scope, userId),
+      {
+        OR: [
+          { declaration: { contains: pattern, mode: "insensitive" } },
+          { titre: { contains: pattern, mode: "insensitive" } },
+          { candidat: { nom: { contains: pattern, mode: "insensitive" } } },
+          ...(themeSlugs.length > 0 ? [{ theme: { in: themeSlugs } }] : []),
+        ],
+      },
     ],
   };
 
   const [rows, total] = await Promise.all([
-    prisma.liveAnalyse.findMany({ where, orderBy: { createdAt: "desc" }, take: SEARCH_LIMIT, select: CARD_SELECT }),
+    prisma.liveAnalyse.findMany({ where, orderBy: { createdAt: "desc" }, take: SEARCH_LIMIT, select: cardSelect(userId) }),
     prisma.liveAnalyse.count({ where }),
   ]);
   return { query, total, analyses: rows.map(toCard), limit: SEARCH_LIMIT };
@@ -177,26 +196,39 @@ export async function getCandidatsForSelect() {
   });
 }
 
-// Dossiers : regroupement automatique par thème, un par thème présent en
-// base, du plus fourni au moins fourni.
-export async function getLiveDossiers() {
-  const groups = await prisma.liveAnalyse.groupBy({ by: ["theme"], _count: { _all: true } });
+// Dossiers : regroupement automatique par thème, un par thème présent dans la portée
+// choisie (mes analyses / toutes), du plus fourni au moins fourni.
+export async function getLiveDossiers({ userId, scope } = {}) {
+  const groups = await prisma.liveAnalyse.groupBy({
+    by: ["theme"],
+    where: scopeWhere(scope, userId),
+    _count: { _all: true },
+  });
   return groups
     .map((group) => ({ slug: group.theme, label: liveThemeLabel(group.theme), count: group._count._all }))
     .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label, "fr"));
 }
 
-// Bascule le favori d'une analyse. Met à jour CE SEUL champ (jamais le
-// contenu de l'analyse). Retourne null si l'analyse n'existe pas.
-export async function setLiveFavori(id, favori) {
+// Ajoute ou retire l'analyse `id` des favoris du journaliste `userId` (favoris
+// personnels : ligne LiveFavori). Ne touche ni à l'analyse ni aux favoris des autres.
+// Idempotent. Retourne { id, favori }, ou null si l'analyse n'existe pas.
+export async function setLiveFavori(userId, id, favori) {
+  if (!Number.isInteger(userId) || userId <= 0) throw new Error("Identifiant de journaliste requis.");
+  if (!favori) {
+    await prisma.liveFavori.deleteMany({ where: { userId, analyseId: id } });
+    const exists = await prisma.liveAnalyse.findUnique({ where: { id }, select: { id: true } });
+    return exists ? { id, favori: false } : null;
+  }
   try {
-    return await prisma.liveAnalyse.update({
-      where: { id },
-      data: { favori },
-      select: { id: true, favori: true },
+    await prisma.liveFavori.upsert({
+      where: { userId_analyseId: { userId, analyseId: id } },
+      create: { userId, analyseId: id },
+      update: {},
     });
+    return { id, favori: true };
   } catch (error) {
-    if (error.code === "P2025") return null;
+    // Clé étrangère : l'analyse n'existe pas
+    if (error.code === "P2003") return null;
     throw error;
   }
 }
@@ -205,7 +237,8 @@ export async function setLiveFavori(id, favori) {
 // avec les analyses créées avant la structure enrichie : leurs champs
 // enrichis sont null en base, et `enrichi` vaut alors false (la page affiche
 // une version simplifiée). Retourne null si l'analyse n'existe pas.
-export async function getLiveAnalyseDetail(id) {
+// `userId` (facultatif) : journaliste connecté, pour son favori personnel.
+export async function getLiveAnalyseDetail(id, { userId } = {}) {
   const row = await prisma.liveAnalyse.findUnique({
     where: { id },
     select: {
@@ -215,7 +248,8 @@ export async function getLiveAnalyseDetail(id) {
       score: true,
       nbMesures: true,
       theme: true,
-      favori: true,
+      favoris: { where: { userId: userId ?? -1 }, select: { userId: true } },
+      auteur: { select: { nom: true } },
       createdAt: true,
       resultat: true,
       syntheseGlobale: true,
@@ -244,7 +278,8 @@ export async function getLiveAnalyseDetail(id) {
     nbMesures: row.nbMesures,
     themeSlug: row.theme,
     themeLabel: liveThemeLabel(row.theme),
-    favori: row.favori,
+    favori: row.favoris.length > 0,
+    auteurLabel: authorLabel(row.auteur),
     dateLabel: longDateFormatter.format(row.createdAt),
     mesures: Array.isArray(row.resultat?.mesures) ? row.resultat.mesures : [],
     remarque: typeof row.resultat?.remarque === "string" ? row.resultat.remarque : null,

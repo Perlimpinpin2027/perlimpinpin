@@ -1,5 +1,4 @@
-import { cookies } from "next/headers";
-import { LIVE_COOKIE_NAME, verifySessionToken } from "@/lib/live-session";
+import { getLiveUser, sessionExpiredResponse } from "@/lib/live-auth";
 import {
   DECLARATION_MAX_LENGTH,
   DECLARATION_MIN_LENGTH,
@@ -19,10 +18,8 @@ export const maxDuration = 300;
 export async function POST(request) {
   // Le proxy ne couvre que /live : cette route API revérifie elle-même la
   // session (elle déclenche un appel payant).
-  const token = (await cookies()).get(LIVE_COOKIE_NAME)?.value;
-  if (!verifySessionToken(token)) {
-    return Response.json({ error: "Session expirée. Reconnectez-vous." }, { status: 401 });
-  }
+  const user = await getLiveUser();
+  if (!user) return sessionExpiredResponse();
 
   const body = await request.json().catch(() => null);
   const declaration = typeof body?.declaration === "string" ? body.declaration.trim() : "";
@@ -59,7 +56,7 @@ export async function POST(request) {
   try {
     const resultat = await analyseDeclaration(declaration, { mode });
     // Sauvegarde pour l'historique ; ne bloque ni ne fait échouer l'analyse.
-    const saved = await saveLiveAnalyse({ declaration, resultat, candidatId, sourceUrl });
+    const saved = await saveLiveAnalyse({ declaration, resultat, candidatId, sourceUrl, auteurId: user.id });
     // `id` : identifiant de la page dédiée /live/analyses/[id] (null si l'analyse
     // n'a pas pu être enregistrée, ex. aucune mesure analysable).
     return Response.json({ ...resultat, id: saved?.id ?? null });
