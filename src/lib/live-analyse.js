@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { z } from "zod";
 import { NotationDetailleeSchema, checkNotationCoherence } from "../../scripts/lib/scoring.js";
 import { LIVE_THEMES, LIVE_THEME_SLUGS } from "./live-themes.js";
+import { BASE_LIMITS, EMPTY_QUESTIONS, questionsSchema, restrictQuestionSources } from "./live-questions.js";
 
 // Analyse "Étape 1 allégée" pour /live : une seule passe Claude, sans
 // recherche web, qui découpe une déclaration en mesures et note chacune
@@ -67,6 +68,14 @@ En plus des fiches par mesure, fournis dans la même réponse JSON :
   Cohérent = conforme aux faits ou au droit que tu connais avec certitude. Plutôt cohérent = globalement exact, avec une réserve mineure ou un chiffre approximatif. Incertain = ne peut pas être tranché sans vérification. Non étayé = présenté comme un fait mais sans base identifiable (chiffre sans source, promesse sans mécanisme). Contredit = en contradiction avec des faits ou un cadre juridique que tu connais avec certitude.
 - "sources" : au plus ${MAX_SOURCES} pistes de vérification, limitées à ce que tu connais avec certitude. Cite de préférence les institutions et organismes de référence du sujet (INSEE, Cour des comptes, DARES, Conseil d'État, Conseil constitutionnel, ministère concerné, Commission européenne…) et les codes ou textes de loi applicables, même sans date ni adresse. Ne cite un rapport, une étude ou un chiffre précis que si tu es certain de son existence et de son intitulé exact. Chaque source : "id" (entier à partir de 1), "nom" (intitulé précis), "date" (année ou date si tu la connais, sinon null) et "url" (uniquement si tu es certain de son adresse exacte, par exemple la page d'accueil d'une institution ; sinon null). Sans recherche web, n'invente JAMAIS une source, un titre de rapport ou une adresse : mieux vaut peu de sources, ou aucune (liste vide). Une affirmation sans source fiable est « Non étayé » ou « Incertain », jamais « Cohérent ».
 
+## QUESTIONS D'INTERVIEW
+
+Prépare aussi des questions qu'un journaliste pourrait poser au candidat en interview ("questions"), en deux listes :
+- "essentielles" (3 à 4) : obtenir les précisions factuelles qui manquent (financement, périmètre, calendrier, base juridique, chiffres…).
+- "difficiles" (3 à 4) : presser sur les points faibles, incertains ou contradictoires de la déclaration.
+Pour chaque question : "texte" (la question telle qu'un journaliste la poserait à l'oral, en une phrase), "justification" (une courte phrase qui explique pourquoi cette question se pose, par exemple « Le financement n'est pas détaillé dans la proposition. »), "sources" (identifiants de la liste "sources" utiles pour préparer la question, [] si aucune) et "relance" (question de suivi à poser si la réponse est évasive ; à fournir pour une ou deux questions difficiles seulement, null pour toutes les autres et pour toutes les questions essentielles).
+RÈGLE ABSOLUE : ces questions doivent sonner comme celles d'un journaliste, naturelles et directes. N'emploie JAMAIS le vocabulaire de l'évaluation interne dans une question, une justification ou une relance : pas de « score », de « note », de « critère », de « barème », d'« opérationnalité », de « qualification », de « plafond », de « degré de préparation » ni de nom d'axe de notation. Ne dis jamais « votre score est faible » : pose la question sur le sujet concret (« Comment financez-vous cette mesure ? »).
+
 ## LIMITES DE CE MODE
 
 Tu n'as PAS accès à la recherche web ici. Appuie-toi uniquement sur la déclaration et sur ce dont tu es certain de mémoire. Toute donnée (chiffre, texte juridique, coût, précédent) dont tu n'es pas sûr doit être listée dans "points_a_verifier" plutôt que tranchée. N'invente jamais de source ni de chiffre. Sans recherche, ne qualifie FRAGILE qu'à partir de ce que tu peux établir avec certitude (déclaration vague, contradiction avec le droit ou les faits que tu connais avec certitude) ; sinon INCERTAIN, et dis ce qu'il faudrait vérifier.
@@ -126,6 +135,14 @@ Retourne uniquement ce JSON, sans texte avant ni après, sans bloc de code :
   "sources": [
     { "id": 1, "nom": "intitulé précis", "date": "année ou date, ou null", "url": "adresse certaine, ou null" }
   ],
+  "questions": {
+    "essentielles": [
+      { "texte": "question de journaliste", "justification": "pourquoi cette question", "sources": [], "relance": null }
+    ],
+    "difficiles": [
+      { "texte": "question de journaliste", "justification": "pourquoi cette question", "sources": [], "relance": "question de suivi, ou null" }
+    ]
+  },
   "theme": "un slug de la liste des thèmes",
   "remarque": "une phrase sur ce qui n'a pas été analysé, ou null"
 }`;
@@ -202,6 +219,8 @@ export const AnalyseLiveSchema = z
       .catch({ chiffrage: "", faisabilite: "", impact: "" }),
     affirmations: lenientList(AffirmationSchema, MAX_AFFIRMATIONS),
     sources: lenientList(SourceSchema, MAX_SOURCES),
+    // Questions d'interview : non critique, absentes ou invalides => listes vides
+    questions: questionsSchema(BASE_LIMITS).catch(EMPTY_QUESTIONS),
     remarque: z.string().nullable(),
   })
   .transform((data) => {
@@ -214,7 +233,7 @@ export const AnalyseLiveSchema = z
       ...affirmation,
       sources: [...new Set(affirmation.sources)].filter((id) => ids.has(id)),
     }));
-    return { ...data, sources, affirmations };
+    return { ...data, sources, affirmations, questions: restrictQuestionSources(data.questions, ids) };
   });
 
 function extractJson(text) {

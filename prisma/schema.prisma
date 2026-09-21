@@ -261,6 +261,13 @@ model LiveAnalyse {
   // n'effectue pas de recherche web) : à vérifier avant diffusion.
   sources Json?
 
+  // Questions d'interview : { essentielles: [...], difficiles: [...], etendu }
+  // Chaque question : { texte, justification, sources: [id, …], relance, angle }.
+  // Générées avec l'analyse ; `etendu` passe à true quand la journaliste a
+  // demandé l'interview complète (route dédiée, sans regénérer score ni
+  // affirmations). null = analyse antérieure ou aucune question générée.
+  questions Json?
+
   candidatId Int?
   candidat   Candidat? @relation(fields: [candidatId], references: [id])
 

@@ -131,7 +131,7 @@ export default async function AnalysePage({ params }) {
             </blockquote>
 
             <div className="mt-8">
-              <AnalysisView analyse={analyse} />
+              <AnalysisView key={analyse.id} analyse={analyse} />
             </div>
 
             <AskBar />

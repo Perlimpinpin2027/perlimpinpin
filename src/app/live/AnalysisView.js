@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { getScoreBadge } from "@/lib/score";
 import { axisLevels, levelTone } from "@/lib/live-axes";
+import InterviewQuestions from "./InterviewQuestions";
 import { MesureCard } from "./MesureDetail";
 import { Icon, SCORE_BAR_CLASS, VerdictDot, VerdictLabel } from "./ui";
 
@@ -151,6 +152,8 @@ function SynthesePanel({ analyse, onShowAffirmations }) {
       ) : (
         !analyse.enrichi && <Notice>{LEGACY_NOTICE}</Notice>
       )}
+
+      <InterviewQuestions analyseId={analyse.id} initial={analyse.questions} sources={analyse.sources} />
 
       {analyse.enrichi && (
         <section aria-labelledby="apercu-affirmations" className="rounded-2xl border border-zinc-200 bg-white p-5 sm:p-6">

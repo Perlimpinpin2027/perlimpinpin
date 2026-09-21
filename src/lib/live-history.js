@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { LIVE_THEMES, LIVE_THEME_SLUGS, liveThemeLabel } from "@/lib/live-themes";
+import { countQuestions, parseStoredQuestions } from "@/lib/live-questions";
 
 // Persistance et lecture des analyses lancées depuis /live (table
 // LiveAnalyse). Distinct du pipeline public (Proposition/Analyse) : rien
@@ -56,6 +57,9 @@ export async function saveLiveAnalyse({ declaration, resultat, candidatId }) {
         confiance: orNull(resultat.niveau_confiance),
         affirmations: resultat.affirmations ?? [],
         sources: resultat.sources ?? [],
+        // Questions d'interview générées avec l'analyse ; undefined = colonne
+        // laissée à NULL quand aucune question exploitable n'a été produite.
+        questions: countQuestions(resultat.questions) > 0 ? { ...resultat.questions, etendu: false } : undefined,
         candidatId: candidatId ?? null,
       },
       select: { id: true },
@@ -214,6 +218,7 @@ export async function getLiveAnalyseDetail(id) {
       confiance: true,
       affirmations: true,
       sources: true,
+      questions: true,
       candidat: { select: { nom: true, parti: true, photoUrl: true } },
     },
   });
@@ -242,8 +247,25 @@ export async function getLiveAnalyseDetail(id) {
     confiance: row.confiance,
     affirmations: enrichi ? row.affirmations : [],
     sources: Array.isArray(row.sources) ? row.sources : [],
+    // Questions d'interview : listes vides pour une analyse antérieure ou sans question
+    questions: parseStoredQuestions(row.questions),
     candidat: row.candidat
       ? { nom: row.candidat.nom, parti: row.candidat.parti, photoUrl: row.candidat.photoUrl }
       : null,
   };
+}
+
+// Met à jour CE SEUL champ (interview complète). Ne touche ni au score ni aux
+// affirmations ni aux sources. Retourne null si l'analyse n'existe pas.
+export async function setLiveQuestions(id, questions) {
+  try {
+    return await prisma.liveAnalyse.update({
+      where: { id },
+      data: { questions },
+      select: { id: true },
+    });
+  } catch (error) {
+    if (error.code === "P2025") return null;
+    throw error;
+  }
 }
