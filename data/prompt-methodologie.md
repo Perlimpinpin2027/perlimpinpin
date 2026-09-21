@@ -438,7 +438,7 @@ Illustratifs uniquement, sans chercher ces cas dans les sources :
   spectaculaire sans budget identifié ni base juridique.
 - **50/100** : mesure floue, sous-documentée ou juridiquement complexe,
   mais envisageable sous conditions.
-- **85/100** : ajustement technique déjà testé ailleurs ou dans le passé,
+- **78/100** : ajustement technique déjà testé ailleurs ou dans le passé,
   chiffré par une source publique et juridiquement bordé.
 
 ## CALCUL
@@ -455,7 +455,7 @@ Illustratifs uniquement, sans chercher ces cas dans les sources :
 4. Vérifier exactement ce calcul. Ne jamais l'ajuster à l'instinct.
 
 Appréciation :
-`0-19 irréaliste | 20-39 fragile | 40-59 partiellement fondé | 60-74 plausible sous condition | 75-89 solide et chiffré | 90-100 exemplaire`
+`0-19 irréaliste | 20-34 fragile | 35-54 partiellement fondé | 55-69 plausible sous condition | 70-84 solide et chiffré | 85-100 exemplaire`
 
 ---
 

@@ -25,11 +25,11 @@ import { z } from "zod";
 // barème, deux consommateurs différents : ce fichier valide côté pipeline
 // d'analyse, score.js affiche côté site).
 export const APPRECIATION_BANDS = [
-  { min: 90, max: 100, label: "exemplaire" },
-  { min: 75, max: 89, label: "solide et chiffré" },
-  { min: 60, max: 74, label: "plausible sous condition" },
-  { min: 40, max: 59, label: "partiellement fondé" },
-  { min: 20, max: 39, label: "fragile" },
+  { min: 85, max: 100, label: "exemplaire" },
+  { min: 70, max: 84, label: "solide et chiffré" },
+  { min: 55, max: 69, label: "plausible sous condition" },
+  { min: 35, max: 54, label: "partiellement fondé" },
+  { min: 20, max: 34, label: "fragile" },
   { min: 0, max: 19, label: "irréaliste" },
 ];
 

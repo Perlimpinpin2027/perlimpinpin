@@ -61,7 +61,7 @@ test("consigne : réponse limitée à l'analyse, phrase de repli exacte, citatio
 test("buildChatContext : score, affirmations avec verdicts, sources, synthèses, déclaration", () => {
   const ctx = buildChatContext(detail);
   assert.equal(ctx.score_global_sur_100, 38);
-  assert.equal(ctx.appreciation, "fragile");
+  assert.equal(ctx.appreciation, "partiellement fondé");
   assert.equal(ctx.niveau_de_confiance, "moyen");
   assert.equal(ctx.recherche_web_effectuee, false);
   assert.deepEqual(ctx.syntheses_par_axe, detail.syntheses);

@@ -126,18 +126,18 @@ function makeFicheComplete({ champs = {}, criteres, ...overrides } = {}) {
 // --- computeAppreciation ----------------------------------------------------
 
 describe("computeAppreciation", () => {
-  test("suit le barème 0-19/20-39/.../90-100", () => {
+  test("suit le barème 0-19/20-34/.../85-100", () => {
     assert.equal(computeAppreciation(0), "irréaliste");
     assert.equal(computeAppreciation(19), "irréaliste");
     assert.equal(computeAppreciation(20), "fragile");
-    assert.equal(computeAppreciation(39), "fragile");
-    assert.equal(computeAppreciation(40), "partiellement fondé");
-    assert.equal(computeAppreciation(59), "partiellement fondé");
-    assert.equal(computeAppreciation(60), "plausible sous condition");
-    assert.equal(computeAppreciation(74), "plausible sous condition");
-    assert.equal(computeAppreciation(75), "solide et chiffré");
-    assert.equal(computeAppreciation(89), "solide et chiffré");
-    assert.equal(computeAppreciation(90), "exemplaire");
+    assert.equal(computeAppreciation(34), "fragile");
+    assert.equal(computeAppreciation(35), "partiellement fondé");
+    assert.equal(computeAppreciation(54), "partiellement fondé");
+    assert.equal(computeAppreciation(55), "plausible sous condition");
+    assert.equal(computeAppreciation(69), "plausible sous condition");
+    assert.equal(computeAppreciation(70), "solide et chiffré");
+    assert.equal(computeAppreciation(84), "solide et chiffré");
+    assert.equal(computeAppreciation(85), "exemplaire");
     assert.equal(computeAppreciation(100), "exemplaire");
   });
 });
