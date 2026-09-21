@@ -13,6 +13,7 @@ import {
   creerSession,
   secretUtilisable,
 } from "@/lib/test-auth-core";
+import { enregistrerTexteCore } from "@/lib/test-enregistrer";
 import { publierBrouillonCore } from "@/lib/test-publier";
 
 // Actions serveur de /test. Rappel : un fichier "use server" n'exporte que des
@@ -88,4 +89,41 @@ export async function publierBrouillon(analyseId) {
 
   // redirect lève une exception : il doit rester hors de tout try/catch.
   redirect(`/declarations/${resultat.propositionId}`);
+}
+
+// Enregistre le nouveau texte d'un champ d'un brouillon (titre, résumé…). Les
+// règles (accès, champ autorisé, brouillon le plus récent, concurrence, simulation,
+// transaction) sont dans src/lib/test-enregistrer.js.
+export async function enregistrerTexte(entree) {
+  const resultat = await enregistrerTexteCore(entree, {
+    isEditor,
+    prisma,
+    dryRun: process.env.TEST_DRY_RUN === "1",
+  });
+
+  if (!resultat.ok) {
+    if (resultat.message === "Non autorisé.") {
+      console.warn("[test] modification de texte refusée (non autorisé)");
+    }
+    return resultat;
+  }
+  if (resultat.simulation) return resultat;
+
+  // Ligne d'audit JSON pour les logs Vercel : l'ancien texte y est conservé,
+  // pour le retrouver si besoin.
+  console.log(
+    JSON.stringify({
+      evenement: "test_modification_texte",
+      date: new Date().toISOString(),
+      analyseId: resultat.analyseId,
+      champ: resultat.champ,
+      avant: resultat.avant,
+      apres: resultat.apres,
+    }),
+  );
+
+  revalidatePath("/test");
+  revalidatePath(`/test/${resultat.propositionId}`);
+
+  return { ok: true, versionSuivante: resultat.versionSuivante };
 }

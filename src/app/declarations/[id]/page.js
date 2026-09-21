@@ -7,6 +7,7 @@ import StickyScoreCard from "@/components/StickyScoreCard";
 import AccordionSection from "@/components/AccordionSection";
 import MesureObjectifBanner from "@/components/MesureObjectifBanner";
 import MonoTag from "@/components/MonoTag";
+import EditableBlock from "@/app/test/EditableBlock";
 import { getDeclarationDetail } from "@/lib/queries";
 import { getScoreBadge } from "@/lib/score";
 
@@ -763,10 +764,30 @@ function FiabiliteSection({ contenu }) {
   );
 }
 
+// Ajoute le crayon de modification autour d'un bloc, seulement en mode édition
+// (/test/[id] pour un éditeur). Sans `edition` (site public, amis, non-éditeur),
+// renvoie le bloc tel quel : aucun composant client, aucune donnée en plus.
+function Editable({ edition, champ, valeurBrute, multiligne, children }) {
+  if (!edition) return children;
+  return (
+    <EditableBlock
+      champ={champ}
+      valeurBrute={valeurBrute}
+      analyseId={edition.analyseId}
+      versionAttendue={edition.versionAttendue}
+      multiligne={multiligne}
+    >
+      {children}
+    </EditableBlock>
+  );
+}
+
 // `preview` : utilisé par /test/[id] pour relire un brouillon. On y masque les
 // blocs qui écrivent en base (vote, feedback) et le lien de retour pointe vers
 // la liste des brouillons. Sur le site public, `preview` reste faux : rien ne change.
-export default async function DeclarationDetailPage({ params, preview = false }) {
+// `edition` : { analyseId, versionAttendue } pour un éditeur (crayon sur le titre et
+// le résumé), sinon null.
+export default async function DeclarationDetailPage({ params, preview = false, edition = null }) {
   const { id } = await params;
   const propositionId = Number(id);
 
@@ -846,9 +867,18 @@ export default async function DeclarationDetailPage({ params, preview = false })
                   partout ailleurs sur le site, pas la serif éditoriale
                   Fraunces — celle-ci ne correspond à aucune maquette fournie
                   pour l'instant, à vérifier avant de la réutiliser ailleurs. */}
-              <h1 className="mt-2 text-[clamp(1.5rem,1.05rem+1.7vw,2.25rem)] font-sans font-bold leading-tight tracking-tight text-zinc-900">
-                {declaration.titre}
-              </h1>
+              <Editable
+                edition={edition}
+                champ="titre_fiche"
+                valeurBrute={typeof contenu.titre_fiche === "string" ? contenu.titre_fiche : declaration.titre}
+                multiligne={false}
+              >
+                <h1
+                  className={`mt-2 text-[clamp(1.5rem,1.05rem+1.7vw,2.25rem)] font-sans font-bold leading-tight tracking-tight text-zinc-900${edition ? " pr-11" : ""}`}
+                >
+                  {declaration.titre}
+                </h1>
+              </Editable>
 
               <div className="mt-6 flex items-center gap-3">
                 <img
@@ -893,34 +923,41 @@ export default async function DeclarationDetailPage({ params, preview = false })
                 scripts/analyze.js). Le lien "Voir le raisonnement complet"
                 sert uniquement à naviguer vers le détail plus bas sur la
                 page, jamais à masquer une partie du résumé. */}
-            <section className="rounded-2xl p-6 sm:p-8" style={GLASS_STYLE}>
-              <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-zinc-900">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={1.5}
-                  className="h-4 w-4 text-blue-500"
-                  aria-hidden="true"
+            <Editable
+              edition={typeof contenu.resume_court === "string" ? edition : null}
+              champ="resume_court"
+              valeurBrute={contenu.resume_court}
+              multiligne
+            >
+              <section className="rounded-2xl p-6 sm:p-8" style={GLASS_STYLE}>
+                <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-zinc-900">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={1.5}
+                    className="h-4 w-4 text-blue-500"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456Z"
+                    />
+                  </svg>
+                  Le résumé de Perlimpinpin IA
+                </h2>
+                <TeaserParagraphs text={contenu.resume_court} />
+                <Link
+                  href="#raisonnement-complet"
+                  className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-zinc-900 transition-colors hover:text-zinc-600"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456Z"
-                  />
-                </svg>
-                Le résumé de Perlimpinpin IA
-              </h2>
-              <TeaserParagraphs text={contenu.resume_court} />
-              <Link
-                href="#raisonnement-complet"
-                className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-zinc-900 transition-colors hover:text-zinc-600"
-              >
-                Voir le raisonnement complet
-                <span aria-hidden="true">→</span>
-              </Link>
-            </section>
+                  Voir le raisonnement complet
+                  <span aria-hidden="true">→</span>
+                </Link>
+              </section>
+            </Editable>
 
 
             {/* Mesure → objectif visé : absente sur les fiches antérieures

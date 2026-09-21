@@ -35,6 +35,7 @@ export default async function TestDetailPage({ params }) {
     select: {
       id: true,
       statut: true,
+      updatedAt: true,
       proposition: { select: { candidat: { select: { nom: true } } } },
     },
   });
@@ -79,7 +80,17 @@ export default async function TestDetailPage({ params }) {
         </div>
       </div>
 
-      <DeclarationDetailPage params={params} preview />
+      {/* Pour un éditeur seulement : le crayon de modification (titre, résumé). La
+          version sert à détecter une modification faite entre-temps par quelqu'un d'autre. */}
+      <DeclarationDetailPage
+        params={params}
+        preview
+        edition={
+          editeur
+            ? { analyseId: derniere.id, versionAttendue: derniere.updatedAt.toISOString() }
+            : null
+        }
+      />
     </>
   );
 }
