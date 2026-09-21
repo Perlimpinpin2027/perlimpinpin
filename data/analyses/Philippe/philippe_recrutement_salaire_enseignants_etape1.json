@@ -1,0 +1,94 @@
+{
+  "mesure_reformulee": {
+    "synthese": "Recruter un peu moins de professeurs, en lien avec la baisse démographique, pour financer une hausse de 20 % du salaire moyen des enseignants sur cinq ans, sans creuser le déficit.",
+    "texte": "Édouard Philippe propose de **recruter chaque année un peu moins de nouveaux professeurs** qu'aujourd'hui, en lien avec la baisse du nombre d'élèves en France, afin de réutiliser cet argent pour **augmenter le salaire moyen des enseignants de 20 %** sur les cinq années du prochain quinquennat, **sans creuser le déficit public**."
+  },
+  "mesure_vers_objectif": {
+    "objectif_court": "Mieux payer les professeurs sans augmenter le déficit",
+    "categorie_objectif": "Éducation",
+    "objectif_vise": "Porter la rémunération moyenne des enseignants, notamment en milieu de carrière, à un niveau proche de la moyenne européenne, pour rendre le métier plus attractif, en finançant cette hausse par les économies liées à la baisse du nombre d'élèves plutôt que par une dépense publique supplémentaire.",
+    "mecanisme_propose": "Réduire légèrement le nombre de nouveaux professeurs recrutés chaque année (l'État recrute déjà moins largement que par le passé du fait de la baisse démographique), et transférer l'argent ainsi non dépensé vers une revalorisation salariale progressive des enseignants en poste.",
+    "lien_causal": "indirect"
+  },
+  "nature_et_existant": "La mesure touche à la gestion budgétaire et humaine du personnel de l'Éducation nationale, qui dépend directement de l'État. Ce n'est pas une idée totalement inédite : ajuster chaque année le nombre de postes offerts aux concours d'enseignants en fonction du nombre d'élèves attendus est déjà une pratique courante, inscrite dans le budget voté par le Parlement (le budget 2026 prévoit déjà la suppression de 4018 postes d'enseignants liée à la baisse démographique). Revaloriser le salaire des enseignants n'est pas non plus une nouveauté : plusieurs hausses ont déjà eu lieu ces dernières années, notamment via le « Pacte enseignant » mis en place en 2023. Ce qui est nouveau dans la proposition de M. Philippe, c'est l'ampleur affichée (+20% en moyenne sur cinq ans) et la promesse explicite de la financer uniquement par cet ajustement démographique, sans autre effort budgétaire ni nouvelle recette.",
+  "contexte_programme": {
+    "synthese": "S'inscrit dans un ensemble de propositions pour l'école, mais mobilise la même source d'argent (économies démographiques) pour deux usages non hiérarchisés.",
+    "texte": "Cette mesure s'inscrit dans un ensemble plus large de propositions d'Édouard Philippe pour l'école, annoncées à quelques jours de la rentrée 2026, qui comprennent aussi un renforcement de l'autorité à l'école et davantage d'autonomie donnée aux établissements. Elle ne semble pas en contradiction frontale avec ces autres axes, mais **elle affecte la même source d'argent** (les économies liées à la baisse du nombre d'élèves) **à deux usages différents et non hiérarchisés** : continuer à réduire le nombre d'élèves par classe, et augmenter les salaires."
+  },
+  "contexte_national": {
+    "synthese": "Le budget 2026 a déjà redirigé toutes les économies démographiques vers d'autres priorités, sans en mettre de côté, alors que la France reste sous procédure de déficit excessif.",
+    "texte": "Le budget de la mission Enseignement scolaire pour 2026 s'élève à environ 64,5 milliards d'euros, dont **94 % servent à payer les salaires du personnel** (environ 840 000 professeurs). Le budget 2026 prévoit déjà la suppression nette de 4018 postes liée à la baisse du nombre d'élèves, mais **cette économie a été intégralement redéployée vers d'autres priorités** du ministère (5440 postes de professeurs stagiaires, près de 5900 emplois pour la formation, l'inclusion et la santé scolaire) **plutôt que mise de côté**. Le nombre d'élèves devrait continuer de baisser fortement : **jusqu'à 1,7 million de moins d'ici 2035**, soit 14,2 % des effectifs actuels. Enfin, **la France affichait un déficit public de 5,1 % du PIB en 2025** et reste sous procédure de déficit excessif de l'Union européenne."
+  },
+  "contexte_international": {
+    "synthese": "Les enseignants français touchent 16 % de moins que la moyenne OCDE dans le secondaire et 40 % de moins dans le primaire ; une hausse uniforme de 20 % ne comblerait pas l'écart primaire.",
+    "texte": "Les salaires des enseignants français restent, à chaque étape de la carrière, inférieurs à la moyenne des pays de l'OCDE. Un professeur du secondaire avec 15 ans d'ancienneté touche en France **environ 16 % de moins que la moyenne OCDE** ; un professeur des écoles au même stade touche **environ 40 % de moins**. Une hausse moyenne de 20 % rapprocherait sensiblement les salaires du secondaire de la moyenne OCDE, mais **resterait insuffisante pour combler l'écart bien plus large observé dans le primaire** si la hausse reste uniforme entre les deux niveaux."
+  },
+  "impact_environnement": null,
+  "analyse_par_criteres": "Sur le plan juridique, rien n'empêche cette mesure : ajuster le nombre de postes aux concours et revaloriser des salaires de fonctionnaires par la loi de finances sont des leviers ordinaires, déjà utilisés chaque année. C'est le financement qui pose un problème sérieux : en appliquant le rythme actuel de recrutement à la baisse attendue du nombre d'élèves, les économies réalistement mobilisables d'ici la fin du quinquennat semblent nettement inférieures, par un facteur de deux à quatre selon nos estimations, au coût récurrent d'une hausse de 20% des salaires une fois pleinement appliquée. Ce calcul, qui reste une estimation de notre part faute de chiffrage précis fourni par le candidat, n'est en outre pas confirmé par le budget déjà voté pour 2026, qui a redirigé la totalité des économies liées à la démographie vers d'autres priorités (formation, inclusion, santé scolaire) plutôt que de les mettre de côté. Sur l'efficacité, la hausse de salaire est un levier plausible pour rendre le métier plus attractif, mais elle reste une moyenne qui ne cible pas spécifiquement les matières où le manque de professeurs est le plus criant. Le principal effet rebond est budgétaire : le risque d'alourdir un déficit déjà élevé, ou de devoir sacrifier d'autres priorités éducatives pour tenir la promesse.",
+  "analyse_longevites": {
+    "synthese": "Une dépense récurrente et quasi irréversible, adossée à une source de financement (la baisse démographique) elle-même incertaine sur la durée.",
+    "texte": "Une hausse de salaire, une fois votée, devient **une dépense récurrente très difficile à revenir en arrière**. À l'inverse, la baisse du nombre d'élèves censée la financer est elle-même **incertaine sur la durée** : son ampleur dépend de la natalité future et pourrait ralentir ou s'inverser localement. La mesure crée donc une **asymétrie dans le temps** : un engagement de dépense qui dure, adossé à une source de financement qui n'est pas garantie de suivre le même rythme au-delà du quinquennat."
+  },
+  "impact_temporel_et_sectoriel": {
+    "synthese": "L'écart entre coût et financement se creuserait surtout à moyen terme, pour un gain de pouvoir d'achat réel côté enseignants mais sans effet macroéconomique perceptible.",
+    "texte": "Court terme (0-2 ans) : effet limité, hausse de salaire encore faible et économies démographiques modestes. Moyen terme (2-7 ans), l'essentiel du quinquennat : **le coût de la hausse monterait fortement jusqu'à son plein niveau**, pendant que les économies démographiques progresseraient plus lentement, ce qui **creuserait l'écart entre ce qui est promis et ce qui est financé** — un gain de pouvoir d'achat réel pour environ 840 000 foyers de professeurs, sans effet perceptible sur l'inflation générale. Long terme (plus de 7 ans) : **une dépense publique permanente**, adossée à un financement démographique non garanti dans la durée."
+  },
+  "ce_qui_est_etabli": {
+    "synthese": "Le salaire des enseignants est nettement inférieur à la moyenne OCDE ; le budget 2026 a déjà redirigé les économies démographiques vers d'autres besoins.",
+    "texte": "Le salaire des enseignants français est **bien inférieur à la moyenne de l'OCDE**, surtout dans le primaire. Le budget 2026 supprime déjà 4018 postes liés à la baisse démographique, mais **redirige entièrement cette économie vers d'autres besoins du ministère**. Le nombre d'élèves va continuer de **baisser fortement** dans les années qui viennent. **La France reste sous procédure de déficit excessif** de l'Union européenne."
+  },
+  "ce_qui_est_probable": {
+    "synthese": "Une hausse de salaire améliorerait probablement l'attractivité du métier, mais les économies démographiques disponibles seraient probablement bien inférieures au coût de la mesure.",
+    "texte": "Une hausse de salaire améliorerait probablement **l'attractivité générale du métier**, même si son effet sur les matières en tension (mathématiques, allemand, lettres) resterait limité si elle n'est pas ciblée. Il est également probable que **les économies réellement disponibles grâce à la baisse démographique soient bien inférieures au coût de la mesure**, sur la base de notre calcul."
+  },
+  "ce_qui_est_discutable": {
+    "synthese": "L'affirmation d'un financement neutre pour les finances publiques n'est pas confirmée par notre calcul ; la répartition entre les deux usages de l'argent reste floue.",
+    "texte": "Le candidat présente la mesure comme finançable « sans dégrader les finances publiques », une affirmation que **notre calcul ne permet pas de confirmer**. Le choix d'utiliser la même source d'argent à la fois pour réduire les effectifs par classe et pour augmenter les salaires, sans préciser la répartition entre les deux, **laisse une marge d'interprétation importante** sur ce qui serait réellement financé."
+  },
+  "ce_qui_est_inconnu": {
+    "synthese": "Le nombre exact de postes non recréés, le montant réellement dégagé, et si la hausse de 20 % serait uniforme entre primaire et secondaire.",
+    "texte": "**Le nombre exact de postes** que le candidat compte ne pas recréer chaque année, **le montant total qu'il prévoit de dégager** ainsi, et la répartition précise entre baisse des effectifs par classe et hausse de salaire. On ignore aussi **si la hausse de 20 % serait uniforme** entre professeurs des écoles et du secondaire, alors que l'écart avec la moyenne OCDE diffère fortement selon le niveau."
+  },
+  "angles_morts": {
+    "synthese": "Le risque de fermetures de classes en zones rurales n'est pas mentionné, et l'argent démographique a déjà d'autres usages identifiés en 2026, non discutés dans l'annonce.",
+    "texte": "**Le risque de fermetures de classes ou d'écoles dans les zones rurales** n'est pas mentionné, alors qu'une baisse du recrutement mal répartie pourrait l'aggraver. La mesure ne dit rien du sort des **postes actuellement non pourvus dans certaines matières en tension**. Enfin, les postes déjà redéployés en 2026 vers l'inclusion et la santé scolaire montrent que **« l'argent libéré » par la démographie a déjà d'autres usages identifiés**, ce qui n'est pas discuté dans l'annonce."
+  },
+  "notation_detaillee": {
+    "operationnalite_juridique": 9,
+    "qualification_juridique": "SOLIDE",
+    "operationnalite_budgetaire": 1,
+    "qualification_budgetaire": "FRAGILE",
+    "operationnalite_moyens_humains": 5,
+    "qualification_moyens_humains": "INCERTAIN",
+    "operationnalite_moyens_total": 10,
+    "plafond_applique": true,
+    "plafond_declencheur": "budgetaire",
+    "efficacite": 14,
+    "qualification_efficacite": "INCERTAIN",
+    "effets_rebonds_externalites": 6,
+    "qualification_effets_rebonds": "FRAGILE",
+    "degre_preparation": 3,
+    "qualification_preparation": "INCERTAIN",
+    "alignement_logique": 4,
+    "qualification_alignement": "INCERTAIN",
+    "score_total": 37,
+    "appreciation": "partiellement fondé"
+  },
+  "verdict_final": "Techniquement, rien n'empêche l'État de recruter un peu moins de professeurs et d'augmenter leurs salaires : ce sont des leviers budgétaires ordinaires. Le problème est ailleurs. Selon notre estimation, les économies réalistes liées à la baisse du nombre d'élèves d'ici la fin du quinquennat couvriraient au mieux une fraction, entre un quart et la moitié, du coût annuel d'une hausse de salaire de 20% une fois pleinement appliquée. Le budget 2026 déjà voté confirme ce doute : les premières économies démographiques ont été intégralement redirigées vers d'autres priorités, pas mises de côté. La mesure reste donc plausible dans son principe, notamment pour rapprocher les salaires du secondaire de la moyenne européenne, mais fragile dans son financement affiché comme neutre pour les finances publiques.",
+  "sources_utilisees": [
+    "https://www.cnews.fr/france/2026-08-24/presidentielle-2027-edouard-philippe-veut-augmenter-de-20-la-remuneration-moyenne",
+    "https://www.lejdd.fr/politique/presidentielle-edouard-philippe-compte-augmenter-de-20-le-salaire-des-enseignants-181734",
+    "https://laclepublique.fr/national/articles/2026/2026-08-31-rentree-enseignants-demographie/",
+    "https://www.senat.fr/fileadmin/Commissions/Finances/2025-2026/PLF_2026/NP/Enseignement_scolaire_NP_PLF_2026.pdf",
+    "https://www.cidj.com/s-orienter/apres-le-bac/le-salaire-des-enseignants-francais-reste-inferieur-a-la-moyenne-de-l-ocde",
+    "https://dettedelafrance.fr/deficit-public-france",
+    "https://www.education.gouv.fr/depp/projections-d-effectifs-d-eleves-dans-les-premier-et-second-degres-horizon-2035-504275"
+  ],
+  "niveau_de_confiance": "Modéré : les chiffres de contexte (budget de l'Éducation nationale, projections démographiques, comparaison OCDE des salaires) viennent de sources officielles récentes et fiables. En revanche, le chiffrage central de la mesure (le montant réellement économisé grâce à la baisse du recrutement) est une estimation de notre part, faute de détail chiffré fourni par le candidat lui-même.",
+  "limites": {
+    "synthese": "Le calcul central sur le financement est une extrapolation faite par l'analyse elle-même, pas un chiffrage confirmé par le candidat.",
+    "texte": "Le document de référence propre au domaine Éducation n'était pas disponible pour ce projet ; l'analyse s'appuie donc sur l'article L111-1 du Code de l'éducation et sur le raisonnement économique établi. Par ailleurs, **le calcul central sur le financement de la mesure est une extrapolation faite par nos soins**, et non un chiffrage produit ou confirmé par le candidat : il suppose notamment **un ratio constant entre nombre d'élèves et nombre de professeurs**, ce qui simplifie une réalité plus complexe."
+  },
+  "resume_court": "Édouard Philippe veut augmenter le salaire moyen des professeurs de 20% en cinq ans, financé par la baisse du nombre d'élèves qui permettrait, selon lui, de recruter un peu moins de nouveaux enseignants. L'idée en elle-même ne pose pas de problème juridique. Mais nos calculs suggèrent que les économies réellement dégagées par cette baisse démographique seraient nettement insuffisantes pour couvrir le coût d'une telle hausse, une fois celle-ci pleinement montée en puissance. Le budget 2026, déjà voté, va d'ailleurs dans ce sens : les postes libérés par la démographie ont été redirigés vers d'autres besoins (formation, inclusion, santé scolaire), pas économisés. La mesure pourrait donc, si elle est appliquée telle quelle, soit creuser le déficit public, soit se faire au détriment d'autres priorités de l'école.",
+  "phrase_teasing": "Édouard Philippe promet +20% de salaire aux professeurs sans toucher au déficit, grâce à la baisse du nombre d'élèves. Les chiffres du budget de l'État permettent-ils vraiment de tenir cette promesse ?"
+}
