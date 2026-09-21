@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ICONS } from "./ui";
+import { loginUrl } from "@/lib/live-redirect";
 
 // Étoile cliquable : bascule le favori d'une analyse via
 // PATCH /api/live/analyses/:id/favori (ce seul champ). Mise à jour
@@ -34,7 +35,7 @@ export default function FavoriteButton({ id, favori, className = "" }) {
         body: JSON.stringify({ favori: next }),
       });
       if (response.status === 401) {
-        window.location.href = "/live/login";
+        window.location.href = loginUrl(window.location.pathname + window.location.search);
         return;
       }
       if (!response.ok) throw new Error(String(response.status));

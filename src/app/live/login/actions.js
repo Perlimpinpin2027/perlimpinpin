@@ -1,6 +1,7 @@
 "use server";
 
 import { cookies } from "next/headers";
+import { postLoginPath } from "@/lib/live-redirect";
 import {
   LIVE_COOKIE_NAME,
   LIVE_SESSION_MAX_AGE_SECONDS,
@@ -32,5 +33,7 @@ export async function login(_previousState, formData) {
   // Pas de redirect() ici : c'est le client qui charge /live par une navigation
   // de page complète (voir LoginForm), pour ne dépendre ni du rechargement
   // interne de la cible par Next ni de la navigation RSC côté client.
-  return { ok: true };
+  // Destination après connexion, revalidée ici (le champ du formulaire peut avoir
+  // été modifié) : une page interne de /live, ou /live par défaut.
+  return { ok: true, redirectTo: postLoginPath(formData.get("next")) };
 }

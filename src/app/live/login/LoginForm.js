@@ -3,17 +3,18 @@
 import { useActionState, useEffect } from "react";
 import { login } from "./actions";
 
-export default function LoginForm() {
+export default function LoginForm({ next = "/live" }) {
   const [state, formAction, pending] = useActionState(login, null);
 
   // Connexion réussie : le cookie est posé, on charge /live par une vraie
   // navigation de page (le proxy voit alors le cookie sur une requête normale).
   useEffect(() => {
-    if (state?.ok) window.location.assign("/live");
+    if (state?.ok) window.location.assign(state.redirectTo ?? "/live");
   }, [state]);
 
   return (
     <form action={formAction} className="flex flex-col gap-4">
+      <input type="hidden" name="next" value={next} />
       <div>
         <label htmlFor="live-password" className="text-sm font-medium text-zinc-700">
           Mot de passe

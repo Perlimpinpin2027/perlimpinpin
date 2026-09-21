@@ -6,6 +6,7 @@ import { liveThemeLabel } from "@/lib/live-themes";
 import { MesureCard } from "./MesureDetail";
 import ProgressBar from "./ProgressBar";
 import { ComingSoon, Icon } from "./ui";
+import { loginUrl } from "@/lib/live-redirect";
 
 const DECLARATION_MAX_LENGTH = 20000;
 // La route d'analyse s'arrête à 90 s (maxDuration) : au-delà de 100 s côté
@@ -61,7 +62,7 @@ export default function LiveAnalyzer({ candidats = [] }) {
 
   async function handleExtractResponse(response, origine) {
     if (response.status === 401) {
-      window.location.href = "/live/login";
+      window.location.href = loginUrl(window.location.pathname + window.location.search);
       return;
     }
     const data = await response.json().catch(() => null);
@@ -162,7 +163,7 @@ export default function LiveAnalyzer({ candidats = [] }) {
         signal: controller.signal,
       });
       if (response.status === 401) {
-        window.location.href = "/live/login";
+        window.location.href = loginUrl(window.location.pathname + window.location.search);
         return;
       }
       const data = await response.json().catch(() => null);

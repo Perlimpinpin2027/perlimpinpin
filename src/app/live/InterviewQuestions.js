@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import ProgressBar from "./ProgressBar";
 import { Icon } from "./ui";
+import { loginUrl } from "@/lib/live-redirect";
 
 // « Questions à poser » (onglet Synthèse) : questions d'interview générées avec
 // l'analyse, en deux blocs (essentielles, difficiles) avec justification,
@@ -205,7 +206,7 @@ export default function InterviewQuestions({ analyseId, initial, sources }) {
         signal: controller.signal,
       });
       if (response.status === 401) {
-        window.location.href = "/live/login";
+        window.location.href = loginUrl(window.location.pathname + window.location.search);
         return;
       }
       const data = await response.json().catch(() => null);

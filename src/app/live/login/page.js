@@ -1,4 +1,5 @@
 import Header from "@/components/Header";
+import { postLoginPath } from "@/lib/live-redirect";
 import LoginForm from "./LoginForm";
 
 export const metadata = {
@@ -6,7 +7,11 @@ export const metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function LiveLoginPage() {
+export default async function LiveLoginPage({ searchParams }) {
+  // Page à rouvrir après connexion (?next=), validée : uniquement une page interne de /live
+  const { next } = await searchParams;
+  const redirectTo = postLoginPath(typeof next === "string" ? next : null);
+
   return (
     <div className="flex min-h-screen flex-col bg-page-gradient font-sans">
       <Header />
@@ -18,7 +23,7 @@ export default function LiveLoginPage() {
         <p className="mt-2 text-sm text-zinc-500">Accès réservé à l&apos;équipe éditoriale.</p>
 
         <div className="mt-8 rounded-2xl border border-zinc-200 bg-white p-6">
-          <LoginForm />
+          <LoginForm next={redirectTo} />
         </div>
       </main>
     </div>
