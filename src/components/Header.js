@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import ContactModal from "./ContactModal";
+import NewsletterModal from "./NewsletterModal";
 
 // Onglets du centre de la barre (maquette : Déclarations, Candidats,
 // Méthode, À propos) + Thèmes, conservé à la demande. "Prix Perlimpinpin"
@@ -72,10 +73,12 @@ export default function Header() {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isContactOpen, setIsContactOpen] = useState(false);
+  const [isNewsletterOpen, setIsNewsletterOpen] = useState(false);
   // Identité stable : sinon chaque re-render du header (ex. isScrolled au
   // scroll) recrée cette fonction et redéclenche l'effet de fermeture
   // automatique de ContactModal, qui l'a en dépendance.
   const closeContact = useCallback(() => setIsContactOpen(false), []);
+  const closeNewsletter = useCallback(() => setIsNewsletterOpen(false), []);
   // Ombre un peu plus marquée une fois la page scrollée, pour bien détacher
   // la barre flottante du contenu qui défile dessous.
   const [isScrolled, setIsScrolled] = useState(false);
@@ -153,15 +156,16 @@ export default function Header() {
         {/* Groupe de droite (maquette) : Newsletter | Go! | bulle de contact,
             séparés par de petits traits verticaux. */}
         <div className="hidden shrink-0 items-center gap-4 lg:flex xl:gap-5">
-          <Link
-            href="/newsletter"
+          <button
+            type="button"
+            onClick={() => setIsNewsletterOpen(true)}
             aria-label="Newsletter"
             title="Newsletter"
             className="flex shrink-0 items-center gap-2 text-sm font-medium text-zinc-700 transition-colors hover:text-zinc-950"
           >
             <MailIcon />
             <span className="hidden xl:inline">Newsletter</span>
-          </Link>
+          </button>
 
           <Divider />
 
@@ -232,14 +236,17 @@ export default function Header() {
                   </li>
                 ))}
                 <li>
-                  <Link
-                    href="/newsletter"
-                    onClick={() => setIsMenuOpen(false)}
-                    className="flex items-center gap-2 py-3 text-base font-medium text-zinc-700 transition-colors hover:text-zinc-950"
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      setIsNewsletterOpen(true);
+                    }}
+                    className="flex w-full items-center gap-2 py-3 text-base font-medium text-zinc-700 transition-colors hover:text-zinc-950"
                   >
                     <MailIcon />
                     Newsletter
-                  </Link>
+                  </button>
                 </li>
                 <li>
                   <Link
@@ -271,6 +278,7 @@ export default function Header() {
       ) : null}
 
       <ContactModal open={isContactOpen} onClose={closeContact} />
+      <NewsletterModal open={isNewsletterOpen} onClose={closeNewsletter} />
     </header>
   );
 }
