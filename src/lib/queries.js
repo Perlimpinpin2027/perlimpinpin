@@ -274,6 +274,32 @@ export async function getPublishedCountsByThemeSlug() {
   return counts;
 }
 
+// IDs des propositions ayant au moins une analyse publiée, avec la date de
+// dernière modification de l'analyse publiée la plus récente — pour
+// app/sitemap.js (lecture seule, aucun write). Une proposition peut avoir
+// plusieurs analyses ; seule la plus récemment modifiée parmi les publiées
+// compte pour lastModified (une proposition sans aucune analyse publiée n'a
+// pas d'URL publique et n'apparaît donc pas ici).
+export async function getPublishedPropositionsForSitemap() {
+  const analyses = await prisma.analyse.findMany({
+    where: { statut: "publie" },
+    select: { propositionId: true, updatedAt: true },
+    orderBy: { updatedAt: "desc" },
+  });
+
+  const lastModifiedByPropositionId = new Map();
+  for (const analyse of analyses) {
+    if (!lastModifiedByPropositionId.has(analyse.propositionId)) {
+      lastModifiedByPropositionId.set(analyse.propositionId, analyse.updatedAt);
+    }
+  }
+
+  return [...lastModifiedByPropositionId.entries()].map(([id, lastModified]) => ({
+    id,
+    lastModified,
+  }));
+}
+
 // Liste de tous les candidats pour la page /candidats, avec leur nombre de
 // déclarations publiées et leur score moyen.
 export async function getAllCandidats() {
@@ -557,6 +583,10 @@ export async function getDeclarationDetail(propositionId) {
     texteOriginal: proposition.texteOriginal,
     theme: proposition.theme,
     dateLabel: dateFormatter.format(proposition.dateDeclaration),
+    // Date brute (ISO via Date), pour le JSON-LD ClaimReview de la fiche —
+    // dateLabel ci-dessus est déjà formatée pour l'affichage, pas exploitable
+    // telle quelle en donnée structurée.
+    dateDeclaration: proposition.dateDeclaration,
     candidat: proposition.candidat,
     analyse,
     // Date de génération affichée en haut de la fiche ("Perlimpinpin

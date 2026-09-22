@@ -7,6 +7,33 @@ import { getScoreBadge } from "@/lib/score";
 
 export const dynamic = "force-dynamic";
 
+export async function generateMetadata({ searchParams }) {
+  const resolvedParams = await searchParams;
+  const candidat = resolvedParams?.candidat || undefined;
+  const theme = resolvedParams?.theme || undefined;
+
+  let title = "Déclarations analysées | Perlimpinpin";
+  let description =
+    "Toutes les déclarations et propositions des candidats à la présidentielle 2027, notées sur leur réalisme et leur faisabilité par Perlimpinpin.";
+
+  if (candidat && theme) {
+    title = `${candidat} — ${theme} | Déclarations | Perlimpinpin`;
+    description = `Déclarations de ${candidat} sur le thème ${theme}, notées sur leur réalisme et leur faisabilité par Perlimpinpin.`;
+  } else if (candidat) {
+    title = `${candidat} — Déclarations analysées | Perlimpinpin`;
+    description = `Toutes les déclarations de ${candidat} notées sur leur réalisme et leur faisabilité par Perlimpinpin.`;
+  } else if (theme) {
+    title = `${theme} — Déclarations analysées | Perlimpinpin`;
+    description = `Déclarations sur le thème ${theme}, notées sur leur réalisme et leur faisabilité par Perlimpinpin.`;
+  }
+
+  return {
+    title,
+    description,
+    openGraph: { title, description },
+  };
+}
+
 const sortOptions = [
   { value: "date", label: "Date ↓" },
   { value: "score_desc", label: "Score ↓" },

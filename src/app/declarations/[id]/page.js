@@ -1,3 +1,4 @@
+import { cache } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
@@ -12,6 +13,100 @@ import { getDeclarationDetail } from "@/lib/queries";
 import { getScoreBadge } from "@/lib/score";
 
 export const dynamic = "force-dynamic";
+
+// Mémoïsé par requête (React cache) plutôt qu'appelé deux fois : generateMetadata
+// et la page elle-même ont besoin de la même fiche, et getDeclarationDetail fait
+// plusieurs requêtes Prisma (pas un simple fetch, que Next.js mémoïse déjà tout seul).
+const getDeclarationDetailCached = cache(getDeclarationDetail);
+
+// Retire les marqueurs **gras** (voir renderRichText plus bas) : utile pour le HTML
+// affiché, mais un <title>/<meta description> doit rester du texte brut.
+function stripMarkdown(text) {
+  return typeof text === "string" ? text.replace(/\*\*/g, "") : "";
+}
+
+function truncate(text, max) {
+  if (typeof text !== "string" || text.length <= max) return text ?? "";
+  return `${text.slice(0, max - 1).trimEnd()}…`;
+}
+
+// titre_fiche/resume_court commencent presque toujours par le nom du candidat
+// ("Raphaël Glucksmann propose de…", voir data/prompt-methodologie.md) : sans
+// ça, le <title> le répéterait deux fois de suite ("Nom — Nom propose…").
+function stripLeadingName(text, nom) {
+  if (typeof text !== "string" || !text.toLowerCase().startsWith(nom.toLowerCase())) {
+    return text;
+  }
+  return text.slice(nom.length).trimStart();
+}
+
+// JSON-LD ClaimReview (schema.org) : permet à Google d'afficher le verdict et
+// le score directement dans les résultats de recherche pour cette fiche.
+// N'utilise que des champs réellement présents sur la fiche (texte original
+// de la déclaration, candidat, score, palier de verdict, dates de la
+// déclaration et de publication de l'analyse) — rien n'est inventé.
+function buildClaimReviewJsonLd(declaration) {
+  const { analyse } = declaration;
+  const badge = getScoreBadge(analyse.scoreFaisabilite);
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "ClaimReview",
+    datePublished: analyse.createdAt.toISOString(),
+    url: `https://perlimpinpin.ai/declarations/${declaration.id}`,
+    claimReviewed: declaration.texteOriginal,
+    itemReviewed: {
+      "@type": "Claim",
+      author: {
+        "@type": "Person",
+        name: declaration.candidat.nom,
+      },
+      datePublished: declaration.dateDeclaration.toISOString(),
+    },
+    author: {
+      "@type": "Organization",
+      name: "Perlimpinpin",
+      url: "https://perlimpinpin.ai",
+    },
+    reviewRating: {
+      "@type": "Rating",
+      ratingValue: String(analyse.scoreFaisabilite),
+      bestRating: "100",
+      worstRating: "0",
+      alternateName: badge.label,
+    },
+  };
+}
+
+export async function generateMetadata({ params }) {
+  const { id } = await params;
+  const propositionId = Number(id);
+  if (!Number.isInteger(propositionId)) return {};
+
+  const declaration = await getDeclarationDetailCached(propositionId);
+  if (!declaration || !declaration.analyse) return {};
+
+  const { analyse } = declaration;
+  const contenu = analyse.contenuComplet ?? {};
+  const badge = getScoreBadge(analyse.scoreFaisabilite);
+  const score = analyse.scoreFaisabilite;
+
+  const resumeBrut = stripMarkdown(contenu.resume_court) || declaration.titre;
+  const resume = truncate(stripLeadingName(resumeBrut, declaration.candidat.nom), 60);
+  const title = `${declaration.candidat.nom} — ${resume} : ${score}/100 | Perlimpinpin`;
+
+  const verdictText = Array.isArray(contenu.verdict_final)
+    ? contenu.verdict_final.join(" ")
+    : contenu.verdict_final;
+  const evaluation = truncate(stripMarkdown(verdictText), 90) || badge.description;
+  const description = `${badge.label} (${score}/100) — ${evaluation.replace(/[.!?…]+$/, "")}. Analyse complète sur Perlimpinpin.`;
+
+  return {
+    title,
+    description,
+    openGraph: { title, description },
+  };
+}
 
 // Icônes réutilisées à la fois par l'ancien et le nouveau barème (mêmes
 // pictogrammes, juste réattribués différemment selon le schéma détecté).
@@ -406,6 +501,22 @@ function TextOrList({ value }) {
 // TextOrList/renderRichText ne savent afficher que des chaînes ; ce
 // composant dédié gère les deux formes sans faire planter le rendu React
 // sur un objet.
+const SOURCE_STRING_REGEX = /^(.*?),\s*(https?:\/\/\S+)\s*$/;
+function renderSourceString(item) {
+  const match = typeof item === "string" ? item.match(SOURCE_STRING_REGEX) : null;
+  if (!match) return renderRichText(item);
+  return (
+    <a
+      href={match[2]}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-inherit underline underline-offset-2 decoration-zinc-400 transition-colors hover:decoration-zinc-900"
+    >
+      {renderRichText(match[1])}
+    </a>
+  );
+}
+
 function SourcesList({ value }) {
   if (!value || (Array.isArray(value) && value.length === 0)) {
     return <p className="text-zinc-400">Non renseigné.</p>;
@@ -414,7 +525,19 @@ function SourcesList({ value }) {
     return <TextOrList value={value} />;
   }
   if (typeof value[0] !== "object" || value[0] === null) {
-    return <TextOrList value={value} />;
+    return (
+      <ul className="flex flex-col gap-2">
+        {value.map((item, index) => (
+          <li key={index} className="flex items-start gap-2">
+            <span
+              className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-zinc-400"
+              aria-hidden="true"
+            />
+            <span>{renderSourceString(item)}</span>
+          </li>
+        ))}
+      </ul>
+    );
   }
 
   return (
@@ -795,7 +918,7 @@ export default async function DeclarationDetailPage({ params, preview = false, e
     notFound();
   }
 
-  const declaration = await getDeclarationDetail(propositionId);
+  const declaration = await getDeclarationDetailCached(propositionId);
 
   if (!declaration || !declaration.analyse) {
     notFound();
@@ -834,9 +957,16 @@ export default async function DeclarationDetailPage({ params, preview = false, e
   const tocSections = isV4
     ? TOC_SECTIONS.filter((section) => section.id === "analyse-criteres" || section.id === "verdict")
     : TOC_SECTIONS;
+  const claimReviewJsonLd = buildClaimReviewJsonLd(declaration);
 
   return (
     <div className="flex min-h-screen flex-col bg-page-gradient font-sans">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(claimReviewJsonLd).replace(/</g, "\\u003c"),
+        }}
+      />
       <Header />
 
       <main className="w-full px-6 py-12 sm:px-8 sm:py-16">

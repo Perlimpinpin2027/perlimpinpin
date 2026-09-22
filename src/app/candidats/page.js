@@ -6,6 +6,12 @@ import { formatScore, getScoreBadge } from "@/lib/score";
 
 export const dynamic = "force-dynamic";
 
+export const metadata = {
+  title: "Les candidats | Perlimpinpin",
+  description:
+    "Le niveau moyen de solidité des propositions de chaque candidat à la présidentielle 2027, selon la méthode Perlimpinpin.",
+};
+
 export default async function CandidatsPage() {
   const candidats = await getAllCandidats();
 
