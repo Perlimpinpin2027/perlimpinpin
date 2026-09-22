@@ -194,6 +194,16 @@ model MessageContact {
   createdAt DateTime @default(now())
 }
 
+// Inscription à la newsletter depuis la modale du header. INSERTION SEULE :
+// aucune mise à jour ni désinscription gérée pour l'instant.
+model NewsletterSubscriber {
+  id Int @id @default(autoincrement())
+
+  email     String   @unique
+  consentAt DateTime @default(now())
+  createdAt DateTime @default(now())
+}
+
 model Source {
   id  Int    @id @default(autoincrement())
   nom String
@@ -349,4 +359,20 @@ model LiveChatMessage {
   createdAt DateTime @default(now())
 
   @@index([analyseId, createdAt])
+}
+
+// Commentaire de relecture éditoriale laissé sur une fiche en brouillon
+// (/relectures). Rattaché à une fiche (ficheSlug) et à une section précise
+// de la fiche (sectionId, ex: "zemmour-retraites-score"). Pas d'authentification
+// pour l'instant : n'importe qui a le lien peut lire et poster.
+model RelectureComment {
+  id           String   @id @default(cuid())
+  ficheSlug    String
+  sectionId    String
+  sectionLabel String?
+  authorName   String?
+  body         String
+  createdAt    DateTime @default(now())
+
+  @@index([ficheSlug, sectionId])
 }

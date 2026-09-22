@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Brouillons Perlimpinpin</title>
+</head>
+<body>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<style>:root{
+  --bg:#fdfbf9; --surface:#ffffff; --ink:#171717; --ink-inv:#fafafa; --muted:#52525b; --faint:#71717a;
+  --rule:#e4e4e7; --soft:#f4f4f5; --track:#ececee;
+  --blue:#2563eb; --orange:#ea580c; --pill:rgba(255,255,255,.86);
+  --warn-bg:#fef9c3; --warn-line:#facc15; --warn-ink:#713f12;
+  --ok:#15803d; --ok-soft:#dcfce7; --mid:#b45309; --mid-soft:#fef3c7; --bad:#b91c1c; --bad-soft:#fee2e2;
+  --t-irreal:#b91c1c; --t-fragile:#dc2626; --t-partiel:#ea580c; --t-plausible:#d97706; --t-solide:#65a30d; --t-exemplaire:#16a34a;
+  --sans:"Geist",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:"Geist Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#111110; --surface:#1a1a19; --ink:#f4f4f5; --ink-inv:#171717; --muted:#a1a1aa; --faint:#8b8b93;
+    --rule:#2c2c2a; --soft:#222220; --track:#2a2a28;
+    --blue:#7aa7f7; --orange:#fb923c; --pill:rgba(26,26,25,.86);
+    --warn-bg:#2b2508; --warn-line:#8a6d0b; --warn-ink:#fde68a;
+    --ok:#4ade80; --ok-soft:#10261a; --mid:#fbbf24; --mid-soft:#2a2108; --bad:#f87171; --bad-soft:#2d1414;
+    --t-irreal:#f87171; --t-fragile:#f87171; --t-partiel:#fb923c; --t-plausible:#fbbf24; --t-solide:#a3e635; --t-exemplaire:#4ade80;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#111110; --surface:#1a1a19; --ink:#f4f4f5; --ink-inv:#171717; --muted:#a1a1aa; --faint:#8b8b93;
+  --rule:#2c2c2a; --soft:#222220; --track:#2a2a28;
+  --blue:#7aa7f7; --orange:#fb923c; --pill:rgba(26,26,25,.86);
+  --warn-bg:#2b2508; --warn-line:#8a6d0b; --warn-ink:#fde68a;
+  --ok:#4ade80; --ok-soft:#10261a; --mid:#fbbf24; --mid-soft:#2a2108; --bad:#f87171; --bad-soft:#2d1414;
+  --t-irreal:#f87171; --t-fragile:#f87171; --t-partiel:#fb923c; --t-plausible:#fbbf24; --t-solide:#a3e635; --t-exemplaire:#4ade80;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+button{font-family:inherit}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+
+.tier-irreal{--tier:var(--t-irreal)} .tier-fragile{--tier:var(--t-fragile)} .tier-partiel{--tier:var(--t-partiel)}
+.tier-plausible{--tier:var(--t-plausible)} .tier-solide{--tier:var(--t-solide)} .tier-exemplaire{--tier:var(--t-exemplaire)}
+
+.wrap{max-width:1040px;margin:0 auto;padding-inline:16px;padding-block:12px 72px}
+@media (min-width:720px){.wrap{padding-inline:24px}}
+
+/* header pill */
+.pill{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px);z-index:30;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  background:var(--pill);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1px solid var(--rule);border-radius:999px;padding:7px 7px 7px 18px}
+.brand{font-weight:600;letter-spacing:-.01em;text-decoration:none;font-size:15px}
+.pill-r{display:flex;align-items:center;gap:8px}
+.pill-tag{font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);display:none}
+@media (min-width:560px){.pill-tag{display:inline}}
+.btn-dark{display:inline-flex;align-items:center;background:var(--ink);color:var(--ink-inv);border-radius:999px;padding:7px 15px;font-size:13.5px;font-weight:500;text-decoration:none;border:0;cursor:pointer}
+
+.banner{margin:14px 0 0;background:var(--warn-bg);border:1px solid var(--warn-line);color:var(--warn-ink);border-radius:12px;padding:10px 14px;font-size:14px}
+
+.label{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--blue);margin:0}
+h1{font-weight:600;letter-spacing:-.025em;line-height:1.1;text-wrap:balance;margin:0}
+h2{font-weight:600;letter-spacing:-.015em;line-height:1.2;text-wrap:balance;margin:0}
+h3{margin:0}
+.muted{color:var(--muted)}
+.mono{font-family:var(--mono)}
+.back{display:inline-flex;gap:6px;align-items:center;font-size:14px;color:var(--muted);text-decoration:none;margin:26px 0 0}
+.back:hover{color:var(--ink)}
+
+/* comment button */
+.cbtn{font-size:13px;font-weight:500;color:var(--ink);background:transparent;border:1px solid var(--rule);border-radius:999px;padding:5px 13px;cursor:pointer;white-space:nowrap;line-height:1.4}
+.cbtn:hover{border-color:var(--ink)}
+.cbtn[hidden]{display:none!important}
+@media (prefers-reduced-motion:no-preference){.cbtn,.fcard,.chipf{transition:border-color .15s, background .15s}}
+
+/* ---------- hub ---------- */
+.hub-head{padding-top:44px;display:grid;gap:14px}
+.hub-head h1{font-size:clamp(2.1rem,6vw,3.4rem)}
+.hub-head p{max-width:60ch;color:var(--muted);margin:0}
+.steps{display:flex;flex-wrap:wrap;gap:8px 10px;margin:22px 0 0;padding:0;list-style:none;counter-reset:s;font-size:13.5px}
+.steps li{counter-increment:s;display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--rule);border-radius:999px;padding:5px 13px 5px 6px;color:var(--muted)}
+.steps li::before{content:counter(s);font-family:var(--mono);font-size:11.5px;width:20px;height:20px;border-radius:50%;background:var(--soft);color:var(--ink);display:grid;place-items:center}
+.steps li.now{color:var(--ink);border-color:var(--ink)}
+.steps li.now::before{background:var(--ink);color:var(--ink-inv)}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin:30px 0 0}
+.chipf{font-size:13.5px;border:1px solid var(--rule);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 13px;cursor:pointer;line-height:1.35}
+.chipf:hover{border-color:var(--ink)}
+.chipf[aria-pressed="true"]{background:var(--ink);color:var(--ink-inv);border-color:var(--ink)}
+.chipf:disabled{color:var(--faint);background:transparent;cursor:default;border-style:dashed}
+.chipf:disabled:hover{border-color:var(--rule)}
+.chipf i{font-style:normal;font-family:var(--mono);font-size:11.5px;margin-left:6px;opacity:.7}
+.count{font-family:var(--mono);font-size:12.5px;color:var(--faint);margin:26px 0 12px}
+.list{display:grid;gap:14px}
+.fcard{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px 28px;align-items:center;background:var(--surface);border:1px solid var(--rule);border-radius:20px;padding:22px 22px 20px;text-decoration:none;color:inherit}
+.fcard:hover{border-color:var(--ink)}
+.fcard .main{display:grid;gap:8px;min-width:0}
+.fcard h2{font-size:clamp(1.25rem,3.2vw,1.6rem)}
+.fcard .teaser{margin:0;color:var(--muted);max-width:62ch}
+.fcard .meta{font-family:var(--mono);font-size:12px;color:var(--faint);letter-spacing:.02em;display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:2px}
+.fscore{display:grid;justify-items:end;gap:2px;text-align:right}
+.fscore .n{font-size:3.4rem;font-weight:600;letter-spacing:-.04em;line-height:1;color:var(--tier);font-variant-numeric:tabular-nums}
+.fscore .n small{font-family:var(--mono);font-size:.85rem;color:var(--faint);font-weight:400;letter-spacing:0;margin-left:3px}
+.tierl{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;font-weight:500}
+.tierl::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--tier)}
+.go{color:var(--orange);font-size:1.1rem;margin-top:6px}
+@media (max-width:560px){
+  .fcard{grid-template-columns:minmax(0,1fr)}
+  .fscore{justify-items:start;text-align:left;grid-auto-flow:row}
+}
+
+/* ---------- fiche ---------- */
+.f-head{padding-top:22px;display:grid;gap:18px}
+.f-head h1{font-size:clamp(1.9rem,5.4vw,3rem);max-width:22ch}
+.who{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.who .mono-av{width:44px;height:44px;border-radius:50%;background:var(--soft);border:1px solid var(--rule);display:grid;place-items:center;font-weight:600;font-size:14px;letter-spacing:.02em;flex:none}
+.who b{display:block;font-weight:600;line-height:1.25}
+.who>div>span{display:block;font-size:13.5px;color:var(--muted);line-height:1.3}
+.goto{display:flex;flex-wrap:wrap;gap:6px 8px;margin:0;padding:0;list-style:none}
+.goto button{font-size:13px;border:0;background:var(--soft);color:var(--muted);border-radius:999px;padding:4px 11px;cursor:pointer}
+.goto button:hover{color:var(--ink)}
+
+.score{background:var(--surface);border:1px solid var(--rule);border-radius:20px;padding:24px 22px;margin-top:26px}
+.score-top{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 32px;margin-bottom:22px}
+.big{display:flex;align-items:baseline;gap:6px}
+.big .n{font-size:clamp(4rem,12vw,5.6rem);font-weight:600;letter-spacing:-.05em;line-height:.95;color:var(--tier);font-variant-numeric:tabular-nums}
+.big .d{font-family:var(--mono);font-size:1.15rem;color:var(--faint)}
+.appr{display:grid;gap:4px}
+.appr .k{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
+.appr .v{font-size:1.4rem;font-weight:600;letter-spacing:-.01em;display:flex;align-items:center;gap:9px}
+.appr .v::before{content:"";width:11px;height:11px;border-radius:50%;background:var(--tier)}
+.score-top .cbtn{margin-left:auto}
+.rows{display:grid;gap:11px}
+.srow{display:grid;grid-template-columns:minmax(0,200px) minmax(60px,1fr) 60px 168px;align-items:center;gap:12px;font-size:14.5px}
+.srow.sub{font-size:13.5px;color:var(--muted)}
+.srow.sub .slabel{padding-left:16px}
+.srow.sub .slabel::before{content:"↳ "}
+.slabel{overflow-wrap:anywhere}
+.bar{height:8px;background:var(--track);border-radius:99px;overflow:hidden}
+.fill{display:block;height:100%;border-radius:99px}
+.fill.ok{background:var(--ok)} .fill.mid{background:var(--mid)} .fill.bad{background:var(--bad)} .fill.acc{background:var(--tier)}
+.sval{font-family:var(--mono);font-weight:500;text-align:right;font-variant-numeric:tabular-nums}
+.sval span{color:var(--faint)}
+.chip{display:inline-block;font-size:12px;font-weight:500;padding:2px 10px;border-radius:99px;white-space:nowrap}
+.chip.ok{background:var(--ok-soft);color:var(--ok)} .chip.mid{background:var(--mid-soft);color:var(--mid)}
+.chip.bad{background:var(--bad-soft);color:var(--bad)} .chip.neutral{background:var(--soft);color:var(--muted)}
+.scale{margin-top:28px;overflow-x:auto;padding-bottom:4px}
+.scale-bar{position:relative;display:flex;gap:4px;min-width:560px;padding-top:8px}
+.seg{border-top:3px solid var(--rule);padding-top:7px;font-size:12px;color:var(--faint);display:flex;flex-direction:column;min-width:0}
+.seg b{font-weight:500}
+.seg i{font-style:normal;font-family:var(--mono);font-size:11px}
+.seg.on{border-top-color:var(--tier);color:var(--ink)}
+.seg.on b{font-weight:600}
+.pin{position:absolute;top:0;width:3px;height:14px;background:var(--tier);border-radius:2px;transform:translateX(-1px)}
+.f-meta{font-family:var(--mono);font-size:12px;color:var(--faint);margin:14px 0 0;letter-spacing:.02em}
+
+.block{display:grid;gap:14px;padding-top:44px}
+.block-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px}
+.block-head h2{font-size:clamp(1.35rem,3.4vw,1.75rem)}
+.note{font-size:13.5px;color:var(--muted);margin:0;max-width:64ch}
+.body{display:grid;gap:14px;min-width:0}
+.body p{max-width:68ch;margin:0}
+.body h3.mini,.mini{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);font-weight:500;margin-top:8px}
+
+.review{background:var(--soft);border:1px dashed var(--faint);border-radius:20px;padding:22px 22px 24px;margin-top:40px}
+.review .label{color:var(--muted)}
+.review h2{font-size:clamp(1.25rem,3vw,1.5rem);margin:6px 0 4px}
+.qs{margin:16px 0 0;padding:0;list-style:none;display:grid;gap:16px}
+.qs li{display:grid;grid-template-columns:34px minmax(0,1fr);gap:0 6px;max-width:74ch}
+.qs .qn{font-family:var(--mono);font-size:12.5px;color:var(--blue);padding-top:3px}
+.qs b{font-weight:600}
+.qs span{color:var(--muted);display:block}
+
+.verdict-t{font-size:clamp(1.1rem,2.4vw,1.28rem);line-height:1.55;letter-spacing:-.005em}
+.quote{background:var(--surface);border:1px solid var(--rule);border-radius:20px;padding:22px}
+.quote blockquote{margin:0;font-size:clamp(1.1rem,2.6vw,1.35rem);line-height:1.5;letter-spacing:-.01em;max-width:60ch}
+.quote .src-l{font-family:var(--mono);font-size:12px;color:var(--faint);margin:14px 0 0;letter-spacing:.02em}
+
+.sub-block{background:var(--surface);border:1px solid var(--rule);border-radius:16px;padding:20px}
+.sub-block>.body{gap:10px}
+.sb-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 14px;margin-bottom:10px}
+.sb-head h3{font-size:1.1rem;font-weight:600;letter-spacing:-.01em}
+.sb-r{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.sb-foot{margin-top:12px}
+.stack{display:grid;gap:14px}
+.reason{display:grid;gap:14px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:760px){.grid2{grid-template-columns:minmax(0,1fr)}}
+.box{background:var(--surface);border:1px solid var(--rule);border-radius:16px;padding:18px}
+.box h3{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);font-weight:500;margin-bottom:10px}
+.box p{font-size:15px;margin:0 0 .8em}
+.box p:last-child{margin:0}
+.dl{display:grid;grid-template-columns:minmax(0,170px) minmax(0,1fr);gap:8px 18px;margin:6px 0 0;padding:18px;background:var(--surface);border:1px solid var(--rule);border-radius:16px;font-size:15px}
+.dl dt{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);padding-top:4px}
+.dl dd{margin:0}
+@media (max-width:560px){.dl{grid-template-columns:minmax(0,1fr)} .dl dt{padding-top:8px} .srow{grid-template-columns:minmax(0,1fr) 60px} .srow .bar{grid-column:1 / -1;order:3} .srow .schip{grid-column:1 / -1;order:4}}
+.src{margin:0;padding-left:1.3em;display:grid;gap:9px;font-size:14.5px;max-width:78ch}
+.src li{overflow-wrap:anywhere}
+.src a{color:var(--blue);margin-left:6px;white-space:nowrap}
+.foot{margin-top:24px;padding-top:20px;border-top:1px solid var(--rule);display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 20px;font-size:13px;color:var(--faint)}
+.foot b{color:var(--tier);font-weight:600}
+
+.badge-cat{display:inline-flex;font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--soft);border:1px solid var(--rule);border-radius:999px;padding:3px 11px;margin:0}
+.fcard .badge-cat{color:var(--blue);background:transparent;border:0;padding:0;font-size:12px;letter-spacing:.04em;margin-bottom:2px}
+
+.linkarrow{display:inline-flex;align-items:center;gap:4px;background:none;border:0;padding:0;color:var(--blue);font-size:14px;font-weight:500;cursor:pointer;text-decoration:none}
+.linkarrow:hover{text-decoration:underline}
+
+.block-card{background:var(--surface);border:1px solid var(--rule);border-radius:16px;padding:20px}
+.bc-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 14px;margin-bottom:10px}
+.bc-head h2{font-size:1.1rem}
+.cert-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;padding-top:44px}
+@media (max-width:760px){.cert-grid{grid-template-columns:minmax(0,1fr);padding-top:28px}}
+
+.plist{margin:0;padding-left:1.2em;display:grid;gap:8px;font-size:15px}
+.verdict-score{font-family:var(--mono);font-size:13px;color:var(--faint);margin-top:4px}
+
+.vote .body{gap:14px}
+.vote-row{display:flex;flex-wrap:wrap;gap:10px}
+.vote-row button{font-size:14px;border:1px solid var(--rule);background:var(--soft);color:var(--faint);border-radius:999px;padding:8px 16px;cursor:not-allowed}
+
+.foot3{margin-top:48px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.01em}
+.foot3 span{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:12px 14px}
+@media (max-width:700px){.foot3{grid-template-columns:minmax(0,1fr)}}
+
+.ccount{display:inline-flex;align-items:center;justify-content:center;min-width:17px;height:17px;padding:0 5px;margin-left:7px;border-radius:99px;background:var(--blue);color:#fff;font-size:11px;font-weight:600;font-family:var(--mono)}
+.cthread{margin-top:16px;padding-top:16px;border-top:1px dashed var(--rule)}
+.clist{list-style:none;margin:0 0 14px;padding:0;display:grid;gap:12px}
+.citem{background:var(--soft);border-radius:12px;padding:12px 14px}
+.chead{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;margin-bottom:4px}
+.chead b{font-weight:600}
+.chead span{color:var(--faint);font-family:var(--mono);font-size:11.5px}
+.citem p{margin:0;font-size:14.5px;white-space:pre-wrap;overflow-wrap:anywhere}
+.cempty{margin:0 0 14px;color:var(--faint);font-size:14px}
+.cform{display:grid;gap:8px;max-width:520px}
+.cform input,.cform textarea{font:inherit;font-size:14.5px;background:var(--surface);color:var(--ink);border:1px solid var(--rule);border-radius:10px;padding:9px 12px;width:100%}
+.cform textarea{min-height:80px;resize:vertical}
+.cform button{justify-self:start;font-size:13.5px;font-weight:500;background:var(--ink);color:var(--ink-inv);border:0;border-radius:999px;padding:8px 16px;cursor:pointer}
+.cform button:disabled{opacity:.6;cursor:default}
+.csent{margin:0;color:var(--ok);font-size:13px}
+.cerr{margin:0;color:var(--bad);font-size:13px}
+</style>
+<div class="wrap">
+<header class="pill"><a class="brand" href="#/">Perlimpinpin</a>
+<div class="pill-r"><span class="pill-tag">Relecture interne</span><a class="btn-dark" href="#/">Brouillons</a></div></header>
+<p class="banner">Brouillon : analyse non publiée. Elle n'est visible que par les personnes qui ont ce lien.</p>
+
+<div data-view="hub">
+<section class="hub-head">
+  <p class="label">// Brouillons</p>
+  <h1>Analyses en brouillon</h1>
+  <p>Ces analyses ne sont pas publiées. Choisissez une fiche, lisez-la, puis cliquez sur « Commenter » à côté de la section concernée. Les commentaires sont repris dans la version suivante.</p>
+  <ol class="steps" aria-label="Circuit de relecture"><li>Analyse de Claude (étape 1)</li><li class="now">Relecture du comité</li><li>Révision</li><li>Validation puis étapes 2 et 3</li></ol>
+</section>
+<div class="filters" role="group" aria-label="Filtrer par thème"><button class="chipf" type="button" data-cat="all" aria-pressed="true">Tous<i>1</i></button><button class="chipf" type="button" data-cat="Logement" aria-pressed="false" disabled>Logement<i>0</i></button><button class="chipf" type="button" data-cat="Perspectives économiques, pouvoir d&#x27;achat, inflation &amp; fiscalité" aria-pressed="false" disabled>Économie &amp; pouvoir d&#x27;achat<i>0</i></button><button class="chipf" type="button" data-cat="IA &amp; Numérique" aria-pressed="false" disabled>IA &amp; Numérique<i>0</i></button><button class="chipf" type="button" data-cat="Éducation nationale" aria-pressed="false" disabled>Éducation nationale<i>0</i></button><button class="chipf" type="button" data-cat="Sécurité &amp; Justice" aria-pressed="false" disabled>Sécurité &amp; Justice<i>0</i></button><button class="chipf" type="button" data-cat="Santé &amp; Hôpital" aria-pressed="false" disabled>Santé &amp; Hôpital<i>0</i></button><button class="chipf" type="button" data-cat="Retraites" aria-pressed="false">Retraites<i>1</i></button><button class="chipf" type="button" data-cat="Emploi &amp; Chômage" aria-pressed="false" disabled>Emploi &amp; Chômage<i>0</i></button><button class="chipf" type="button" data-cat="Énergie &amp; Climat" aria-pressed="false" disabled>Énergie &amp; Climat<i>0</i></button><button class="chipf" type="button" data-cat="Alimentation &amp; Agriculture" aria-pressed="false" disabled>Alimentation &amp; Agriculture<i>0</i></button><button class="chipf" type="button" data-cat="Immigration" aria-pressed="false" disabled>Immigration<i>0</i></button><button class="chipf" type="button" data-cat="Démocratie et institutions" aria-pressed="false" disabled>Démocratie et institutions<i>0</i></button></div>
+<p class="count" id="hub-count"></p>
+<div class="list"><a class="fcard tier-partiel" href="#/zemmour-retraites" data-cat="Retraites"><div class="main"><p class="badge-cat">Retraites · Éric Zemmour</p><h2>Sortir de la répartition sans dire qui paie</h2><p class="teaser">Zemmour veut basculer peu à peu vers la capitalisation, sans dire qui paiera. Que coûterait vraiment la transition ?</p><p class="meta"><span>Étape 1</span><span>Version 1</span><span>21 septembre 2026</span><span>À relire</span></p></div><div class="fscore"><span class="n">47<small>/100</small></span><span class="tierl">Partiellement fondé</span><span class="go" aria-hidden="true">→</span></div></a></div>
+</div>
+
+
+<div data-view="zemmour-retraites" hidden>
+<a class="back" href="#/">← Tous les brouillons</a>
+<header class="f-head tier-partiel">
+  <p class="badge-cat">Retraites</p>
+  <div id="zemmour-retraites-titre" data-comment-target><h1>Sortir de la répartition sans dire qui paie</h1></div>
+  <div class="who"><span class="mono-av" aria-hidden="true">EZ</span>
+    <div><b>Éric Zemmour</b><span>Reconquête · 21 septembre 2026 · version 1</span></div>
+    <button class="cbtn" type="button" data-target="zemmour-retraites-titre" style="margin-left:auto">Commenter le titre</button></div>
+  <ul class="goto" aria-label="Aller à"><li><button type="button" data-goto="zemmour-retraites-resume">Résumé</button></li><li><button type="button" data-goto="zemmour-retraites-score">Score</button></li><li><button type="button" data-goto="zemmour-retraites-detail-score">Détail</button></li><li><button type="button" data-goto="zemmour-retraites-extrait">Extrait</button></li><li><button type="button" data-goto="zemmour-retraites-raisonnement">Raisonnement</button></li><li><button type="button" data-goto="zemmour-retraites-verdict">Verdict</button></li><li><button type="button" data-goto="zemmour-retraites-sources">Sources</button></li><li><button type="button" data-goto="zemmour-retraites-fiabilite">Fiabilité</button></li><li><button type="button" data-goto="zemmour-retraites-questions">À valider</button></li></ul>
+</header>
+<section class="review" id="zemmour-retraites-questions" data-comment-target><p class="label">Réservé au comité</p><h2>Points de jugement à valider</h2><p class="note">Les choix de notation les plus discutables. Cette section n'apparaîtra pas sur la fiche publiée.</p><ol class="qs"><li><span class="qn">Q1</span><div><b>Citation du candidat</b><span>La phrase de Zemmour vient d&#x27;une republication de presse de l&#x27;entretien BFMTV du 17 septembre 2026. Peut-on la vérifier sur l&#x27;enregistrement ou la transcription avant publication ?</span></div></li><li><span class="qn">Q2</span><div><b>Budget noté 3 sur 10</b><span>La part de cotisations n&#x27;étant pas annoncée, j&#x27;ai qualifié la faisabilité budgétaire d&#x27;incertaine (3/10) et non de fragile. Une note inférieure à 3 déclencherait le plafond et ramènerait toute l&#x27;opérationnalité à 10/30, soit un score total de 40 au lieu de 47. Le comité valide-t-il ce choix ?</span></div></li><li><span class="qn">Q3</span><div><b>Efficacité notée 15 sur 30</b><span>J&#x27;ai placé la note dans le bas de la zone incertaine parce que le candidat parle de sortir de la répartition, ce qui est la version la moins bien étayée par les exemples étrangers. Si le comité lit sa position comme une part complémentaire de type suédois, la note monterait.</span></div></li><li><span class="qn">Q4</span><div><b>Chiffres de Sarah Knafo</b><span>Ils sont cités dans le contexte du programme mais ne comptent pas dans la note, car ils n&#x27;engagent pas le candidat. Faut-il les garder, les alléger ou les retirer ?</span></div></li><li><span class="qn">Q5</span><div><b>Ordres de grandeur du coût</b><span>Les montants (28, 37 et 69 milliards d&#x27;euros par an) sont des extrapolations de l&#x27;analyste sur des parts illustratives, présentées comme telles. Est-on à l&#x27;aise pour les publier sous cette forme ?</span></div></li><li><span class="qn">Q6</span><div><b>Titre provisoire</b><span>Le titre « Sortir de la répartition sans dire qui paie » résume le constat principal, mais il est appuyé. Le titre définitif sera fixé à l&#x27;étape 3 : faut-il en proposer un plus neutre ?</span></div></li></ol><div class="sb-foot"><button class="cbtn" type="button" data-target="zemmour-retraites-questions">Répondre à ces points</button></div></section>
+<section class="block" id="zemmour-retraites-resume" data-comment-target><div class="block-head"><h2>Le résumé de Perlimpinpin IA</h2><button class="cbtn" type="button" data-target="zemmour-retraites-resume">Commenter</button></div><div class="body"><p>Zemmour veut sortir peu à peu de la répartition pour passer à la capitalisation, et il admet que ce sera très long. Ce qui tient : le vieillissement est réel, une petite part de capitalisation existe déjà en France et a fonctionné en Suède, et rien n&#x27;empêche juridiquement de le faire par une loi. Ce qui ne tient pas : le financement de la transition n&#x27;est pas traité. Détourner une part de cotisations comparable à celle de la Suède coûterait environ 37 milliards d&#x27;euros par an, sept fois le déficit actuel des retraites, et l&#x27;âge de départ à 64 ou 65 ans n&#x27;en finance qu&#x27;une petite fraction.</p><p>Le candidat ne donne ni part, ni calendrier, ni financement, et cette idée n&#x27;était pas dans son programme de 2022. Score : 47 sur 100.</p><p><button class="linkarrow" type="button" data-goto="zemmour-retraites-raisonnement">Voir le raisonnement complet →</button></p><p class="mini">Phrase d'accroche (brouillon)</p><p><em>Zemmour veut basculer peu à peu vers la capitalisation, sans dire qui paiera. Que coûterait vraiment la transition ?</em></p></div></section>
+<section class="score tier-partiel" id="zemmour-retraites-score" data-comment-target><p class="label">Score Perlimpinpin</p><div class="score-top"><div class="big"><span class="n">47</span><span class="d">/100</span></div><div class="appr"><span class="v">Partiellement fondé</span></div><button class="cbtn" type="button" data-target="zemmour-retraites-score">Commenter la notation</button></div><p class="f-meta">Analyse réalisée avec Perlimpinpin 1.0 · étape 1 (brouillon) · 21 septembre 2026</p><p><button class="linkarrow" type="button" data-goto="zemmour-retraites-raisonnement">Lire l&#x27;analyse détaillée →</button></p></section>
+<section class="block" id="zemmour-retraites-mesure-initiale" data-comment-target><div class="block-head"><h2>Mesure initiale</h2><button class="cbtn" type="button" data-target="zemmour-retraites-mesure-initiale">Commenter</button></div><div class="body"><p>Éric Zemmour veut faire entrer peu à peu la capitalisation dans les retraites et sortir peu à peu de la répartition, en reconnaissant que cela prendra très longtemps. Aujourd&#x27;hui, les cotisations des actifs paient directement les pensions des retraités du moment : c&#x27;est la répartition.</p></div></section>
+<section class="block" id="zemmour-retraites-objectif" data-comment-target><div class="block-head"><h2>Objectif visé</h2><button class="cbtn" type="button" data-target="zemmour-retraites-objectif">Commenter</button></div><div class="body"><p>Garantir des pensions financées durablement alors que le pays compte moins d&#x27;actifs pour chaque retraité, ce que le candidat attribue au manque d&#x27;enfants.</p></div></section>
+<section class="block" id="zemmour-retraites-detail-score" data-comment-target><div class="block-head"><h2>Détail du score</h2><button class="cbtn" type="button" data-target="zemmour-retraites-detail-score">Commenter la notation</button></div><div class="body"><div class="rows"><div class="srow"><div class="slabel">Opérationnalité &amp; Moyens</div><div class="bar"><span class="fill acc" style="width:56.7%"></span></div><div class="sval">17<span>/30</span></div><div class="schip"><span class="chip neutral">Somme de 3 volets</span></div></div><div class="srow sub"><div class="slabel">Juridique</div><div class="bar"><span class="fill ok" style="width:80.0%"></span></div><div class="sval">8<span>/10</span></div><div class="schip"><span class="chip ok">Solide</span></div></div><div class="srow sub"><div class="slabel">Budgétaire</div><div class="bar"><span class="fill mid" style="width:30.0%"></span></div><div class="sval">3<span>/10</span></div><div class="schip"><span class="chip mid">Incertain documenté</span></div></div><div class="srow sub"><div class="slabel">Moyens humains</div><div class="bar"><span class="fill mid" style="width:60.0%"></span></div><div class="sval">6<span>/10</span></div><div class="schip"><span class="chip mid">Incertain documenté</span></div></div><div class="srow"><div class="slabel">Efficacité</div><div class="bar"><span class="fill mid" style="width:50.0%"></span></div><div class="sval">15<span>/30</span></div><div class="schip"><span class="chip mid">Incertain documenté</span></div></div><div class="srow"><div class="slabel">Effets rebonds &amp; Externalités</div><div class="bar"><span class="fill mid" style="width:40.0%"></span></div><div class="sval">8<span>/20</span></div><div class="schip"><span class="chip mid">Incertain documenté</span></div></div><div class="srow"><div class="slabel">Degré de préparation</div><div class="bar"><span class="fill bad" style="width:10.0%"></span></div><div class="sval">1<span>/10</span></div><div class="schip"><span class="chip bad">Fragile</span></div></div><div class="srow"><div class="slabel">Alignement &amp; Logique globale</div><div class="bar"><span class="fill mid" style="width:60.0%"></span></div><div class="sval">6<span>/10</span></div><div class="schip"><span class="chip mid">Incertain documenté</span></div></div></div><div class="scale"><div class="scale-bar"><div class="seg" style="flex:20"><b>Irréaliste</b><i>0 à 19</i></div><div class="seg" style="flex:15"><b>Fragile</b><i>20 à 34</i></div><div class="seg on" style="flex:20"><b>Partiellement fondé</b><i>35 à 54</i></div><div class="seg" style="flex:15"><b>Plausible sous condition</b><i>55 à 69</i></div><div class="seg" style="flex:15"><b>Solide et chiffré</b><i>70 à 84</i></div><div class="seg" style="flex:16"><b>Exemplaire</b><i>85 à 100</i></div><span class="pin" style="left:47%"></span></div></div><p class="f-meta">Le plafond d'opérationnalité n'est pas déclenché. <a class="linkarrow" href="https://perlimpinpin.ai/methode" target="_blank" rel="noopener noreferrer">Voir comment nous notons →</a></p></div></section>
+<section class="block" id="zemmour-retraites-extrait" data-comment-target>
+  <div class="block-head"><h2>Extrait analysé</h2><button class="cbtn" type="button" data-target="zemmour-retraites-extrait">Commenter</button></div>
+  <div class="body"><p class="mini">Sources publiques</p><div class="quote"><blockquote>« on va progressivement mettre de la capitalisation et on va progressivement sortir de la répartition mais je reconnais que ça va prendre très longtemps »</blockquote><p class="src-l">Entretien BFMTV du 17 septembre 2026, relayé par une republication de presse · Non vérifié sur l&#x27;enregistrement</p></div></div></section>
+<section class="block" id="zemmour-retraites-raisonnement">
+  <div class="block-head"><h2>Le raisonnement complet</h2></div>
+  <p class="note">Chaque sous-section se commente séparément. La note découle de la qualification de chaque critère, jamais l'inverse.</p>
+  <div class="stack"><article class="sub-block" id="zemmour-retraites-mesure-reformulee" data-comment-target><div class="sb-head"><h3>Mesure reformulée</h3></div><div class="body"><p>Éric Zemmour veut faire entrer peu à peu la capitalisation dans les retraites et sortir peu à peu de la répartition, en reconnaissant que cela prendra très longtemps. Aujourd&#x27;hui, les cotisations des actifs paient directement les pensions des retraités du moment : c&#x27;est la répartition. Avec la capitalisation, chacun épargne pendant sa vie active dans un fonds qui place cet argent, et sa pension vient ensuite de cette épargne. Le candidat l&#x27;a dit à la télévision (BFMTV, entretien du 17 septembre 2026).</p><p>Il n&#x27;a précisé ni la part des cotisations concernée, ni le calendrier, ni les personnes touchées, ni le financement. Sa phrase sur un âge de départ de 64 voire 65 ans est une autre mesure, traitée ici comme contexte.</p><dl class="dl"><dt>Objectif en bref</dt><dd>Sécuriser les retraites malgré le vieillissement</dd><dt>Domaine</dt><dd>Retraites</dd><dt>Mécanisme proposé</dt><dd>Réorienter progressivement une partie du financement des retraites vers l&#x27;épargne placée dans des fonds (capitalisation), en réduisant d&#x27;autant la répartition, sur une période très longue.</dd><dt>Lien de cause à effet</dt><dd>Indirect</dd></dl><p class="mini">Vérification et existant</p><p>Mesure à la fois sociale, budgétaire et financière, qui relève de la loi (Parlement). Ce n&#x27;est pas une nouveauté totale : la capitalisation existe déjà en France, mais en complément et surtout sur base volontaire. Fin 2025, les plans d&#x27;épargne retraite (PER) pesaient 150,4 milliards d&#x27;euros pour 12,9 millions de titulaires (ministère de l&#x27;Économie), soit environ quatre mois de pensions versées sur une année (422 milliards d&#x27;euros en 2025 selon le Conseil d&#x27;orientation des retraites, COR).</p><p>Ce qui est nouveau ici, c&#x27;est l&#x27;idée de faire reculer la répartition elle-même. Un article de principe de la loi affirme que « la Nation réaffirme solennellement le choix de la retraite par répartition au coeur du pacte social qui unit les générations » (formulation relevée dans les travaux du Sénat, article du Code de la sécurité sociale à revérifier sur Légifrance). C&#x27;est un texte de loi ordinaire, qu&#x27;une autre loi peut modifier : aucune décision consultée n&#x27;impose la répartition comme principe constitutionnel.</p><p>La décision 97-388 DC du Conseil constitutionnel (20 mars 1997) a validé un dispositif d&#x27;épargne retraite précisément parce qu&#x27;il ne modifiait pas les droits du régime général.</p><p>Vérification d&#x27;une éventuelle dérive de sens, dans l&#x27;ordre : (1) citation relevée : « on va progressivement mettre de la capitalisation et on va progressivement sortir de la répartition mais je reconnais que ça va prendre très longtemps », relayée par une republication de presse, non vérifiée sur l&#x27;enregistrement ; (2) objectif affiché : le manque d&#x27;enfants pour faire vivre la répartition, selon lui ; (3) mécanisme : capitalisation progressive et sortie progressive de la répartition ; (4) population réellement concernée : non précisée, ce peut être les seuls nouveaux entrants, tous les actifs, ou aussi les retraités actuels ; (5) critère juridique : il dépend de cette population, une réorientation de cotisations futures relève de la politique de financement, alors qu&#x27;une baisse de pensions déjà liquidées poserait la question des droits acquis ; (6) les études citées plus bas portent sur des transitions complètes ou partielles, ce qui est le cas le plus proche, mais aucune ne mesure exactement ce que propose le candidat.</p><p>Le doute sur la population visée est signalé et non tranché.</p></div><div class="sb-foot"><button class="cbtn" type="button" data-target="zemmour-retraites-mesure-reformulee">Commenter</button></div></article><article class="sub-block" id="zemmour-retraites-programme" data-comment-target><div class="sb-head"><h3>Mise en contexte dans le programme</h3></div><div class="body"><p>Le programme de 2022 ne contenait aucune capitalisation : il proposait un âge légal de 64 ans d&#x27;ici 2030, l&#x27;alignement des régimes public et privé et un bonus-malus pour éviter les licenciements de seniors (Institut Montaigne). Le changement est donc récent et apparaît dans l&#x27;entretien du 17 septembre 2026, où Zemmour l&#x27;explique par la démographie (le manque d&#x27;enfants) et regrette qu&#x27;on n&#x27;ait pas créé les fonds de pension « en 86 ».</p><p>Deux semaines plus tôt, le 1er septembre 2026, l&#x27;eurodéputée Sarah Knafo, figure de Reconquête, avait plaidé sur CNews pour passer « urgemment » à la capitalisation, en comparant 450 000 euros de cotisations à 1,5 million d&#x27;euros s&#x27;ils avaient été placés au rendement du CAC 40 sur 35 ans. Ce calcul n&#x27;engage pas le candidat, ne dit rien du coût de la transition, des frais ni du risque de marché, et n&#x27;a pas été repris dans son entretien.</p><p>Dans ce même entretien, Zemmour défend un âge de départ de 64 voire 65 ans et se dit en désaccord avec Marine Le Pen : c&#x27;est cohérent avec sa position de 2022, mais cela ne finance pas la transition (voir l&#x27;analyse des critères).</p><p>Parmi les candidats dont la presse spécialisée relaie les propositions (Meilleurtaux, septembre 2026), les autres visent plutôt une part de capitalisation en plus de la répartition : fonds souverain pour Bruno Retailleau, capitalisation plus individuelle pour Gabriel Attal, renforcement du fonds de réserve des retraites pour le député socialiste Philippe Brun. Zemmour est le seul de cette liste à parler de sortir de la répartition.</p><p>Aucun mandat électif ni vote parlementaire de Zemmour sur ce sujet n&#x27;a été identifié : son bilan passé se résume à ses positions publiques.</p></div><div class="sb-foot"><button class="cbtn" type="button" data-target="zemmour-retraites-programme">Commenter</button></div></article><article class="sub-block" id="zemmour-retraites-national" data-comment-target><div class="sb-head"><h3>Contexte national</h3></div><div class="body"><p>Le diagnostic d&#x27;un système par répartition « mort et condamné » est exagéré par les chiffres officiels, même si le vieillissement est bien réel. Selon le COR (juin 2026), les retraites coûtent 422 milliards d&#x27;euros en 2025, soit 14,1 % du PIB, pour 417 milliards d&#x27;euros de ressources : le déficit du système est de 5,1 milliards d&#x27;euros, soit 0,2 % du PIB. Il atteindrait 0,9 % du PIB en 2045 puis 2,4 % en 2070, ce qui représenterait environ 72 milliards d&#x27;euros d&#x27;aujourd&#x27;hui (extrapolation de l&#x27;analyste).</p><p>Le nombre de 20-64 ans par personne de 65 ans et plus passe de 2,5 en 2025 à 1,62 en 2070. L&#x27;âge moyen de départ passe de 63,1 à 64,6 ans. Le problème est donc de long terme, pas d&#x27;urgence à court terme sur les retraites elles-mêmes. Le contexte budgétaire, lui, est tendu : déficit public de 152,5 milliards d&#x27;euros (5,1 % du PIB) et dette de 115,6 % du PIB fin 2025 (Insee). La capitalisation existe déjà à petite échelle (PER : 150,4 milliards d&#x27;euros fin 2025).</p><p>Une étude du CEPII (Villa et Rouquet, 2000) conclut que, pour la France, passer à la capitalisation ne se justifie que près du plein emploi ou en cas de manque de capital, les gains restant sinon modestes ; elle est ancienne et repose sur un modèle théorique.</p></div><div class="sb-foot"><button class="cbtn" type="button" data-target="zemmour-retraites-national">Commenter</button></div></article><article class="sub-block" id="zemmour-retraites-international" data-comment-target><div class="sb-head"><h3>Contexte international</h3></div><div class="body"><p>Les expériences étrangères montrent qu&#x27;une petite part de capitalisation peut fonctionner, alors qu&#x27;un basculement large a été coûteux et souvent corrigé. En Suède, seuls 2,5 points de cotisation sur 18,5 sont placés en fonds, avec une transition de 16 ans (1998 à 2014) et un mécanisme automatique qui baisse l&#x27;indexation des pensions quand le régime se dégrade (Trésor).</p><p>Au Chili, la bascule de 1981 a coûté en moyenne environ 3,25 % du PIB par an à l&#x27;État (COR) ; les pensions sont restées souvent très faibles, à cause de cotisations insuffisantes et d&#x27;un travail informel important, et la réforme de 2025 relève la cotisation des employeurs de 1,5 % à 8,5 % pour financer un pilier de solidarité (Crédit Agricole S.A.). Plusieurs pays d&#x27;Europe centrale (Hongrie, Pologne, Lettonie et d&#x27;autres) ont en grande partie fait marche arrière entre 2008 et 2021 (COR).</p><p>L&#x27;Allemagne a subventionné une épargne retraite (plans Riester) avec un succès limité. Transposabilité : le seul exemple réussi parmi ceux consultés est une petite part au sein d&#x27;un système qui a aussi changé les règles de la répartition ; le Chili et l&#x27;Europe centrale sont plus proches d&#x27;une vraie sortie. Une partie de leurs difficultés vient d&#x27;autres causes (crise financière de 2008, informalité au Chili), donc ils ne prouvent pas à eux seuls l&#x27;échec de la capitalisation.</p></div><div class="sb-foot"><button class="cbtn" type="button" data-target="zemmour-retraites-international">Commenter</button></div></article><h3 class="mini" id="zemmour-retraites-criteres">Analyse par critères</h3><article class="sub-block" id="zemmour-retraites-crit-operationnalite" data-comment-target><div class="sb-head"><h3>Opérationnalité &amp; Moyens</h3><div class="sb-r"><span class="sval">17<span>/30</span></span></div></div><div class="body"><p>le vrai point faible est le financement de la transition, alors que le droit et les moyens ne bloquent pas. Côté droit (8/10), rien n&#x27;empêche de le faire par une loi ordinaire, le choix de la répartition figeant seulement un article de principe et non la Constitution. Côté budget (3/10), le mécanisme est connu : pendant la transition, les actifs paient les pensions actuelles tout en alimentant leur propre épargne, c&#x27;est le « double paiement ».</p><p>Extrapolation de l&#x27;analyste à partir des 277 milliards d&#x27;euros de cotisations du COR : détourner la part choisie par la Suède (2,5 points sur 18,5, soit 13,5 %) reviendrait à environ 37 milliards d&#x27;euros par an (1,25 % du PIB), soit sept fois le déficit actuel des retraites.</p><p>L&#x27;âge de 64 ans est déjà dans la loi de 2023, et l&#x27;année de plus vers 65 rapporterait de l&#x27;ordre de 5 milliards d&#x27;euros par an (extrapolation à partir d&#x27;une estimation de l&#x27;Institut Montaigne pour deux années d&#x27;âge) : cela ne finance qu&#x27;une petite part de la somme. La note n&#x27;est pas plus basse parce que la part exacte n&#x27;est pas annoncée, donc l&#x27;ampleur reste incertaine.</p><p>Côté moyens (6/10), les gestionnaires et les produits existent (12,9 millions de PER), mais rien n&#x27;est décrit pour un dispositif obligatoire à grande échelle.</p></div><div class="sb-foot"><button class="cbtn" type="button" data-target="zemmour-retraites-crit-operationnalite">Commenter ce critère</button></div></article><article class="sub-block" id="zemmour-retraites-crit-efficacite" data-comment-target><div class="sb-head"><h3>Efficacité</h3><div class="sb-r"><span class="sval">15<span>/30</span></span><span class="chip mid">Incertain documenté</span></div></div><div class="body"><p>une petite part de capitalisation est une idée défendable, mais rien ne démontre que sortir de la répartition règle le problème, et le candidat ne dit pas laquelle des deux il veut. Le lien est indirect : la capitalisation ne crée pas d&#x27;enfants et ne comble aucun déficit à court terme, elle change surtout qui porte le risque.</p><p>En sa faveur : sur longue période, le rendement de la richesse a dépassé la croissance de 2,68 points en moyenne dans seize pays de 1950 à 2015 (chiffre cité par Anne Lavigne dans une note versée au COR), et la Suède a placé 2,5 points de cotisation en fonds avec de bons rendements. Contre : le vieillissement fait aussi baisser le rendement du capital, un krach juste avant le départ peut ruiner une pension individuelle, et les pays qui ont basculé largement ont dû corriger.</p><p>Le diagnostic d&#x27;un système « mort et condamné » n&#x27;est pas soutenu par le déficit actuel (0,2 % du PIB).</p></div><div class="sb-foot"><button class="cbtn" type="button" data-target="zemmour-retraites-crit-efficacite">Commenter ce critère</button></div></article><article class="sub-block" id="zemmour-retraites-crit-effets" data-comment-target><div class="sb-head"><h3>Effets rebonds &amp; Externalités</h3><div class="sb-r"><span class="sval">8<span>/20</span></span><span class="chip mid">Incertain documenté</span></div></div><div class="body"><p>les effets négatifs sont réels et documentés, mais leur ampleur dépend d&#x27;une part non annoncée. Le COR décrit une « double cotisation » pour les actifs avec un « risque récessif » si l&#x27;épargne placée ne remplace pas d&#x27;autres épargnes. Le risque de marché et les frais sont reportés sur chaque ménage. Si la transition passe par l&#x27;emprunt, elle s&#x27;ajoute à un déficit de 5,1 % du PIB et à une dette de 115,6 % du PIB, et le candidat ne dit rien de cet effet.</p><p>Le double paiement (0,9 % à 2,3 % du PIB par an selon la part) est du même ordre que le déficit de long terme à éviter (2,4 % du PIB en 2070), mais il arriverait des décennies plus tôt.</p></div><div class="sb-foot"><button class="cbtn" type="button" data-target="zemmour-retraites-crit-effets">Commenter ce critère</button></div></article><article class="sub-block" id="zemmour-retraites-crit-preparation" data-comment-target><div class="sb-head"><h3>Degré de préparation</h3><div class="sb-r"><span class="sval">1<span>/10</span></span><span class="chip bad">Fragile</span></div></div><div class="body"><p>le dossier est quasi vide, c&#x27;est une phrase de télévision. Aucune part, aucun calendrier, aucune règle pour les retraités actuels, aucun financement, aucun chiffrage ; le candidat reconnaît lui-même que « ça va prendre très longtemps ». Les seuls chiffres de son camp viennent de Sarah Knafo et n&#x27;engagent pas le candidat.</p></div><div class="sb-foot"><button class="cbtn" type="button" data-target="zemmour-retraites-crit-preparation">Commenter ce critère</button></div></article><article class="sub-block" id="zemmour-retraites-crit-alignement" data-comment-target><div class="sb-head"><h3>Alignement &amp; Logique globale</h3><div class="sb-r"><span class="sval">6<span>/10</span></span><span class="chip mid">Incertain documenté</span></div></div><div class="body"><p>la mesure rompt avec le programme de 2022 et laisse une tension non traitée. Ce qui tient : le candidat explique son changement par le manque d&#x27;enfants, assume une transition très longue et garde un âge de 64 à 65 ans cohérent avec 2022. Ce qui ne tient pas : dire le système par répartition « mort et condamné » tout en s&#x27;appuyant sur lui pour financer la transition, sans dire comment payer le double paiement.</p><p>Aucun vote ni mandat antérieur sur le sujet n&#x27;a été identifié, donc aucune contradiction avec un bilan parlementaire ne peut être relevée.</p></div><div class="sb-foot"><button class="cbtn" type="button" data-target="zemmour-retraites-crit-alignement">Commenter ce critère</button></div></article></div></section>
+<section class="block" id="zemmour-retraites-longevite" data-comment-target><div class="block-head"><h2>Longévité des effets</h2><button class="cbtn" type="button" data-target="zemmour-retraites-longevite">Commenter</button></div><div class="body"><p>Court terme (0 à 2 ans) : la mesure est surtout un choix de loi et d&#x27;organisation. Dès que des cotisations sont détournées vers des fonds, le solde des retraites se dégrade, sans aucune pension supplémentaire à la clé. Moyen terme (2 à 7 ans) : le double paiement dure, les fonds commencent à grossir, et il faut soit emprunter, soit augmenter les prélèvements, soit réduire des pensions ; la Suède a mis 16 ans pour faire glisser toutes ses générations vers le nouveau système.</p><p>Long terme (plus de 7 ans) : les premières générations à recevoir des pensions financées par leur épargne n&#x27;arrivent qu&#x27;après une carrière complète, ce que le candidat admet (« ça va prendre très longtemps »). C&#x27;est seulement là que la répartition serait soulagée, et le résultat dépend alors de l&#x27;écart entre le rendement du capital et la croissance des salaires, qui n&#x27;est pas garanti.</p></div></section>
+<section class="block" id="zemmour-retraites-impact" data-comment-target><div class="block-head"><h2>Impact temporel et sectoriel</h2><button class="cbtn" type="button" data-target="zemmour-retraites-impact">Commenter</button></div><div class="body"><p>Effets retenus, avec un mécanisme crédible : (1) consommation et pouvoir d&#x27;achat, à court et moyen terme, car la génération de transition paie deux fois et les retraités actuels risquent une pension moins bien indexée si l&#x27;on choisit cette voie de financement (le COR parle d&#x27;un risque récessif si l&#x27;épargne placée ne remplace pas d&#x27;autres épargnes) ; (2) stabilité des marchés financiers à long terme, car une part plus grande de la retraite dépendrait des marchés, avec un risque de krach au moment du départ (Lavigne).</p><p>Effets non retenus faute de mécanisme crédible identifié dans les sources consultées : inflation, et stabilité du secteur bancaire, non creusée au-delà de ce constat. Pas d&#x27;effet territorial ou sectoriel documenté, hors gestionnaires d&#x27;actifs et assureurs qui gèrent déjà les PER.</p></div></section>
+<div class="cert-grid"><article class="block-card" id="zemmour-retraites-ce_qui_est_etabli" data-comment-target><div class="bc-head"><h2>Ce qui est établi</h2><button class="cbtn" type="button" data-target="zemmour-retraites-ce_qui_est_etabli">Commenter</button></div><div class="body"><p>Le candidat a dit à la télévision (BFMTV, 17 septembre 2026) vouloir entrer progressivement dans la capitalisation et sortir progressivement de la répartition, en admettant que ce serait très long. Il n&#x27;a donné ni part, ni calendrier, ni financement. Les retraites coûtent 422 milliards d&#x27;euros en 2025 (14,1 % du PIB) pour un déficit de 5,1 milliards d&#x27;euros ; le COR projette 0,9 % du PIB de déficit en 2045 et 2,4 % en 2070.</p><p>Tout passage de la répartition vers la capitalisation impose un double paiement pour les actifs pendant la transition (COR, Banque mondiale). Le Chili a supporté en moyenne environ 3,25 % du PIB par an de coût de transition ; la Suède n&#x27;a placé en fonds que 2,5 points de cotisation sur 18,5. Le Conseil constitutionnel a validé en 1997 un dispositif d&#x27;épargne retraite complémentaire qui ne modifiait pas les droits du régime général.</p><p>Le programme de 2022 de Zemmour n&#x27;incluait pas de capitalisation.</p></div></article><article class="block-card" id="zemmour-retraites-ce_qui_est_probable" data-comment-target><div class="bc-head"><h2>Ce qui est probable</h2><button class="cbtn" type="button" data-target="zemmour-retraites-ce_qui_est_probable">Commenter</button></div><div class="body"><p>Chaque point de cotisation détourné vers des fonds coûte environ 2,8 milliards d&#x27;euros par an (1 % des 277 milliards de cotisations retenues par le COR, extrapolation de l&#x27;analyste), donc toute part significative dépasse largement le déficit actuel des retraites. Le double paiement pèse d&#x27;abord sur une génération de transition, sauf si l&#x27;État choisit d&#x27;emprunter ou de vendre des actifs.</p><p>L&#x27;âge de 65 ans ne suffirait pas à financer une transition de taille comparable à celle de la Suède. Une petite part de capitalisation, sur le modèle suédois, est juridiquement et administrativement accessible en France.</p></div></article><article class="block-card" id="zemmour-retraites-ce_qui_est_discutable" data-comment-target><div class="bc-head"><h2>Ce qui est discutable</h2><button class="cbtn" type="button" data-target="zemmour-retraites-ce_qui_est_discutable">Commenter</button></div><div class="body"><p>Le rendement de la capitalisation par rapport à la répartition : sur longue période le capital a rapporté plus que la croissance (2,68 points d&#x27;écart en moyenne selon un travail cité par Lavigne), mais après frais, risque de marché et effet du vieillissement sur le rendement, l&#x27;avantage est incertain pour chaque ménage.</p><p>Les propositions de Fondapol (part de 25 % de capitalisation pour les salariés du privé, 30 à 60 milliards d&#x27;euros d&#x27;actifs publics à transférer, rendement réel de 4 %) et de l&#x27;IFRAP viennent de think tanks d&#x27;orientation libérale et n&#x27;ont pas été corroborées par une source neutre : elles montrent que des chemins de financement existent, sans les établir.</p><p>Le calcul de Sarah Knafo (450 000 euros devenant 1,5 million d&#x27;euros) repose sur le rendement passé d&#x27;un indice, ce qui ne garantit rien pour l&#x27;avenir. La formule « mort et condamné » est un jugement du candidat, non un fait établi par le COR.</p></div></article><article class="block-card" id="zemmour-retraites-ce_qui_est_inconnu" data-comment-target><div class="bc-head"><h2>Ce qui est inconnu</h2><button class="cbtn" type="button" data-target="zemmour-retraites-ce_qui_est_inconnu">Commenter</button></div><div class="body"><p>La part des cotisations concernée, le calendrier, les personnes visées (nouveaux entrants, tous les actifs, retraités actuels), le caractère obligatoire ou volontaire, individuel ou collectif, les frais de gestion, la garantie éventuelle d&#x27;un minimum de pension, le financement du double paiement, le sort des régimes complémentaires existants, et l&#x27;éventuelle intégration dans un programme chiffré de campagne. Aucun texte écrit du programme 2027 sur ce point n&#x27;a été trouvé.</p></div></article></div>
+<section class="block" id="zemmour-retraites-angles" data-comment-target><div class="block-head"><h2>Angles morts et effets de bord</h2><button class="cbtn" type="button" data-target="zemmour-retraites-angles">Commenter</button></div><div class="body"><p>Population visée : si seuls les nouveaux entrants passent à la capitalisation, le coût est étalé dans le temps (Banque mondiale) ; si tous les actifs y passent, il est immédiat ; si les retraités actuels sont touchés, c&#x27;est un autre problème juridique et social. Le candidat ne le dit pas.</p><p>Alternatives pour le même objectif : garder la répartition et agir sur l&#x27;âge, les cotisations ou les pensions (le déficit est de 0,2 % du PIB aujourd&#x27;hui), ajouter une petite part de capitalisation comme en Suède, renforcer un fonds de réserve collectif (idée de Philippe Brun) ou créer un fonds souverain (idée de Bruno Retailleau), ou encore pousser l&#x27;épargne volontaire (déjà 150,4 milliards d&#x27;euros dans les PER).</p><p>Ces options peuvent atteindre en partie le même objectif à moindre coût de transition ; elles sont signalées comme contexte, sans baisser à elles seules la note. Dette et finances publiques : le candidat ne dit rien de l&#x27;effet de sa mesure sur le déficit et la dette.</p><p>Report de charge : le coût de la transition se reporte sur les actifs de la génération de transition (jugé dans Effets rebonds) tandis que son montant pour les finances publiques est jugé dans la faisabilité budgétaire : ce sont deux aspects distincts d&#x27;un même fait, comptés chacun une fois.</p><p>Effets difficiles à chiffrer, mais plausibles : la part des ménages qui réduiraient leur autre épargne (assurance vie, immobilier) ou celle des employeurs qui changeraient leur comportement face aux cotisations ; le CEPII évoque une sur-accumulation qui déplace en partie l&#x27;épargne existante. Âge de départ : 64 ans est déjà dans la loi de 2023, donc l&#x27;économie nouvelle ne vient que de la 65e année.</p></div></section>
+<section class="block" id="zemmour-retraites-verdict" data-comment-target><div class="block-head"><h2>Verdict final</h2><button class="cbtn" type="button" data-target="zemmour-retraites-verdict">Commenter</button></div><div class="body"><p>Le diagnostic démographique du candidat est sérieux, mais sa solution n&#x27;est pas dessinée. Une part de capitalisation est une voie connue, comme en Suède ; sortir de la répartition l&#x27;est beaucoup moins, et les cas du Chili et d&#x27;Europe centrale invitent à la prudence. Le point le plus grave est budgétaire : la transition coûte des dizaines de milliards d&#x27;euros par an selon la part choisie, sans financement annoncé. Sur le droit et les moyens, rien ne bloque. Résultat : 47 sur 100, une idée partiellement fondée, mais une proposition encore presque vide.</p><h3 class="mini">Ce qui tient</h3><p>le vieillissement est réel, une petite part de capitalisation existe déjà en France et a fonctionné en Suède, et rien n&#x27;empêche juridiquement de le faire par une loi.</p><h3 class="mini">Ce qui reste flou</h3><p>le financement de la transition n&#x27;est pas traité. Détourner une part de cotisations comparable à celle de la Suède coûterait environ 37 milliards d&#x27;euros par an, sept fois le déficit actuel des retraites, et l&#x27;âge de départ à 64 ou 65 ans n&#x27;en finance qu&#x27;une petite fraction. Le candidat ne donne ni part, ni calendrier, ni financement, et cette idée n&#x27;était pas dans son programme de 2022.</p><p class="verdict-score">Score : <b>47</b> sur 100.</p></div></section>
+<section class="block" id="zemmour-retraites-sources" data-comment-target><div class="block-head"><h2>Sources utilisées</h2><button class="cbtn" type="button" data-target="zemmour-retraites-sources">Commenter</button></div><div class="body"><ol class="src"><li>Shango Media, « Ce qu&#x27;il faut retenir de l&#x27;interview d&#x27;Éric Zemmour sur BFMTV », 18 septembre 2026 (entretien du 17 septembre 2026)<a href="https://www.shango.media/bfm-tv-presidentielle-immigration-voile-marine-le-pen-ce-quil-faut-retenir-de-linterview-deric-zemmour-sur-bfmtv-11855675" target="_blank" rel="noopener noreferrer">Ouvrir</a></li><li>Conseil d&#x27;orientation des retraites, Rapport annuel, juin 2026<a href="https://cor-retraites.fr/sites/default/files/2026-06/RA_2026_def.pdf" target="_blank" rel="noopener noreferrer">Ouvrir</a></li><li>CFDT UFETAM, « Retraites : ce que dit vraiment le rapport 2026 du COR » (synthèse syndicale, chiffres recoupés avec le rapport)<a href="https://www.cfdt-ufetam.org/decryptage-retraites-ce-que-dit-vraiment-le-rapport-2026-du-cor/" target="_blank" rel="noopener noreferrer">Ouvrir</a></li><li>Conseil d&#x27;orientation des retraites, « Répartition à capitalisation », document n° 6, décembre 2025<a href="https://www.cor-retraites.fr/sites/default/files/2025-12/Doc_06_R%C3%A9partition%20%C3%A0%20Capitalisation.pdf" target="_blank" rel="noopener noreferrer">Ouvrir</a></li><li>Conseil d&#x27;orientation des retraites, « Montée en charge de la retraite par capitalisation », 12 novembre 2025<a href="https://www.cor-retraites.fr/sites/default/files/2025-11/COR_Transition%20capitalisation_12-11-2025.pdf" target="_blank" rel="noopener noreferrer">Ouvrir</a></li><li>Conseil d&#x27;orientation des retraites, Anne Lavigne, « Capitalisation : quel capital ? », document n° 7, décembre 2025<a href="https://www.cor-retraites.fr/sites/default/files/2025-12/Doc_07_Capitalisation_quel%20capital_A.Lavigne.pdf" target="_blank" rel="noopener noreferrer">Ouvrir</a></li><li>CEPII, Villa et Rouquet, « Le passage des retraites de la répartition à la capitalisation », document de travail n° 2000-02, janvier 2000<a href="https://www.cepii.fr/PDF_PUB/wp/2000/wp2000-02.pdf" target="_blank" rel="noopener noreferrer">Ouvrir</a></li><li>Banque mondiale, note sur le coût de la transition de la répartition vers les pensions capitalisées, janvier 2005<a href="https://openknowledge.worldbank.org/entities/publication/e9c47c86-59b1-565c-8989-04b052a09469/full" target="_blank" rel="noopener noreferrer">Ouvrir</a></li><li>Fondapol (think tank d&#x27;orientation libérale), Martinot, Gravier et Muret, « Vers un système de retraite mixte répartition capitalisation », novembre 2025<a href="https://www.fondapol.org/etude/vers-un-systeme-de-retraite-mixte-repartition-capitalisation/" target="_blank" rel="noopener noreferrer">Ouvrir</a></li><li>Fondation IFRAP (think tank d&#x27;orientation libérale), Sandrine Gorreri, « Quel rôle pour la retraite par capitalisation dans la réforme systémique », 13 décembre 2017<a href="https://www.ifrap.org/retraite/quel-role-pour-la-retraite-par-capitalisation-dans-la-reforme-systemique" target="_blank" rel="noopener noreferrer">Ouvrir</a></li><li>Institut Montaigne, « Augmenter l&#x27;âge légal de la retraite à 64 ans et aligner les différents régimes de retraite » (programme Zemmour 2022)<a href="https://www.institutmontaigne.org/presidentielle-2022/eric-zemmour/augmenter-lage-legal-de-la-retraite-a-64-ans-et-aligner-les-differents-regimes-de-retraite/" target="_blank" rel="noopener noreferrer">Ouvrir</a></li><li>Conseil constitutionnel, décision n° 97-388 DC du 20 mars 1997<a href="https://www.conseil-constitutionnel.fr/decision/1997/97388DC.htm" target="_blank" rel="noopener noreferrer">Ouvrir</a></li><li>Sénat, rapport sur le projet de loi portant réforme des retraites (texte de l&#x27;article 1er A)<a href="https://www.senat.fr/rap/a09-727/a09-72710.html" target="_blank" rel="noopener noreferrer">Ouvrir</a></li><li>Direction générale du Trésor, note sur la réforme des retraites en Suède<a href="https://www.tresor.economie.gouv.fr/Articles/ec4827e2-c260-4298-9054-9bda177f3110/files/1777394c-45bd-4054-a64d-aa030bcff8d0" target="_blank" rel="noopener noreferrer">Ouvrir</a></li><li>Crédit Agricole S.A., Études économiques, « Chili : réforme décisive du système de retraites », février 2025<a href="https://etudes-economiques.credit-agricole.com/fr/chili-reforme-decisive-du-systeme-de-retraites" target="_blank" rel="noopener noreferrer">Ouvrir</a></li><li>Ministère de l&#x27;Économie, communiqué « Épargne retraite : record battu pour le PER avec plus de 150 milliards d&#x27;euros d&#x27;encours au 4e trimestre 2025 »<a href="https://presse.economie.gouv.fr/epargne-retraite-record-battu-pour-le-per-avec-plus-de-150-milliards-deuros-dencours-au-4e-trimestre-2025-et-129-millions-de-titulaires/" target="_blank" rel="noopener noreferrer">Ouvrir</a></li><li>Insee, Informations rapides n° 78, « En 2025, le déficit public s&#x27;élève à 5,1 % du PIB, la dette publique à 115,6 % du PIB »<a href="https://www.insee.fr/fr/statistiques/8956575" target="_blank" rel="noopener noreferrer">Ouvrir</a></li><li>Yahoo Finance France, « Retraite par capitalisation : Sarah Knafo a sorti sa calculatrice et fait le point », septembre 2026<a href="https://fr.finance.yahoo.com/actualites/retraite-capitalisation-sarah-knafo-sorti-215742438.html" target="_blank" rel="noopener noreferrer">Ouvrir</a></li><li>Meilleurtaux Placement, « Présidentielle 2027 : la retraite par capitalisation s&#x27;invite dans le débat », septembre 2026<a href="https://placement.meilleurtaux.com/retraite/actualites/2026-septembre/presidentielle-2027-la-retraite-par-capitalisation-sinvite-dans-le-debat.html" target="_blank" rel="noopener noreferrer">Ouvrir</a></li></ol></div></section>
+<section class="block" id="zemmour-retraites-fiabilite" data-comment-target><div class="block-head"><h2>Fiabilité de l&#x27;analyse</h2><button class="cbtn" type="button" data-target="zemmour-retraites-fiabilite">Commenter</button></div><div class="body"><h3 class="mini">Niveau de confiance</h3><p><span class="chip mid">Moyen</span></p><p>Moyen sur la description de la mesure (une seule phrase du candidat, relayée par une republication de presse) ; moyen sur le sens des effets (établi par des sources officielles et institutionnelles) ; faible à moyen sur les ordres de grandeur du coût, qui sont des extrapolations sur des parts illustratives et non annoncées.</p><h3 class="mini">Limites identifiées</h3><ul class="plist"><li>La citation du candidat vient d&#x27;une republication de presse d&#x27;un entretien BFMTV, non vérifiée sur l&#x27;enregistrement ; aucun texte écrit de son programme 2027 sur ce point n&#x27;a été trouvé.</li><li>Les ordres de grandeur du double paiement sont des extrapolations à partir des chiffres du COR (277 milliards d&#x27;euros de cotisations, 14,1 % du PIB) appliquées à trois parts illustratives (13,5 % comme en Suède, 10 % et 25 %), dont aucune n&#x27;est annoncée par le candidat ; linéarité supposée, effets sur la croissance et sur l&#x27;assiette de cotisations non modélisés.</li><li>L&#x27;estimation d&#x27;environ 5 milliards d&#x27;euros par an d&#x27;âge supplémentaire prolonge un chiffre de l&#x27;Institut Montaigne (10,7 milliards d&#x27;euros en 2030 pour un âge à 64 ans, fourchette de 5,8 à 15,9) et n&#x27;est pas corroborée par une source neutre.</li><li>Les chiffres du rapport du COR 2026 ont été relevés dans le rapport et recoupés avec une synthèse syndicale ; les nombres démographiques (natalité, migrations) et la suspension de la réforme de 2023 signalée dans cette synthèse n&#x27;ont pas été vérifiés sur le texte.</li><li>L&#x27;article du Code de la sécurité sociale sur la répartition n&#x27;a pas pu être relu sur Légifrance.</li><li>Les chiffres de Fondapol et de l&#x27;IFRAP viennent de think tanks d&#x27;orientation libérale et n&#x27;ont pas été utilisés pour fixer une note extrême.</li><li>Les Pays-Bas, le Royaume-Uni, le Danemark et l&#x27;Australie n&#x27;ont pas été examinés en détail, et la page de l&#x27;OCDE sur les taux de remplacement était inaccessible.</li><li>L&#x27;objectif de référence du domaine (financement durable des retraites, équité entre assurés) a été reconstitué à partir de l&#x27;article de principe du Code de la sécurité sociale et des repères du COR, sans texte de synthèse dédié.</li><li>L&#x27;effet sur l&#x27;inflation et la stabilité du secteur bancaire n&#x27;a pas été creusé, faute de mécanisme crédible identifié.</li></ul></div></section>
+<section class="block vote" id="zemmour-retraites-vote"><div class="block-head"><h2>Et vous, qu'en pensez-vous ?</h2></div><p class="note">Aperçu de la fiche publiée — non actif sur ce brouillon.</p><div class="body"><p>Votre avis sur la mesure elle-même — pas sur la qualité de notre analyse.</p><div class="vote-row"><button type="button" disabled>D'accord avec cette mesure</button><button type="button" disabled>Pas d'accord avec cette mesure</button></div><p>Votre avis sur la qualité de notre travail — pas sur la mesure elle-même.</p><p><b>Je trouve cette analyse pertinente</b></p><div class="vote-row"><button type="button" disabled>Oui</button><button type="button" disabled>Non</button></div></div></section>
+<div class="foot3"><span>// 01 Analyses générées par l'IA</span><span>// 02 Méthodologie avec des experts</span><span>// 03 Sources publiques et documentées</span></div>
+<footer class="foot tier-partiel"><span>Version 1 · 21 septembre 2026 · étape 1, analyse initiale non encore contrôlée</span><span><b>47/100</b> · Partiellement fondé</span></footer>
+</div>
+
+</div>
+<script>(function () {
+  var views = Array.prototype.slice.call(document.querySelectorAll("[data-view]"));
+  var cards = Array.prototype.slice.call(document.querySelectorAll(".fcard"));
+  var filters = Array.prototype.slice.call(document.querySelectorAll(".chipf"));
+  var countEl = document.getElementById("hub-count");
+  var API = "/api/relectures/comments";
+
+  var commentsBySection = {}; // sectionId -> array of comments
+  var loadedFiche = null;
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  function fmtDate(iso) {
+    try {
+      var d = new Date(iso);
+      return d.toLocaleString("fr-FR", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+    } catch (e) {
+      return "";
+    }
+  }
+
+  function route() {
+    var h = (location.hash || "").replace(/^#\/?/, "");
+    var name = h || "hub";
+    var found = false;
+    views.forEach(function (v) {
+      var on = v.getAttribute("data-view") === name;
+      v.hidden = !on;
+      if (on) found = true;
+    });
+    if (!found) {
+      name = "hub";
+      views.forEach(function (v) { v.hidden = v.getAttribute("data-view") !== "hub"; });
+    }
+    window.scrollTo(0, 0);
+    if (name !== "hub") loadFiche(name);
+  }
+
+  function applyFilter(theme) {
+    var shown = 0;
+    cards.forEach(function (c) {
+      var on = theme === "all" || c.getAttribute("data-cat") === theme;
+      c.hidden = !on;
+      if (on) shown++;
+    });
+    filters.forEach(function (f) {
+      f.setAttribute("aria-pressed", f.getAttribute("data-cat") === theme ? "true" : "false");
+    });
+    if (countEl) countEl.textContent = shown + (shown > 1 ? " analyses en brouillon" : " analyse en brouillon");
+  }
+
+  filters.forEach(function (f) {
+    f.addEventListener("click", function () {
+      if (f.disabled) return;
+      applyFilter(f.getAttribute("data-cat"));
+    });
+  });
+
+  // ---------- commentaires ----------
+
+  function loadFiche(slug) {
+    if (loadedFiche === slug) return;
+    loadedFiche = slug;
+    commentsBySection = {};
+    fetch(API + "?fiche=" + encodeURIComponent(slug))
+      .then(function (r) { return r.ok ? r.json() : []; })
+      .then(function (list) {
+        (list || []).forEach(function (c) {
+          (commentsBySection[c.sectionId] = commentsBySection[c.sectionId] || []).push(c);
+        });
+        updateBadges();
+      })
+      .catch(function () { /* pas de connexion possible : on affiche quand même la fiche, sans compteurs */ });
+  }
+
+  function updateBadges() {
+    Array.prototype.forEach.call(document.querySelectorAll(".cbtn[data-target]"), function (b) {
+      var list = commentsBySection[b.getAttribute("data-target")] || [];
+      var badge = b.querySelector(".ccount");
+      if (list.length) {
+        if (!badge) {
+          badge = document.createElement("span");
+          badge.className = "ccount";
+          b.appendChild(badge);
+        }
+        badge.textContent = list.length;
+      } else if (badge) {
+        badge.remove();
+      }
+    });
+  }
+
+  function renderThread(panel, sectionId) {
+    var list = commentsBySection[sectionId] || [];
+    var itemsHtml = list.length
+      ? list.map(function (c) {
+          return '<li class="citem"><div class="chead"><b>' + esc(c.authorName || "Anonyme") + "</b><span>" + esc(fmtDate(c.createdAt)) + "</span></div><p>" + esc(c.body) + "</p></li>";
+        }).join("")
+      : '<p class="cempty">Aucun commentaire pour l’instant.</p>';
+    panel.innerHTML =
+      '<ul class="clist">' + itemsHtml + "</ul>" +
+      '<form class="cform">' +
+      '<input type="text" name="author" placeholder="Ton nom (optionnel)" maxlength="80">' +
+      '<textarea name="body" placeholder="Ton commentaire…" maxlength="4000" required></textarea>' +
+      '<button type="submit">Publier le commentaire</button>' +
+      '<p class="csent" hidden>Commentaire publié.</p>' +
+      "</form>";
+  }
+
+  function openThread(button) {
+    var sectionId = button.getAttribute("data-target");
+    var section = document.getElementById(sectionId);
+    if (!section) return;
+    var panel = section.querySelector(":scope > .cthread");
+    if (panel) {
+      panel.hidden = !panel.hidden;
+      return;
+    }
+    panel = document.createElement("div");
+    panel.className = "cthread";
+    section.appendChild(panel);
+    renderThread(panel, sectionId);
+  }
+
+  document.addEventListener("click", function (ev) {
+    var g = ev.target.closest && ev.target.closest("[data-goto]");
+    if (g) {
+      var t = document.getElementById(g.getAttribute("data-goto"));
+      if (t) t.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
+    var b = ev.target.closest && ev.target.closest(".cbtn[data-target]");
+    if (b) {
+      openThread(b);
+      return;
+    }
+  });
+
+  document.addEventListener("submit", function (ev) {
+    var form = ev.target.closest && ev.target.closest(".cform");
+    if (!form) return;
+    ev.preventDefault();
+    var panel = form.closest(".cthread");
+    var section = panel.parentElement;
+    var sectionId = section.id;
+    var ficheEl = section.closest("[data-view]");
+    var ficheSlug = ficheEl ? ficheEl.getAttribute("data-view") : loadedFiche;
+    var sectionLabel = (section.querySelector("h1,h2,h3") || {}).textContent || "";
+    var author = form.author.value.trim();
+    var body = form.body.value.trim();
+    if (!body) return;
+    var btn = form.querySelector("button");
+    btn.disabled = true;
+    btn.textContent = "Publication…";
+    fetch(API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ficheSlug: ficheSlug, sectionId: sectionId, sectionLabel: sectionLabel, authorName: author, body: body }),
+    })
+      .then(function (r) { if (!r.ok) throw new Error("failed"); return r.json(); })
+      .then(function (created) {
+        (commentsBySection[sectionId] = commentsBySection[sectionId] || []).push(created);
+        renderThread(panel, sectionId);
+        updateBadges();
+      })
+      .catch(function () {
+        btn.disabled = false;
+        btn.textContent = "Publier le commentaire";
+        var err = document.createElement("p");
+        err.className = "cerr";
+        err.textContent = "Échec de l'envoi, réessaie.";
+        form.appendChild(err);
+      });
+  });
+
+  window.addEventListener("hashchange", route);
+  route();
+  applyFilter("all");
+})();
+</script>
+
+</body>
+</html>
