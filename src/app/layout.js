@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono, Fraunces } from "next/font/google";
 import AnalyticsGate from "@/components/AnalyticsGate";
 import CookieConsentBanner from "@/components/CookieConsentBanner";
+import Footer from "@/components/Footer";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -61,6 +62,7 @@ export default function RootLayout({ children }) {
     >
       <body className="min-h-full flex flex-col">
         {children}
+        <Footer />
         <AnalyticsGate />
         <CookieConsentBanner />
       </body>
