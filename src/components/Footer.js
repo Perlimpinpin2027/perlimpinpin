@@ -9,12 +9,11 @@ const platformLinks = [
   { label: "À propos", href: "/a-propos" },
 ];
 
-// TODO(Arno) : URLs des comptes officiels à compléter. Tant que `href` est
-// vide, le lien reste affiché mais inactif (non cliquable).
+// Comptes officiels, ouverts dans un nouvel onglet (voir FooterLink).
 const socialLinks = [
-  { label: "X (Twitter)", href: "", icon: XIcon },
-  { label: "Instagram", href: "", icon: InstagramIcon },
-  { label: "LinkedIn", href: "", icon: LinkedInIcon },
+  { label: "X (Twitter)", href: "https://x.com/PerlimpinpinAI", icon: XIcon },
+  { label: "Instagram", href: "https://www.instagram.com/perlimpinpin.ai", icon: InstagramIcon },
+  { label: "LinkedIn", href: "https://www.linkedin.com/company/perlimpinpin-ai", icon: LinkedInIcon },
 ];
 
 // `href: null` = page pas encore construite : texte visible, non cliquable.
@@ -99,7 +98,7 @@ export default function Footer() {
               <span className="text-blue-500">/</span>Perlimpinpin
             </p>
             <p className="mt-4 flex items-center gap-2 text-base text-zinc-400">
-              Ce que valent les promesses politiques.
+              Ce que valent vraiment les promesses politiques.
               <span aria-hidden="true" className="h-2 w-2 rounded-full bg-white" />
             </p>
           </div>
