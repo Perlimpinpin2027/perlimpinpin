@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { CHAMPS_EDITABLES, normaliserTexte, validerTexte } from "@/lib/test-edition";
+import { normaliserTexte, resoudreChamp, validerTexte } from "@/lib/test-edition";
 import { enregistrerTexte } from "./actions";
 
 // Petit crayon de modification d'un texte de la fiche (réservé au mode édition :
@@ -15,11 +15,12 @@ export default function EditableBlock({
   valeurBrute,
   analyseId,
   versionAttendue,
-  multiligne,
+  libelle,
   children,
 }) {
   const router = useRouter();
-  const regles = CHAMPS_EDITABLES[champ];
+  const regles = resoudreChamp(champ).regles;
+  const multiligne = regles.multiligne;
 
   const [edition, setEdition] = useState(false);
   const [texte, setTexte] = useState(valeurBrute);
@@ -53,7 +54,7 @@ export default function EditableBlock({
     if (edition && !enCours) champRef.current?.focus();
   }, [edition, enCours]);
 
-  // La zone de texte du résumé grandit avec son contenu.
+  // La zone de texte (résumé, verdict…) grandit avec son contenu.
   useEffect(() => {
     const zone = champRef.current;
     if (!edition || !multiligne || !zone) return;
@@ -162,7 +163,7 @@ export default function EditableBlock({
       className="flex flex-col gap-2 rounded-2xl border border-zinc-300 bg-white p-4 sm:p-5"
     >
       <label htmlFor={idChamp} className="text-xs font-bold uppercase tracking-widest text-zinc-500">
-        {regles.libelle}
+        {libelle ?? regles.libelle}
       </label>
 
       {multiligne ? (
@@ -196,12 +197,7 @@ export default function EditableBlock({
         <span>Échap pour annuler · Ctrl/Cmd + Entrée pour enregistrer</span>
       </div>
 
-      {multiligne ? (
-        <p className="text-xs text-zinc-500">
-          Une ligne vide sépare deux paragraphes. Entourez un mot de deux étoiles pour le mettre en gras :
-          **mot**
-        </p>
-      ) : null}
+      {regles.aide ? <p className="text-xs text-zinc-500">{regles.aide}</p> : null}
       {champ === "titre_fiche" && longueur > 80 ? (
         <p className="text-xs text-zinc-500">Sur les cartes du site, le titre sera coupé à 80 caractères.</p>
       ) : null}

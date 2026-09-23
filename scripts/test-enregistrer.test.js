@@ -221,6 +221,59 @@ test("enregistrement du titre : contenu + Proposition.titre (coupé à 80), pas 
   });
 });
 
+const CONTENU_V4 = {
+  schema_version: "v4",
+  titre_fiche: "Titre v4",
+  resume_court: "Résumé v4 d'origine, assez long pour être valide.",
+  analyse_par_criteres: [{ critere: "efficacite", titre: "Efficacité", note: 9, note_max: 20, texte: "Texte d'origine du critère." }],
+  verdict_final: "Verdict d'origine, assez long.",
+  verdict_conclusion: "Conclusion d'origine.",
+  sources_utilisees: ["Source A", "Source B"],
+  notation_detaillee: { score_total: 57 },
+};
+
+async function enregistrerV4(champ, valeur) {
+  const base = fausseBase({ ecrituresAutorisees: true, analyse: { ...ANALYSE, contenuComplet: CONTENU_V4 } });
+  const resultat = await enregistrerTexteCore(entree({ champ, valeur }), { isEditor: editeur, prisma: base.prisma, dryRun: false });
+  return { resultat, ...base };
+}
+
+test("enregistrement du verdict : Analyse.verdict mis à jour dans la même écriture, resumeAccueil jamais", async () => {
+  const verdict = "Nouveau verdict final, assez long pour passer.";
+  const { resultat, journal, appels } = await enregistrerV4("verdict_final", verdict);
+  assert.equal(resultat.ok, true);
+  assert.deepEqual(journal.filter((a) => /update|\$transaction/.test(a)), ["$transaction", "tx.analyse.updateMany"]);
+  const [, args] = appels[0];
+  assert.deepEqual(Object.keys(args.data).sort(), ["contenuComplet", "updatedAt", "verdict"]);
+  assert.equal(args.data.verdict, verdict);
+  assert.equal(args.data.contenuComplet.verdict_final, verdict);
+});
+
+test("enregistrement des sources : tableau dans le contenu, liste à puces dans Analyse.sourcesUtilisees", async () => {
+  const { resultat, appels } = await enregistrerV4("sources_utilisees", "Source A\n\nSource C");
+  assert.equal(resultat.ok, true);
+  assert.deepEqual(resultat.avant, ["Source A", "Source B"]);
+  assert.deepEqual(resultat.apres, ["Source A", "Source C"]);
+  const [, args] = appels[0];
+  assert.deepEqual(Object.keys(args.data).sort(), ["contenuComplet", "sourcesUtilisees", "updatedAt"]);
+  assert.deepEqual(args.data.contenuComplet.sources_utilisees, ["Source A", "Source C"]);
+  assert.equal(args.data.sourcesUtilisees, "• Source A\n• Source C");
+});
+
+test("enregistrement d'un texte sans colonne copiée (critère, conclusion) : seul le contenu change", async () => {
+  for (const champ of ["analyse_par_criteres.0.texte", "verdict_conclusion"]) {
+    const { resultat, journal, appels } = await enregistrerV4(champ, "Nouveau texte, assez long pour passer.");
+    assert.equal(resultat.ok, true, champ);
+    assert.deepEqual(journal.filter((a) => /update|\$transaction/.test(a)), ["$transaction", "tx.analyse.updateMany"], champ);
+    assert.deepEqual(Object.keys(appels[0][1].data).sort(), ["contenuComplet", "updatedAt"], champ);
+  }
+});
+
+test("test-enregistrer.js n'écrit jamais resumeAccueil", () => {
+  const source = readFileSync(new URL("../src/lib/test-enregistrer.js", import.meta.url), "utf8");
+  assert.doesNotMatch(source, /resumeAccueil\s*:/);
+});
+
 test("enregistrement : si quelqu'un est passé avant (count = 0), on annule avant de toucher à la proposition", async () => {
   const { prisma, journal } = fausseBase({ ecrituresAutorisees: true, count: 0 });
   const resultat = await enregistrerTexteCore(entree({ champ: "titre_fiche", valeur: "Un autre titre" }), {

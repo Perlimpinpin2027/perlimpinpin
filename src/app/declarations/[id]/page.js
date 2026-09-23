@@ -10,6 +10,7 @@ import AccordionSection from "@/components/AccordionSection";
 import MesureObjectifBanner from "@/components/MesureObjectifBanner";
 import MonoTag from "@/components/MonoTag";
 import EditableBlock from "@/app/test/EditableBlock";
+import { champCritere, texteEditable } from "@/lib/test-edition";
 import { getDeclarationDetail } from "@/lib/queries";
 import { getScoreBadge, PLAFOND_DECLENCHEUR_LABELS } from "@/lib/score";
 
@@ -624,24 +625,33 @@ function CriteriaCard({
 // tableau structuré (barème 2026 ou schémas antérieurs, un objet par
 // critère), objet keyé (plus ancien format à 5 clés), ou simple chaîne
 // (repli générique) pour tout format non reconnu.
-function CriteresCards({ criteres, notation }) {
+// `edition` / `contenu` : crayon sur le texte de chaque critère (fiches v4, mode
+// édition). La note et le titre du critère ne sont jamais modifiables.
+function CriteresCards({ criteres, notation, edition = null, contenu = null }) {
   if (Array.isArray(criteres)) {
     if (criteres.length === 0) return <TextOrList value={null} />;
     return (
       <div className="flex flex-col gap-4">
         {criteres.map((item, index) => (
-          <CriteriaCard
+          <EditableChamp
             key={item.critere ?? index}
-            icon={CRITERE_ICONS[item.critere] ?? ICON_FACTUEL}
-            label={item.titre ?? item.critere ?? "Critère"}
-            note={item.note}
-            max={item.note_max ?? 25}
-            isGardeFou={Boolean(item.est_garde_fou)}
-            vetoApplique={Boolean(item.veto_applique)}
-            plafondApplique={Boolean(item.plafond_applique)}
-            plafondDeclencheur={item.plafond_declencheur}
-            texte={item.texte}
-          />
+            edition={edition}
+            contenu={contenu}
+            champ={champCritere(index)}
+            libelle={`Texte du critère « ${item.titre ?? item.critere ?? index + 1} »`}
+          >
+            <CriteriaCard
+              icon={CRITERE_ICONS[item.critere] ?? ICON_FACTUEL}
+              label={item.titre ?? item.critere ?? "Critère"}
+              note={item.note}
+              max={item.note_max ?? 25}
+              isGardeFou={Boolean(item.est_garde_fou)}
+              vetoApplique={Boolean(item.veto_applique)}
+              plafondApplique={Boolean(item.plafond_applique)}
+              plafondDeclencheur={item.plafond_declencheur}
+              texte={item.texte}
+            />
+          </EditableChamp>
         ))}
       </div>
     );
@@ -870,7 +880,7 @@ function FiabiliteSection({ contenu }) {
 // Ajoute le crayon de modification autour d'un bloc, seulement en mode édition
 // (/test/[id] pour un éditeur). Sans `edition` (site public, amis, non-éditeur),
 // renvoie le bloc tel quel : aucun composant client, aucune donnée en plus.
-function Editable({ edition, champ, valeurBrute, multiligne, children }) {
+function Editable({ edition, champ, valeurBrute, libelle, children }) {
   if (!edition) return children;
   return (
     <EditableBlock
@@ -878,10 +888,23 @@ function Editable({ edition, champ, valeurBrute, multiligne, children }) {
       valeurBrute={valeurBrute}
       analyseId={edition.analyseId}
       versionAttendue={edition.versionAttendue}
-      multiligne={multiligne}
+      libelle={libelle}
     >
       {children}
     </EditableBlock>
+  );
+}
+
+// Variante pour les champs de l'analyse détaillée (fiches v4 uniquement) : le
+// crayon n'apparaît que si le champ est réellement modifiable sur CETTE fiche
+// (voir texteEditable : fiche v4, valeur présente et de la forme attendue).
+function EditableChamp({ edition, contenu, champ, libelle, children }) {
+  const texte = edition ? texteEditable(contenu, champ) : null;
+  if (texte === null) return children;
+  return (
+    <Editable edition={edition} champ={champ} valeurBrute={texte} libelle={libelle}>
+      {children}
+    </Editable>
   );
 }
 
@@ -981,7 +1004,6 @@ export default async function DeclarationDetailPage({ params, preview = false, e
                 edition={edition}
                 champ="titre_fiche"
                 valeurBrute={typeof contenu.titre_fiche === "string" ? contenu.titre_fiche : declaration.titre}
-                multiligne={false}
               >
                 <h1
                   className={`mt-2 text-[clamp(1.5rem,1.05rem+1.7vw,2.25rem)] font-sans font-bold leading-tight tracking-tight text-zinc-900${edition ? " pr-11" : ""}`}
@@ -1037,7 +1059,6 @@ export default async function DeclarationDetailPage({ params, preview = false, e
               edition={typeof contenu.resume_court === "string" ? edition : null}
               champ="resume_court"
               valeurBrute={contenu.resume_court}
-              multiligne
             >
               <section className="rounded-2xl p-6 sm:p-8" style={GLASS_STYLE}>
                 <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-zinc-900">
@@ -1073,11 +1094,13 @@ export default async function DeclarationDetailPage({ params, preview = false, e
             {/* Mesure → objectif visé : absente sur les fiches antérieures
                 au barème 2026 (mesure_vers_objectif n'existait pas encore). */}
             {contenu.mesure_vers_objectif ? (
-              <MesureObjectifBanner
-                categorieObjectif={contenu.mesure_vers_objectif.categorie_objectif}
-                titre={declaration.texteOriginal}
-                objectifCourt={contenu.mesure_vers_objectif.objectif_court}
-              />
+              <EditableChamp edition={edition} contenu={contenu} champ="mesure_vers_objectif.objectif_court">
+                <MesureObjectifBanner
+                  categorieObjectif={contenu.mesure_vers_objectif.categorie_objectif}
+                  titre={declaration.texteOriginal}
+                  objectifCourt={contenu.mesure_vers_objectif.objectif_court}
+                />
+              </EditableChamp>
             ) : null}
 
             {/* Détail du score. Barème 2026 : ScoreDetail (qualification
@@ -1273,7 +1296,12 @@ export default async function DeclarationDetailPage({ params, preview = false, e
               ) : null}
 
               <Section id="analyse-criteres" title="Analyse par critères">
-                <CriteresCards criteres={contenu.analyse_par_criteres} notation={notation} />
+                <CriteresCards
+                  criteres={contenu.analyse_par_criteres}
+                  notation={notation}
+                  edition={edition}
+                  contenu={contenu}
+                />
               </Section>
 
               {/* analyse_longevites (requis) et impact_temporel_et_sectoriel
@@ -1345,12 +1373,28 @@ export default async function DeclarationDetailPage({ params, preview = false, e
                   Verdict final
                 </h2>
                 <div className="mt-3 max-w-[68ch] text-sm leading-7 text-zinc-600">
-                  <VerdictBody verdict={contenu.verdict_final} conclusion={contenu.verdict_conclusion} />
+                  {edition ? (
+                    // Mode édition : verdict et conclusion ont chacun leur crayon.
+                    <>
+                      <EditableChamp edition={edition} contenu={contenu} champ="verdict_final">
+                        <VerdictBody verdict={contenu.verdict_final} conclusion={null} />
+                      </EditableChamp>
+                      {typeof contenu.verdict_conclusion === "string" ? (
+                        <EditableChamp edition={edition} contenu={contenu} champ="verdict_conclusion">
+                          <VerdictBody verdict={null} conclusion={contenu.verdict_conclusion} />
+                        </EditableChamp>
+                      ) : null}
+                    </>
+                  ) : (
+                    <VerdictBody verdict={contenu.verdict_final} conclusion={contenu.verdict_conclusion} />
+                  )}
                 </div>
               </section>
 
               <Section title="Sources utilisées">
-                <SourcesList value={contenu.sources_utilisees} />
+                <EditableChamp edition={edition} contenu={contenu} champ="sources_utilisees">
+                  <SourcesList value={contenu.sources_utilisees} />
+                </EditableChamp>
               </Section>
 
               {!isV4 ? <FiabiliteSection contenu={contenu} /> : null}

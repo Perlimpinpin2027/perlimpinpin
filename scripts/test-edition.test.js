@@ -4,7 +4,13 @@ import { readFileSync } from "node:fs";
 import {
   CHAMPS_EDITABLES,
   appliquerModification,
+  champCritere,
+  lireValeur,
   normaliserTexte,
+  resoudreChamp,
+  texteEditable,
+  toText,
+  verifierIntouchables,
   truncateTeaser,
   truncateTitre,
   validerTexte,
@@ -28,8 +34,20 @@ const CONTENU = {
   nul: null,
 };
 
-test("liste blanche : seulement titre_fiche et resume_court, avec leurs limites", () => {
-  assert.deepEqual(Object.keys(CHAMPS_EDITABLES).sort(), ["resume_court", "titre_fiche"]);
+test("liste blanche : titre, résumé et les textes v4 de l'analyse détaillée, avec leurs limites", () => {
+  assert.deepEqual(Object.keys(CHAMPS_EDITABLES).sort(), [
+    "analyse_par_criteres.*.texte",
+    "mesure_vers_objectif.objectif_court",
+    "resume_court",
+    "sources_utilisees",
+    "titre_fiche",
+    "verdict_conclusion",
+    "verdict_final",
+  ]);
+  // Titre et résumé : toutes fiches ; les autres : fiches v4 seulement.
+  for (const [champ, regles] of Object.entries(CHAMPS_EDITABLES)) {
+    assert.equal(Boolean(regles.v4), !["titre_fiche", "resume_court"].includes(champ), champ);
+  }
   assert.deepEqual(
     [CHAMPS_EDITABLES.titre_fiche.multiligne, CHAMPS_EDITABLES.titre_fiche.min, CHAMPS_EDITABLES.titre_fiche.max],
     [false, 3, 300],
@@ -88,12 +106,24 @@ test("résumé : trop court (< 20) et trop long (> 6000) refusés", () => {
   assert.match(validerTexte("resume_court", "a".repeat(6001)).message, /trop long : 6001 caractères, maximum 6000/);
 });
 
-test("champ hors liste blanche refusé (notes, scores, verdict, noms hérités de Object)", () => {
+test("champ hors liste blanche refusé (notes, scores, titres de critères, noms hérités de Object)", () => {
   for (const champ of [
     "notation_detaillee",
+    "notation_detaillee.score_total",
     "score_global",
-    "verdict_final",
     "scoreFaisabilite",
+    "analyse_par_criteres",
+    "analyse_par_criteres.*.texte",
+    "analyse_par_criteres.0.note",
+    "analyse_par_criteres.0.note_max",
+    "analyse_par_criteres.0.titre",
+    "analyse_par_criteres.-1.texte",
+    "analyse_par_criteres.01.texte",
+    "analyse_par_criteres.100.texte",
+    "analyse_par_criteres.0.texte.x",
+    "mesure_vers_objectif.categorie_objectif",
+    "mesure_vers_objectif",
+    "schema_version",
     "constructor",
     "__proto__",
     "toString",
@@ -190,6 +220,188 @@ test("appliquerModification : champ interdit, valeur non textuelle ou contenu il
   }
 });
 
+// --- Champs de l'analyse détaillée (fiches v4) ----------------------------
+
+const CONTENU_V4 = {
+  schema_version: "v4",
+  titre_fiche: "Titre v4",
+  resume_court: "Résumé v4 d'origine, assez long pour être valide.",
+  mesure_vers_objectif: { categorie_objectif: "pouvoir_achat", objectif_court: "Objectif d'origine" },
+  analyse_par_criteres: [
+    { critere: "solidite_faits", titre: "Solidité des faits", note: 18, note_max: 25, texte: "Texte du critère un, d'origine." },
+    { critere: "efficacite", titre: "Efficacité", note: 9, note_max: 20, est_garde_fou: false, texte: "Texte du critère deux, d'origine." },
+  ],
+  verdict_final: "Premier paragraphe du verdict.\n\nSecond paragraphe du verdict.",
+  verdict_conclusion: "Conclusion d'origine.",
+  sources_utilisees: ["Source A, https://exemple.fr/a", "Source B"],
+  notation_detaillee: { score_total: 57, operationnalite_moyens_total: 14 },
+};
+
+test("resoudreChamp : chemin exact pour chaque champ, index du critère en nombre", () => {
+  assert.deepEqual(resoudreChamp("verdict_final").chemin, ["verdict_final"]);
+  assert.deepEqual(resoudreChamp("mesure_vers_objectif.objectif_court").chemin, ["mesure_vers_objectif", "objectif_court"]);
+  assert.deepEqual(resoudreChamp(champCritere(1)).chemin, ["analyse_par_criteres", 1, "texte"]);
+  assert.equal(champCritere(3), "analyse_par_criteres.3.texte");
+  assert.equal(resoudreChamp("analyse_par_criteres.*.texte"), null);
+});
+
+test("texteEditable : pré-remplissage des champs v4, sources en une ligne par élément", () => {
+  assert.equal(texteEditable(CONTENU_V4, "verdict_final"), CONTENU_V4.verdict_final);
+  assert.equal(texteEditable(CONTENU_V4, "verdict_conclusion"), "Conclusion d'origine.");
+  assert.equal(texteEditable(CONTENU_V4, "mesure_vers_objectif.objectif_court"), "Objectif d'origine");
+  assert.equal(texteEditable(CONTENU_V4, champCritere(1)), "Texte du critère deux, d'origine.");
+  assert.equal(texteEditable(CONTENU_V4, "sources_utilisees"), "Source A, https://exemple.fr/a\nSource B");
+  assert.equal(texteEditable({ ...CONTENU_V4, sources_utilisees: "Sources en texte." }, "sources_utilisees"), "Sources en texte.");
+});
+
+test("texteEditable : pas de crayon hors v4, critère absent, ou valeur d'une forme inattendue", () => {
+  const v3 = { ...CONTENU_V4, schema_version: "v3" };
+  for (const champ of ["verdict_final", "verdict_conclusion", "sources_utilisees", "mesure_vers_objectif.objectif_court", champCritere(0)]) {
+    assert.equal(texteEditable(v3, champ), null, champ);
+  }
+  // Titre et résumé restent modifiables sur une fiche antérieure.
+  assert.equal(texteEditable(v3, "resume_court"), CONTENU_V4.resume_court);
+
+  assert.equal(texteEditable(CONTENU_V4, champCritere(2)), null);
+  assert.equal(texteEditable({ ...CONTENU_V4, verdict_conclusion: undefined }, "verdict_conclusion"), null);
+  assert.equal(texteEditable({ ...CONTENU_V4, verdict_final: ["a", "b"] }, "verdict_final"), null);
+  assert.equal(texteEditable({ ...CONTENU_V4, mesure_vers_objectif: null }, "mesure_vers_objectif.objectif_court"), null);
+  // Critères en objet keyé (et non en tableau) : pas d'accès par index.
+  assert.equal(texteEditable({ ...CONTENU_V4, analyse_par_criteres: { 0: { texte: "x" } } }, champCritere(0)), null);
+  // Sources structurées en objets : les aplatir en texte les abîmerait.
+  assert.equal(
+    texteEditable({ ...CONTENU_V4, sources_utilisees: [{ titre: "S", url: "https://x.fr" }] }, "sources_utilisees"),
+    null,
+  );
+  assert.equal(texteEditable(null, "verdict_final"), null);
+});
+
+test("appliquerModification : texte d'un critère modifié, note, note_max et titre intacts", () => {
+  const { contenu, derives } = appliquerModification(CONTENU_V4, champCritere(1), "Nouveau texte du deuxième critère.");
+  assert.equal(contenu.analyse_par_criteres[1].texte, "Nouveau texte du deuxième critère.");
+  assert.deepEqual(derives, {});
+  const { texte: _a, ...resteAvant } = CONTENU_V4.analyse_par_criteres[1];
+  const { texte: _b, ...resteApres } = contenu.analyse_par_criteres[1];
+  assert.deepEqual(resteApres, resteAvant);
+  assert.deepEqual(contenu.analyse_par_criteres[0], CONTENU_V4.analyse_par_criteres[0]);
+  assert.deepEqual(contenu.notation_detaillee, CONTENU_V4.notation_detaillee);
+  assert.equal(lireValeur(contenu, champCritere(1)), "Nouveau texte du deuxième critère.");
+  // L'original n'a pas bougé.
+  assert.equal(CONTENU_V4.analyse_par_criteres[1].texte, "Texte du critère deux, d'origine.");
+});
+
+test("appliquerModification : objectif, verdict et conclusion modifiés au bon endroit seulement", () => {
+  const objectif = appliquerModification(CONTENU_V4, "mesure_vers_objectif.objectif_court", "Nouvel objectif");
+  assert.deepEqual(objectif.contenu.mesure_vers_objectif, { categorie_objectif: "pouvoir_achat", objectif_court: "Nouvel objectif" });
+  for (const champ of ["verdict_final", "verdict_conclusion"]) {
+    const { contenu } = appliquerModification(CONTENU_V4, champ, "Nouveau texte, assez long pour passer.");
+    assert.equal(contenu[champ], "Nouveau texte, assez long pour passer.");
+    assert.deepEqual({ ...contenu, [champ]: CONTENU_V4[champ] }, CONTENU_V4);
+  }
+});
+
+test("appliquerModification : sources en tableau reconverties en tableau, en texte restent en texte", () => {
+  const { contenu } = appliquerModification(CONTENU_V4, "sources_utilisees", "  Source A, https://exemple.fr/a \n\n Source C  \n");
+  assert.deepEqual(contenu.sources_utilisees, ["Source A, https://exemple.fr/a", "Source C"]);
+  const enTexte = appliquerModification({ ...CONTENU_V4, sources_utilisees: "Ancien texte" }, "sources_utilisees", "Nouveau texte");
+  assert.equal(enTexte.contenu.sources_utilisees, "Nouveau texte");
+});
+
+test("appliquerModification : champ v4 refusé sur une fiche antérieure ou de forme inattendue", () => {
+  const v3 = { ...CONTENU_V4, schema_version: "v3" };
+  assert.throws(() => appliquerModification(v3, "verdict_final", "Texte valide et assez long."), /non modifiable sur cette fiche/);
+  assert.throws(
+    () => appliquerModification(CONTENU_V4, champCritere(5), "Texte valide et assez long."),
+    /non modifiable sur cette fiche/,
+  );
+  const sourcesObjets = { ...CONTENU_V4, sources_utilisees: [{ titre: "S" }] };
+  assert.throws(() => appliquerModification(sourcesObjets, "sources_utilisees", "Une source"), /non modifiable sur cette fiche/);
+  const sansConclusion = { ...CONTENU_V4 };
+  delete sansConclusion.verdict_conclusion;
+  assert.throws(
+    () => appliquerModification(sansConclusion, "verdict_conclusion", "Conclusion ajoutée."),
+    /non modifiable sur cette fiche/,
+  );
+});
+
+test("garde-fou verifierIntouchables : note, note_max, titre, notation et schéma protégés explicitement", () => {
+  const modifie = (changer) => {
+    const copie = structuredClone(CONTENU_V4);
+    changer(copie);
+    return copie;
+  };
+  // Changer seulement le texte d'un critère : accepté.
+  assert.doesNotThrow(() => verifierIntouchables(CONTENU_V4, modifie((c) => (c.analyse_par_criteres[0].texte = "autre"))));
+  const refus = [
+    [(c) => (c.analyse_par_criteres[0].note = 25), /« note » du critère n° 1/],
+    [(c) => (c.analyse_par_criteres[1].note_max = 25), /« note_max » du critère n° 2/],
+    [(c) => (c.analyse_par_criteres[0].titre = "Autre"), /« titre » du critère n° 1/],
+    [(c) => delete c.analyse_par_criteres[1].est_garde_fou, /« est_garde_fou »/],
+    [(c) => (c.analyse_par_criteres[0].note_bonus = 1), /« note_bonus »/],
+    [(c) => c.analyse_par_criteres.pop(), /longueur/],
+    [(c) => (c.notation_detaillee.score_total = 90), /notation_detaillee/],
+    [(c) => (c.schema_version = "v3"), /schema_version/],
+  ];
+  for (const [changer, message] of refus) {
+    assert.throws(() => verifierIntouchables(CONTENU_V4, modifie(changer)), message);
+  }
+});
+
+test("validerTexte : règles propres aux nouveaux champs", () => {
+  // Objectif : une ligne, sans gras (affiché tel quel).
+  assert.equal(validerTexte("mesure_vers_objectif.objectif_court", "Un objectif").ok, true);
+  assert.match(validerTexte("mesure_vers_objectif.objectif_court", "Un **objectif**").message, /\*\*/);
+  assert.match(validerTexte("mesure_vers_objectif.objectif_court", "Ligne\nautre").message, /seule ligne/);
+  // Conclusion : une ligne, gras permis mais bien apparié.
+  assert.equal(validerTexte("verdict_conclusion", "Une **conclusion** nette.").ok, true);
+  assert.match(validerTexte("verdict_conclusion", "Une **conclusion nette.").message, /mal appariés/);
+  assert.match(validerTexte("verdict_conclusion", "Une\nconclusion nette.").message, /seule ligne/);
+  // Texte de critère et verdict : plusieurs paragraphes permis.
+  assert.equal(validerTexte(champCritere(0), "Paragraphe un du critère.\n\nParagraphe deux.").ok, true);
+  assert.equal(validerTexte("verdict_final", "Paragraphe un du verdict.\n\nParagraphe **deux**.").ok, true);
+  assert.equal(validerTexte(champCritere(0), "Trop court").ok, false);
+});
+
+test("dérivés : chaque champ ne met à jour que ses propres colonnes, jamais resumeAccueil", () => {
+  const attendus = {
+    titre_fiche: ["titreProposition"],
+    resume_court: ["teaser"],
+    verdict_final: ["verdict"],
+    sources_utilisees: ["sourcesUtilisees"],
+    verdict_conclusion: [],
+    "mesure_vers_objectif.objectif_court": [],
+    [champCritere(0)]: [],
+  };
+  for (const [champ, colonnes] of Object.entries(attendus)) {
+    const { derives } = appliquerModification(CONTENU_V4, champ, "Nouveau texte, assez long pour passer.");
+    assert.deepEqual(Object.keys(derives), colonnes, champ);
+    assert.ok(!("resumeAccueil" in derives), champ);
+  }
+});
+
+test("dérivés : verdict copié tel quel (sans troncature), sources en liste à puces comme analyze.js", () => {
+  const verdict = `${"Un verdict long. ".repeat(60)}Fin.`;
+  assert.deepEqual(appliquerModification(CONTENU_V4, "verdict_final", verdict).derives, { verdict });
+
+  const tableau = appliquerModification(CONTENU_V4, "sources_utilisees", "Source A\n\nSource C");
+  assert.deepEqual(tableau.derives, { sourcesUtilisees: "• Source A\n• Source C" });
+  // Calculé depuis la valeur ENREGISTRÉE (le tableau), pas depuis le texte saisi.
+  assert.equal(tableau.derives.sourcesUtilisees, toText(tableau.contenu.sources_utilisees));
+
+  const texte = appliquerModification({ ...CONTENU_V4, sources_utilisees: "Ancien" }, "sources_utilisees", "Nouveau texte");
+  assert.deepEqual(texte.derives, { sourcesUtilisees: "Nouveau texte" });
+});
+
+test("validerTexte : sources, une par ligne, lignes vides retirées, gras fermé sur chaque ligne", () => {
+  assert.deepEqual(validerTexte("sources_utilisees", " Source A \n\n\n Source B \r\n"), { ok: true, valeur: "Source A\nSource B" });
+  assert.match(validerTexte("sources_utilisees", "Source **A\nSource B**").message, /mal appariés/);
+  assert.match(
+    validerTexte("sources_utilisees", `Source A\n${"x".repeat(1001)}`).message,
+    /ligne 2 est trop longue : 1001 caractères, maximum 1000/,
+  );
+  assert.match(validerTexte("sources_utilisees", "\n  \n").message, /vide/);
+});
+
 // --- Troncatures : identiques à scripts/analyze.js ------------------------
 
 test("truncateTitre : court, long avec espaces, long sans espace", () => {
@@ -260,6 +472,27 @@ test("truncateTitre et truncateTeaser donnent les mêmes résultats que dans scr
   for (const echantillon of echantillons) {
     assert.equal(truncateTitre(echantillon), titreOriginal(echantillon), `titre : ${echantillon.slice(0, 30)}…`);
     assert.equal(truncateTeaser(echantillon), teaserOriginal(echantillon), `teaser : ${echantillon.slice(0, 30)}…`);
+  }
+});
+
+test("toText donne les mêmes résultats que dans scripts/analyze.js", () => {
+  const source = readFileSync(new URL("../scripts/analyze.js", import.meta.url), "utf8");
+  const corps = source.match(/function toText\(value\) \{[\s\S]*?\n\}\n/)?.[0];
+  assert.ok(corps, "toText introuvable dans scripts/analyze.js");
+  const original = new Function(`${corps}\nreturn toText;`)();
+  const echantillons = [
+    "Un verdict.",
+    "",
+    null,
+    undefined,
+    [],
+    ["Source A", "Source B, https://exemple.fr"],
+    { synthese: "S", texte: "Texte" },
+    { synthese: "S", texte: ["a", "b"] },
+    { synthese: "S" },
+  ];
+  for (const echantillon of echantillons) {
+    assert.deepEqual(toText(echantillon), original(echantillon), JSON.stringify(echantillon));
   }
 });
 

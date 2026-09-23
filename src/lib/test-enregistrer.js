@@ -1,4 +1,4 @@
-import { appliquerModification, validerTexte } from "./test-edition.js";
+import { appliquerModification, lireValeur, validerTexte } from "./test-edition.js";
 
 // Logique de « Enregistrer » d'un texte modifié depuis /test/[id], SANS
 // dépendance à Next ni à la vraie base : contrôle d'accès, client Prisma et mode
@@ -74,7 +74,7 @@ export async function enregistrerTexteCore(entree, { isEditor, prisma, dryRun })
     return refus("Ce brouillon ne peut pas être modifié : son contenu n'a pas la forme attendue.");
   }
   const { contenu, derives } = modification;
-  const avant = analyse.contenuComplet?.[champ];
+  const avant = lireValeur(analyse.contenuComplet, champ);
 
   // Simulation : on valide tout, on n'écrit RIEN.
   if (dryRun) {
@@ -99,7 +99,10 @@ export async function enregistrerTexteCore(entree, { isEditor, prisma, dryRun })
         data: {
           contenuComplet: contenu,
           updatedAt: versionSuivante,
+          // Colonnes copiées du champ modifié (resumeAccueil n’en fait jamais partie, voir test-edition.js).
           ...(derives.teaser !== undefined ? { teaser: derives.teaser } : {}),
+          ...(derives.verdict !== undefined ? { verdict: derives.verdict } : {}),
+          ...(derives.sourcesUtilisees !== undefined ? { sourcesUtilisees: derives.sourcesUtilisees } : {}),
         },
       });
       if (count !== 1) throw new ModificationRefusee(CONFLIT);
@@ -125,6 +128,6 @@ export async function enregistrerTexteCore(entree, { isEditor, prisma, dryRun })
     propositionId: analyse.propositionId,
     champ,
     avant,
-    apres: contenu[champ],
+    apres: lireValeur(contenu, champ),
   };
 }
