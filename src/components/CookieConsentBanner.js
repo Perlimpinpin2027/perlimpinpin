@@ -2,17 +2,18 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import ArrowIcon from "@/components/ArrowIcon";
 import {
   getStoredConsent,
   storeConsent,
   REOPEN_CONSENT_EVENT,
 } from "@/lib/cookieConsent";
 
-// Les deux choix ont un traitement strictement identique (même taille,
-// même contraste, pas de flèche sur l'un seulement) : exigence CNIL, le
-// refus doit être aussi simple et visible que l'acceptation.
-const CHOICE_BUTTON_CLASS =
-  "inline-flex h-12 flex-1 items-center justify-center rounded-full border border-white/80 bg-white/70 px-6 text-sm font-semibold text-zinc-900 shadow-[0_2px_10px_rgb(0_0_0/0.06)] transition-colors hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 sm:flex-none sm:min-w-[140px]";
+// Les deux choix ont le même gabarit (taille, padding, flèche, texte blanc,
+// fond plein) : seule la couleur de fond change. Exigence CNIL, le refus
+// doit être aussi simple et visible que l'acceptation.
+const CHOICE_BUTTON_BASE =
+  "inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-full px-6 text-sm font-semibold text-white shadow-[0_2px_10px_rgb(0_0_0/0.08)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 sm:flex-none sm:min-w-[150px]";
 
 export default function CookieConsentBanner() {
   const [visible, setVisible] = useState(false);
@@ -131,11 +132,21 @@ export default function CookieConsentBanner() {
       </p>
 
       <div className="mt-6 flex gap-3 sm:justify-between">
-        <button type="button" onClick={refuseAll} className={CHOICE_BUTTON_CLASS}>
+        <button
+          type="button"
+          onClick={refuseAll}
+          className={`${CHOICE_BUTTON_BASE} bg-zinc-600 hover:bg-zinc-700`}
+        >
           Refuser
+          <ArrowIcon direction="right" />
         </button>
-        <button type="button" onClick={acceptAll} className={CHOICE_BUTTON_CLASS}>
+        <button
+          type="button"
+          onClick={acceptAll}
+          className={`${CHOICE_BUTTON_BASE} bg-blue-600 hover:bg-blue-700`}
+        >
           Accepter
+          <ArrowIcon direction="right" />
         </button>
       </div>
     </div>
