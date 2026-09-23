@@ -5,12 +5,13 @@ import Header from "@/components/Header";
 import FeedbackWidget from "@/components/FeedbackWidget";
 import VoteMesureWidget from "@/components/VoteMesureWidget";
 import StickyScoreCard from "@/components/StickyScoreCard";
+import ScoreDetail from "@/components/ScoreDetail";
 import AccordionSection from "@/components/AccordionSection";
 import MesureObjectifBanner from "@/components/MesureObjectifBanner";
 import MonoTag from "@/components/MonoTag";
 import EditableBlock from "@/app/test/EditableBlock";
 import { getDeclarationDetail } from "@/lib/queries";
-import { getScoreBadge } from "@/lib/score";
+import { getScoreBadge, PLAFOND_DECLENCHEUR_LABELS } from "@/lib/score";
 
 export const dynamic = "force-dynamic";
 
@@ -229,29 +230,8 @@ const notationLabelsV2 = [
 ];
 
 // Barème 2026 (5 critères SANS malus, voir data/prompt-methodologie.md) :
-// remplace entièrement l'ajustement juridique bonus-malus par une RÈGLE DE
-// PLAFOND interne à Opérationnalité & Moyens (voir plafond_applique /
-// plafond_declencheur, gérés par CriteriaCard/ScoreBar directement, pas par
-// ce tableau de labels). Détecté par la présence de
-// operationnalite_moyens_total dans notation_detaillee (absent de tous les
-// schémas antérieurs), pour ne pas casser l'affichage des fiches déjà
-// publiées sous un ancien barème.
-const notationLabelsV5 = [
-  { key: "operationnalite_moyens_total", label: "Opérationnalité & Moyens", max: 30, icon: ICON_OPERATIONNEL },
-  { key: "efficacite", label: "Efficacité", max: 30, icon: ICON_EFFICACITE },
-  { key: "effets_rebonds_externalites", label: "Effets rebonds & Externalités", max: 20, icon: ICON_REBONDS },
-  { key: "degre_preparation", label: "Degré de préparation", max: 10, icon: ICON_PREPARATION },
-  { key: "alignement_logique", label: "Alignement & Logique globale", max: 10, icon: ICON_ALIGNEMENT },
-];
-
-// Libellés lisibles pour plafond_declencheur ("juridique" | "budgetaire" |
-// "moyens_humains"), utilisés par le badge de plafond sur la carte
-// "Opérationnalité & Moyens".
-const PLAFOND_DECLENCHEUR_LABELS = {
-  juridique: "faisabilité juridique",
-  budgetaire: "faisabilité budgétaire",
-  moyens_humains: "moyens humains",
-};
+// détecté par operationnalite_moyens_total dans notation_detaillee, son
+// "Détail du score" est rendu par le composant ScoreDetail.
 
 // Icônes pour le tableau structuré analyse_par_criteres (étape 3) : les
 // valeurs de `critere` n'utilisent pas toujours les mêmes clés que
@@ -1100,33 +1080,19 @@ export default async function DeclarationDetailPage({ params, preview = false, e
               />
             ) : null}
 
-            {/* Détail du score */}
+            {/* Détail du score. Barème 2026 : ScoreDetail (qualification
+                par critère, échelle des paliers, RÈGLE DE PLAFOND).
+                Schémas antérieurs : barres simples conservées pour ne pas
+                casser les fiches déjà publiées. */}
+            {isNouveauBaremeV5 ? (
+              <ScoreDetail notation={notation} score={analyse.scoreFaisabilite} />
+            ) : (
             <div className="rounded-2xl border border-zinc-200 bg-white p-6">
               <span className="text-xs font-bold uppercase tracking-widest text-zinc-500">
                 Détail du score
               </span>
 
               <div className="mt-4 flex flex-col divide-y divide-zinc-100">
-                {isNouveauBaremeV5 ? (
-                  // Barème 2026 : 5 critères sans malus, note_max propre à
-                  // chacun (30/30/20/10/10) — voir notationLabelsV5. La
-                  // RÈGLE DE PLAFOND s'affiche directement sur la barre
-                  // "Opérationnalité & Moyens" plutôt que via un bloc
-                  // textuel séparé comme l'ancienne V3.
-                  notationLabelsV5.map(({ key, label, max, icon }) => (
-                    <ScoreBar
-                      key={key}
-                      icon={icon}
-                      label={label}
-                      note={notation[key]}
-                      max={max}
-                      isGardeFou={false}
-                      vetoApplique={false}
-                      plafondApplique={key === "operationnalite_moyens_total" && Boolean(notation.plafond_applique)}
-                      plafondDeclencheur={notation.plafond_declencheur}
-                    />
-                  ))
-                ) : (
                   <>
                     {/* score_juridique_garde_fou (V2), qualification_juridique
                         (V3) et schema_version "v4" désignent tous un barème à
@@ -1158,7 +1124,6 @@ export default async function DeclarationDetailPage({ params, preview = false, e
                       />
                     ) : null}
                   </>
-                )}
               </div>
 
               {/* V3 : l'incidence juridique n'est plus un score séparé —
@@ -1198,6 +1163,7 @@ export default async function DeclarationDetailPage({ params, preview = false, e
                 <span aria-hidden="true">→</span>
               </Link>
             </div>
+            )}
 
             {/* Extrait analysé */}
             <section className="rounded-2xl border border-zinc-200 bg-white p-6 sm:p-8">

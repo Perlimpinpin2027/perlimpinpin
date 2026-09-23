@@ -101,6 +101,16 @@ const COLOR_CLASSES = {
   },
 };
 
+// Libellés lisibles pour plafond_declencheur ("juridique" | "budgetaire" |
+// "moyens_humains") de la RÈGLE DE PLAFOND d'Opérationnalité & Moyens (voir
+// data/prompt-methodologie.md) — partagés par la fiche déclaration et
+// ScoreDetail.
+export const PLAFOND_DECLENCHEUR_LABELS = {
+  juridique: "faisabilité juridique",
+  budgetaire: "faisabilité budgétaire",
+  moyens_humains: "moyens humains",
+};
+
 // Formate un score pour l'affichage : arrondi à 1 décimale max, sans
 // décimale du tout quand elle est nulle (66, pas 66.0). Le score stocké
 // en base reste inchangé, seul l'arrondi visuel est concerné.
