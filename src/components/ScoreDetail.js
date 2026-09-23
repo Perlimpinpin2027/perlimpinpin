@@ -75,15 +75,18 @@ const CRITERES = [
 // (largeur fixe, pour que les barres restent alignées) en dessous. À partir
 // de sm : 4 colonnes alignées (libellé, barre, note, badge) — les deux
 // conteneurs passent en display: contents pour que leurs enfants
-// deviennent des cellules de la grille, replacées par order.
+// deviennent des cellules de la grille, replacées par order. Colonnes
+// libellé/note/badge au plus juste (texte sm/xs) : le bloc vit dans la
+// colonne principale, à côté de la carte "Score Perlimpinpin", et chaque
+// pixel gagné va à la barre.
 function CritereRow({ label, note, max, badge, isSub = false }) {
   const pct = typeof note === "number" ? Math.min(100, Math.max(0, (note / max) * 100)) : 0;
   return (
-    <div className="flex flex-col gap-2 py-2.5 sm:grid sm:grid-cols-[minmax(0,15rem)_minmax(0,1fr)_3.5rem_9.5rem] sm:items-center sm:gap-x-4">
+    <div className="flex flex-col gap-1.5 py-2 sm:grid sm:grid-cols-[12.5rem_minmax(0,1fr)_3rem_8.75rem] sm:items-center sm:gap-x-3 sm:py-1.5">
       <div className="flex items-center justify-between gap-3 sm:contents">
-        <p className={`text-[0.95rem] sm:order-1 ${isSub ? "pl-5 text-zinc-600" : "text-zinc-900"}`}>
+        <p className={`text-sm sm:order-1 ${isSub ? "pl-4 text-zinc-600" : "text-zinc-900"}`}>
           {isSub ? (
-            <span aria-hidden="true" className="mr-1.5 text-zinc-400">
+            <span aria-hidden="true" className="mr-1 text-zinc-400">
               ↳
             </span>
           ) : null}
@@ -92,7 +95,7 @@ function CritereRow({ label, note, max, badge, isSub = false }) {
         <span className="shrink-0 sm:order-4">
           {badge ? (
             <span
-              className={`inline-flex whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold ${badge.className}`}
+              className={`inline-flex whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-semibold ${badge.className}`}
             >
               {badge.label}
             </span>
@@ -104,7 +107,7 @@ function CritereRow({ label, note, max, badge, isSub = false }) {
         <div className="h-2 min-w-0 flex-1 overflow-hidden rounded-full bg-zinc-100 sm:order-2">
           <div className={`h-full rounded-full ${badge?.bar ?? NEUTRAL_BAR}`} style={{ width: `${pct}%` }} />
         </div>
-        <p className="w-14 shrink-0 text-right font-mono text-base sm:order-3 sm:w-auto">
+        <p className="w-12 shrink-0 text-right font-mono text-sm sm:order-3 sm:w-auto">
           <span className="font-semibold text-zinc-900">{note ?? "—"}</span>
           <span className="text-zinc-400">/{max}</span>
         </p>
@@ -131,10 +134,10 @@ function ScoreScale({ score }) {
           <li
             key={band.label}
             style={{ flexGrow: band.max - band.min + 1, flexBasis: 0 }}
-            className={`border-t-[3px] pt-3 ${active ? "border-zinc-900" : "border-zinc-200"}`}
+            className={`border-t-[3px] pt-2 ${active ? "border-zinc-900" : "border-zinc-200"}`}
             aria-current={active ? "true" : undefined}
           >
-            <p className={`text-sm ${active ? "font-semibold text-zinc-900" : "text-zinc-500"}`}>{band.label}</p>
+            <p className={`text-xs leading-snug ${active ? "font-semibold text-zinc-900" : "text-zinc-500"}`}>{band.label}</p>
             <p className={`mt-1 font-mono text-xs ${active ? "text-zinc-900" : "text-zinc-400"}`}>
               {band.min} à {band.max}
             </p>
@@ -152,10 +155,10 @@ export default function ScoreDetail({ notation, score }) {
   );
 
   return (
-    <section className="rounded-2xl border border-zinc-200 bg-white p-6 sm:p-8">
+    <section className="rounded-2xl border border-zinc-200 bg-white p-6">
       <h2 className="text-2xl font-bold tracking-tight text-zinc-900">Détail du score</h2>
 
-      <div className="mt-5 flex flex-col">
+      <div className="mt-4 flex flex-col">
         <CritereRow
           label={OPERATIONNALITE.label}
           note={notation[OPERATIONNALITE.key]}
@@ -187,11 +190,11 @@ export default function ScoreDetail({ notation, score }) {
         ))}
       </div>
 
-      <div className="mt-10">
+      <div className="mt-6">
         <ScoreScale score={score} />
       </div>
 
-      <p className="mt-6 font-mono text-sm text-zinc-500">
+      <p className="mt-5 font-mono text-sm text-zinc-500">
         {notation.plafond_applique
           ? `Le plafond d'opérationnalité est déclenché (volet jugé fragile : ${plafondLabel ?? "?"}) : Opérationnalité & Moyens est limité à 10/30.`
           : "Le plafond d'opérationnalité n'est pas déclenché."}
