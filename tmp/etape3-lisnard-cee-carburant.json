@@ -1,0 +1,187 @@
+{
+  "parsed": {
+    "mesure_reformulee": {
+      "synthese": "Suspendre provisoirement les certificats d'économies d'énergie (CEE) pour faire baisser tout de suite le prix du carburant.",
+      "texte": "David Lisnard propose de suspendre, pour un temps, les certificats d'économies d'énergie (CEE) : un dispositif qui oblige les fournisseurs d'énergie et de carburants à financer des travaux d'économies d'énergie, **un coût qu'ils répercutent aujourd'hui sur les factures et sur le prix à la pompe**. Objectif annoncé : **faire baisser tout de suite le prix du carburant**."
+    },
+    "mesure_vers_objectif": {
+      "objectif_court": "Baisser le prix du carburant sans creuser le déficit",
+      "categorie_objectif": "Fiscalité et pouvoir d'achat",
+      "objectif_vise": "Faire baisser tout de suite le prix payé à la pompe. Pour beaucoup de ménages, en particulier ceux qui vivent loin de leur travail ou en zone rurale mal desservie par les transports en commun, le carburant n'est pas une dépense qu'on peut réduire facilement : c'est une dépense contrainte, presque obligatoire. Une baisse de son prix a donc un effet réel sur le pouvoir d'achat, pas seulement un effet d'affichage. Le candidat agit sur un coût répercuté par les fournisseurs, pas sur la fiscalité budgétaire de l'État.",
+      "mecanisme_propose": "Suspendre pour un temps l'obligation faite aux fournisseurs d'énergie et de carburants de financer des économies d'énergie via les CEE. Cela supprime le coût qu'ils répercutent aujourd'hui sur le prix des carburants et sur les factures d'énergie.",
+      "lien_causal": "direct"
+    },
+    "nature_et_existant": "Les CEE ne sont pas un nouveau dispositif : ils existent depuis 2005 (loi POPE), inscrits dans le code de l'énergie. Ils sont déjà régulièrement modifiés par décret ou arrêté, sans loi nouvelle. La 6e période, entrée en vigueur par un arrêté du 21 décembre 2025, a augmenté le volume d'obligations d'environ 27 %, ce qui explique la hausse récente des prix et le moment choisi pour cette proposition. Ce relèvement vise à rapprocher la France de ses objectifs d'économies d'énergie pour 2026-2030, fixés par la directive européenne sur l'efficacité énergétique (directive (UE) 2023/1791), après un retard pris sur les périodes précédentes. Concrètement, cette obligation finance surtout des aides à la rénovation thermique des logements (isolation, remplacement de chaudières via les primes « coup de pouce »), en priorité pour les ménages en précarité énergétique, ainsi que des actions dans l'industrie, le tertiaire et les transports. Suspendre le dispositif est donc un ajustement réglementaire ordinaire, pas une innovation juridique.",
+    "contexte_programme": {
+      "synthese": "Une mesure cohérente avec sa ligne constante de baisse des prélèvements, sans précédent parlementaire sur les CEE.",
+      "texte": "David Lisnard est maire de Cannes et président de l'Association des maires de France (AMF). Il a quitté Les Républicains en mars 2026 pour lancer son propre mouvement, \"Nouvelle Énergie\", et appelle à une primaire ouverte à droite et au centre. Sur le fond, cette proposition s'inscrit dans une ligne qu'il défend de façon constante ailleurs dans son discours public : il refuse de traiter la dette publique par la hausse des prélèvements, affirmant que \"la dette ne se réduit pas en prélevant davantage dans un pays qui détient déjà le record des prélèvements\", et défend une baisse structurelle des impôts financée uniquement par la baisse de la dépense publique (**80 milliards d'euros d'économies dès la première année**, selon son programme). En tant que président de l'AMF, il critique aussi l'opacité de certains prélèvements décidés au niveau national, hors du contrôle des élus locaux. Suspendre les CEE, une charge imposée aux fournisseurs sans passer par le vote du budget de l'État, prolonge donc une position déjà exprimée ailleurs, plutôt qu'elle n'est isolée. **Cette cohérence porte sur sa philosophie générale, pas sur un vote ou un précédent qui porterait précisément sur les CEE ou les carburants**, introuvable pour un candidat qui n'a jamais eu de mandat parlementaire."
+    },
+    "contexte_national": {
+      "synthese": "La proposition s'inscrit dans une polémique déjà engagée après la hausse des obligations CEE fin 2025.",
+      "texte": "Cette proposition arrive en pleine polémique publique, fin 2025 et début 2026. **La hausse des obligations CEE pour la 6e période a poussé les pétroliers, via leur organisation professionnelle l'UFIP, à annoncer une hausse des prix à la pompe**. Plusieurs responsables politiques, dont Jordan Bardella pour le Rassemblement national, ont eux aussi demandé la suppression du dispositif. Le gouvernement défend au contraire les CEE comme un outil de financement de la rénovation énergétique. Cette mesure de David Lisnard s'inscrit donc dans **un débat déjà engagé, pas dans une proposition isolée**."
+    },
+    "contexte_international": {
+      "synthese": "La directive européenne impose un résultat d'économies d'énergie, pas l'outil CEE, mais exige un moyen de remplacement.",
+      "texte": "Des dispositifs proches, parfois appelés \"certificats blancs\", existent dans d'autres pays européens, par exemple en Italie ou au Royaume-Uni. C'est une façon parmi d'autres de respecter un objectif fixé par une directive européenne sur l'efficacité énergétique (directive (UE) 2023/1791) : **cette directive impose à la France un résultat chiffré, un volume d'économies d'énergie à atteindre, mais ne lui impose pas un outil précis pour y arriver**. La France pourrait donc, sur le papier, suspendre les CEE sans violer directement cette directive, à condition de continuer à progresser vers cet objectif par un autre moyen, **ce que la mesure telle que formulée ne prévoit pas**."
+    },
+    "impact_environnement": {
+      "synthese": "Impact climatique négatif à court et moyen terme, dont la durée dépend d'une suspension non bornée.",
+      "texte": "Impact négatif à court et moyen terme sur la politique climatique française, atténué si la suspension reste vraiment temporaire. Court terme (0 à 2 ans) : effet direct, **les travaux de rénovation énergétique financés aujourd'hui par les CEE s'arrêtent ou ralentissent pendant la suspension**, notamment les aides \"coup de pouce\" pour les ménages qui doivent remplacer un chauffage coûteux ou défaillant. Moyen terme (2 à 7 ans) : un carburant moins cher peut légèrement freiner la baisse de la consommation de carburants fossiles, un effet rebond réel mais probablement limité. Long terme (plus de 7 ans) : **tout dépend d'une durée de suspension que le candidat ne précise pas** ; sans cette précision, impossible de dire si l'effet sur la trajectoire climatique française (la SNBC, la stratégie qui fixe les objectifs français de baisse des émissions) sera passager ou durable."
+    },
+    "analyse_longevites": {
+      "synthese": "Baisse rapide du prix à la pompe, mais retard de rénovation énergétique qui s'accumule si la suspension dure.",
+      "texte": "À court terme (0 à 2 ans), l'effet est le plus net dans les deux sens : **baisse rapide et visible du prix à la pompe pour tous les automobilistes, sans coût pour le budget de l'État**, mais aussi arrêt ou ralentissement des chantiers de rénovation actuellement financés par les CEE. À moyen terme (2 à 7 ans), tout dépend de la durée réelle de la suspension : si elle se prolonge, **le retard pris sur les économies d'énergie et sur le soutien aux ménages en précarité énergétique s'accumule, sans qu'aucun mécanisme de rattrapage ne soit prévu**. À long terme (plus de 7 ans), la mesure n'a de sens économique et climatique que si elle reste réellement provisoire et suivie d'une reprise ou d'une réforme du dispositif : cette trajectoire de sortie n'étant pas précisée, ses effets structurels restent incertains."
+    },
+    "impact_temporel_et_sectoriel": {
+      "synthese": "Gain de pouvoir d'achat sur le carburant, sans effet sur le déficit public ni sur la stabilité bancaire.",
+      "texte": "Sur l'inflation et le pouvoir d'achat : effet baissier attendu sur le poste carburant du budget des ménages, dans la limite de ce que les distributeurs répercuteront réellement et à quelle vitesse (voir la réserve sur la transmission asymétrique des prix). Sur la consommation des ménages : soutien au pouvoir d'achat disponible pour d'autres postes de dépense, avec **un bénéfice plus élevé en valeur absolue pour les gros rouleurs que pour les ménages peu motorisés**. Sur la stabilité bancaire : aucun effet identifié, la mesure ne touchant ni le crédit ni les bilans bancaires. Sur les finances publiques : **aucun effet sur le déficit de l'État, le dispositif CEE étant financé hors budget public**, ce que le candidat affirme et qui est exact."
+    },
+    "ce_qui_est_etabli": {
+      "synthese": "Le coût des CEE, environ 6 milliards par an et 164 euros par ménage, est confirmé par la Cour des comptes.",
+      "texte": "Le dispositif CEE existe bien depuis 2005, codifié dans le code de l'énergie, et finance hors budget de l'État des travaux d'économies d'énergie via une obligation imposée aux fournisseurs d'énergie et de carburants. **La Cour des comptes confirme un coût total d'environ 6 milliards d'euros par an en 2022 et 2023, et de 164 euros par ménage en 2023** : le chiffrage central de David Lisnard est donc exact et bien sourcé. Le volume d'obligations CEE a été relevé d'environ 27 % pour la période 2026, par arrêté du 21 décembre 2025, ce qui est le déclencheur direct de la hausse de prix actuellement dénoncée. La mesure ne crée aucun déficit budgétaire pour l'État, comme l'affirme le candidat. David Lisnard défend par ailleurs, de façon constante dans son discours public, une baisse structurelle des impôts et une critique du niveau des prélèvements obligatoires en France."
+    },
+    "ce_qui_est_probable": {
+      "synthese": "L'essentiel du coût CEE disparaîtrait des prix à la pompe, mais les aides aux ménages précaires s'arrêteraient.",
+      "texte": "Étant donné le fonctionnement d'un marché du carburant concurrentiel, où les prix sont affichés et comparés en permanence, **l'essentiel du coût CEE aujourd'hui répercuté sur le prix à la pompe disparaîtrait probablement si l'obligation était suspendue**. Une suspension interromprait ou ralentirait très probablement le financement des aides \"coup de pouce\" qui bénéficient en priorité aux ménages en précarité énergétique pour remplacer un système de chauffage coûteux ou défaillant, ainsi qu'une partie de l'activité du secteur de la rénovation énergétique."
+    },
+    "ce_qui_est_discutable": {
+      "synthese": "Le chiffre de 15 à 18 centimes par litre vient de la seule filière pétrolière, contre 7,3 centimes selon la Cour des comptes.",
+      "texte": "Le chiffre de 15 à 18 centimes par litre, mis en avant comme la mesure de référence de l'impact des CEE sur le carburant, **provient uniquement d'une estimation de la filière pétrolière elle-même (l'UFIP), non confirmée par une source officielle ou neutre** : la Cour des comptes documentait un impact plus proche de **7,3 centimes par litre en 2023**, avant la hausse récente des obligations. Les sources consultées ne permettent pas non plus de confirmer si les 164 euros par ménage cités par la Cour des comptes couvrent bien la part carburant du dispositif, ou principalement les factures d'électricité et de gaz."
+    },
+    "ce_qui_est_inconnu": {
+      "synthese": "Ni la durée de la suspension, ni ses conditions de reprise, ni la protection des ménages précaires ne sont précisées.",
+      "texte": "**La durée réelle de la suspension \"provisoire\" annoncée, ses critères de reprise, et la façon dont les ménages en précarité énergétique seraient protégés pendant cette période ne sont pas précisés** par le candidat. L'ampleur exacte de l'effet sur l'emploi dans le secteur de la rénovation énergétique, ainsi que la vitesse et l'ampleur réelles avec lesquelles les distributeurs répercuteraient la baisse sur le prix affiché à la pompe, ne peuvent pas être établies avec les sources disponibles : sources insuffisantes pour trancher ici."
+    },
+    "angles_morts": {
+      "synthese": "Sans date de reprise ni compensation, la mesure déplace le problème vers la rénovation énergétique et le climat.",
+      "texte": "La mesure ne prévoit **aucune date de reprise ni aucun mécanisme de compensation pour les ménages en précarité énergétique** qui bénéficient aujourd'hui des aides \"coup de pouce\" financées par les CEE : en l'absence de ces précisions, une suspension prolongée reviendrait à déplacer le problème plutôt qu'à le résoudre, du prix du carburant vers le financement de la rénovation énergétique et la trajectoire climatique française. Un effet rebond mineur sur la consommation de carburant elle-même, du fait de la baisse de son prix, est également possible mais non chiffré. Autre élément utile au débat : **plusieurs autres responsables politiques, dont Jordan Bardella, ont proposé une mesure similaire**, ce qui montre que ce choix dépasse le seul cas de David Lisnard."
+    },
+    "notation_detaillee": {
+      "operationnalite_juridique": 8,
+      "qualification_juridique": "SOLIDE",
+      "operationnalite_budgetaire": 7,
+      "qualification_budgetaire": "SOLIDE",
+      "operationnalite_moyens_humains": 9,
+      "qualification_moyens_humains": "SOLIDE",
+      "operationnalite_moyens_total": 24,
+      "plafond_applique": false,
+      "plafond_declencheur": null,
+      "efficacite": 24,
+      "qualification_efficacite": "SOLIDE",
+      "effets_rebonds_externalites": 7,
+      "qualification_effets_rebonds": "FRAGILE",
+      "degre_preparation": 5,
+      "qualification_preparation": "INCERTAIN",
+      "alignement_logique": 9,
+      "qualification_alignement": "SOLIDE",
+      "score_total": 69,
+      "appreciation": "plausible sous condition"
+    },
+    "verdict_final": "Le mécanisme tient : suspendre les CEE est simple et rapide à mettre en place, ne coûte rien au budget de l'État, et devrait vraiment faire baisser le prix du carburant, une dépense contrainte pour beaucoup de ménages. Le chiffrage central, 6 milliards d'euros par an et 164 euros par ménage, est exact et confirmé par la Cour des comptes.\n\nMais la mesure supprime, sans aucune compensation ni date de reprise, plusieurs milliards de financement pour la rénovation énergétique et l'aide aux ménages en précarité énergétique, deux besoins réels qui ne concernent pas forcément les mêmes foyers que ceux qui profitent de la baisse du carburant. Son chiffre le plus marquant, 15 à 18 centimes par litre, vient uniquement de la filière pétrolière elle-même, sans être présenté comme tel.\n\nC'est une mesure facile à appliquer et efficace sur son objectif immédiat, mais son silence sur la suite (durée, reprise, protection des ménages précaires) en fait une solution seulement provisoire à un problème réel, au prix d'un autre problème réel qu'elle ne traite pas.",
+    "sources_utilisees": [
+      "Cour des comptes, Les certificats d'économies d'énergie, rapport, septembre 2024, https://www.ccomptes.fr/sites/default/files/2024-09/20240917-Certificats-economie-energie_0.pdf",
+      "Ministère de la Transition écologique, Dispositif des certificats d'économies d'énergie, https://www.ecologie.gouv.fr/politiques-publiques/dispositif-certificats-deconomies-denergie",
+      "Cabinet Gossement Avocats, arrêté du 21 décembre 2025 relatif à la 6e période des CEE, https://www.gossement-avocats.com/blog/certificats-deconomies-denergie-cee-publication-de-larrete-du-21-decembre-2025-relatif-a-la-mise-en-oeuvre-de-la-sixieme-periode-du-dispositif-des-certificats-dec/",
+      "Connaissance des Énergies / AFP, Tempête autour des CEE : une hausse des factures énergétiques à relativiser, décembre 2025, https://www.connaissancedesenergies.org/afp/tempete-autour-des-cee-une-hausse-des-factures-energetiques-relativiser-251203",
+      "Connaissance des Énergies / AFP, Certificats d'économie d'énergie : 4 à 6 centimes d'impact sur le carburant (pétroliers), novembre 2025, https://www.connaissancedesenergies.org/afp/certificats-deconomie-denergie-4-6-centimes-dimpact-sur-le-carburant-petroliers-251126-0",
+      "Parlons Politique, Pourquoi les certificats d'économies d'énergie alourdissent aussi la facture des carburants et divisent le débat politique, https://www.parlons-politique.fr/economie-societe/pourquoi-les-certificats-deconomies-denergie-alourdissent-aussi-la-facture-des-carburants-et-divisent-le-debat-politique_15089/",
+      "Bureau Veritas, Directive efficacité énergétique : la transposition en droit français se poursuit, https://www.bureauveritas.fr/magazine/directive-efficacite-energetique-transposition-droit-francais",
+      "ÉlyséeScope, fiche Stratégie politique de David Lisnard, https://www.elyseescope.com/candidat/david-lisnard/strategie-politique",
+      "Nouvelle Énergie, Que propose David Lisnard face à la dette publique ?, https://www.unenouvelleenergie.fr/questions/que-propose-david-lisnard-face-a-la-dette-publique/",
+      "Public Sénat, Finances locales : il faut une nouvelle organisation de la fiscalité, réclame David Lisnard, président de l'AMF, https://www.publicsenat.fr/actualites/territoires/finances-locales-il-faut-une-nouvelle-organisation-de-la-fiscalite-reclame-david-lisnard-president-de-lamf",
+      "Conseil d'analyse économique, note sur la rénovation énergétique des logements (écart entre économies prévues et réelles, décomposition des causes), juin 2023, https://cae-eco.fr/static/pdf/cae081-renovation-230619-web.pdf"
+    ],
+    "niveau_de_confiance": "Confiance modérée à bonne. Le chiffrage central de la mesure (coût global des CEE, coût par ménage) est confirmé par une source institutionnelle indépendante, la Cour des comptes, ce qui est solide. La cohérence du candidat avec ses positions passées est maintenant appuyée par plusieurs déclarations publiques concordantes sur la fiscalité et les prélèvements obligatoires, ce qui renforce la confiance sur l'Alignement par rapport à une première version de cette fiche fondée sur une recherche plus limitée. La confiance reste plus faible sur deux points : le chiffre de 15 à 18 centimes par litre, qui vient uniquement de la filière pétrolière, et la catégorie \"Fiscalité et pouvoir d'achat\" choisie pour cette mesure, un domaine où l'ancrage de référence est lui-même moins solidement établi que pour d'autres thèmes comme les retraites ou l'énergie.",
+    "limites": {
+      "synthese": "La part carburant des 164 euros par ménage et l'impact sur l'emploi de la rénovation n'ont pas pu être établis.",
+      "texte": "Cette analyse n'a pas pu confirmer si les 164 euros par ménage documentés par la Cour des comptes pour 2023 incluent la part carburant du dispositif CEE ou concernent surtout les factures d'électricité et de gaz : sources insuffisantes pour trancher ce point précis. Elle n'a pas non plus pu chiffrer précisément l'impact sur l'emploi dans le secteur de la rénovation énergétique. Un entretien de David Lisnard spécifiquement consacré aux carburants (\"8h30 franceinfo\") n'a pas pu être consulté, son accès étant bloqué : il pourrait contenir des éléments directement pertinents pour cette mesure, à vérifier si possible dans une prochaine révision. Un commentaire du comité de relecture attribuait à un rapport de l'Assemblée nationale un chiffre selon lequel **le changement de comportement des ménages n'expliquerait qu'environ 6 % de l'écart entre économies d'énergie prévues et réelles** des travaux de rénovation : cette source précise n'a pas pu être retrouvée malgré plusieurs recherches ciblées. Une note du Conseil d'analyse économique, mieux sourcée, a été utilisée à la place pour préciser la section Effets rebonds."
+    },
+    "analyse_par_criteres": [
+      {
+        "critere": "operationnalite_moyens",
+        "titre": "Opérationnalité & Moyens",
+        "note": 24,
+        "note_max": 30,
+        "plafond_applique": false,
+        "plafond_declencheur": null,
+        "texte": "Suspendre les CEE ne rencontre **aucun obstacle juridique identifié** : c'est un dispositif déjà modifié régulièrement par décret ou arrêté, sans besoin de loi nouvelle, et la directive européenne fixe un résultat à atteindre, pas un outil précis. Le chiffrage global, **environ 6 milliards d'euros par an et 164 euros par ménage**, est confirmé par la Cour des comptes. La mesure ne crée aucun déficit budgétaire pour l'État puisque le dispositif est financé hors budget public, et ne demande aucun moyen humain nouveau."
+      },
+      {
+        "critere": "efficacite",
+        "titre": "Efficacité",
+        "note": 24,
+        "note_max": 30,
+        "texte": "Le lien de cause à effet est direct : les fournisseurs de carburants sont eux-mêmes soumis à l'obligation CEE, et sur un marché concurrentiel où les prix sont affichés en permanence, **l'essentiel de ce coût devrait disparaître du prix à la pompe**. Pour beaucoup de ménages, le carburant est une dépense contrainte, difficile à éviter, ce qui rend cette baisse réelle pour le pouvoir d'achat. Un bémol : les prix des carburants **baissent historiquement plus lentement qu'ils ne montent**, ce qui peut retarder l'effet réellement constaté."
+      },
+      {
+        "critere": "effets_rebonds_externalites",
+        "titre": "Effets rebonds & Externalités",
+        "note": 7,
+        "note_max": 20,
+        "texte": "C'est le point faible de la mesure : elle supprime, **sans aucune compensation ni date de reprise**, plusieurs milliards d'euros par an de financement pour la rénovation énergétique et les aides aux ménages en précarité énergétique. Les ménages qui profitent le plus de la baisse du carburant (les gros rouleurs) **ne sont pas forcément les mêmes** que ceux qui perdent les aides à la rénovation. La Cour des comptes chiffre à au moins 30 % la surévaluation des économies d'énergie affichées par le dispositif, mais cela ne change rien au fait que **les aides versées sont de vraies sommes, réellement coupées**."
+      },
+      {
+        "critere": "degre_preparation",
+        "titre": "Degré de préparation",
+        "note": 5,
+        "note_max": 10,
+        "texte": "Le chiffrage global est solide, mais le chiffre le plus mis en avant ne l'est pas : **les 15 à 18 centimes par litre viennent uniquement d'une estimation de la filière pétrolière (l'UFIP)**, présentée sans le signaler comme une source intéressée, alors que la Cour des comptes documentait plutôt 7,3 centimes en 2023. **La durée de la suspension \"provisoire\" et ses conditions de reprise ne sont pas précisées**, ce qui laisse le dossier incomplet sur un point central."
+      },
+      {
+        "critere": "alignement_logique",
+        "titre": "Alignement & Logique globale",
+        "note": 9,
+        "note_max": 10,
+        "texte": "Cette proposition prolonge une ligne que David Lisnard défend ailleurs de façon constante : **refuser la hausse des prélèvements pour traiter la dette et cibler la baisse de la dépense publique**. Suspendre les CEE, une charge imposée sans passer par le vote du budget, s'inscrit directement dans cette philosophie, y compris sa critique de l'opacité de certains prélèvements nationaux en tant que président de l'AMF. Cette cohérence reste toutefois générale, **sans précédent parlementaire précis sur les CEE ou les carburants**, faute de mandat national du candidat."
+      }
+    ],
+    "verdict_conclusion": "Une mesure simple et efficace sur le prix du carburant, mais qui déplace sans compensation le coût vers la rénovation énergétique et les ménages précaires.",
+    "titre_fiche": "Suspendre les certificat d’économie d’énergie pour faire baisser le prix du carburant",
+    "resume_court": "Cette mesure tient sur son objectif immédiat : suspendre les CEE est simple à mettre en œuvre, ne coûte rien au budget de l'État, et devrait vraiment faire baisser le prix du carburant, une dépense difficile à éviter pour beaucoup de ménages. Le chiffrage central avancé, 6 milliards d'euros par an et 164 euros par ménage, est exact et confirmé par la Cour des comptes.\n\nElle ne tient en revanche pas sur ce qu'elle laisse de côté : aucune date de reprise, aucune compensation pour les ménages en précarité énergétique qui perdent leurs aides à la rénovation, des ménages qui ne sont pas forcément les mêmes que ceux qui profitent le plus de la baisse du carburant. Son chiffre phare, 15 à 18 centimes par litre, vient uniquement de la filière pétrolière, sans être présenté comme tel.\n\nCe qui tient : la baisse de prix elle-même, son absence de coût budgétaire, sa simplicité de mise en œuvre, une cohérence réelle avec les positions déjà connues du candidat. Ce qui ne tient pas : l'absence de tout mécanisme pour éviter un recul durable du financement de la rénovation énergétique et de la lutte contre la précarité énergétique.",
+    "teaser_accueil": "Suspendre les CEE ferait sans doute baisser le prix du carburant, une dépense difficile à éviter pour beaucoup. Mais qui financerait la rénovation énergétique pendant ce temps-là ?"
+  },
+  "contreAvisMistral": {
+    "remarques": [],
+    "avis_general": "solide"
+  },
+  "auditArbitrage": [
+    {
+      "remarque": "Contrôle Mistral : aucune remarque soulevée, avis général 'solide'.",
+      "statut": "rejetee",
+      "raison": "Absence de remarque substantielle à arbitrer. L'analyse initiale est conservée intégralement, seule la mise en forme finale est appliquée."
+    }
+  ],
+  "coutPipeline": {
+    "tokensEtape1": null,
+    "tokensEtape2": {
+      "prompt_tokens": 7295,
+      "total_tokens": 7310,
+      "completion_tokens": 15,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "service_tier": "standard"
+    },
+    "tokensEtape3": {
+      "input_tokens": 15422,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "output_tokens": 12907,
+      "service_tier": "standard",
+      "inference_geo": "global",
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      }
+    },
+    "coutEstimeParEtape": {
+      "etape2": 0.0147,
+      "etape3": 0.2399
+    },
+    "coutEstimeTotal": 0.2546,
+    "note": "tokensEtape1 non disponible : étape 1 réalisée manuellement, hors pipeline automatisé."
+  }
+}
