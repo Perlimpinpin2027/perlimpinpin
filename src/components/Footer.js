@@ -17,9 +17,8 @@ const socialLinks = [
   { label: "LinkedIn", href: "https://www.linkedin.com/company/perlimpinpin-ai", icon: LinkedInIcon },
 ];
 
-// `href: null` = page pas encore construite : texte visible, non cliquable.
 const legalLinks = [
-  { label: "Mentions légales", href: null },
+  { label: "Mentions légales", href: "/mentions-legales" },
   { label: "Confidentialité", href: "/confidentialite" },
 ];
 
