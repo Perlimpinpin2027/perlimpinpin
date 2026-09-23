@@ -6,6 +6,8 @@ export const metadata = {
   description: "Comment Perlimpinpin collecte, utilise et protège vos données personnelles.",
 };
 
+const CONTACT_EMAIL = "perlimpinpin.admin@gmail.com";
+
 // Même structure que les sections de /a-propos (séparateur + SectionHeading)
 // pour rester cohérent avec les autres pages de contenu du site, plutôt que
 // de réinventer un style propre à cette page.
@@ -25,11 +27,17 @@ function Paragraph({ children }) {
   return <p className="text-base leading-relaxed text-zinc-600">{children}</p>;
 }
 
+// Intertitre en gras en tête de paragraphe ou d'item de liste.
+function Lead({ children }) {
+  return <strong className="font-semibold text-zinc-900">{children}</strong>;
+}
+
+// Contenu statique : l'index suffit comme clé.
 function List({ items }) {
   return (
     <ul className="flex flex-col gap-2 pl-5 text-base leading-relaxed text-zinc-600">
-      {items.map((item) => (
-        <li key={item.slice(0, 24)} className="list-disc">
+      {items.map((item, index) => (
+        <li key={index} className="list-disc">
           {item}
         </li>
       ))}
@@ -37,16 +45,21 @@ function List({ items }) {
   );
 }
 
-// Repère visuel pour les points que la rédaction doit encore trancher (durée
-// de conservation, date de mise en ligne réelle...) — ce document est un
-// brouillon, voir la demande d'origine : mieux vaut que ces trous restent
-// visibles sur la page plutôt que remplis par une valeur inventée.
-function AValider({ children }) {
+function TextLink({ href, children }) {
+  const external = href.startsWith("http");
   return (
-    <span className="rounded bg-amber-100 px-1.5 py-0.5 font-semibold text-amber-800">
+    <a
+      href={href}
+      {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+      className="text-blue-600 transition-colors hover:text-blue-800"
+    >
       {children}
-    </span>
+    </a>
   );
+}
+
+function ContactLink() {
+  return <TextLink href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</TextLink>;
 }
 
 export default function ConfidentialitePage() {
@@ -64,132 +77,155 @@ export default function ConfidentialitePage() {
               Politique de confidentialité
             </h1>
             <p className="mt-4 text-sm text-zinc-500">
-              Dernière mise à jour : <AValider>22 septembre 2026 — à confirmer avant publication</AValider>
+              Dernière mise à jour : <time dateTime="2026-09-23">23/09/2026</time>
             </p>
           </div>
 
           <hr className="mt-10 border-zinc-200" />
 
           <div className="mx-auto mt-2 mb-16 flex max-w-[68ch] flex-col gap-4">
-            <Section title="Responsable du traitement">
+            <Section title="1. Qui sommes-nous">
               <Paragraph>
-                Association Perlimpinpin est responsable du traitement des données personnelles
-                collectées sur ce site.
-              </Paragraph>
-              <Paragraph>
-                Contact :{" "}
-                <a
-                  href="mailto:perlimpinpin.admin@gmail.com"
-                  className="text-blue-600 transition-colors hover:text-blue-800"
-                >
-                  perlimpinpin.admin@gmail.com
-                </a>
+                Perlimpinpin est un projet porté par l&apos;association Perlimpinpin, dont le
+                siège social est situé au 31, rue Camille Mouquet, 94220 Charenton-le-Pont,
+                accessible à l&apos;adresse perlimpinpin.ai. Pour toute question relative à vos
+                données personnelles, vous pouvez nous contacter à l&apos;adresse :{" "}
+                <ContactLink />.
               </Paragraph>
             </Section>
 
-            <Section title="Données collectées">
+            <Section title="2. Données que nous collectons">
+              <Paragraph>
+                <Lead>Cookies et données de navigation.</Lead> Lors de votre première visite, un
+                bandeau vous permet d&apos;accepter ou de refuser les cookies non essentiels
+                (mesure d&apos;audience). Si vous acceptez, nous utilisons un outil de mesure
+                d&apos;audience (Vercel Analytics) qui collecte des données de navigation
+                anonymisées ou pseudonymisées (pages visitées, provenance, type d&apos;appareil).
+                Aucun cookie de ce type n&apos;est déposé si vous refusez ou avant que vous ayez
+                fait un choix.
+              </Paragraph>
+              <Paragraph>
+                <Lead>Données techniques d&apos;hébergement.</Lead> Comme tout site web,
+                l&apos;hébergeur du site (Vercel) collecte des données techniques de connexion
+                (adresse IP, horodatage, user-agent) nécessaires au fonctionnement et à la
+                sécurité du service, selon sa propre politique de confidentialité.
+              </Paragraph>
+              <Paragraph>
+                <Lead>Newsletter.</Lead> Si vous vous inscrivez à notre newsletter, nous
+                collectons votre adresse e-mail, sur la base de votre consentement,
+                exclusivement pour vous envoyer cette newsletter. Vous pouvez vous désinscrire à
+                tout moment via un lien présent dans chaque e-mail.
+              </Paragraph>
+              <Paragraph>
+                <Lead>Formulaire de contact.</Lead> Si vous nous contactez via le formulaire du
+                site, nous collectons votre nom et votre adresse e-mail afin de pouvoir vous
+                répondre. Ces données sont conservées le temps nécessaire au traitement de votre
+                demande, puis supprimées dans un délai raisonnable (12 mois maximum sans nouvel
+                échange).
+              </Paragraph>
+              <Paragraph>
+                <Lead>Accès journalistes (&laquo;&nbsp;/live&nbsp;&raquo;).</Lead> Certaines
+                pages du site sont protégées par un accès restreint réservé à des journalistes
+                partenaires. L&apos;accès à ces pages ne collecte pas de données personnelles
+                au-delà de ce qui est strictement nécessaire à l&apos;authentification.
+              </Paragraph>
+              <Paragraph>
+                Nous ne collectons aucune autre donnée personnelle : pas de compte utilisateur
+                public, pas de formulaire de contact collectant des données au-delà de ce qui
+                précède, à ce jour.
+              </Paragraph>
+            </Section>
+
+            <Section title="3. Pourquoi nous utilisons ces données">
               <List
                 items={[
-                  "Adresse e-mail, lors de l'inscription à la newsletter (formulaire dédié).",
-                  "Données de navigation anonymisées, via les cookies de mesure d'audience Vercel Analytics et Vercel Speed Insights — voir la section Cookies ci-dessous.",
+                  "Mesurer la fréquentation du site pour l'améliorer (uniquement avec votre consentement).",
+                  "Assurer la sécurité et le bon fonctionnement technique du site.",
+                  "Vous envoyer la newsletter, une fois active, si vous vous y êtes inscrit(e).",
                 ]}
               />
             </Section>
 
-            <Section title="Finalités">
+            <Section title="4. Base légale">
               <List
                 items={[
-                  "Envoi de la newsletter Perlimpinpin (analyses, nouvelles déclarations, actualités du projet).",
-                  "Mesure d'audience du site, pour comprendre son utilisation et l'améliorer (Vercel Analytics, Vercel Speed Insights).",
+                  <>
+                    <Lead>Cookies de mesure d&apos;audience et newsletter :</Lead> votre
+                    consentement, que vous pouvez retirer à tout moment.
+                  </>,
+                  <>
+                    <Lead>Données techniques d&apos;hébergement :</Lead> intérêt légitime à
+                    assurer la sécurité et le fonctionnement du site.
+                  </>,
                 ]}
               />
             </Section>
 
-            <Section title="Base légale">
-              <Paragraph>
-                Le traitement de l&apos;adresse e-mail pour la newsletter repose sur votre
-                consentement exprès (case à cocher lors de l&apos;inscription), conformément à
-                l&apos;article 6.1.a du RGPD. Vous pouvez retirer ce consentement à tout moment.
-              </Paragraph>
-            </Section>
-
-            <Section title="Durée de conservation">
-              <Paragraph>
-                Votre adresse e-mail est conservée tant que vous êtes inscrit·e à la newsletter,
-                et supprimée <AValider>[durée à valider]</AValider> après la dernière ouverture
-                d&apos;un e-mail ou sur demande de désinscription.
-              </Paragraph>
-            </Section>
-
-            <Section title="Destinataires des données">
-              <Paragraph>
-                Vos données ne sont pas vendues ni cédées à des tiers à des fins commerciales.
-                Elles peuvent être traitées par nos sous-traitants techniques dans le cadre de
-                l&apos;hébergement et du fonctionnement du site :
-              </Paragraph>
-              <List items={["Vercel (hébergement)", "Neon (base de données)"]} />
-              <Paragraph>
-                <AValider>
-                  À compléter si un outil d&apos;envoi d&apos;e-mails tiers est ajouté
-                  ultérieurement — aucun n&apos;est utilisé à ce jour.
-                </AValider>
-              </Paragraph>
-            </Section>
-
-            <Section title="Vos droits">
-              <Paragraph>
-                Conformément au RGPD, vous disposez d&apos;un droit d&apos;accès, de
-                rectification, d&apos;effacement, de limitation, d&apos;opposition et de
-                portabilité de vos données. Vous pouvez exercer ces droits en nous contactant à :{" "}
-                <a
-                  href="mailto:perlimpinpin.admin@gmail.com"
-                  className="text-blue-600 transition-colors hover:text-blue-800"
-                >
-                  perlimpinpin.admin@gmail.com
-                </a>
-              </Paragraph>
-              <Paragraph>
-                Vous disposez également du droit d&apos;introduire une réclamation auprès de la
-                CNIL (
-                <a
-                  href="https://www.cnil.fr"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 transition-colors hover:text-blue-800"
-                >
-                  www.cnil.fr
-                </a>
-                ).
-              </Paragraph>
-            </Section>
-
-            <Section title="Cookies">
-              <Paragraph>
-                Le bandeau de consentement affiché sur le site distingue deux catégories de
-                cookies :
-              </Paragraph>
+            <Section title="5. Durée de conservation">
               <List
                 items={[
-                  "Cookies strictement nécessaires : toujours actifs, indispensables au fonctionnement du site.",
-                  "Cookies de mesure d'audience (Vercel Analytics, Vercel Speed Insights) : statistiques de visite anonymisées, déposés uniquement si vous les acceptez.",
+                  <>
+                    <Lead>Consentement aux cookies :</Lead> conservé 6 mois, à l&apos;issue
+                    desquels le bandeau vous sera à nouveau présenté.
+                  </>,
+                  <>
+                    <Lead>Données de mesure d&apos;audience :</Lead> conservées 13 mois maximum,
+                    conformément aux recommandations de la CNIL.
+                  </>,
+                  <>
+                    <Lead>Données de connexion techniques (hébergeur) :</Lead> conservées selon la
+                    politique de Vercel, non déterminée par Perlimpinpin.
+                  </>,
+                  <>
+                    <Lead>Adresse e-mail newsletter :</Lead> conservée jusqu&apos;à votre
+                    désinscription.
+                  </>,
+                  <>
+                    <Lead>Données du formulaire de contact :</Lead> conservées 12 mois maximum
+                    après le traitement de votre demande, sauf échange en cours.
+                  </>,
                 ]}
               />
+            </Section>
+
+            <Section title="6. Qui a accès à vos données">
               <Paragraph>
-                Vous pouvez modifier votre choix à tout moment depuis le bandeau de consentement.
+                Vos données ne sont jamais vendues. Elles peuvent être traitées par nos
+                prestataires techniques dans la stricte mesure nécessaire au fonctionnement du
+                site : Vercel (hébergement), Neon (base de données, hébergée dans l&apos;Union
+                européenne — Francfort, Allemagne), et, une fois choisi, notre futur prestataire
+                d&apos;envoi de newsletter. Vercel étant une société américaine, certaines données
+                techniques peuvent être traitées hors de l&apos;Union européenne ; dans ce cas,
+                des garanties contractuelles conformes au RGPD s&apos;appliquent (clauses
+                contractuelles types).
               </Paragraph>
             </Section>
 
-            <Section title="Sécurité">
+            <Section title="7. Vos droits">
               <Paragraph>
-                Nous mettons en œuvre des mesures techniques raisonnables pour protéger vos
+                Conformément au Règlement général sur la protection des données (RGPD), vous
+                disposez d&apos;un droit d&apos;accès, de rectification, d&apos;effacement, de
+                limitation, d&apos;opposition et de portabilité de vos données. Vous pouvez
+                exercer ces droits en nous écrivant à <ContactLink />. Vous pouvez également
+                gérer votre consentement aux cookies à tout moment via le lien &laquo;&nbsp;Gérer
+                les cookies&nbsp;&raquo; en bas de page. Si vous estimez que vos droits ne sont
+                pas respectés, vous pouvez introduire une réclamation auprès de la CNIL (
+                <TextLink href="https://www.cnil.fr">www.cnil.fr</TextLink>).
+              </Paragraph>
+            </Section>
+
+            <Section title="8. Sécurité">
+              <Paragraph>
+                Nous mettons en œuvre les mesures techniques raisonnables pour protéger vos
                 données contre l&apos;accès non autorisé, la perte ou l&apos;altération.
               </Paragraph>
             </Section>
 
-            <Section title="Modification de cette politique">
+            <Section title="9. Modifications">
               <Paragraph>
-                Cette politique peut être mise à jour. La date de dernière modification est
-                indiquée en haut de cette page.
+                Cette politique peut être mise à jour, notamment lors de l&apos;activation de
+                nouvelles fonctionnalités (comme la newsletter). La date de dernière mise à jour
+                figure en haut de cette page.
               </Paragraph>
             </Section>
           </div>

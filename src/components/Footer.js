@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ManageCookiesButton from "./ManageCookiesButton";
 
 // Mêmes routes que la barre de navigation (voir Header.js) : toutes existent.
 const platformLinks = [
@@ -142,7 +143,7 @@ export default function Footer() {
 
         <div className="mt-14 flex flex-col gap-4 border-t border-zinc-800 pt-8 text-sm text-zinc-400 sm:flex-row sm:items-center sm:justify-between">
           <p>© 2026 Perlimpinpin. Tous droits réservés.</p>
-          <ul className="flex items-center gap-5">
+          <ul className="flex flex-wrap items-center gap-x-5 gap-y-2">
             {legalLinks.map((link, index) => (
               <li key={link.label} className="flex items-center gap-5">
                 {index > 0 ? (
@@ -156,6 +157,10 @@ export default function Footer() {
                 </FooterLink>
               </li>
             ))}
+            <li className="flex items-center gap-5">
+              <span aria-hidden="true" className="h-4 w-px bg-zinc-700" />
+              <ManageCookiesButton className="cursor-pointer transition-colors hover:text-white" />
+            </li>
           </ul>
         </div>
       </div>
