@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { formatClosedAt, isRelectureClosed } from "@/lib/relecture";
 
 const BODY_MAX_LENGTH = 4000;
 
@@ -30,6 +31,19 @@ export async function POST(request) {
 
   if (!ficheSlug || !sectionId || !body) {
     return Response.json({ error: "Champs requis manquants." }, { status: 400 });
+  }
+
+  // Relecture terminée (échéance du chrono passée) : la fiche reste lisible,
+  // mais on n'accepte plus de commentaire, quoi que fasse la page.
+  const fiche = await prisma.relectureFiche.findUnique({ where: { ficheSlug } });
+  if (isRelectureClosed(fiche)) {
+    return Response.json(
+      {
+        error: `Relecture terminée le ${formatClosedAt(fiche.reviewDeadline)} : les commentaires sont fermés.`,
+        closed: true,
+      },
+      { status: 403 },
+    );
   }
 
   const comment = await prisma.relectureComment.create({

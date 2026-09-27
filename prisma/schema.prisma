@@ -376,3 +376,15 @@ model RelectureComment {
 
   @@index([ficheSlug, sectionId])
 }
+
+// Chronomètre de relecture d'une fiche en brouillon (/relectures), rattaché
+// par ficheSlug comme RelectureComment. Une fois reviewDeadline passée, les
+// commentaires sont fermés et la fiche est "Prête à publier" — aucune
+// publication automatique. Les deux dates restent nulles tant que le chrono
+// n'a pas été lancé (ou après un arrêt).
+model RelectureFiche {
+  id              String    @id @default(cuid())
+  ficheSlug       String    @unique
+  reviewStartedAt DateTime?
+  reviewDeadline  DateTime?
+}
