@@ -104,6 +104,40 @@ h3{margin:0}
 .tierl{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;font-weight:500}
 .tierl::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--tier)}
 .go{color:var(--orange);font-size:1.1rem;margin-top:6px}
+.fcard{position:relative}
+.fcard-link{color:inherit;text-decoration:none}
+.fcard-link::after{content:"";position:absolute;inset:0;border-radius:inherit}
+.fcard-link:focus-visible{outline:none}
+.fcard:has(.fcard-link:focus-visible){outline:2px solid var(--blue);outline-offset:2px}
+
+/* ---------- chrono de relecture ---------- */
+.chrono{position:relative;z-index:1}
+.chrono:empty{display:none}
+.chrono-line{margin:0;font-family:var(--mono);font-size:12px;color:var(--faint);letter-spacing:.02em}
+.chrono-form{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:4px}
+.chrono-form input,.chrono-form select{font:inherit;font-family:var(--mono);font-size:12.5px;background:var(--surface);color:var(--ink);border:1px solid var(--rule);border-radius:999px;padding:5px 10px}
+.chrono-form input{width:6.5em}
+.chrono-btn{font-size:12.5px;font-weight:500;background:var(--ink);color:var(--ink-inv);border:0;border-radius:999px;padding:6px 14px;cursor:pointer}
+.chrono-btn:disabled{opacity:.6;cursor:default}
+.chrono-err{flex-basis:100%;margin:0;color:var(--bad);font-size:12.5px}
+.chrono-run{display:grid;gap:7px;margin-top:2px}
+.chrono-left{color:var(--orange);font-weight:500;font-variant-numeric:tabular-nums;margin:0 2px}
+.chrono-bar{height:3px;max-width:360px;border-radius:99px;background:var(--track);overflow:hidden}
+.chrono-bar i{display:block;height:100%;width:0;background:var(--orange);transition:width 1s linear}
+.chrono-ghost{font-size:12.5px;font-weight:500;background:none;color:var(--ink);border:1px solid var(--rule);border-radius:999px;padding:5px 12px;cursor:pointer}
+.chrono-ghost:hover{border-color:var(--ink)}
+.chrono-ghost:disabled{opacity:.6;cursor:default}
+.chrono-run + .chrono-form,.chrono-done + .chrono-form{margin-top:8px}
+.chrono-done{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin:2px 0 0;font-family:var(--mono);font-size:12px;color:var(--faint)}
+.done-badge{display:inline-flex;align-items:center;gap:7px;background:var(--ok-soft);color:var(--ok);border-radius:999px;padding:3px 11px;font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.02em}
+.done-badge::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.closed-banner{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:0 0 18px;padding:12px 16px;border:1px solid var(--rule);border-radius:14px;background:var(--surface);font-size:13.5px;color:var(--muted)}
+.cclosed{margin:0;color:var(--faint);font-size:13.5px;font-family:var(--mono)}
+.admin{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:18px 0 0;font-family:var(--mono);font-size:12px;color:var(--faint)}
+.admin form{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.admin input{font:inherit;background:var(--surface);color:var(--ink);border:1px solid var(--rule);border-radius:999px;padding:5px 10px;width:12em}
+.admin button{font:inherit;background:none;color:var(--ink);border:1px solid var(--rule);border-radius:999px;padding:5px 12px;cursor:pointer}
+.admin button:hover{border-color:var(--ink)}
 @media (max-width:560px){
   .fcard{grid-template-columns:minmax(0,1fr)}
   .fscore{justify-items:start;text-align:left;grid-auto-flow:row}
@@ -253,10 +287,11 @@ h3{margin:0}
   <h1>Analyses en brouillon</h1>
   <p>Ces analyses ne sont pas publiées. Choisissez une fiche, lisez-la, puis cliquez sur « Commenter » à côté de la section concernée. Les commentaires sont repris dans la version suivante.</p>
   <ol class="steps" aria-label="Circuit de relecture"><li>Analyse de Claude (étape 1)</li><li class="now">Relecture du comité</li><li>Révision</li><li>Validation puis étapes 2 et 3</li></ol>
+  <div class="admin" id="chrono-admin"></div>
 </section>
 <div class="filters" role="group" aria-label="Filtrer par thème"><button class="chipf" type="button" data-cat="all" aria-pressed="true">Tous<i>2</i></button><button class="chipf" type="button" data-cat="Logement" aria-pressed="false" disabled>Logement<i>0</i></button><button class="chipf" type="button" data-cat="Perspectives économiques, pouvoir d&#x27;achat, inflation &amp; fiscalité" aria-pressed="false">Économie &amp; pouvoir d&#x27;achat<i>1</i></button><button class="chipf" type="button" data-cat="IA &amp; Numérique" aria-pressed="false" disabled>IA &amp; Numérique<i>0</i></button><button class="chipf" type="button" data-cat="Éducation nationale" aria-pressed="false" disabled>Éducation nationale<i>0</i></button><button class="chipf" type="button" data-cat="Sécurité &amp; Justice" aria-pressed="false" disabled>Sécurité &amp; Justice<i>0</i></button><button class="chipf" type="button" data-cat="Santé &amp; Hôpital" aria-pressed="false" disabled>Santé &amp; Hôpital<i>0</i></button><button class="chipf" type="button" data-cat="Retraites" aria-pressed="false">Retraites<i>1</i></button><button class="chipf" type="button" data-cat="Emploi &amp; Chômage" aria-pressed="false" disabled>Emploi &amp; Chômage<i>0</i></button><button class="chipf" type="button" data-cat="Énergie &amp; Climat" aria-pressed="false" disabled>Énergie &amp; Climat<i>0</i></button><button class="chipf" type="button" data-cat="Alimentation &amp; Agriculture" aria-pressed="false" disabled>Alimentation &amp; Agriculture<i>0</i></button><button class="chipf" type="button" data-cat="Immigration" aria-pressed="false" disabled>Immigration<i>0</i></button><button class="chipf" type="button" data-cat="Démocratie et institutions" aria-pressed="false" disabled>Démocratie et institutions<i>0</i></button></div>
 <p class="count" id="hub-count"></p>
-<div class="list"><a class="fcard tier-partiel" href="#/zemmour-retraites" data-cat="Retraites"><div class="main"><p class="badge-cat">Retraites · Éric Zemmour</p><h2>Sortir de la répartition sans dire qui paie</h2><p class="teaser">Zemmour veut basculer peu à peu vers la capitalisation, sans dire qui paiera. Que coûterait vraiment la transition ?</p><p class="meta"><span>Étape 1</span><span>Version 1</span><span>21 septembre 2026</span><span>À relire</span></p></div><div class="fscore"><span class="n">47<small>/100</small></span><span class="tierl">Partiellement fondé</span><span class="go" aria-hidden="true">→</span></div></a><a class="fcard tier-plausible" href="#/lisnard-cee-carburant" data-cat="Perspectives économiques, pouvoir d&#x27;achat, inflation &amp; fiscalité"><div class="main"><p class="badge-cat">Perspectives économiques, pouvoir d&#x27;achat, inflation &amp; fiscalité · David Lisnard</p><h2>Baisser le carburant en coupant un chèque climat</h2><p class="teaser">Suspendre les CEE ferait sans doute baisser le prix du carburant, et sans creuser le déficit. Mais qui financerait la rénovation énergétique pendant ce temps-là ?</p><p class="meta"><span>Étape 1</span><span>Version 1</span><span>22 septembre 2026</span><span>À relire</span></p></div><div class="fscore"><span class="n">68<small>/100</small></span><span class="tierl">Plausible sous condition</span><span class="go" aria-hidden="true">→</span></div></a></div>
+<div class="list"><article class="fcard tier-partiel" data-fiche="zemmour-retraites" data-cat="Retraites"><div class="main"><p class="badge-cat">Retraites · Éric Zemmour</p><h2><a class="fcard-link" href="#/zemmour-retraites">Sortir de la répartition sans dire qui paie</a></h2><p class="teaser">Zemmour veut basculer peu à peu vers la capitalisation, sans dire qui paiera. Que coûterait vraiment la transition ?</p><p class="meta"><span>Étape 1</span><span>Version 1</span><span>21 septembre 2026</span><span data-statut>À relire</span></p><div class="chrono" data-chrono="zemmour-retraites"></div></div><div class="fscore"><span class="n">47<small>/100</small></span><span class="tierl">Partiellement fondé</span><span class="go" aria-hidden="true">→</span></div></article><article class="fcard tier-plausible" data-fiche="lisnard-cee-carburant" data-cat="Perspectives économiques, pouvoir d&#x27;achat, inflation &amp; fiscalité"><div class="main"><p class="badge-cat">Perspectives économiques, pouvoir d&#x27;achat, inflation &amp; fiscalité · David Lisnard</p><h2><a class="fcard-link" href="#/lisnard-cee-carburant">Baisser le carburant en coupant un chèque climat</a></h2><p class="teaser">Suspendre les CEE ferait sans doute baisser le prix du carburant, et sans creuser le déficit. Mais qui financerait la rénovation énergétique pendant ce temps-là ?</p><p class="meta"><span>Étape 1</span><span>Version 1</span><span>22 septembre 2026</span><span data-statut>À relire</span></p><div class="chrono" data-chrono="lisnard-cee-carburant"></div></div><div class="fscore"><span class="n">68<small>/100</small></span><span class="tierl">Plausible sous condition</span><span class="go" aria-hidden="true">→</span></div></article></div>
 </div>
 
 
@@ -435,6 +470,12 @@ h3{margin:0}
           return '<li class="citem"><div class="chead"><b>' + esc(c.authorName || "Anonyme") + "</b><span>" + esc(fmtDate(c.createdAt)) + "</span></div><p>" + esc(c.body) + "</p></li>";
         }).join("")
       : '<p class="cempty">Aucun commentaire pour l’instant.</p>';
+    var view = panel.closest("[data-view]");
+    if (view && isClosed(view.getAttribute("data-view"))) {
+      panel.innerHTML = '<ul class="clist">' + itemsHtml + "</ul>" +
+        '<p class="cclosed">Relecture terminée : les commentaires sont fermés.</p>';
+      return;
+    }
     panel.innerHTML =
       '<ul class="clist">' + itemsHtml + "</ul>" +
       '<form class="cform">' +
@@ -495,25 +536,297 @@ h3{margin:0}
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ficheSlug: ficheSlug, sectionId: sectionId, sectionLabel: sectionLabel, authorName: author, body: body }),
     })
-      .then(function (r) { if (!r.ok) throw new Error("failed"); return r.json(); })
+      .then(function (r) {
+        return r.json().catch(function () { return {}; }).then(function (res) {
+          if (!r.ok) {
+            var e = new Error(res.error || "Échec de l'envoi, réessaie.");
+            e.closed = !!res.closed;
+            throw e;
+          }
+          return res;
+        });
+      })
       .then(function (created) {
         (commentsBySection[sectionId] = commentsBySection[sectionId] || []).push(created);
         renderThread(panel, sectionId);
         updateBadges();
       })
-      .catch(function () {
+      .catch(function (e) {
         btn.disabled = false;
         btn.textContent = "Publier le commentaire";
         var err = document.createElement("p");
         err.className = "cerr";
-        err.textContent = "Échec de l'envoi, réessaie.";
+        err.textContent = e.message || "Échec de l'envoi, réessaie.";
         form.appendChild(err);
+        // Refus serveur « relecture terminée » : on recharge l'état des chronos,
+        // ce qui bascule la fiche en lecture seule.
+        if (e.closed) loadChronos();
       });
+  });
+
+  // ---------- chrono de relecture ----------
+  // À l'échéance (atteinte ou « Clore maintenant ») : la fiche reste affichée avec
+  // ses commentaires, mais n'est plus commentable. Aucune publication automatique.
+
+  var CHRONO_API = "/api/relectures/chrono";
+  var ADMIN_KEY = "perlimpinpin.relectureAdminCode";
+  var adminCodeMem = ""; // repli si localStorage est indisponible
+  var chronoBySlug = {}; // ficheSlug -> { reviewStartedAt, reviewDeadline }
+  var clockOffset = 0; // heure du serveur - heure locale, en ms
+  var renderedKey = {}; // ficheSlug -> état affiché sur la carte ("running+admin"…)
+  var renderedClosed = {}; // ficheSlug -> fiche affichée comme close ou non
+  var ticker = null;
+  var adminEl = document.getElementById("chrono-admin");
+
+  function getAdminCode() {
+    try { return localStorage.getItem(ADMIN_KEY) || adminCodeMem; } catch (e) { return adminCodeMem; }
+  }
+
+  function setAdminCode(code) {
+    adminCodeMem = code || "";
+    try {
+      if (code) localStorage.setItem(ADMIN_KEY, code);
+      else localStorage.removeItem(ADMIN_KEY);
+    } catch (e) { /* on garde la copie en mémoire */ }
+  }
+
+  function nowMs() { return Date.now() + clockOffset; }
+
+  function stateOf(slug) {
+    var f = chronoBySlug[slug];
+    if (!f || !f.reviewDeadline) return "none";
+    return new Date(f.reviewDeadline).getTime() <= nowMs() ? "closed" : "running";
+  }
+
+  function isClosed(slug) { return stateOf(slug) === "closed"; }
+
+  function pad(n) { return (n < 10 ? "0" : "") + n; }
+
+  // « 1 j 04 h 12 min », « 4 h 12 min », puis avec les secondes sous 1 h : « 12 min 05 s ».
+  function fmtRemaining(ms) {
+    var s = Math.max(0, Math.ceil(ms / 1000));
+    var d = Math.floor(s / 86400), h = Math.floor((s % 86400) / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
+    if (d) return d + " j " + pad(h) + " h " + pad(m) + " min";
+    if (h) return h + " h " + pad(m) + " min";
+    if (m) return m + " min " + pad(sec) + " s";
+    return sec + " s";
+  }
+
+  // « 27 sept. 2026 à 14:32 »
+  function fmtAt(iso) {
+    var d = new Date(iso);
+    return d.toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" }) +
+      " à " + d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+  }
+
+  function renderAdmin(message) {
+    if (!adminEl) return;
+    var msg = message ? '<span class="chrono-err">' + esc(message) + "</span>" : "";
+    adminEl.innerHTML = getAdminCode()
+      ? "<span>// Mode comité : chronos modifiables</span>" +
+        '<button type="button" data-admin="forget">Oublier le code</button>' + msg
+      : '<form class="admin-form"><label for="admin-code">// Code comité</label>' +
+        '<input id="admin-code" type="password" name="code" autocomplete="off" required>' +
+        '<button type="submit">Enregistrer</button></form>' + msg;
+  }
+
+  function durationFields(value) {
+    return '<input type="number" name="duration" min="1" step="any" value="' + value + '" aria-label="Durée" required>' +
+      '<select name="unit" aria-label="Unité"><option value="h">heures</option><option value="min">minutes</option></select>';
+  }
+
+  function adminControls(slug, state) {
+    var open = '<form class="chrono-form" data-fiche="' + esc(slug) + '" data-action="' + (state === "none" ? "start" : "extend") + '">';
+    var err = '<p class="chrono-err" hidden></p></form>';
+    if (state === "none") {
+      return open + durationFields(48) + '<button class="chrono-btn" type="submit">Lancer la relecture</button>' + err;
+    }
+    return open + durationFields(24) +
+      '<button class="chrono-ghost" type="submit">' + (state === "closed" ? "Rouvrir" : "Prolonger") + "</button>" +
+      '<button class="chrono-ghost" type="button" data-chrono-action="stop">Arrêter</button>' +
+      (state === "running" ? '<button class="chrono-ghost" type="button" data-chrono-action="close">Clore maintenant</button>' : "") +
+      err;
+  }
+
+  function tickChrono(slug) {
+    var el = document.querySelector('[data-chrono="' + slug + '"]');
+    var f = chronoBySlug[slug];
+    if (!el || !f || stateOf(slug) !== "running") return;
+    var start = new Date(f.reviewStartedAt || f.reviewDeadline).getTime();
+    var end = new Date(f.reviewDeadline).getTime();
+    var pct = end > start ? Math.min(100, Math.max(0, ((nowMs() - start) / (end - start)) * 100)) : 100;
+    var left = el.querySelector("[data-left]");
+    var bar = el.querySelector("[data-bar]");
+    if (left) left.textContent = fmtRemaining(end - nowMs());
+    if (bar) {
+      bar.style.width = pct.toFixed(2) + "%";
+      bar.parentElement.setAttribute("aria-valuenow", String(Math.round(pct)));
+    }
+  }
+
+  // Bandeau en tête de fiche + fils de commentaires ouverts, quand la fiche se ferme ou se rouvre.
+  function renderFicheState(slug) {
+    var closed = isClosed(slug);
+    if (renderedClosed[slug] === closed) return;
+    renderedClosed[slug] = closed;
+    var view = document.querySelector('[data-view="' + slug + '"]');
+    if (!view) return;
+    var banner = view.querySelector(".closed-banner");
+    if (closed) {
+      if (!banner) {
+        banner = document.createElement("p");
+        banner.className = "closed-banner";
+        var back = view.querySelector(".back");
+        view.insertBefore(banner, back ? back.nextSibling : view.firstChild);
+      }
+      banner.innerHTML = '<span class="done-badge">Relecture terminée · Prête à publier</span>' +
+        "<span>Clôturée le " + esc(fmtAt(chronoBySlug[slug].reviewDeadline)) +
+        ". Les commentaires sont fermés ; ceux déjà laissés restent visibles.</span>";
+    } else if (banner) {
+      banner.remove();
+    }
+    Array.prototype.forEach.call(view.querySelectorAll(".cthread"), function (panel) {
+      renderThread(panel, panel.parentElement.id);
+    });
+  }
+
+  function renderChrono(slug) {
+    var el = document.querySelector('[data-chrono="' + slug + '"]');
+    var state = stateOf(slug);
+    var admin = !!getAdminCode();
+    var f = chronoBySlug[slug];
+    if (el) {
+      var html = "";
+      if (state === "running") {
+        html = '<div class="chrono-run"><p class="chrono-line">Temps restant <b class="chrono-left" data-left></b> · échéance ' + esc(fmtAt(f.reviewDeadline)) + "</p>" +
+          '<div class="chrono-bar" role="progressbar" aria-label="Temps de relecture écoulé" aria-valuemin="0" aria-valuemax="100"><i data-bar></i></div></div>';
+      } else if (state === "closed") {
+        html = '<p class="chrono-done"><span class="done-badge">Relecture terminée · Prête à publier</span><span>clôturée le ' + esc(fmtAt(f.reviewDeadline)) + "</span></p>";
+      }
+      if (admin) html += adminControls(slug, state);
+      el.innerHTML = html;
+    }
+    var card = document.querySelector('.fcard[data-fiche="' + slug + '"]');
+    var statut = card && card.querySelector("[data-statut]");
+    if (statut) statut.textContent = state === "closed" ? "Prête à publier" : "À relire";
+    renderedKey[slug] = state + (admin ? "+admin" : "");
+    tickChrono(slug);
+    renderFicheState(slug);
+  }
+
+  function ficheSlugs() {
+    return views.map(function (v) { return v.getAttribute("data-view"); }).filter(function (s) { return s !== "hub"; });
+  }
+
+  function renderAllChronos() {
+    ficheSlugs().forEach(renderChrono);
+  }
+
+  // Chaque seconde : compte à rebours, et bascule en « Relecture terminée » à l'échéance.
+  function tick() {
+    var admin = !!getAdminCode();
+    ficheSlugs().forEach(function (slug) {
+      if (renderedKey[slug] !== stateOf(slug) + (admin ? "+admin" : "")) renderChrono(slug);
+      else tickChrono(slug);
+    });
+  }
+
+  function applyServerNow(iso) {
+    var t = new Date(iso).getTime();
+    if (!isNaN(t)) clockOffset = t - Date.now();
+  }
+
+  function loadChronos() {
+    fetch(CHRONO_API)
+      .then(function (r) { return r.ok ? r.json() : { fiches: [] }; })
+      .then(function (res) {
+        if (res.now) applyServerNow(res.now);
+        chronoBySlug = {};
+        (res.fiches || []).forEach(function (f) { chronoBySlug[f.ficheSlug] = f; });
+        renderAllChronos();
+      })
+      .catch(function () { renderAllChronos(); })
+      .then(function () { if (!ticker) ticker = setInterval(tick, 1000); });
+  }
+
+  function sendChrono(form, action, btn) {
+    var slug = form.getAttribute("data-fiche");
+    var err = form.querySelector(".chrono-err");
+    var withDuration = action === "start" || action === "extend";
+    btn.disabled = true;
+    err.hidden = true;
+    fetch(CHRONO_API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-relecture-admin-code": getAdminCode() },
+      body: JSON.stringify({
+        ficheSlug: slug,
+        action: action,
+        duration: withDuration ? form.duration.value : undefined,
+        unit: withDuration ? form.unit.value : undefined,
+      }),
+    })
+      .then(function (r) {
+        return r.json().catch(function () { return {}; }).then(function (res) {
+          if (r.status === 401) {
+            setAdminCode("");
+            renderAdmin("Code comité refusé.");
+            renderAllChronos();
+            return;
+          }
+          if (!r.ok) throw new Error(res.error || "Échec, réessaie.");
+          if (res.now) applyServerNow(res.now);
+          chronoBySlug[slug] = res.fiche;
+          renderChrono(slug);
+        });
+      })
+      .catch(function (e) {
+        btn.disabled = false;
+        err.textContent = e.message || "Échec, réessaie.";
+        err.hidden = false;
+      });
+  }
+
+  document.addEventListener("submit", function (ev) {
+    var chronoForm = ev.target.closest && ev.target.closest(".chrono-form");
+    if (chronoForm) {
+      ev.preventDefault();
+      sendChrono(chronoForm, chronoForm.getAttribute("data-action"), chronoForm.querySelector('button[type="submit"]'));
+      return;
+    }
+    var adminForm = ev.target.closest && ev.target.closest(".admin-form");
+    if (adminForm) {
+      ev.preventDefault();
+      var code = adminForm.code.value.trim();
+      if (!code) return;
+      setAdminCode(code);
+      renderAdmin();
+      renderAllChronos();
+    }
+  });
+
+  document.addEventListener("click", function (ev) {
+    var forget = ev.target.closest && ev.target.closest('[data-admin="forget"]');
+    if (forget) {
+      setAdminCode("");
+      renderAdmin();
+      renderAllChronos();
+      return;
+    }
+    var act = ev.target.closest && ev.target.closest("[data-chrono-action]");
+    if (act) {
+      var action = act.getAttribute("data-chrono-action");
+      var question = action === "close"
+        ? "Clore la relecture maintenant ? Les commentaires seront fermés (rien n'est publié)."
+        : "Arrêter le chrono ? La fiche redevient « À relire », sans échéance.";
+      if (window.confirm(question)) sendChrono(act.closest(".chrono-form"), action, act);
+    }
   });
 
   window.addEventListener("hashchange", route);
   route();
   applyFilter("all");
+  renderAdmin();
+  loadChronos();
 })();
 </script>
 
