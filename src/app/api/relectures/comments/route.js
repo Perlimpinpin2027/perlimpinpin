@@ -2,6 +2,30 @@ import { prisma } from "@/lib/prisma";
 import { formatClosedAt, isRelectureClosed } from "@/lib/relecture";
 
 const BODY_MAX_LENGTH = 4000;
+const QUOTE_MAX_LENGTH = 20000;
+const OFFSET_MAX = 1_000_000;
+
+// Annotation (surligneur + note) : les trois champs vont ensemble. Renvoie
+// null pour un commentaire de section, { error } si les champs sont incohérents.
+function parseAnnotation(data) {
+  const hasAny = data.quotedText != null || data.startOffset != null || data.endOffset != null;
+  if (!hasAny) return null;
+  const quotedText = typeof data.quotedText === "string" ? data.quotedText : "";
+  const startOffset = data.startOffset;
+  const endOffset = data.endOffset;
+  if (
+    !quotedText.trim() ||
+    quotedText.length > QUOTE_MAX_LENGTH ||
+    !Number.isInteger(startOffset) ||
+    !Number.isInteger(endOffset) ||
+    startOffset < 0 ||
+    endOffset > OFFSET_MAX ||
+    endOffset - startOffset !== quotedText.length
+  ) {
+    return { error: "Annotation invalide (passage ou positions incohérents)." };
+  }
+  return { quotedText, startOffset, endOffset };
+}
 
 export async function GET(request) {
   const ficheSlug = request.nextUrl.searchParams.get("fiche");
@@ -33,6 +57,11 @@ export async function POST(request) {
     return Response.json({ error: "Champs requis manquants." }, { status: 400 });
   }
 
+  const annotation = parseAnnotation(data);
+  if (annotation?.error) {
+    return Response.json({ error: annotation.error }, { status: 400 });
+  }
+
   // Relecture terminée (échéance du chrono passée) : la fiche reste lisible,
   // mais on n'accepte plus de commentaire, quoi que fasse la page.
   const fiche = await prisma.relectureFiche.findUnique({ where: { ficheSlug } });
@@ -47,7 +76,7 @@ export async function POST(request) {
   }
 
   const comment = await prisma.relectureComment.create({
-    data: { ficheSlug, sectionId, sectionLabel, authorName, body },
+    data: { ficheSlug, sectionId, sectionLabel, authorName, body, ...annotation },
   });
 
   return Response.json(comment, { status: 201 });

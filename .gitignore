@@ -51,3 +51,8 @@ dev.db
 # journaux du pipeline automatisé (scripts/analyze.js --auto) : insertions
 # et erreurs de validation, hors repo par design (voir garde-fou #4)
 /logs/
+
+# gros dossiers de travail locaux, hors repo
+/Perlimpinpin Base Documentaire/
+/Claude outputs/
+/tmp/
