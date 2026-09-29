@@ -52,16 +52,19 @@ export const CLES_RELECTURE = [
   "titre", "candidat", "parti", "theme", "date", "version", "mesure_initiale", "extrait",
   "verdict_tient", "verdict_flou", "niveau_confiance", "questions",
 ];
+// Clé ajoutée seulement quand la relecture est traitée (fiche archivée, voir
+// scripts/build-relectures.js) : acceptée, jamais exigée.
+export const CLES_RELECTURE_FACULTATIVES = ["archive"];
 
 export class RelectureError extends Error {}
 
 // ---------- ajouter ----------
 
-function comparerCles(obj, attendues, prefixe) {
+function comparerCles(obj, attendues, prefixe, facultatives = []) {
   const erreurs = [];
   if (!obj || typeof obj !== "object" || Array.isArray(obj)) return [`${prefixe || "(racine)"} : objet attendu.`];
   const manquantes = attendues.filter((k) => !(k in obj));
-  const enTrop = Object.keys(obj).filter((k) => !attendues.includes(k));
+  const enTrop = Object.keys(obj).filter((k) => !attendues.includes(k) && !facultatives.includes(k));
   const p = prefixe ? prefixe + "." : "";
   if (manquantes.length) erreurs.push(`clés manquantes : ${manquantes.map((k) => p + k).join(", ")}`);
   if (enTrop.length) erreurs.push(`clés inattendues : ${enTrop.map((k) => p + k).join(", ")}`);
@@ -73,7 +76,7 @@ export function verifierFiche(fiche) {
   const erreurs = comparerCles(fiche, CLES, "");
   if (erreurs.length && (!fiche || typeof fiche !== "object")) return erreurs;
   erreurs.push(...comparerCles(fiche.mesure_vers_objectif, CLES_OBJECTIF, "mesure_vers_objectif"));
-  erreurs.push(...comparerCles(fiche.relecture, CLES_RELECTURE, "relecture"));
+  erreurs.push(...comparerCles(fiche.relecture, CLES_RELECTURE, "relecture", CLES_RELECTURE_FACULTATIVES));
   const notationErr = comparerCles(fiche.notation_detaillee, CLES_NOTATION, "notation_detaillee");
   erreurs.push(...notationErr);
   if (!notationErr.length) {

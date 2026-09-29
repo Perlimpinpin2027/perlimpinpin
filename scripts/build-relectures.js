@@ -13,8 +13,26 @@
 // ligne vide, le texte est découpé automatiquement en paragraphes de quelques
 // phrases.
 //
+// Archivage : une fois la relecture traitée (réponses rédigées, version
+// suivante déposée dans "data/analyses finales/"), on ajoute dans le bloc
+// `relecture` un sous-bloc `archive` :
+//   "archive": {
+//     "date": "2026-09-28",
+//     "version_suivante": "data/analyses finales/Zemmour/…_v2.json",
+//     "synthese": "Ce qui a changé dans la version suivante (optionnel).",
+//     "reponses": [
+//       { "commentaire_id": "<id en base>", "auteur": "Alexis",
+//         "section": "Contexte national", "commentaire": "copie du commentaire",
+//         "reponse": "Réponse de Perlimpinpin" }
+//     ]
+//   }
+// La fiche passe alors dans la section « Analyses archivées » : lecture seule,
+// chaque commentaire affiche sa réponse. Les étapes 2 et 3 ne lisent pas ce
+// dossier : le bloc archive n'a aucun effet sur elles.
+//
 // Le CSS, le JavaScript et la structure de la page viennent du gabarit
-// scripts/templates/relectures.html ({{FILTRES}}, {{CARTES}}, {{VUES}}).
+// scripts/templates/relectures.html ({{FILTRES}}, {{CARTES}}, {{ARCHIVES}},
+// {{NB_ARCHIVES}}, {{VUES}}, {{REPONSES}}).
 
 import { readFileSync, writeFileSync, readdirSync } from "node:fs";
 import path from "node:path";
@@ -221,14 +239,16 @@ function renderVue(slug, fiche) {
 
   const goto = [
     ["resume", "Résumé"], ["score", "Score"], ["detail-score", "Détail"], ["extrait", "Extrait"],
-    ["raisonnement", "Raisonnement"], ["verdict", "Verdict"], ["sources", "Sources"], ["fiabilite", "Fiabilité"], ["questions", "À valider"],
+    ["raisonnement", "Raisonnement"], ["verdict", "Verdict"], ["sources", "Sources"], ["fiabilite", "Fiabilité"], ["questions", "À valider"], ["reponses", "Réponses"],
   ]
-    .filter(([s]) => (s !== "extrait" || r.extrait) && (s !== "questions" || r.questions?.length))
+    .filter(([s]) => (s !== "extrait" || r.extrait) && (s !== "questions" || r.questions?.length) && (s !== "reponses" || r.archive))
     .map(([s, label]) => `<li><button type="button" data-goto="${id(s)}">${label}</button></li>`)
     .join("");
 
-  const head = `<div data-view="${slug}" hidden>
-<a class="back" href="#/">← Tous les brouillons</a>
+  const a = r.archive;
+  const head = `<div data-view="${slug}" class="fiche${a ? " is-archived" : ""}"${a ? ' data-archived="1"' : ""} hidden>
+<a class="back" href="${a ? "#/archives" : "#/"}">← ${a ? "Toutes les analyses archivées" : "Tous les brouillons"}</a>
+${a ? renderArchiveBanner(a) : '<p class="anno-help">Survolez un paragraphe ou sélectionnez un passage pour ajouter une note.</p>'}
 <header class="f-head tier-${tier.cls}">
   <p class="badge-cat">${esc(r.theme)}</p>
   <div id="${id("titre")}" data-comment-target><h1>${esc(r.titre)}</h1></div>
@@ -318,20 +338,50 @@ function renderVue(slug, fiche) {
     `<div class="foot3"><span>// 01 Analyses générées par l'IA</span><span>// 02 Méthodologie avec des experts</span><span>// 03 Sources publiques et documentées</span></div>\n` +
     `<footer class="foot tier-${tier.cls}"><span>Version ${r.version} · ${date} · étape 1, analyse initiale non encore contrôlée</span><span><b>${n.score_total}/100</b> · ${tier.label}</span></footer></div>\n`;
 
-  return head + questions + resume + score + mesureInitiale + objectif + renderDetailScore(id("detail-score"), n) + extrait + raisonnement + longevite + impact + cert + angles + verdict + sources + fiabilite + vote + foot;
+  const reponses = a ? renderReponses(id("reponses"), a) : "";
+
+  return head + reponses + questions + resume + score + mesureInitiale + objectif + renderDetailScore(id("detail-score"), n) + extrait + raisonnement + longevite + impact + cert + angles + verdict + sources + fiabilite + vote + foot;
+}
+
+// ---------- archives ----------
+
+function renderArchiveBanner(a) {
+  const v2 = a.version_suivante ? ` Version suivante : <code>${esc(path.basename(a.version_suivante))}</code>.` : "";
+  return `<p class="archive-banner"><span class="arch-badge">Analyse archivée</span><span>Relecture traitée le ${dateFr(a.date)}.${v2} Les réponses aux commentaires sont regroupées ci-dessous et affichées sous chaque commentaire.</span></p>`;
+}
+
+function renderReponses(sectionId, a) {
+  const items = a.reponses
+    .map(
+      (x) =>
+        `<li><div class="rp-q"><div class="chead"><b>${esc(x.auteur || "Anonyme")}</b>${x.section ? `<span>${esc(x.section)}</span>` : ""}</div>${x.commentaire ? `<p>${esc(x.commentaire)}</p>` : ""}</div>` +
+        `<div class="creply"><b>Réponse de Perlimpinpin</b>${ps(x.reponse)}</div></li>`,
+    )
+    .join("");
+  return (
+    `<section class="review replies" id="${sectionId}"><p class="label">Relecture traitée</p><h2>Réponses aux commentaires</h2>` +
+    (a.synthese ? ps(a.synthese) : "") +
+    `<ol class="rp-list">${items}</ol></section>\n`
+  );
 }
 
 function renderCarte(slug, fiche) {
   const r = fiche.relecture;
+  const a = r.archive;
   const score = fiche.notation_detaillee.score_total;
   const tier = tierOf(score);
+  const n = a?.reponses.length ?? 0;
+  const bas = a
+    ? `<p class="meta"><span>Étape 1</span><span>Version ${r.version}</span><span>${dateFr(r.date)}</span></p>` +
+      `<p class="arch-line"><span class="arch-badge">Archivée · version suivante déposée</span><span>le ${dateFr(a.date)} · ${n} réponse${n > 1 ? "s" : ""} aux commentaires</span></p></div>`
+    : `<p class="meta"><span>Étape 1</span><span>Version ${r.version}</span><span>${dateFr(r.date)}</span><span data-statut>À relire</span></p>` +
+      `<div class="chrono" data-chrono="${slug}"></div></div>`;
   return (
-    `<article class="fcard tier-${tier.cls}" data-fiche="${slug}" data-cat="${esc(r.theme)}"><div class="main">` +
+    `<article class="fcard tier-${tier.cls}${a ? " archived" : ""}" data-fiche="${slug}" data-cat="${esc(r.theme)}"><div class="main">` +
     `<p class="badge-cat">${esc(r.theme)} · ${esc(r.candidat)}</p>` +
     `<h2><a class="fcard-link" href="#/${slug}">${esc(r.titre)}</a></h2>` +
     `<p class="teaser">${esc(fiche.phrase_teasing)}</p>` +
-    `<p class="meta"><span>Étape 1</span><span>Version ${r.version}</span><span>${dateFr(r.date)}</span><span data-statut>À relire</span></p>` +
-    `<div class="chrono" data-chrono="${slug}"></div></div>` +
+    bas +
     `<div class="fscore"><span class="n">${score}<small>/100</small></span><span class="tierl">${tier.label}</span><span class="go" aria-hidden="true">→</span></div></article>`
   );
 }
@@ -355,6 +405,15 @@ function renderFiltres(fiches) {
 
 const CHAMPS_RELECTURE = ["titre", "candidat", "theme", "date", "version"];
 
+function verifierArchive(a) {
+  if (a == null) return null;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(a.date ?? "")) return "date manquante ou pas au format AAAA-MM-JJ.";
+  if (!Array.isArray(a.reponses)) return "\"reponses\" doit être une liste (éventuellement vide).";
+  const i = a.reponses.findIndex((x) => !x?.commentaire_id || !String(x.reponse ?? "").trim());
+  if (i >= 0) return `réponse n° ${i + 1} : "commentaire_id" et "reponse" sont obligatoires.`;
+  return null;
+}
+
 function chargerFiches() {
   const files = readdirSync(DATA_DIR).filter((f) => f.endsWith(".json")).sort();
   const fiches = [];
@@ -371,6 +430,11 @@ function chargerFiches() {
       erreurs.push(`${file} : champs manquants dans "relecture" : ${manquants.join(", ")}.`);
       continue;
     }
+    const errArchive = verifierArchive(fiche.relecture.archive);
+    if (errArchive) {
+      erreurs.push(`${file} : bloc "archive" invalide : ${errArchive}`);
+      continue;
+    }
     for (const e of checkNotationCoherence(fiche.notation_detaillee)) console.warn(`⚠ ${file} : ${e}`);
     fiches.push({ slug, fiche });
   }
@@ -383,9 +447,28 @@ function chargerFiches() {
 }
 
 const fiches = chargerFiches();
+const brouillons = fiches.filter(({ fiche }) => !fiche.relecture.archive);
+// Archives : les plus récemment archivées d'abord.
+const archives = fiches
+  .filter(({ fiche }) => fiche.relecture.archive)
+  .sort((a, b) => b.fiche.relecture.archive.date.localeCompare(a.fiche.relecture.archive.date) || a.slug.localeCompare(b.slug));
+
+// { slug: { idCommentaire: réponse } }, lu par la page pour afficher chaque réponse sous son commentaire.
+const reponses = Object.fromEntries(
+  archives.map(({ slug, fiche }) => [slug, Object.fromEntries(fiche.relecture.archive.reponses.map((x) => [x.commentaire_id, x.reponse]))]),
+);
+const reponsesJson = JSON.stringify(reponses).replace(/</g, "\\u003c");
+
 const html = readFileSync(TEMPLATE_PATH, "utf8")
-  .replace("{{FILTRES}}", () => renderFiltres(fiches))
-  .replace("{{CARTES}}", () => fiches.map(({ slug, fiche }) => renderCarte(slug, fiche)).join(""))
-  .replace("{{VUES}}", () => fiches.map(({ slug, fiche }) => renderVue(slug, fiche)).join("\n\n\n"));
+  .replace("{{FILTRES}}", () => renderFiltres(brouillons))
+  .replace("{{CARTES}}", () => brouillons.map(({ slug, fiche }) => renderCarte(slug, fiche)).join(""))
+  .replace("{{NB_ARCHIVES}}", () => String(archives.length))
+  .replace("{{ARCHIVES}}", () =>
+    archives.length
+      ? archives.map(({ slug, fiche }) => renderCarte(slug, fiche)).join("")
+      : '<p class="cempty">Aucune analyse archivée pour l’instant.</p>',
+  )
+  .replace("{{VUES}}", () => [...brouillons, ...archives].map(({ slug, fiche }) => renderVue(slug, fiche)).join("\n\n\n"))
+  .replace("{{REPONSES}}", () => reponsesJson);
 writeFileSync(OUTPUT_PATH, html);
-console.log(`✓ ${path.relative(ROOT, OUTPUT_PATH)} : ${fiches.length} fiche(s) (${fiches.map((f) => f.slug).join(", ")}).`);
+console.log(`✓ ${path.relative(ROOT, OUTPUT_PATH)} : ${brouillons.length} brouillon(s) (${brouillons.map((f) => f.slug).join(", ") || "aucun"}), ${archives.length} archivée(s) (${archives.map((f) => f.slug).join(", ") || "aucune"}).`);

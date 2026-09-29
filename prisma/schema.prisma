@@ -373,6 +373,11 @@ model RelectureComment {
   authorName   String?
   body         String
   createdAt    DateTime @default(now())
+  // Annotation (surligneur + note) : passage cité et sa position, en
+  // caractères, dans le texte de la section. Nuls pour un commentaire de section.
+  quotedText   String?
+  startOffset  Int?
+  endOffset    Int?
 
   @@index([ficheSlug, sectionId])
 }

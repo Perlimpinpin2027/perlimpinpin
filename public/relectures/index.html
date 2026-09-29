@@ -13,6 +13,7 @@
   --rule:#e4e4e7; --soft:#f4f4f5; --track:#ececee;
   --blue:#2563eb; --orange:#ea580c; --pill:rgba(255,255,255,.86);
   --warn-bg:#fef9c3; --warn-line:#facc15; --warn-ink:#713f12;
+  --hl:#fff3a3; --hl-strong:#ffe36b; --note-bg:#fff3a3; --note-line:#ead56a; --note-ink:#3d3510;
   --ok:#15803d; --ok-soft:#dcfce7; --mid:#b45309; --mid-soft:#fef3c7; --bad:#b91c1c; --bad-soft:#fee2e2;
   --t-irreal:#b91c1c; --t-fragile:#dc2626; --t-partiel:#ea580c; --t-plausible:#d97706; --t-solide:#65a30d; --t-exemplaire:#16a34a;
   --sans:"Geist",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
@@ -24,6 +25,7 @@
     --rule:#2c2c2a; --soft:#222220; --track:#2a2a28;
     --blue:#7aa7f7; --orange:#fb923c; --pill:rgba(26,26,25,.86);
     --warn-bg:#2b2508; --warn-line:#8a6d0b; --warn-ink:#fde68a;
+    --hl:rgba(255,232,110,.26); --hl-strong:rgba(255,232,110,.46); --note-bg:#efe28f; --note-line:#c9b650; --note-ink:#2e2808;
     --ok:#4ade80; --ok-soft:#10261a; --mid:#fbbf24; --mid-soft:#2a2108; --bad:#f87171; --bad-soft:#2d1414;
     --t-irreal:#f87171; --t-fragile:#f87171; --t-partiel:#fb923c; --t-plausible:#fbbf24; --t-solide:#a3e635; --t-exemplaire:#4ade80;
   }
@@ -33,6 +35,7 @@
   --rule:#2c2c2a; --soft:#222220; --track:#2a2a28;
   --blue:#7aa7f7; --orange:#fb923c; --pill:rgba(26,26,25,.86);
   --warn-bg:#2b2508; --warn-line:#8a6d0b; --warn-ink:#fde68a;
+  --hl:rgba(255,232,110,.26); --hl-strong:rgba(255,232,110,.46); --note-bg:#efe28f; --note-line:#c9b650; --note-ink:#2e2808;
   --ok:#4ade80; --ok-soft:#10261a; --mid:#fbbf24; --mid-soft:#2a2108; --bad:#f87171; --bad-soft:#2d1414;
   --t-irreal:#f87171; --t-fragile:#f87171; --t-partiel:#fb923c; --t-plausible:#fbbf24; --t-solide:#a3e635; --t-exemplaire:#4ade80;
 }
@@ -266,6 +269,32 @@ h3{margin:0}
 .chead span{color:var(--faint);font-family:var(--mono);font-size:11.5px}
 .citem p{margin:0;font-size:14.5px;white-space:pre-wrap;overflow-wrap:anywhere}
 .cempty{margin:0 0 14px;color:var(--faint);font-size:14px}
+
+/* ---------- archives ---------- */
+.pill-link{font-size:13.5px;font-weight:500;color:var(--ink);text-decoration:none;border:1px solid var(--rule);border-radius:999px;padding:6px 13px}
+.pill-link:hover{border-color:var(--ink)}
+.archives{margin-top:64px;padding-top:36px;border-top:1px solid var(--rule);display:grid;gap:10px}
+.archives h2{font-size:clamp(1.5rem,4vw,2.1rem)}
+.archives > p{max-width:60ch;color:var(--muted);margin:0}
+.archives .list{margin-top:14px}
+.fcard.archived{background:var(--soft)}
+.arch-line{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin:2px 0 0;font-family:var(--mono);font-size:12px;color:var(--faint)}
+.arch-badge{display:inline-flex;align-items:center;gap:7px;background:var(--surface);color:var(--muted);border:1px solid var(--rule);border-radius:999px;padding:3px 11px;font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.02em}
+.arch-badge::before{content:"";width:7px;height:7px;border-radius:2px;background:currentColor}
+.archive-banner{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:18px 0 0;padding:12px 16px;border:1px solid var(--rule);border-radius:14px;background:var(--surface);font-size:13.5px;color:var(--muted)}
+.archive-banner code{font-family:var(--mono);font-size:12.5px;color:var(--ink);overflow-wrap:anywhere}
+.replies{margin-top:28px}
+.replies > p{max-width:70ch;color:var(--muted)}
+.rp-list{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:14px}
+.rp-list > li{display:grid;gap:8px;background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:14px 16px}
+.rp-q p{margin:0;font-size:14.5px;white-space:pre-wrap;overflow-wrap:anywhere}
+.creply{border-left:3px solid var(--blue);padding:2px 0 2px 12px;display:grid;gap:4px}
+.creply b{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--blue);font-weight:500}
+.creply p{margin:0;font-size:14.5px;overflow-wrap:anywhere}
+.citem .creply{margin-top:10px}
+.anote .creply{margin-top:8px;border-left-color:var(--note-ink)}
+.anote .creply b{color:var(--note-ink)}
+.anote .creply p{font-size:13px}
 .cform{display:grid;gap:8px;max-width:520px}
 .cform input,.cform textarea{font:inherit;font-size:14.5px;background:var(--surface);color:var(--ink);border:1px solid var(--rule);border-radius:10px;padding:9px 12px;width:100%}
 .cform textarea{min-height:80px;resize:vertical}
@@ -273,12 +302,56 @@ h3{margin:0}
 .cform button:disabled{opacity:.6;cursor:default}
 .csent{margin:0;color:var(--ok);font-size:13px}
 .cerr{margin:0;color:var(--bad);font-size:13px}
+
+/* ---------- annotations : surligneur + note jaune ---------- */
+.annot-btn{position:absolute;z-index:50;transform:translate(-50%,-100%);font:inherit;font-size:13px;font-weight:500;background:var(--ink);color:var(--ink-inv);border:0;border-radius:999px;padding:6px 13px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.18);white-space:nowrap;-webkit-user-select:none;user-select:none}
+.annot-btn.below{transform:translate(-50%,0)}
+.annot-btn[hidden]{display:none}
+.anno-help{display:flex;align-items:center;gap:8px;margin:14px 0 0;font-size:13.5px;color:var(--muted)}
+.anno-help::before{content:"";flex:none;width:10px;height:10px;border-radius:3px;background:var(--hl);border:1px solid var(--note-line)}
+.anno-help[hidden]{display:none}
+mark.anno-hl{background:var(--hl);color:inherit;border-radius:2px;padding:0}
+mark.anno-hl.pending{background:var(--hl-strong)}
+.anno-add{font:inherit;font-size:12.5px;font-weight:500;line-height:1.4;background:var(--hl);color:var(--note-ink);border:1px solid var(--note-line);border-radius:999px;padding:2px 10px;cursor:pointer;white-space:nowrap;-webkit-user-select:none;user-select:none}
+.anno-add:hover{background:var(--hl-strong)}
+.anno-add[hidden]{display:none}
+.anote{background:var(--note-bg);color:var(--note-ink);border:1px solid var(--note-line);border-radius:4px 4px 4px 14px;padding:10px 12px;font-size:13.5px;line-height:1.45;box-shadow:0 1px 0 rgba(0,0,0,.04),0 6px 16px rgba(80,60,0,.12)}
+.anote-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:12.5px;margin-bottom:4px}
+.anote-h b{font-weight:600;overflow-wrap:anywhere}
+.anote-h span{flex:none;font-family:var(--mono);font-size:11px;opacity:.72}
+.anote-q{margin:0 0 6px;font-size:12px;font-style:italic;opacity:.78;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.anote-b{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
+.anote-orphan{margin:0 0 6px;font-size:12px;font-weight:500}
+.anote .cerr{color:#9f1d1d}
+.anote-draft{display:grid;gap:7px}
+.anote-draft .anote-q{margin:0}
+.anote-draft input,.anote-draft textarea{font:inherit;font-size:13.5px;background:rgba(255,255,255,.72);color:#1c1a0a;border:1px solid var(--note-line);border-radius:6px;padding:6px 8px;width:100%}
+.anote-draft textarea{min-height:76px;resize:vertical}
+.anote-actions{display:flex;gap:6px}
+.anote-actions button{font-size:12.5px;font-weight:500;border:1px solid var(--note-ink);border-radius:999px;padding:4px 12px;cursor:pointer}
+.anote-actions [type=submit]{background:var(--note-ink);color:var(--note-bg)}
+.anote-actions [type=button]{background:transparent;color:var(--note-ink)}
+/* Petit écran : notes et pastille « + Note » à la fin de la section. */
+.anno-inline{display:grid;gap:10px;margin-top:12px}
+.anno-inline:empty{display:none}
+.anno-inline .anno-add{justify-self:start}
+/* Écran large : les notes vont dans une marge droite propre à la fiche. */
+.anno-layer{display:none}
+@media (min-width:760px){
+  body.on-fiche .wrap{max-width:1280px}
+  .fiche{--mgw:212px;position:relative;padding-right:var(--mgw)}
+  .anno-layer{display:block;position:absolute;top:0;right:0;bottom:0;width:calc(var(--mgw) - 24px);pointer-events:none}
+  .anno-layer>*{position:absolute;left:0;right:0;pointer-events:auto}
+  .anno-layer>.anno-add{right:auto}
+}
+@media (min-width:760px) and (max-width:1023px){.fiche .cert-grid,.fiche .grid2{grid-template-columns:minmax(0,1fr)}}
+@media (min-width:1024px){.fiche{--mgw:256px}}
 </style>
 </head>
 <body>
 <div class="wrap">
 <header class="pill"><a class="brand" href="#/">Perlimpinpin</a>
-<div class="pill-r"><span class="pill-tag">Relecture interne</span><a class="btn-dark" href="#/">Brouillons</a></div></header>
+<div class="pill-r"><span class="pill-tag">Relecture interne</span><a class="pill-link" href="#/archives">Archives</a><a class="btn-dark" href="#/">Brouillons</a></div></header>
 <p class="banner">Brouillon : analyse non publiée. Elle n'est visible que par les personnes qui ont ce lien.</p>
 
 <div data-view="hub">
@@ -289,13 +362,21 @@ h3{margin:0}
   <ol class="steps" aria-label="Circuit de relecture"><li>Analyse de Claude (étape 1)</li><li class="now">Relecture du comité</li><li>Révision</li><li>Validation puis étapes 2 et 3</li></ol>
   <div class="admin" id="chrono-admin"></div>
 </section>
-<div class="filters" role="group" aria-label="Filtrer par thème"><button class="chipf" type="button" data-cat="all" aria-pressed="true">Tous<i>3</i></button><button class="chipf" type="button" data-cat="Logement" aria-pressed="false" disabled>Logement<i>0</i></button><button class="chipf" type="button" data-cat="Perspectives économiques, pouvoir d&#x27;achat, inflation &amp; fiscalité" aria-pressed="false">Économie &amp; pouvoir d&#x27;achat<i>2</i></button><button class="chipf" type="button" data-cat="IA &amp; Numérique" aria-pressed="false" disabled>IA &amp; Numérique<i>0</i></button><button class="chipf" type="button" data-cat="Éducation nationale" aria-pressed="false" disabled>Éducation nationale<i>0</i></button><button class="chipf" type="button" data-cat="Sécurité &amp; Justice" aria-pressed="false" disabled>Sécurité &amp; Justice<i>0</i></button><button class="chipf" type="button" data-cat="Santé &amp; Hôpital" aria-pressed="false" disabled>Santé &amp; Hôpital<i>0</i></button><button class="chipf" type="button" data-cat="Retraites" aria-pressed="false">Retraites<i>1</i></button><button class="chipf" type="button" data-cat="Emploi &amp; Chômage" aria-pressed="false" disabled>Emploi &amp; Chômage<i>0</i></button><button class="chipf" type="button" data-cat="Énergie &amp; Climat" aria-pressed="false" disabled>Énergie &amp; Climat<i>0</i></button><button class="chipf" type="button" data-cat="Alimentation &amp; Agriculture" aria-pressed="false" disabled>Alimentation &amp; Agriculture<i>0</i></button><button class="chipf" type="button" data-cat="Immigration" aria-pressed="false" disabled>Immigration<i>0</i></button><button class="chipf" type="button" data-cat="Démocratie et institutions" aria-pressed="false" disabled>Démocratie et institutions<i>0</i></button></div>
+<div class="filters" role="group" aria-label="Filtrer par thème"><button class="chipf" type="button" data-cat="all" aria-pressed="true">Tous<i>2</i></button><button class="chipf" type="button" data-cat="Logement" aria-pressed="false" disabled>Logement<i>0</i></button><button class="chipf" type="button" data-cat="Perspectives économiques, pouvoir d&#x27;achat, inflation &amp; fiscalité" aria-pressed="false">Économie &amp; pouvoir d&#x27;achat<i>2</i></button><button class="chipf" type="button" data-cat="IA &amp; Numérique" aria-pressed="false" disabled>IA &amp; Numérique<i>0</i></button><button class="chipf" type="button" data-cat="Éducation nationale" aria-pressed="false" disabled>Éducation nationale<i>0</i></button><button class="chipf" type="button" data-cat="Sécurité &amp; Justice" aria-pressed="false" disabled>Sécurité &amp; Justice<i>0</i></button><button class="chipf" type="button" data-cat="Santé &amp; Hôpital" aria-pressed="false" disabled>Santé &amp; Hôpital<i>0</i></button><button class="chipf" type="button" data-cat="Retraites" aria-pressed="false" disabled>Retraites<i>0</i></button><button class="chipf" type="button" data-cat="Emploi &amp; Chômage" aria-pressed="false" disabled>Emploi &amp; Chômage<i>0</i></button><button class="chipf" type="button" data-cat="Énergie &amp; Climat" aria-pressed="false" disabled>Énergie &amp; Climat<i>0</i></button><button class="chipf" type="button" data-cat="Alimentation &amp; Agriculture" aria-pressed="false" disabled>Alimentation &amp; Agriculture<i>0</i></button><button class="chipf" type="button" data-cat="Immigration" aria-pressed="false" disabled>Immigration<i>0</i></button><button class="chipf" type="button" data-cat="Démocratie et institutions" aria-pressed="false" disabled>Démocratie et institutions<i>0</i></button></div>
 <p class="count" id="hub-count"></p>
-<div class="list"><article class="fcard tier-plausible" data-fiche="villepin-compte-social-unique" data-cat="Perspectives économiques, pouvoir d&#x27;achat, inflation &amp; fiscalité"><div class="main"><p class="badge-cat">Perspectives économiques, pouvoir d&#x27;achat, inflation &amp; fiscalité · Dominique de Villepin</p><h2><a class="fcard-link" href="#/villepin-compte-social-unique">Un compte pour tous vos droits sociaux, s&#x27;il sait les ouvrir</a></h2><p class="teaser">Un seul compte pour voir et faire valoir tous vos droits sociaux : l&#x27;idée peut marcher, si elle va au-delà de l&#x27;affichage. Villepin s&#x27;en donne-t-il vraiment les moyens ?</p><p class="meta"><span>Étape 1</span><span>Version 2</span><span>25 septembre 2026</span><span data-statut>À relire</span></p><div class="chrono" data-chrono="villepin-compte-social-unique"></div></div><div class="fscore"><span class="n">64<small>/100</small></span><span class="tierl">Plausible sous condition</span><span class="go" aria-hidden="true">→</span></div></article><article class="fcard tier-plausible" data-fiche="lisnard-cee-carburant" data-cat="Perspectives économiques, pouvoir d&#x27;achat, inflation &amp; fiscalité"><div class="main"><p class="badge-cat">Perspectives économiques, pouvoir d&#x27;achat, inflation &amp; fiscalité · David Lisnard</p><h2><a class="fcard-link" href="#/lisnard-cee-carburant">Baisser le carburant en coupant un chèque climat</a></h2><p class="teaser">Suspendre les CEE ferait sans doute baisser le prix du carburant, et sans creuser le déficit. Mais qui financerait la rénovation énergétique pendant ce temps-là ?</p><p class="meta"><span>Étape 1</span><span>Version 1</span><span>22 septembre 2026</span><span data-statut>À relire</span></p><div class="chrono" data-chrono="lisnard-cee-carburant"></div></div><div class="fscore"><span class="n">68<small>/100</small></span><span class="tierl">Plausible sous condition</span><span class="go" aria-hidden="true">→</span></div></article><article class="fcard tier-partiel" data-fiche="zemmour-retraites" data-cat="Retraites"><div class="main"><p class="badge-cat">Retraites · Éric Zemmour</p><h2><a class="fcard-link" href="#/zemmour-retraites">Sortir de la répartition sans dire qui paie</a></h2><p class="teaser">Zemmour veut basculer peu à peu vers la capitalisation, sans dire qui paiera. Que coûterait vraiment la transition ?</p><p class="meta"><span>Étape 1</span><span>Version 1</span><span>21 septembre 2026</span><span data-statut>À relire</span></p><div class="chrono" data-chrono="zemmour-retraites"></div></div><div class="fscore"><span class="n">47<small>/100</small></span><span class="tierl">Partiellement fondé</span><span class="go" aria-hidden="true">→</span></div></article></div>
+<div class="list list-brouillons"><article class="fcard tier-plausible" data-fiche="villepin-compte-social-unique" data-cat="Perspectives économiques, pouvoir d&#x27;achat, inflation &amp; fiscalité"><div class="main"><p class="badge-cat">Perspectives économiques, pouvoir d&#x27;achat, inflation &amp; fiscalité · Dominique de Villepin</p><h2><a class="fcard-link" href="#/villepin-compte-social-unique">Un compte pour tous vos droits sociaux, s&#x27;il sait les ouvrir</a></h2><p class="teaser">Un seul compte pour voir et faire valoir tous vos droits sociaux : l&#x27;idée peut marcher, si elle va au-delà de l&#x27;affichage. Villepin s&#x27;en donne-t-il vraiment les moyens ?</p><p class="meta"><span>Étape 1</span><span>Version 2</span><span>25 septembre 2026</span><span data-statut>À relire</span></p><div class="chrono" data-chrono="villepin-compte-social-unique"></div></div><div class="fscore"><span class="n">64<small>/100</small></span><span class="tierl">Plausible sous condition</span><span class="go" aria-hidden="true">→</span></div></article><article class="fcard tier-plausible" data-fiche="lisnard-cee-carburant" data-cat="Perspectives économiques, pouvoir d&#x27;achat, inflation &amp; fiscalité"><div class="main"><p class="badge-cat">Perspectives économiques, pouvoir d&#x27;achat, inflation &amp; fiscalité · David Lisnard</p><h2><a class="fcard-link" href="#/lisnard-cee-carburant">Baisser le carburant en coupant un chèque climat</a></h2><p class="teaser">Suspendre les CEE ferait sans doute baisser le prix du carburant, et sans creuser le déficit. Mais qui financerait la rénovation énergétique pendant ce temps-là ?</p><p class="meta"><span>Étape 1</span><span>Version 1</span><span>22 septembre 2026</span><span data-statut>À relire</span></p><div class="chrono" data-chrono="lisnard-cee-carburant"></div></div><div class="fscore"><span class="n">68<small>/100</small></span><span class="tierl">Plausible sous condition</span><span class="go" aria-hidden="true">→</span></div></article></div>
+
+<section class="archives" id="archives" aria-labelledby="archives-titre">
+  <p class="label">// Archives · 1</p>
+  <h2 id="archives-titre">Analyses archivées</h2>
+  <p>Relectures traitées : la version suivante est déposée dans « analyses finales » pour les étapes 2 et 3. Chaque fiche reste consultable en lecture seule, avec la réponse apportée à chaque commentaire.</p>
+  <div class="list list-archives"><article class="fcard tier-partiel archived" data-fiche="zemmour-retraites" data-cat="Retraites"><div class="main"><p class="badge-cat">Retraites · Éric Zemmour</p><h2><a class="fcard-link" href="#/zemmour-retraites">Sortir de la répartition sans dire qui paie</a></h2><p class="teaser">Zemmour veut basculer peu à peu vers la capitalisation, sans dire qui paiera. Que coûterait vraiment la transition ?</p><p class="meta"><span>Étape 1</span><span>Version 1</span><span>21 septembre 2026</span></p><p class="arch-line"><span class="arch-badge">Archivée · version suivante déposée</span><span>le 28 septembre 2026 · 3 réponses aux commentaires</span></p></div><div class="fscore"><span class="n">47<small>/100</small></span><span class="tierl">Partiellement fondé</span><span class="go" aria-hidden="true">→</span></div></article></div>
+</section>
 </div>
 
-<div data-view="villepin-compte-social-unique" hidden>
+<div data-view="villepin-compte-social-unique" class="fiche" hidden>
 <a class="back" href="#/">← Tous les brouillons</a>
+<p class="anno-help">Survolez un paragraphe ou sélectionnez un passage pour ajouter une note.</p>
 <header class="f-head tier-plausible">
   <p class="badge-cat">Perspectives économiques, pouvoir d&#x27;achat, inflation &amp; fiscalité</p>
   <div id="villepin-compte-social-unique-titre" data-comment-target><h1>Un compte pour tous vos droits sociaux, s&#x27;il sait les ouvrir</h1></div>
@@ -330,8 +411,9 @@ h3{margin:0}
 
 
 
-<div data-view="lisnard-cee-carburant" hidden>
+<div data-view="lisnard-cee-carburant" class="fiche" hidden>
 <a class="back" href="#/">← Tous les brouillons</a>
+<p class="anno-help">Survolez un paragraphe ou sélectionnez un passage pour ajouter une note.</p>
 <header class="f-head tier-plausible">
   <p class="badge-cat">Perspectives économiques, pouvoir d&#x27;achat, inflation &amp; fiscalité</p>
   <div id="lisnard-cee-carburant-titre" data-comment-target><h1>Baisser le carburant en coupant un chèque climat</h1></div>
@@ -366,16 +448,19 @@ h3{margin:0}
 
 
 
-<div data-view="zemmour-retraites" hidden>
-<a class="back" href="#/">← Tous les brouillons</a>
+<div data-view="zemmour-retraites" class="fiche is-archived" data-archived="1" hidden>
+<a class="back" href="#/archives">← Toutes les analyses archivées</a>
+<p class="archive-banner"><span class="arch-badge">Analyse archivée</span><span>Relecture traitée le 28 septembre 2026. Version suivante : <code>zemmour_retraite_capitalisation_etape1_v2.json</code>. Les réponses aux commentaires sont regroupées ci-dessous et affichées sous chaque commentaire.</span></p>
 <header class="f-head tier-partiel">
   <p class="badge-cat">Retraites</p>
   <div id="zemmour-retraites-titre" data-comment-target><h1>Sortir de la répartition sans dire qui paie</h1></div>
   <div class="who"><span class="mono-av" aria-hidden="true">EZ</span>
     <div><b>Éric Zemmour</b><span>Reconquête · 21 septembre 2026 · version 1</span></div>
     <button class="cbtn" type="button" data-target="zemmour-retraites-titre" style="margin-left:auto">Commenter le titre</button></div>
-  <ul class="goto" aria-label="Aller à"><li><button type="button" data-goto="zemmour-retraites-resume">Résumé</button></li><li><button type="button" data-goto="zemmour-retraites-score">Score</button></li><li><button type="button" data-goto="zemmour-retraites-detail-score">Détail</button></li><li><button type="button" data-goto="zemmour-retraites-extrait">Extrait</button></li><li><button type="button" data-goto="zemmour-retraites-raisonnement">Raisonnement</button></li><li><button type="button" data-goto="zemmour-retraites-verdict">Verdict</button></li><li><button type="button" data-goto="zemmour-retraites-sources">Sources</button></li><li><button type="button" data-goto="zemmour-retraites-fiabilite">Fiabilité</button></li><li><button type="button" data-goto="zemmour-retraites-questions">À valider</button></li></ul>
+  <ul class="goto" aria-label="Aller à"><li><button type="button" data-goto="zemmour-retraites-resume">Résumé</button></li><li><button type="button" data-goto="zemmour-retraites-score">Score</button></li><li><button type="button" data-goto="zemmour-retraites-detail-score">Détail</button></li><li><button type="button" data-goto="zemmour-retraites-extrait">Extrait</button></li><li><button type="button" data-goto="zemmour-retraites-raisonnement">Raisonnement</button></li><li><button type="button" data-goto="zemmour-retraites-verdict">Verdict</button></li><li><button type="button" data-goto="zemmour-retraites-sources">Sources</button></li><li><button type="button" data-goto="zemmour-retraites-fiabilite">Fiabilité</button></li><li><button type="button" data-goto="zemmour-retraites-questions">À valider</button></li><li><button type="button" data-goto="zemmour-retraites-reponses">Réponses</button></li></ul>
 </header>
+<section class="review replies" id="zemmour-retraites-reponses"><p class="label">Relecture traitée</p><h2>Réponses aux commentaires</h2><p>La version 2 distingue les deux ratios démographiques, ajoute un paragraphe sur les Pays-Bas et corrige le statut de la réforme de 2023, dont la hausse de l&#x27;âge légal est suspendue jusqu&#x27;au 1er janvier 2028. Aucune note ne change : le score reste de 47 sur 100.</p><ol class="rp-list"><li><div class="rp-q"><div class="chead"><b>Alexis</b><span>Titre</span></div><p>Je trouve le titre pas très clair, je pense qu&#x27;il faut dire explicitement le mot &quot;retraite&quot; et on indique la conclusion dans le titre &quot;sans dire qui paie&quot; alors que dans les autres titre ce n&#x27;est pas le cas.</p></div><div class="creply"><b>Réponse de Perlimpinpin</b><p>D&#x27;accord sur les deux points : le titre doit nommer les retraites et ne pas annoncer le verdict, comme les autres fiches. Le titre définitif est fixé à l&#x27;étape 3, qui reçoit cette consigne. Piste : « Retraites : sortir progressivement de la répartition pour la capitalisation ». Le constat « sans dire qui paie » reste dans la phrase d&#x27;accroche.</p></div></li><li><div class="rp-q"><div class="chead"><b>Alexis</b><span>Contexte national</span></div><p>Je ne comprend pas cette phrase: Le nombre de 20-64 ans par personne de 65 ans et plus passe de 2,5 en 2025 à 1,62 en 2070.
+Est-ce qu&#x27;on parle du nombre d&#x27;actif pour un retraité ? Si c&#x27;est le cas les chiffres ne sont pas corrects. Nous sommes à 1,77 et en 2060 l&#x27;INSEE prévoit 1,5 (source: https://www.insee.fr/fr/statistiques/1281165).</p></div><div class="creply"><b>Réponse de Perlimpinpin</b><p>Ce sont deux ratios différents. Le chiffre de la fiche (2,5 en 2025, 1,62 en 2070) compare des âges : les 20-64 ans aux 65 ans et plus, selon le rapport 2026 du COR. Il ne compte pas les actifs. Le chiffre que tu cites compare des cotisants à des retraités.</p><p>La version 2 présente les deux, clairement séparés : 2,5 puis 1,62 pour le ratio d&#x27;âges, environ 1,7 cotisant par retraité aujourd&#x27;hui puis 1,3 à 1,4 en 2070 (COR). La page Insee citée date de projections anciennes (horizon 2060) ; nous avons retenu les chiffres du COR 2026.</p></div></li><li><div class="rp-q"><div class="chead"><b>Alexis</b><span>Efficacité</span></div><p>Ca pourrait être bien d&#x27;avoir une analyse plus poussée des pays ayant un système par capitalisation (type Pays-Bas).</p></div><div class="creply"><b>Réponse de Perlimpinpin</b><p>Ajouté dans la version 2 (contexte international et critère Efficacité). Les fonds de pension néerlandais gèrent 1 720 milliards d&#x27;euros à la mi-2026 (banque centrale néerlandaise), mais les Pays-Bas ont gardé une pension de base par répartition, et ce capital s&#x27;est accumulé sur des décennies. Leur réforme de 2023 fait davantage porter le risque de marché aux assurés, avec une bascule à achever au 1er janvier 2028. Cet exemple confirme qu&#x27;aucun pays de référence n&#x27;est « sorti » de la répartition ; la note d&#x27;efficacité reste à 15 sur 30.</p></div></li></ol></section>
 <section class="review" id="zemmour-retraites-questions" data-comment-target><p class="label">Réservé au comité</p><h2>Points de jugement à valider</h2><p class="note">Les choix de notation les plus discutables. Cette section n'apparaîtra pas sur la fiche publiée.</p><ol class="qs"><li><span class="qn">Q1</span><div><b>Citation du candidat</b><span>La phrase de Zemmour vient d&#x27;une republication de presse de l&#x27;entretien BFMTV du 17 septembre 2026. Peut-on la vérifier sur l&#x27;enregistrement ou la transcription avant publication ?</span></div></li><li><span class="qn">Q2</span><div><b>Budget noté 3 sur 10</b><span>La part de cotisations n&#x27;étant pas annoncée, j&#x27;ai qualifié la faisabilité budgétaire d&#x27;incertaine (3/10) et non de fragile. Une note inférieure à 3 déclencherait le plafond et ramènerait toute l&#x27;opérationnalité à 10/30, soit un score total de 40 au lieu de 47. Le comité valide-t-il ce choix ?</span></div></li><li><span class="qn">Q3</span><div><b>Efficacité notée 15 sur 30</b><span>J&#x27;ai placé la note dans le bas de la zone incertaine parce que le candidat parle de sortir de la répartition, ce qui est la version la moins bien étayée par les exemples étrangers. Si le comité lit sa position comme une part complémentaire de type suédois, la note monterait.</span></div></li><li><span class="qn">Q4</span><div><b>Chiffres de Sarah Knafo</b><span>Ils sont cités dans le contexte du programme mais ne comptent pas dans la note, car ils n&#x27;engagent pas le candidat. Faut-il les garder, les alléger ou les retirer ?</span></div></li><li><span class="qn">Q5</span><div><b>Ordres de grandeur du coût</b><span>Les montants (28, 37 et 69 milliards d&#x27;euros par an) sont des extrapolations de l&#x27;analyste sur des parts illustratives, présentées comme telles. Est-on à l&#x27;aise pour les publier sous cette forme ?</span></div></li><li><span class="qn">Q6</span><div><b>Titre provisoire</b><span>Le titre « Sortir de la répartition sans dire qui paie » résume le constat principal, mais il est appuyé. Le titre définitif sera fixé à l&#x27;étape 3 : faut-il en proposer un plus neutre ?</span></div></li></ol><div class="sb-foot"><button class="cbtn" type="button" data-target="zemmour-retraites-questions">Répondre à ces points</button></div></section>
 <section class="block" id="zemmour-retraites-resume" data-comment-target><div class="block-head"><h2>Le résumé de Perlimpinpin IA</h2><button class="cbtn" type="button" data-target="zemmour-retraites-resume">Commenter</button></div><div class="body"><p>Zemmour veut sortir peu à peu de la répartition pour passer à la capitalisation, et il admet que ce sera très long. Ce qui tient : le vieillissement est réel, une petite part de capitalisation existe déjà en France et a fonctionné en Suède, et rien n&#x27;empêche juridiquement de le faire par une loi. Ce qui ne tient pas : le financement de la transition n&#x27;est pas traité. Détourner une part de cotisations comparable à celle de la Suède coûterait environ 37 milliards d&#x27;euros par an, sept fois le déficit actuel des retraites, et l&#x27;âge de départ à 64 ou 65 ans n&#x27;en finance qu&#x27;une petite fraction.</p><p>Le candidat ne donne ni part, ni calendrier, ni financement, et cette idée n&#x27;était pas dans son programme de 2022. Score : 47 sur 100.</p><p><button class="linkarrow" type="button" data-goto="zemmour-retraites-raisonnement">Voir le raisonnement complet →</button></p><p class="mini">Phrase d'accroche (brouillon)</p><p><em>Zemmour veut basculer peu à peu vers la capitalisation, sans dire qui paiera. Que coûterait vraiment la transition ?</em></p></div></section>
 <section class="score tier-partiel" id="zemmour-retraites-score" data-comment-target><p class="label">Score Perlimpinpin</p><div class="score-top"><div class="big"><span class="n">47</span><span class="d">/100</span></div><div class="appr"><span class="v">Partiellement fondé</span></div><button class="cbtn" type="button" data-target="zemmour-retraites-score">Commenter la notation</button></div><p class="f-meta">Analyse réalisée avec Perlimpinpin 1.0 · étape 1 (brouillon) · 21 septembre 2026</p><p><button class="linkarrow" type="button" data-goto="zemmour-retraites-raisonnement">Lire l&#x27;analyse détaillée →</button></p></section>
@@ -401,9 +486,18 @@ h3{margin:0}
 <footer class="foot tier-partiel"><span>Version 1 · 21 septembre 2026 · étape 1, analyse initiale non encore contrôlée</span><span><b>47/100</b> · Partiellement fondé</span></footer></div>
 
 </div>
+<script>window.__RELECTURE_REPONSES = {"zemmour-retraites":{"cmudrnkri000004l5jigg8gwp":"D'accord sur les deux points : le titre doit nommer les retraites et ne pas annoncer le verdict, comme les autres fiches. Le titre définitif est fixé à l'étape 3, qui reçoit cette consigne. Piste : « Retraites : sortir progressivement de la répartition pour la capitalisation ». Le constat « sans dire qui paie » reste dans la phrase d'accroche.","cmudryj1x000004l9da6on3xy":"Ce sont deux ratios différents. Le chiffre de la fiche (2,5 en 2025, 1,62 en 2070) compare des âges : les 20-64 ans aux 65 ans et plus, selon le rapport 2026 du COR. Il ne compte pas les actifs. Le chiffre que tu cites compare des cotisants à des retraités.\n\nLa version 2 présente les deux, clairement séparés : 2,5 puis 1,62 pour le ratio d'âges, environ 1,7 cotisant par retraité aujourd'hui puis 1,3 à 1,4 en 2070 (COR). La page Insee citée date de projections anciennes (horizon 2060) ; nous avons retenu les chiffres du COR 2026.","cmudsk07w000004l23r5t7z5m":"Ajouté dans la version 2 (contexte international et critère Efficacité). Les fonds de pension néerlandais gèrent 1 720 milliards d'euros à la mi-2026 (banque centrale néerlandaise), mais les Pays-Bas ont gardé une pension de base par répartition, et ce capital s'est accumulé sur des décennies. Leur réforme de 2023 fait davantage porter le risque de marché aux assurés, avec une bascule à achever au 1er janvier 2028. Cet exemple confirme qu'aucun pays de référence n'est « sorti » de la répartition ; la note d'efficacité reste à 15 sur 30."}};</script>
 <script>(function () {
+  var REPONSES = window.__RELECTURE_REPONSES || {};
+  function isArchived(slug) { return Object.prototype.hasOwnProperty.call(REPONSES, slug); }
+  function replyHtml(slug, id) {
+    var r = (REPONSES[slug] || {})[id];
+    if (!r) return "";
+    return '<div class="creply"><b>Réponse de Perlimpinpin</b>' +
+      String(r).split(/\n\s*\n/).map(function (p) { return "<p>" + esc(p) + "</p>"; }).join("") + "</div>";
+  }
   var views = Array.prototype.slice.call(document.querySelectorAll("[data-view]"));
-  var cards = Array.prototype.slice.call(document.querySelectorAll(".fcard"));
+  var cards = Array.prototype.slice.call(document.querySelectorAll(".list-brouillons .fcard"));
   var filters = Array.prototype.slice.call(document.querySelectorAll(".chipf"));
   var countEl = document.getElementById("hub-count");
   var API = "/api/relectures/comments";
@@ -428,7 +522,8 @@ h3{margin:0}
 
   function route() {
     var h = (location.hash || "").replace(/^#\/?/, "");
-    var name = h || "hub";
+    var toArchives = h === "archives";
+    var name = h && !toArchives ? h : "hub";
     var found = false;
     views.forEach(function (v) {
       var on = v.getAttribute("data-view") === name;
@@ -440,7 +535,15 @@ h3{margin:0}
       views.forEach(function (v) { v.hidden = v.getAttribute("data-view") !== "hub"; });
     }
     window.scrollTo(0, 0);
-    if (name !== "hub") loadFiche(name);
+    if (toArchives) {
+      var arch = document.getElementById("archives");
+      if (arch) arch.scrollIntoView({ block: "start" });
+    }
+    document.body.classList.toggle("on-fiche", name !== "hub");
+    if (name !== "hub") {
+      loadFiche(name);
+      renderNotes(name);
+    }
   }
 
   function applyFilter(theme) {
@@ -472,12 +575,28 @@ h3{margin:0}
     fetch(API + "?fiche=" + encodeURIComponent(slug))
       .then(function (r) { return r.ok ? r.json() : []; })
       .then(function (list) {
+        var annots = [];
         (list || []).forEach(function (c) {
+          // Les annotations (passage surligné) ont leur propre affichage, hors des fils « Commenter ».
+          if (c.quotedText != null) return annots.push(c);
           (commentsBySection[c.sectionId] = commentsBySection[c.sectionId] || []).push(c);
         });
         updateBadges();
+        loadAnnotations(slug, annots);
+        if (isArchived(slug)) openAnsweredThreads(slug);
       })
       .catch(function () { /* pas de connexion possible : on affiche quand même la fiche, sans compteurs */ });
+  }
+
+  // Fiche archivée : on ouvre d'office les fils qui contiennent des commentaires.
+  function openAnsweredThreads(slug) {
+    var view = document.querySelector('[data-view="' + slug + '"]');
+    if (!view) return;
+    Object.keys(commentsBySection).forEach(function (sectionId) {
+      var b = view.querySelector('.cbtn[data-target="' + sectionId + '"]');
+      var section = document.getElementById(sectionId);
+      if (b && section && !section.querySelector(":scope > .cthread")) openThread(b);
+    });
   }
 
   function updateBadges() {
@@ -501,13 +620,13 @@ h3{margin:0}
     var list = commentsBySection[sectionId] || [];
     var itemsHtml = list.length
       ? list.map(function (c) {
-          return '<li class="citem"><div class="chead"><b>' + esc(c.authorName || "Anonyme") + "</b><span>" + esc(fmtDate(c.createdAt)) + "</span></div><p>" + esc(c.body) + "</p></li>";
+          return '<li class="citem"><div class="chead"><b>' + esc(c.authorName || "Anonyme") + "</b><span>" + esc(fmtDate(c.createdAt)) + "</span></div><p>" + esc(c.body) + "</p>" + replyHtml(c.ficheSlug, c.id) + "</li>";
         }).join("")
       : '<p class="cempty">Aucun commentaire pour l’instant.</p>';
     var view = panel.closest("[data-view]");
     if (view && isClosed(view.getAttribute("data-view"))) {
       panel.innerHTML = '<ul class="clist">' + itemsHtml + "</ul>" +
-        '<p class="cclosed">Relecture terminée : les commentaires sont fermés.</p>';
+        '<p class="cclosed">' + (isArchived(view.getAttribute("data-view")) ? "Analyse archivée : les commentaires sont fermés." : "Relecture terminée : les commentaires sont fermés.") + "</p>";
       return;
     }
     panel.innerHTML =
@@ -632,7 +751,7 @@ h3{margin:0}
     return new Date(f.reviewDeadline).getTime() <= nowMs() ? "closed" : "running";
   }
 
-  function isClosed(slug) { return stateOf(slug) === "closed"; }
+  function isClosed(slug) { return isArchived(slug) || stateOf(slug) === "closed"; }
 
   function pad(n) { return (n < 10 ? "0" : "") + n; }
 
@@ -706,7 +825,7 @@ h3{margin:0}
     var view = document.querySelector('[data-view="' + slug + '"]');
     if (!view) return;
     var banner = view.querySelector(".closed-banner");
-    if (closed) {
+    if (closed && !isArchived(slug)) {
       if (!banner) {
         banner = document.createElement("p");
         banner.className = "closed-banner";
@@ -722,6 +841,15 @@ h3{margin:0}
     Array.prototype.forEach.call(view.querySelectorAll(".cthread"), function (panel) {
       renderThread(panel, panel.parentElement.id);
     });
+    // Annotations : plus d'ajout possible une fois la relecture close.
+    var help = view.querySelector(".anno-help");
+    if (help) help.hidden = closed;
+    if (closed) {
+      if (draft && draft.slug === slug) cancelDraft();
+      hideAnnot();
+      hidePastille();
+    }
+    renderNotes(slug);
   }
 
   function renderChrono(slug) {
@@ -855,6 +983,546 @@ h3{margin:0}
       if (window.confirm(question)) sendChrono(act.closest(".chrono-form"), action, act);
     }
   });
+
+  // ---------- annotations : surligneur + note jaune ----------
+  // Enregistrées en base via /api/relectures/comments (RelectureComment avec quotedText).
+  // Une annotation porte sur un passage de la zone de texte d'une section
+  // commentable (.body, liste des questions ou titre). startOffset/endOffset
+  // sont des positions en caractères dans le textContent de cette zone : les
+  // <mark> du surlignage n'ajoutent pas de texte, les positions restent justes.
+  var ANNOT_ROOT = ":scope > .body, :scope > .qs, :scope > h1";
+  var ANNOT_PARAS = "p, li, blockquote, dd";
+  var marginMq = window.matchMedia("(min-width:760px)");
+  var hoverMq = window.matchMedia("(hover:hover) and (pointer:fine) and (min-width:760px)");
+  var coarseMq = window.matchMedia("(pointer:coarse)");
+  var annotsBySlug = {}; // ficheSlug -> [annotation]
+  var draft = null; // { slug, sectionId, target, el }
+
+  function openView() {
+    for (var i = 0; i < views.length; i++) {
+      if (!views[i].hidden && views[i].getAttribute("data-view") !== "hub") return views[i];
+    }
+    return null;
+  }
+
+  function canAnnotate(view) {
+    return Boolean(view) && !view.hidden && !isClosed(view.getAttribute("data-view"));
+  }
+
+  function rootOf(node) {
+    var el = node && (node.nodeType === 1 ? node : node.parentElement);
+    if (!el || el.closest("button, input, textarea, .anote, .anno-inline, .anno-layer")) return null;
+    var section = el.closest("[data-comment-target]");
+    var root = section && section.querySelector(ANNOT_ROOT);
+    return root && root.contains(el) ? root : null;
+  }
+
+  function textOffset(root, node, offset) {
+    var r = document.createRange();
+    r.setStart(root, 0);
+    r.setEnd(node, offset);
+    return r.toString().length;
+  }
+
+  // Cible d'annotation : positions débarrassées des blancs de bord.
+  function makeTarget(root, start, end) {
+    var full = root.textContent;
+    while (start < end && /\s/.test(full.charAt(start))) start++;
+    while (end > start && /\s/.test(full.charAt(end - 1))) end--;
+    if (end <= start) return null;
+    var section = root.closest("[data-comment-target]");
+    var view = section.closest("[data-view]");
+    if (!canAnnotate(view)) return null;
+    return { view: view, section: section, root: root, start: start, end: end, text: full.slice(start, end) };
+  }
+
+  // Sélection → cible. Un bout qui déborde de la zone de texte (titre de la
+  // section, marge, bouton) est rogné ; deux zones différentes sont refusées.
+  function selectionTarget() {
+    var sel = window.getSelection();
+    if (!sel || sel.isCollapsed || !sel.rangeCount) return null;
+    var range = sel.getRangeAt(0);
+    var r1 = rootOf(range.startContainer);
+    var r2 = rootOf(range.endContainer);
+    if (r1 && r2 && r1 !== r2) return null;
+    var root = r1 || r2;
+    if (!root) return null;
+    var start = r1 ? textOffset(root, range.startContainer, range.startOffset) : 0;
+    var end = r2 ? textOffset(root, range.endContainer, range.endOffset) : root.textContent.length;
+    return makeTarget(root, start, end);
+  }
+
+  function paragraphTarget(para) {
+    var root = para.closest("[data-comment-target]").querySelector(ANNOT_ROOT);
+    var start = textOffset(root, para, 0);
+    return makeTarget(root, start, start + para.textContent.length);
+  }
+
+  function sectionTarget(section) {
+    var root = section.querySelector(ANNOT_ROOT);
+    return root ? makeTarget(root, 0, root.textContent.length) : null;
+  }
+
+  // Paragraphes survolables : pas les intertitres (.mini) ni les lignes qui
+  // ne contiennent qu'un bouton (« Voir le raisonnement complet → »).
+  function paragraphsOf(root) {
+    if (root.matches("h1")) return [root];
+    return Array.prototype.filter.call(root.querySelectorAll(ANNOT_PARAS), function (p) {
+      if (p.matches(".mini")) return false;
+      var text = p.textContent.trim();
+      if (!text) return false;
+      var btnText = Array.prototype.map.call(p.querySelectorAll("button"), function (b) { return b.textContent; }).join("").trim();
+      return text !== btnText;
+    });
+  }
+
+  // Surligne [start, end[ de root en entourant chaque bout de texte d'un <mark>.
+  function wrapRange(root, start, end, id, cls) {
+    var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    var pos = 0, node, parts = [];
+    while ((node = walker.nextNode()) && pos < end) {
+      var len = node.data.length;
+      var s = Math.max(start - pos, 0), e = Math.min(end - pos, len);
+      // Les blancs entre deux blocs restent hors <mark> (sinon, dans une grille, ils deviendraient un élément).
+      if (s < e && /\S/.test(node.data.slice(s, e))) parts.push([node, s, e]);
+      pos += len;
+    }
+    return parts.map(function (p) {
+      var n = p[0];
+      if (p[2] < n.data.length) n.splitText(p[2]);
+      if (p[1] > 0) n = n.splitText(p[1]);
+      var mark = document.createElement("mark");
+      mark.className = cls;
+      mark.setAttribute("data-anno", id);
+      n.parentNode.insertBefore(mark, n);
+      mark.appendChild(n);
+      return mark;
+    });
+  }
+
+  function unwrapMarks(scope, id) {
+    Array.prototype.forEach.call(scope.querySelectorAll('mark.anno-hl[data-anno="' + id + '"]'), function (m) {
+      var parent = m.parentNode;
+      while (m.firstChild) parent.insertBefore(m.firstChild, m);
+      parent.removeChild(m);
+      parent.normalize();
+    });
+  }
+
+  function excerpt(text) {
+    var t = text.replace(/\s+/g, " ");
+    return "« " + (t.length > 90 ? t.slice(0, 90) + "…" : t) + " »";
+  }
+
+  function readAuthor() {
+    try { return localStorage.getItem("relectures-auteur") || ""; } catch (e) { return ""; }
+  }
+
+  function saveAuthor(name) {
+    try { localStorage.setItem("relectures-auteur", name); } catch (e) { /* stockage indisponible */ }
+  }
+
+  // --- brouillon de note (formulaire) ---
+
+  function startDraft(target) {
+    if (!target) return;
+    if (draft) {
+      if (draft.el.body.value.trim() && !window.confirm("Abandonner la note en cours ?")) return;
+      cancelDraft();
+    }
+    hideAnnot();
+    hidePastille();
+    var sel = window.getSelection();
+    if (sel) sel.removeAllRanges();
+    wrapRange(target.root, target.start, target.end, "draft", "anno-hl pending");
+    var form = document.createElement("form");
+    form.className = "anote anote-draft";
+    form.innerHTML =
+      '<p class="anote-q">' + esc(excerpt(target.text)) + "</p>" +
+      '<input type="text" name="author" placeholder="Ton nom (optionnel)" maxlength="80">' +
+      '<textarea name="body" placeholder="Ta note…" maxlength="4000" required></textarea>' +
+      '<div class="anote-actions"><button type="submit">Valider</button><button type="button" data-anno-cancel>Annuler</button></div>';
+    form.author.value = readAuthor();
+    form.addEventListener("submit", function (ev) {
+      ev.preventDefault();
+      submitDraft();
+    });
+    form.addEventListener("click", function (ev) {
+      if (ev.target.closest("[data-anno-cancel]")) cancelDraft();
+    });
+    form.addEventListener("keydown", function (ev) {
+      if (ev.key === "Escape") cancelDraft();
+    });
+    draft = { slug: target.view.getAttribute("data-view"), sectionId: target.section.id, target: target, el: form };
+    renderNotes(draft.slug);
+    form.body.focus({ preventScroll: true });
+  }
+
+  function cancelDraft() {
+    if (!draft) return;
+    var d = draft;
+    draft = null;
+    unwrapMarks(d.target.root, "draft");
+    d.el.remove();
+    renderNotes(d.slug);
+  }
+
+  function submitDraft() {
+    var d = draft;
+    var form = d.el;
+    var body = form.body.value.trim();
+    if (!body) return;
+    var author = form.author.value.trim();
+    saveAuthor(author);
+    var t = d.target;
+    var btn = form.querySelector('[type="submit"]');
+    var err = form.querySelector(".cerr");
+    if (err) err.remove();
+    btn.disabled = true;
+    btn.textContent = "Envoi…";
+    fetch(API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ficheSlug: d.slug,
+        sectionId: d.sectionId,
+        sectionLabel: (t.section.querySelector("h1,h2,h3") || {}).textContent || "",
+        authorName: author,
+        body: body,
+        quotedText: t.text,
+        startOffset: t.start,
+        endOffset: t.end,
+      }),
+    })
+      .then(function (r) {
+        return r.json().catch(function () { return {}; }).then(function (res) {
+          if (!r.ok) throw new Error(res.error || "Envoi impossible, réessaie.");
+          return res;
+        });
+      })
+      .then(function (annot) {
+        (annotsBySlug[annot.ficheSlug] = annotsBySlug[annot.ficheSlug] || []).push(annot);
+        // Brouillon abandonné pendant l'envoi : la note est enregistrée, elle s'affichera au prochain chargement.
+        if (draft !== d) return;
+        Array.prototype.forEach.call(t.root.querySelectorAll('mark.anno-hl[data-anno="draft"]'), function (m) {
+          m.classList.remove("pending");
+          m.setAttribute("data-anno", annot.id);
+        });
+        form.remove();
+        draft = null;
+        renderNotes(annot.ficheSlug);
+      })
+      .catch(function (e) {
+        btn.disabled = false;
+        btn.textContent = "Valider";
+        var p = document.createElement("p");
+        p.className = "cerr";
+        p.textContent = e.message;
+        form.appendChild(p);
+        var view = document.querySelector('[data-view="' + d.slug + '"]');
+        if (view) layoutNotes(view);
+      });
+  }
+
+  // Replace un passage enregistré dans le texte actuel de sa section. Si la
+  // fiche a changé depuis (nouvelle version), on cherche le passage cité, au
+  // plus près de son ancienne position ; introuvable : note « orpheline ».
+  function anchorAnnotation(a) {
+    var section = document.getElementById(a.sectionId);
+    var root = section && section.querySelector(ANNOT_ROOT);
+    if (!root || !a.quotedText) return false;
+    var full = root.textContent;
+    var start = a.startOffset;
+    if (full.slice(start, a.endOffset) !== a.quotedText) {
+      start = -1;
+      for (var i = full.indexOf(a.quotedText); i >= 0; i = full.indexOf(a.quotedText, i + 1)) {
+        if (start < 0 || Math.abs(i - a.startOffset) < Math.abs(start - a.startOffset)) start = i;
+      }
+      if (start < 0) return false;
+    }
+    return wrapRange(root, start, start + a.quotedText.length, a.id, "anno-hl").length > 0;
+  }
+
+  function loadAnnotations(slug, list) {
+    var view = document.querySelector('[data-view="' + slug + '"]');
+    if (!view) return;
+    // Rechargement de la fiche : on repart d'un texte sans surlignage (sauf le brouillon en cours).
+    Array.prototype.forEach.call(view.querySelectorAll('mark.anno-hl:not([data-anno="draft"])'), function (m) {
+      if (m.isConnected) unwrapMarks(view, m.getAttribute("data-anno"));
+    });
+    list.forEach(function (a) {
+      a.orphan = !anchorAnnotation(a);
+    });
+    annotsBySlug[slug] = list;
+    renderNotes(slug);
+  }
+
+  // --- rendu des notes ---
+
+  function noteEl(a) {
+    var el = document.createElement("aside");
+    el.className = "anote";
+    el.setAttribute("data-anno", a.id);
+    el.innerHTML =
+      '<div class="anote-h"><b>' + esc(a.authorName || "Anonyme") + "</b><span>" + esc(fmtDate(a.createdAt)) + "</span></div>" +
+      '<p class="anote-q">' + esc(excerpt(a.quotedText)) + "</p>" +
+      (a.orphan ? '<p class="anote-orphan">Passage introuvable dans cette version de la fiche.</p>' : "") +
+      '<p class="anote-b">' + esc(a.body) + "</p>" + replyHtml(a.ficheSlug, a.id);
+    return el;
+  }
+
+  function layerOf(view) {
+    var layer = view.querySelector(":scope > .anno-layer");
+    if (!layer) {
+      layer = document.createElement("div");
+      layer.className = "anno-layer";
+      view.appendChild(layer);
+      if (window.ResizeObserver) new ResizeObserver(function () { layoutNotes(view); }).observe(view);
+    }
+    return layer;
+  }
+
+  function inlineOf(section) {
+    var box = section.querySelector(":scope > .anno-inline");
+    if (!box) {
+      box = document.createElement("div");
+      box.className = "anno-inline";
+      section.querySelector(ANNOT_ROOT).insertAdjacentElement("afterend", box);
+    }
+    return box;
+  }
+
+  function renderNotes(slug) {
+    var view = document.querySelector('[data-view="' + slug + '"]');
+    if (!view) return;
+    var layer = layerOf(view);
+    Array.prototype.forEach.call(view.querySelectorAll(".anote:not(.anote-draft), .anno-inline > .anno-add"), function (el) { el.remove(); });
+    var inMargin = marginMq.matches;
+    var list = annotsBySlug[slug] || [];
+    list.forEach(function (a) {
+      var section = document.getElementById(a.sectionId);
+      if (!section) return;
+      (inMargin ? layer : inlineOf(section)).appendChild(noteEl(a));
+    });
+    if (draft && draft.slug === slug) {
+      (inMargin ? layer : inlineOf(draft.target.section)).appendChild(draft.el);
+    }
+    // Sans survol possible (petit écran, tactile) : pastille « + Note » permanente en fin de section.
+    if (!hoverMq.matches && canAnnotate(view)) {
+      Array.prototype.forEach.call(view.querySelectorAll("[data-comment-target]"), function (section) {
+        if (!section.querySelector(ANNOT_ROOT)) return;
+        var add = document.createElement("button");
+        add.type = "button";
+        add.className = "anno-add";
+        add.setAttribute("data-anno-section", section.id);
+        add.textContent = "+ Note";
+        inlineOf(section).appendChild(add);
+      });
+    }
+    layoutNotes(view);
+  }
+
+  // Aligne chaque note de la marge sur son passage, en poussant vers le bas
+  // celles qui se chevaucheraient.
+  function layoutNotes(view) {
+    if (!marginMq.matches || view.hidden) return;
+    var layer = view.querySelector(":scope > .anno-layer");
+    if (!layer) return;
+    var top0 = view.getBoundingClientRect().top;
+    var items = Array.prototype.map.call(layer.querySelectorAll(":scope > .anote"), function (el) {
+      var id = el.classList.contains("anote-draft") ? "draft" : el.getAttribute("data-anno");
+      var anchor = view.querySelector('mark.anno-hl[data-anno="' + id + '"]');
+      if (!anchor && id !== "draft") {
+        var a = (annotsBySlug[view.getAttribute("data-view")] || []).filter(function (x) { return x.id === id; })[0];
+        anchor = a && document.getElementById(a.sectionId);
+      }
+      return { el: el, want: anchor ? anchor.getBoundingClientRect().top - top0 : 0 };
+    });
+    items.sort(function (a, b) { return a.want - b.want; });
+    var bottom = -Infinity;
+    items.forEach(function (it) {
+      var y = Math.max(it.want, bottom + 8);
+      it.el.style.top = y + "px";
+      bottom = y + it.el.offsetHeight;
+    });
+  }
+
+  // --- bouton flottant « ✎ Annoter » sur une sélection ---
+  // Il n'apparaît qu'une fois la sélection terminée (bouton de la souris relâché) :
+  // affiché pendant le glisser, il passait sous le curseur et la sélection
+  // débordait dessus, hors de la section, ce qui le masquait aussitôt.
+  var annotBtn = document.createElement("button");
+  annotBtn.type = "button";
+  annotBtn.className = "annot-btn";
+  annotBtn.textContent = "✎ Annoter";
+  annotBtn.hidden = true;
+  document.body.appendChild(annotBtn);
+  var annotSel = null; // cible calculée au moment de la sélection
+  var mouseDown = false;
+  var annotPressing = false;
+
+  function hideAnnot() {
+    annotBtn.hidden = true;
+    annotSel = null;
+  }
+
+  function updateAnnot() {
+    if (annotPressing || mouseDown) return;
+    var target = selectionTarget();
+    if (!target) return hideAnnot();
+    // Les rectangles vides (bord de ligne ou d'élément) plaçaient le bouton loin du texte : on les ignore.
+    var rects = Array.prototype.filter.call(window.getSelection().getRangeAt(0).getClientRects(), function (r) {
+      return r.width > 1 && r.height > 1;
+    });
+    if (!rects.length) return hideAnnot();
+    var first = rects[0], last = rects[rects.length - 1];
+    // Au-dessus de la 1re ligne ; en dessous de la dernière si le haut est sous l'en-tête
+    // collant, ou au doigt (la barre de sélection du téléphone est au-dessus).
+    var below = first.top < 80 || coarseMq.matches;
+    var ref = below ? last : first;
+    var x = Math.max(60, Math.min(document.documentElement.clientWidth - 60, ref.left + ref.width / 2));
+    annotSel = target;
+    annotBtn.classList.toggle("below", below);
+    annotBtn.style.left = x + window.scrollX + "px";
+    annotBtn.style.top = (below ? ref.bottom + 8 : ref.top - 8) + window.scrollY + "px";
+    annotBtn.hidden = false;
+  }
+
+  var annotTimer = null;
+  function scheduleAnnot(delay) {
+    clearTimeout(annotTimer);
+    annotTimer = setTimeout(updateAnnot, delay);
+  }
+
+  document.addEventListener("mousedown", function (ev) {
+    if (ev.button !== 0 || annotBtn.contains(ev.target) || ev.target.closest(".anno-add")) return;
+    mouseDown = true;
+    hideAnnot();
+  });
+  document.addEventListener("mouseup", function () {
+    if (!mouseDown) return;
+    mouseDown = false;
+    scheduleAnnot(10);
+  });
+  // Clavier (Maj+flèches), poignées tactiles, double-clic : tout passe par selectionchange.
+  document.addEventListener("selectionchange", function () {
+    if (!mouseDown) scheduleAnnot(150);
+  });
+  // Au doigt, toucher le bouton peut vider la sélection avant le clic : on garde la cible.
+  annotBtn.addEventListener("pointerdown", function () {
+    annotPressing = true;
+    setTimeout(function () { annotPressing = false; }, 800);
+  });
+  annotBtn.addEventListener("mousedown", function (ev) { ev.preventDefault(); });
+  annotBtn.addEventListener("click", function () {
+    var target = annotSel;
+    annotPressing = false;
+    if (target) startDraft(target);
+  });
+
+  // --- pastille « + Note » au survol d'un paragraphe (écran large, souris) ---
+  var pastille = document.createElement("button");
+  pastille.type = "button";
+  pastille.className = "anno-add";
+  pastille.textContent = "+ Note";
+  pastille.hidden = true;
+  var pastillePara = null;
+  var lastMove = null;
+  var moveQueued = false;
+
+  function hidePastille() {
+    pastille.hidden = true;
+    pastillePara = null;
+  }
+
+  function showPastille(view, para) {
+    var layer = layerOf(view);
+    if (pastille.parentNode !== layer) layer.appendChild(pastille);
+    pastillePara = para;
+    pastille.style.top = para.getBoundingClientRect().top - view.getBoundingClientRect().top + "px";
+    pastille.hidden = false;
+  }
+
+  function paragraphAt(section, y) {
+    var root = section.querySelector(ANNOT_ROOT);
+    if (!root) return null;
+    var best = null, bestH = Infinity;
+    paragraphsOf(root).forEach(function (p) {
+      var r = p.getBoundingClientRect();
+      if (y >= r.top && y <= r.bottom && r.height < bestH) {
+        best = p;
+        bestH = r.height;
+      }
+    });
+    return best;
+  }
+
+  function onHover() {
+    moveQueued = false;
+    var ev = lastMove;
+    if (!hoverMq.matches || mouseDown || draft) return hidePastille();
+    if (pastille.contains(ev.target)) return;
+    var view = openView();
+    if (!canAnnotate(view)) return hidePastille();
+    var t = ev.target;
+    var section = t.closest && t.closest("[data-comment-target]");
+    if (section && view.contains(section) && !t.closest(".anote, .cthread")) {
+      var para = paragraphAt(section, ev.clientY);
+      return para ? showPastille(view, para) : hidePastille();
+    }
+    // Vers la marge : la pastille reste tant qu'on est à hauteur du paragraphe.
+    if (pastillePara && ev.clientX > pastillePara.getBoundingClientRect().left) {
+      var r = pastillePara.getBoundingClientRect();
+      if (ev.clientY >= r.top - 4 && ev.clientY <= r.bottom + 4) return;
+    }
+    hidePastille();
+  }
+
+  document.addEventListener("mousemove", function (ev) {
+    lastMove = ev;
+    if (!moveQueued) {
+      moveQueued = true;
+      requestAnimationFrame(onHover);
+    }
+  });
+  pastille.addEventListener("click", function () {
+    if (pastillePara) startDraft(paragraphTarget(pastillePara));
+  });
+
+  // Pastilles permanentes (petit écran) : note sur toute la zone de texte de la section.
+  document.addEventListener("click", function (ev) {
+    var add = ev.target.closest && ev.target.closest("[data-anno-section]");
+    if (add) startDraft(sectionTarget(document.getElementById(add.getAttribute("data-anno-section"))));
+  });
+
+  // Passage marge ↔ fin de section (ou survol ↔ pastilles permanentes) : on
+  // reconstruit les notes ; sinon un simple réalignement suffit.
+  function annotMode() {
+    return (marginMq.matches ? "m" : "i") + (hoverMq.matches ? "h" : "t");
+  }
+  var lastAnnotMode = annotMode();
+  function onViewportChange() {
+    hideAnnot();
+    var view = openView();
+    if (!view) return;
+    var mode = annotMode();
+    if (mode !== lastAnnotMode) {
+      lastAnnotMode = mode;
+      hidePastille();
+      renderNotes(view.getAttribute("data-view"));
+    } else {
+      layoutNotes(view);
+    }
+  }
+  window.addEventListener("resize", onViewportChange);
+  marginMq.addEventListener("change", onViewportChange);
+  hoverMq.addEventListener("change", onViewportChange);
+  window.addEventListener("hashchange", function () {
+    hideAnnot();
+    hidePastille();
+    cancelDraft();
+  });
+
 
   window.addEventListener("hashchange", route);
   route();

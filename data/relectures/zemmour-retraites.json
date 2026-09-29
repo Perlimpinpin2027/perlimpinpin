@@ -107,6 +107,34 @@
         "titre": "Titre provisoire",
         "texte": "Le titre « Sortir de la répartition sans dire qui paie » résume le constat principal, mais il est appuyé. Le titre définitif sera fixé à l'étape 3 : faut-il en proposer un plus neutre ?"
       }
-    ]
+    ],
+    "archive": {
+      "date": "2026-09-28",
+      "version_suivante": "data/analyses finales/Zemmour/zemmour_retraite_capitalisation_etape1_v2.json",
+      "synthese": "La version 2 distingue les deux ratios démographiques, ajoute un paragraphe sur les Pays-Bas et corrige le statut de la réforme de 2023, dont la hausse de l'âge légal est suspendue jusqu'au 1er janvier 2028. Aucune note ne change : le score reste de 47 sur 100.",
+      "reponses": [
+        {
+          "commentaire_id": "cmudrnkri000004l5jigg8gwp",
+          "auteur": "Alexis",
+          "section": "Titre",
+          "commentaire": "Je trouve le titre pas très clair, je pense qu'il faut dire explicitement le mot \"retraite\" et on indique la conclusion dans le titre \"sans dire qui paie\" alors que dans les autres titre ce n'est pas le cas.",
+          "reponse": "D'accord sur les deux points : le titre doit nommer les retraites et ne pas annoncer le verdict, comme les autres fiches. Le titre définitif est fixé à l'étape 3, qui reçoit cette consigne. Piste : « Retraites : sortir progressivement de la répartition pour la capitalisation ». Le constat « sans dire qui paie » reste dans la phrase d'accroche."
+        },
+        {
+          "commentaire_id": "cmudryj1x000004l9da6on3xy",
+          "auteur": "Alexis",
+          "section": "Contexte national",
+          "commentaire": "Je ne comprend pas cette phrase: Le nombre de 20-64 ans par personne de 65 ans et plus passe de 2,5 en 2025 à 1,62 en 2070.\nEst-ce qu'on parle du nombre d'actif pour un retraité ? Si c'est le cas les chiffres ne sont pas corrects. Nous sommes à 1,77 et en 2060 l'INSEE prévoit 1,5 (source: https://www.insee.fr/fr/statistiques/1281165).",
+          "reponse": "Ce sont deux ratios différents. Le chiffre de la fiche (2,5 en 2025, 1,62 en 2070) compare des âges : les 20-64 ans aux 65 ans et plus, selon le rapport 2026 du COR. Il ne compte pas les actifs. Le chiffre que tu cites compare des cotisants à des retraités.\n\nLa version 2 présente les deux, clairement séparés : 2,5 puis 1,62 pour le ratio d'âges, environ 1,7 cotisant par retraité aujourd'hui puis 1,3 à 1,4 en 2070 (COR). La page Insee citée date de projections anciennes (horizon 2060) ; nous avons retenu les chiffres du COR 2026."
+        },
+        {
+          "commentaire_id": "cmudsk07w000004l23r5t7z5m",
+          "auteur": "Alexis",
+          "section": "Efficacité",
+          "commentaire": "Ca pourrait être bien d'avoir une analyse plus poussée des pays ayant un système par capitalisation (type Pays-Bas).",
+          "reponse": "Ajouté dans la version 2 (contexte international et critère Efficacité). Les fonds de pension néerlandais gèrent 1 720 milliards d'euros à la mi-2026 (banque centrale néerlandaise), mais les Pays-Bas ont gardé une pension de base par répartition, et ce capital s'est accumulé sur des décennies. Leur réforme de 2023 fait davantage porter le risque de marché aux assurés, avec une bascule à achever au 1er janvier 2028. Cet exemple confirme qu'aucun pays de référence n'est « sorti » de la répartition ; la note d'efficacité reste à 15 sur 30."
+        }
+      ]
+    }
   }
 }

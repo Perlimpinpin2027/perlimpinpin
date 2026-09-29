@@ -4,7 +4,7 @@ import { mkdtempSync, readFileSync, writeFileSync, existsSync, rmSync } from "no
 import { tmpdir } from "node:os";
 import path from "node:path";
 import {
-  CLES, CLES_OBJECTIF, CLES_NOTATION, CLES_RELECTURE, DATA_DIR, RelectureError,
+  CLES, CLES_OBJECTIF, CLES_NOTATION, CLES_RELECTURE, CLES_RELECTURE_FACULTATIVES, DATA_DIR, RelectureError,
   ajouter, ficheEnLigne, fichesExistantes, lancer, parseDuree, redigerMail, slugDepuisChemin, verifierFiche,
   estNuit, finVersDuree, partiesParis, proposerFinJournee,
 } from "./relecture.js";
@@ -12,7 +12,12 @@ import {
 // Outil scripts/relecture.js (aucun accès réseau : fetch simulé, dossiers temporaires).
 
 const CODE = "code-comite-secret-123";
-const fixture = () => JSON.parse(readFileSync(path.join(DATA_DIR, "zemmour-retraites.json"), "utf8"));
+// Une fiche qu'on ajoute n'est jamais déjà archivée : on retire le bloc archive du modèle.
+const fixture = () => {
+  const fiche = JSON.parse(readFileSync(path.join(DATA_DIR, "zemmour-retraites.json"), "utf8"));
+  delete fiche.relecture.archive;
+  return fiche;
+};
 
 function tmp() {
   return mkdtempSync(path.join(tmpdir(), "relecture-test-"));
@@ -33,9 +38,17 @@ test("les clés attendues sont exactement celles des fiches de data/relectures/"
     assert.deepEqual(Object.keys(fiche), CLES, f);
     assert.deepEqual(Object.keys(fiche.mesure_vers_objectif), CLES_OBJECTIF, f);
     assert.deepEqual(Object.keys(fiche.notation_detaillee), CLES_NOTATION, f);
-    assert.deepEqual(Object.keys(fiche.relecture), CLES_RELECTURE, f);
+    const cles = Object.keys(fiche.relecture).filter((k) => !CLES_RELECTURE_FACULTATIVES.includes(k));
+    assert.deepEqual(cles, CLES_RELECTURE, f);
     assert.deepEqual(verifierFiche(fiche), [], f);
   }
+});
+
+test("verifierFiche : bloc archive accepté mais pas exigé", () => {
+  const fiche = fixture();
+  assert.deepEqual(verifierFiche(fiche), []);
+  fiche.relecture.archive = { date: "2026-09-29", reponses: [] };
+  assert.deepEqual(verifierFiche(fiche), []);
 });
 
 test("verifierFiche : clé manquante, clé en trop, bloc relecture absent", () => {
