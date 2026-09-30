@@ -28,13 +28,14 @@ export default function SupportBanner() {
         {/* Texte + bouton */}
         <div className="relative flex flex-col gap-5 px-6 pb-6 pt-2 lg:ml-auto lg:min-h-[250px] lg:w-[46%] lg:justify-center lg:py-10 lg:pl-0 lg:pr-8">
           <h2 className="text-3xl font-extrabold leading-[1.05] tracking-tight text-zinc-900 sm:text-4xl">
-            de l’intelligence artificielle à l’intelligence collective
+            L’objectivité ne se décrète pas.
+            <br className="hidden sm:block" /> Elle se construit.
           </h2>
 
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm leading-relaxed text-zinc-700 sm:text-base">
-              L’objectivité ne se décrète pas.
-              <br className="hidden sm:block" /> Elle se construit.
+              Relisez, commentez et challengez les analyses avant leur
+              publication.
             </p>
             <Link
               href="/nous-rejoindre"
