@@ -14,7 +14,7 @@ const DEFAULT_TITLE = (
   </>
 );
 const DEFAULT_TEXT =
-  "Relisez, commentez et challengez les analyses avant leur publication.";
+  "Relisez, commentez et challengez les analyses avant leur publication en adhérant à l'association pour 2€.";
 
 // `embedded` : le bandeau est posé dans une page qui gère déjà ses marges
 // (ex. page d'analyse) — on retire alors la <section> à marges propres.
