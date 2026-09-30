@@ -105,7 +105,10 @@ try {
     let crees = 0;
     for (const { email, nom } of nouveaux) {
       try {
-        const adherent = await prisma.adherent.create({ data: { email, nom }, select: { id: true } });
+        const adherent = await prisma.adherent.create({
+          data: { email, nom, source: "import" },
+          select: { id: true },
+        });
         crees += 1;
         appendJsonLine(INSERTIONS_LOG_PATH, {
           timestamp: new Date().toISOString(),
