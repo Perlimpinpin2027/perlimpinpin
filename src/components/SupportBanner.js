@@ -1,4 +1,4 @@
-const HELLOASSO_URL = "https://www.helloasso.com/associations/perlimpinpin-ai";
+import Link from "next/link";
 
 // Image du bandeau : public/bannière/Rejoindre.jpeg
 // (le dossier contient un accent, on encode l'URL pour être sûr qu'elle
@@ -36,14 +36,12 @@ export default function SupportBanner() {
               L’objectivité ne se décrète pas.
               <br className="hidden sm:block" /> Elle se construit.
             </p>
-            <a
-              href={HELLOASSO_URL}
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              href="/nous-rejoindre"
               className="inline-flex shrink-0 items-center justify-center gap-2 self-start whitespace-nowrap rounded-full bg-zinc-900 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-zinc-700 sm:self-auto"
             >
               Rejoignez-nous →
-            </a>
+            </Link>
           </div>
         </div>
       </div>
