@@ -69,7 +69,9 @@ function Divider() {
   return <span aria-hidden="true" className="h-5 w-px bg-zinc-300/80" />;
 }
 
-export default function Header() {
+// `club` : logo du Club Perlimpinpin à la place du logo du site (pages de
+// connexion et d'inscription du Club uniquement).
+export default function Header({ club = false } = {}) {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isContactOpen, setIsContactOpen] = useState(false);
@@ -117,18 +119,31 @@ export default function Header() {
             taille d'affichage) pour rester net en écran retina. aria-hidden
             sur l'image, aria-label porté par le Link pour un nom accessible
             propre ("Perlimpinpin"). */}
-        <Link
-          href="/"
-          aria-label="Perlimpinpin"
-          className="flex shrink-0 items-center"
-        >
-          <img
-            src="/logo/perlimpinpin-logo.png"
-            alt=""
-            aria-hidden="true"
-            className="h-[17.6px] w-auto sm:h-[22.4px]"
-          />
-        </Link>
+        {club ? (
+          // Espace Club (/relectures/connexion, /relectures/inscription) :
+          // logo du Club (public/logo/club-header.webp, version recadrée et
+          // détourée de club.jpg, 80px de haut) qui ramène vers /club.
+          <Link href="/club" className="flex min-w-0 shrink items-center">
+            <img
+              src="/logo/club-header.webp"
+              alt="Club Perlimpinpin"
+              className="h-[18px] w-auto max-w-full sm:h-[24px]"
+            />
+          </Link>
+        ) : (
+          <Link
+            href="/"
+            aria-label="Perlimpinpin"
+            className="flex shrink-0 items-center"
+          >
+            <img
+              src="/logo/perlimpinpin-logo.png"
+              alt=""
+              aria-hidden="true"
+              className="h-[17.6px] w-auto sm:h-[22.4px]"
+            />
+          </Link>
+        )}
 
         <nav className="hidden lg:block">
           <ul className="flex items-center gap-5 text-sm font-medium text-zinc-700 xl:gap-8">

@@ -15,7 +15,7 @@ export default async function RelectureInscriptionPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-page-gradient font-sans">
-      <Header />
+      <Header club />
 
       <main className="mx-auto w-full max-w-md flex-1 px-6 py-16 sm:px-8">
         <h1 className="font-serif text-3xl font-bold leading-tight text-zinc-900">Première connexion</h1>
