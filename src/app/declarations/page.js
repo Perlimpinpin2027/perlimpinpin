@@ -4,6 +4,7 @@ import FilterPillGroup from "@/components/FilterPillGroup";
 import MonoTag from "@/components/MonoTag";
 import { getPublishedDeclarations } from "@/lib/queries";
 import { getScoreBadge } from "@/lib/score";
+import { vignettePhoto } from "@/lib/photo-vignette";
 
 export const dynamic = "force-dynamic";
 
@@ -107,6 +108,7 @@ export default async function DeclarationsPage({ searchParams }) {
                   <Link
                     key={option.value}
                     href={buildSortHref(currentParams, option.value)}
+                    prefetch={false}
                     className={`rounded-full px-3 py-1 text-sm font-semibold transition-colors ${
                       sort === option.value
                         ? "bg-zinc-900 text-white"
@@ -134,12 +136,13 @@ export default async function DeclarationsPage({ searchParams }) {
                   <Link
                     key={d.id}
                     href={`/declarations/${d.id}`}
+                    prefetch={false}
                     className="flex flex-col gap-3 rounded-2xl border border-zinc-200 bg-white p-6 transition-colors hover:border-zinc-300 hover:bg-zinc-50"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex items-center gap-3">
                         <img
-                          src={d.candidatPhotoUrl || "/avatar-placeholder.svg"}
+                          src={vignettePhoto(d.candidatPhotoUrl) || "/avatar-placeholder.svg"}
                           alt={d.candidatNom}
                           className="h-9 w-9 shrink-0 rounded-lg object-cover object-top"
                         />

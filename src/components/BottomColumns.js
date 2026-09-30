@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { formatScore, getScoreBadge, getScoreBands } from "@/lib/score";
+import { vignettePhoto } from "@/lib/photo-vignette";
 
 function ColumnHeader({ title, subtitle, linkLabel, linkHref, icon }) {
   return (
@@ -49,7 +50,7 @@ function TopDeclarationsColumn({ declarations }) {
                   className="-m-2 flex items-start gap-3 rounded-xl p-2 transition-colors hover:bg-zinc-50"
                 >
                   <img
-                    src={item.photoUrl || "/avatar-placeholder.svg"}
+                    src={vignettePhoto(item.photoUrl) || "/avatar-placeholder.svg"}
                     alt={item.name}
                     className="h-9 w-9 shrink-0 rounded-lg object-cover object-top"
                   />
@@ -179,10 +180,11 @@ function ReliabilityIndexColumn({ candidates }) {
               </span>
               <Link
                 href={`/declarations?candidat=${encodeURIComponent(candidate.name)}`}
+                prefetch={false}
                 className="flex min-w-0 flex-1 items-center gap-3 transition-opacity hover:opacity-70"
               >
                 <img
-                  src={candidate.photoUrl || "/avatar-placeholder.svg"}
+                  src={vignettePhoto(candidate.photoUrl) || "/avatar-placeholder.svg"}
                   alt={candidate.name}
                   className="h-9 w-9 shrink-0 rounded-lg object-cover object-top"
                 />

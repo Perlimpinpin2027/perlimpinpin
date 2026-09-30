@@ -2,7 +2,8 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import { getPublishedCountsByThemeSlug } from "@/lib/queries";
 
-export const dynamic = "force-dynamic";
+// ISR : servie depuis le cache du CDN, recalculée au plus toutes les 5 minutes.
+export const revalidate = 300;
 
 export const metadata = {
   title: "Thèmes — Perlimpinpin",

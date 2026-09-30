@@ -4,8 +4,18 @@ import Header from "@/components/Header";
 import { getPublishedPropositionsByThemeSlug } from "@/lib/queries";
 import { getThemeBySlug } from "@/lib/themes";
 import { getScoreBadge } from "@/lib/score";
+import { vignettePhoto } from "@/lib/photo-vignette";
 
-export const dynamic = "force-dynamic";
+// ISR : chaque page est calculée à sa première visite, puis servie depuis le
+// cache du CDN et recalculée au plus toutes les 5 minutes. generateStaticParams
+// renvoie [] : le build ne lit pas Neon, et dynamicParams = true laisse
+// générer n'importe quelle adresse à la demande.
+export const revalidate = 300;
+export const dynamicParams = true;
+
+export async function generateStaticParams() {
+  return [];
+}
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
@@ -60,7 +70,7 @@ export default async function ThemeDetailPage({ params }) {
                     className="flex flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-6 transition-colors hover:border-zinc-300 hover:bg-zinc-50 sm:flex-row sm:items-center"
                   >
                     <img
-                      src={proposition.candidatPhotoUrl || "/avatar-placeholder.svg"}
+                      src={vignettePhoto(proposition.candidatPhotoUrl) || "/avatar-placeholder.svg"}
                       alt={proposition.candidatNom}
                       className="h-11 w-11 shrink-0 rounded-lg object-cover object-top"
                     />

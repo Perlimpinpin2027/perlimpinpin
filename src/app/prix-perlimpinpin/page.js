@@ -4,8 +4,10 @@ import MonoTag from "@/components/MonoTag";
 import ArrowIcon from "@/components/ArrowIcon";
 import { getScoreExtremes, getVoteMesureLeaderboard } from "@/lib/queries";
 import { getScoreBadge } from "@/lib/score";
+import { vignettePhoto } from "@/lib/photo-vignette";
 
-export const dynamic = "force-dynamic";
+// ISR : servie depuis le cache du CDN, recalculée au plus toutes les 5 minutes.
+export const revalidate = 300;
 
 const ICON_FLAG = (
   <path
@@ -60,7 +62,7 @@ function ExtremeCardContent({ card, border }) {
     <div className={`mt-3 rounded-2xl border border-l-4 border-zinc-200 bg-white p-6 ${border}`}>
       <div className="flex items-center gap-3">
         <img
-          src={card.candidatPhotoUrl || "/avatar-placeholder.svg"}
+          src={vignettePhoto(card.candidatPhotoUrl) || "/avatar-placeholder.svg"}
           alt={card.candidatNom}
           className="h-10 w-10 shrink-0 rounded-lg object-cover object-top"
         />
@@ -115,7 +117,7 @@ function VoteColumn({ title, cards, countLabel, pctLabel, direction }) {
                 {String(index + 1).padStart(2, "0")}
               </span>
               <img
-                src={card.candidatPhotoUrl || "/avatar-placeholder.svg"}
+                src={vignettePhoto(card.candidatPhotoUrl) || "/avatar-placeholder.svg"}
                 alt={card.candidatNom}
                 className="h-9 w-9 shrink-0 rounded-lg object-cover object-top"
               />

@@ -30,6 +30,7 @@ export default async function ThemeTags() {
         <Link
           key={theme}
           href={`/declarations?theme=${encodeURIComponent(theme)}`}
+          prefetch={false}
           className="rounded-full bg-zinc-100 px-4 py-1.5 text-zinc-700 transition-colors hover:bg-zinc-200"
         >
           {theme}
