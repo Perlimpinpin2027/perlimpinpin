@@ -22,8 +22,26 @@ function formatDate(date) {
 // Liste les commentaires de relecture (/relectures), groupés par fiche puis
 // par section, triés par date. Filtre optionnel sur ficheSlug :
 //   node scripts/relecture-comments.js lisnard-cee-carburant
+//
+// --json : sortie JSON (lecture seule, directement en base), au même format que
+// GET /api/relectures/comments?fiche=<slug> — un tableau trié par date, chaque
+// commentaire avec son id, sectionId, authorName, body, quotedText… C'est ce que
+// lit le traitement d'une relecture close, l'API étant réservée aux adhérents
+// connectés :
+//   node scripts/relecture-comments.js lisnard-cee-carburant --json
 async function main() {
-  const ficheSlug = process.argv[2];
+  const args = process.argv.slice(2);
+  const json = args.includes("--json");
+  const ficheSlug = args.find((arg) => !arg.startsWith("--"));
+
+  if (json) {
+    const list = await prisma.relectureComment.findMany({
+      where: ficheSlug ? { ficheSlug } : undefined,
+      orderBy: { createdAt: "asc" },
+    });
+    console.log(JSON.stringify(list, null, 2));
+    return;
+  }
 
   const comments = await prisma.relectureComment.findMany({
     where: ficheSlug ? { ficheSlug } : undefined,

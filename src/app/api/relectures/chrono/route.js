@@ -1,9 +1,11 @@
 import { timingSafeEqual } from "node:crypto";
 import { prisma } from "@/lib/prisma";
 import { isRelectureClosed } from "@/lib/relecture";
+import { getAdherent } from "@/lib/relecture-auth";
+import { SESSION_EXPIREE } from "@/lib/relecture-comments-core";
 
 // Chronomètre de relecture des fiches en brouillon (/relectures).
-// GET : lecture publique de l'état des chronos (pour l'affichage des cartes).
+// GET : état des chronos (affichage des cartes), réservé aux adhérents connectés.
 // POST : lancer / prolonger / arrêter / clore maintenant, réservé au comité via le code admin
 // (en-tête x-relecture-admin-code, comparé à RELECTURE_ADMIN_CODE).
 // Aucune publication automatique : l'échéance ne fait que fermer la relecture.
@@ -41,6 +43,7 @@ function parseDuration(data) {
 }
 
 export async function GET() {
+  if (!(await getAdherent())) return Response.json(SESSION_EXPIREE, { status: 401 });
   const fiches = await prisma.relectureFiche.findMany();
   return Response.json({ now: new Date(), fiches: fiches.map(serialize) });
 }

@@ -363,23 +363,30 @@ model LiveChatMessage {
 
 // Commentaire de relecture éditoriale laissé sur une fiche en brouillon
 // (/relectures). Rattaché à une fiche (ficheSlug) et à une section précise
-// de la fiche (sectionId, ex: "zemmour-retraites-score"). Pas d'authentification
-// pour l'instant : n'importe qui a le lien peut lire et poster.
+// de la fiche (sectionId, ex: "zemmour-retraites-score"). Lecture et écriture
+// réservées aux adhérents connectés (Club Perlimpinpin, /api/relectures/comments).
 model RelectureComment {
-  id           String   @id @default(cuid())
+  id           String    @id @default(cuid())
   ficheSlug    String
   sectionId    String
   sectionLabel String?
   authorName   String?
   body         String
-  createdAt    DateTime @default(now())
+  createdAt    DateTime  @default(now())
   // Annotation (surligneur + note) : passage cité et sa position, en
   // caractères, dans le texte de la section. Nuls pour un commentaire de section.
   quotedText   String?
   startOffset  Int?
   endOffset    Int?
+  // Adhérent qui a écrit le commentaire (Club Perlimpinpin). Nul pour les
+  // commentaires d'avant les comptes adhérents. authorName garde une copie du
+  // nom au moment du commentaire. Si le compte est supprimé, le commentaire
+  // reste (SetNull).
+  adherentId   Int?
+  adherent     Adherent? @relation(fields: [adherentId], references: [id], onDelete: SetNull)
 
   @@index([ficheSlug, sectionId])
+  @@index([adherentId])
 }
 
 // Chronomètre de relecture d'une fiche en brouillon (/relectures), rattaché
@@ -409,4 +416,6 @@ model Adherent {
   motDePasseHash String?
   activatedAt    DateTime?
   createdAt      DateTime  @default(now())
+
+  commentaires RelectureComment[]
 }
