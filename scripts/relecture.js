@@ -286,13 +286,20 @@ export async function lancer(
   if (dryRun) {
     log("[dry-run] Aucune requête envoyée. Ce qui serait fait :");
     log(`  1. GET ${pageUrl} et vérifier qu'elle contient data-fiche="${slug}"`);
+    log(`     en-tête x-relecture-admin-code : lu dans .env (masqué) — la page est réservée aux adhérents`);
     log(`  2. POST ${apiUrl}`);
     log(`     en-tête x-relecture-admin-code : lu dans .env (masqué)`);
     log(`     corps : ${JSON.stringify(corps)}`);
     echeance = estimee;
     log(`  Échéance estimée : ${formatClosedAt(echeance)} (heure de Paris)`);
   } else {
-    const page = await fetchFn(pageUrl, { headers: { "cache-control": "no-cache" } });
+    // La page est réservée aux adhérents du Club : le code comité en ouvre la
+    // lecture seule (voir lectureComiteAutorisee dans src/lib/relecture-auth-core.js).
+    const page = await fetchFn(pageUrl, { headers: { "cache-control": "no-cache", "x-relecture-admin-code": code } });
+    // Code refusé : le site renvoie vers la page de connexion (redirection suivie par fetch).
+    if (page.redirected && /\/relectures\/connexion/.test(page.url ?? "")) {
+      throw new RelectureError(`Lecture de ${pageUrl} refusée : code comité (RELECTURE_ADMIN_CODE) non reconnu par le site.`);
+    }
     if (!page.ok) throw new RelectureError(`Impossible de lire ${pageUrl} (HTTP ${page.status}).`);
     if (!ficheEnLigne(await page.text(), slug)) {
       throw new RelectureError(`La fiche « ${slug} » n'est pas encore déployée sur ${pageUrl} : attends la fin du déploiement Vercel.`);

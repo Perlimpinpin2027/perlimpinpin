@@ -183,6 +183,8 @@ function fetchSimule(reponses) {
     return {
       ok: r.status >= 200 && r.status < 300,
       status: r.status,
+      redirected: r.redirected ?? false,
+      url: r.url ?? url,
       text: async () => r.body,
       json: async () => r.body,
     };
@@ -208,6 +210,19 @@ test("lancer : refuse si la fiche n'est pas encore en ligne (aucun POST)", async
   await assert.rejects(lancer("zemmour-retraites", "10h", { fetchFn: fn, code: CODE, log: () => {} }), /pas encore déployée/);
   assert.equal(appels.length, 1);
   assert.equal(appels[0].url, "https://perlimpinpin.ai/relectures/");
+  // Page réservée aux adhérents : le code comité en ouvre la lecture seule.
+  assert.equal(appels[0].opts.headers["x-relecture-admin-code"], CODE);
+});
+
+test("lancer : code comité refusé à la lecture de la page (renvoi vers la connexion) → erreur claire, aucun POST", async () => {
+  const { fn, appels } = fetchSimule({
+    GET: { status: 200, body: "<h1>Club Perlimpinpin</h1>", redirected: true, url: "https://perlimpinpin.ai/relectures/connexion" },
+  });
+  await assert.rejects(
+    lancer("zemmour-retraites", "10h", { fetchFn: fn, code: CODE, log: () => {} }),
+    (e) => /code comité \(RELECTURE_ADMIN_CODE\) non reconnu/.test(e.message) && !e.message.includes(CODE),
+  );
+  assert.equal(appels.length, 1);
 });
 
 test("lancer : POST start avec le code en en-tête, jamais affiché", async () => {

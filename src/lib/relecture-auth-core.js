@@ -1,4 +1,4 @@
-import { createHmac, timingSafeEqual } from "node:crypto";
+import { createHash, createHmac, timingSafeEqual } from "node:crypto";
 
 // Cœur de la session adhérent de /relectures : fonctions PURES (ni Next, ni
 // cookies, ni base) pour pouvoir les tester avec `node --test`
@@ -72,11 +72,42 @@ const PAGES_PUBLIQUES = new Set(["/relectures/connexion", "/relectures/inscripti
 // /relectures (y compris /relectures/index.html, servi depuis public/) sauf les
 // trois pages ci-dessus. Comparaison en minuscules et sans « / » final, pour
 // qu'une variante d'écriture de l'URL ne contourne pas la protection.
+function normaliserChemin(pathname) {
+  return pathname.toLowerCase().replace(/\/+$/, "");
+}
+
 export function cheminRelectureProtege(pathname) {
   if (typeof pathname !== "string") return true;
-  const chemin = pathname.toLowerCase().replace(/\/+$/, "");
+  const chemin = normaliserChemin(pathname);
   if (chemin !== "/relectures" && !chemin.startsWith("/relectures/")) return false;
   return !PAGES_PUBLIQUES.has(chemin);
+}
+
+// Lecture de la page par le comité, sans compte adhérent : c'est ce que fait
+// `node scripts/relecture.js lancer` pour vérifier qu'une fiche est en ligne
+// avant de lancer son chrono. L'en-tête x-relecture-admin-code (comparé à
+// RELECTURE_ADMIN_CODE) ouvre UNIQUEMENT la lecture (GET/HEAD) de la page
+// elle-même : ni cookie posé, ni /api/relectures/* (non couvert par le proxy,
+// les routes exigent un adhérent), ni aucune autre page.
+export const ADMIN_CODE_MIN_LENGTH = 12;
+const PAGES_LECTURE_COMITE = new Set(["/relectures", "/relectures/index.html"]);
+
+function sha256(texte) {
+  return createHash("sha256").update(texte, "utf8").digest();
+}
+
+// Code trop court ou absent côté serveur : personne n'entre (fail closed).
+// Comparaison à temps constant sur les empreintes (longueur fixe).
+export function codeAdminValide(recu, attendu) {
+  if (typeof attendu !== "string" || attendu.length < ADMIN_CODE_MIN_LENGTH) return false;
+  if (typeof recu !== "string" || recu.length === 0) return false;
+  return timingSafeEqual(sha256(recu), sha256(attendu));
+}
+
+export function lectureComiteAutorisee({ methode, pathname, codeRecu, codeAdmin }) {
+  if (methode !== "GET" && methode !== "HEAD") return false;
+  if (typeof pathname !== "string" || !PAGES_LECTURE_COMITE.has(normaliserChemin(pathname))) return false;
+  return codeAdminValide(codeRecu, codeAdmin);
 }
 
 // Options du cookie de session (httpOnly : illisible par le JavaScript de la page).

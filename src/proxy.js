@@ -2,7 +2,12 @@ import { NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 import { LIVE_COOKIE_NAME } from "@/lib/live-auth-config";
 import { loginUrl } from "@/lib/live-redirect";
-import { RELECTURE_COOKIE_NAME, cheminRelectureProtege, lireSession } from "@/lib/relecture-auth-core";
+import {
+  RELECTURE_COOKIE_NAME,
+  cheminRelectureProtege,
+  lectureComiteAutorisee,
+  lireSession,
+} from "@/lib/relecture-auth-core";
 
 // Next 16 : la convention `middleware` est renommée `proxy` (Node.js runtime par défaut).
 // Deux espaces protégés, avec deux sessions indépendantes :
@@ -26,9 +31,19 @@ function proxyRelectures(request) {
     secret: process.env.AUTH_SECRET,
     valeur: request.cookies.get(RELECTURE_COOKIE_NAME)?.value,
   });
-  if (!session) return NextResponse.redirect(new URL("/relectures/connexion", request.url));
+  if (session) return NextResponse.next();
 
-  return NextResponse.next();
+  // Lecture seule de la page par le comité (scripts/relecture.js lancer) : voir
+  // lectureComiteAutorisee. Aucun cookie posé, et le code n'est jamais journalisé.
+  const lectureComite = lectureComiteAutorisee({
+    methode: request.method,
+    pathname: request.nextUrl.pathname,
+    codeRecu: request.headers.get("x-relecture-admin-code"),
+    codeAdmin: process.env.RELECTURE_ADMIN_CODE,
+  });
+  if (lectureComite) return NextResponse.next();
+
+  return NextResponse.redirect(new URL("/relectures/connexion", request.url));
 }
 
 // Protège tout /live sauf /live/login. Contrôle « optimiste » : on vérifie seulement que

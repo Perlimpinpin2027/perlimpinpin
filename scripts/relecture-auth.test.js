@@ -5,6 +5,8 @@ import {
   RELECTURE_COOKIE_NAME,
   RELECTURE_SESSION_MS,
   cheminRelectureProtege,
+  codeAdminValide,
+  lectureComiteAutorisee,
   creerSession,
   lireSession,
   optionsCookie,
@@ -151,5 +153,38 @@ test("proxy : tout /relectures est protégé, sauf connexion, inscription et dé
     "/relecturesx",
   ]) {
     assert.equal(cheminRelectureProtege(chemin), false, chemin);
+  }
+});
+
+const CODE_ADMIN = "code-comite-assez-long";
+
+test("lecture comité : bon code en GET ou HEAD sur la page seule", () => {
+  for (const methode of ["GET", "HEAD"]) {
+    for (const pathname of ["/relectures", "/relectures/", "/relectures/index.html", "/RELECTURES/Index.html"]) {
+      assert.equal(
+        lectureComiteAutorisee({ methode, pathname, codeRecu: CODE_ADMIN, codeAdmin: CODE_ADMIN }),
+        true,
+        `${methode} ${pathname}`,
+      );
+    }
+  }
+});
+
+test("lecture comité : mauvais code, code absent ou code serveur trop court → refus (redirection)", () => {
+  for (const codeRecu of ["mauvais-code-assez-long", "", undefined, null, CODE_ADMIN + " ", CODE_ADMIN.slice(0, -1)]) {
+    assert.equal(lectureComiteAutorisee({ methode: "GET", pathname: "/relectures", codeRecu, codeAdmin: CODE_ADMIN }), false, String(codeRecu));
+  }
+  for (const codeAdmin of [undefined, "", "court"]) {
+    assert.equal(lectureComiteAutorisee({ methode: "GET", pathname: "/relectures", codeRecu: codeAdmin, codeAdmin }), false, String(codeAdmin));
+  }
+  assert.equal(codeAdminValide(CODE_ADMIN, CODE_ADMIN), true);
+});
+
+test("lecture comité : le code n'ouvre ni l'écriture, ni les autres chemins, ni l'API", () => {
+  for (const methode of ["POST", "PUT", "DELETE", "PATCH", "OPTIONS", undefined]) {
+    assert.equal(lectureComiteAutorisee({ methode, pathname: "/relectures", codeRecu: CODE_ADMIN, codeAdmin: CODE_ADMIN }), false, String(methode));
+  }
+  for (const pathname of ["/relectures/autre", "/relectures/index", "/relectures/connexion", "/api/relectures/comments", "/api/relectures/chrono", "/live", undefined]) {
+    assert.equal(lectureComiteAutorisee({ methode: "GET", pathname, codeRecu: CODE_ADMIN, codeAdmin: CODE_ADMIN }), false, String(pathname));
   }
 });
