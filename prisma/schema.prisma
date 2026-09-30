@@ -402,20 +402,27 @@ model RelectureFiche {
 }
 
 // Adhérents de l'association : espace personnel de la page /relectures.
-// Seules les adresses importées (scripts/import-adherents.js) peuvent créer un
+// Seules les adresses connues (import scripts/import-adherents.js, ou adhésion
+// HelloAsso payée : voir src/lib/helloasso-core.js) peuvent créer un
 // compte ; l'adhérent choisit lui-même son mot de passe à la première
 // connexion (/relectures/inscription). Session séparée de /live (cookie signé
 // relecture_auth, voir src/lib/relecture-auth-core.js).
 model Adherent {
-  id             Int       @id @default(autoincrement())
+  id               Int       @id @default(autoincrement())
   // Adresse e-mail, toujours en minuscules (identifiant de connexion)
-  email          String    @unique
+  email            String    @unique
   // Nom affiché (ex. "Camille D.")
-  nom            String
+  nom              String
   // Hachage bcrypt ; null = compte pas encore activé
-  motDePasseHash String?
-  activatedAt    DateTime?
-  createdAt      DateTime  @default(now())
+  motDePasseHash   String?
+  activatedAt      DateTime?
+  createdAt        DateTime  @default(now())
+  // Origine du compte : "helloasso" (adhésion payée) ou "import"
+  // (scripts/import-adherents.js). null = compte antérieur à ce champ.
+  source           String?
+  // Commande HelloAsso qui a créé le compte. Unique : une commande ne crée
+  // jamais deux comptes, même si la notification arrive plusieurs fois.
+  helloassoOrderId Int?      @unique
 
   commentaires RelectureComment[]
 }
