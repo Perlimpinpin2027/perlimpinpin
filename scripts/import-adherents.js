@@ -7,7 +7,9 @@
 //   node scripts/import-adherents.js chemin/adherents.csv --appliquer
 //       → crée en base les adhérents absents
 //
-// CSV : une ligne « email;nom » par adhérent (en-tête « email;nom » facultatif).
+// CSV : une ligne « email;nom » ou « email,nom » par adhérent (en-tête
+// facultatif). Le séparateur est détecté sur la première ligne ; un nom qui
+// contient le séparateur se met entre guillemets ("Dupont, Camille").
 // Les lignes invalides sont listées et ignorées.
 //
 // Création uniquement : une adresse déjà présente en base n'est jamais modifiée
@@ -64,7 +66,8 @@ try {
   fail(`lecture de ${source} impossible (${error.code ?? error.message}).`);
 }
 
-const { valides, invalides } = lireCsvAdherents(texte);
+const { separateur, valides, invalides } = lireCsvAdherents(texte);
+console.log(`Séparateur détecté : « ${separateur} »`);
 
 if (invalides.length > 0) {
   console.log(`\nLignes ignorées (${invalides.length}) :`);
