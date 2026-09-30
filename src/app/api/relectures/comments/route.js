@@ -1,33 +1,15 @@
 import { prisma } from "@/lib/prisma";
-import { formatClosedAt, isRelectureClosed } from "@/lib/relecture";
+import { getAdherent } from "@/lib/relecture-auth";
+import { SESSION_EXPIREE, posterCommentaire } from "@/lib/relecture-comments-core";
 
-const BODY_MAX_LENGTH = 4000;
-const QUOTE_MAX_LENGTH = 20000;
-const OFFSET_MAX = 1_000_000;
-
-// Annotation (surligneur + note) : les trois champs vont ensemble. Renvoie
-// null pour un commentaire de section, { error } si les champs sont incohérents.
-function parseAnnotation(data) {
-  const hasAny = data.quotedText != null || data.startOffset != null || data.endOffset != null;
-  if (!hasAny) return null;
-  const quotedText = typeof data.quotedText === "string" ? data.quotedText : "";
-  const startOffset = data.startOffset;
-  const endOffset = data.endOffset;
-  if (
-    !quotedText.trim() ||
-    quotedText.length > QUOTE_MAX_LENGTH ||
-    !Number.isInteger(startOffset) ||
-    !Number.isInteger(endOffset) ||
-    startOffset < 0 ||
-    endOffset > OFFSET_MAX ||
-    endOffset - startOffset !== quotedText.length
-  ) {
-    return { error: "Annotation invalide (passage ou positions incohérents)." };
-  }
-  return { quotedText, startOffset, endOffset };
-}
+// Commentaires de relecture (Club Perlimpinpin) : lecture et écriture réservées
+// aux adhérents connectés. La vérification est faite ici, pas seulement dans le
+// proxy (qui ne couvre pas /api). Les scripts lisent la base directement
+// (scripts/relecture-comments.js --json).
 
 export async function GET(request) {
+  if (!(await getAdherent())) return Response.json(SESSION_EXPIREE, { status: 401 });
+
   const ficheSlug = request.nextUrl.searchParams.get("fiche");
   if (!ficheSlug) {
     return Response.json({ error: "Paramètre 'fiche' manquant." }, { status: 400 });
@@ -42,42 +24,13 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
-  const data = await request.json().catch(() => null);
-  if (!data) {
-    return Response.json({ error: "JSON invalide." }, { status: 400 });
-  }
-
-  const ficheSlug = String(data.ficheSlug || "").trim();
-  const sectionId = String(data.sectionId || "").trim();
-  const sectionLabel = String(data.sectionLabel || "").trim().slice(0, 200) || null;
-  const authorName = String(data.authorName || "").trim().slice(0, 80) || null;
-  const body = String(data.body || "").trim().slice(0, BODY_MAX_LENGTH);
-
-  if (!ficheSlug || !sectionId || !body) {
-    return Response.json({ error: "Champs requis manquants." }, { status: 400 });
-  }
-
-  const annotation = parseAnnotation(data);
-  if (annotation?.error) {
-    return Response.json({ error: annotation.error }, { status: 400 });
-  }
-
-  // Relecture terminée (échéance du chrono passée) : la fiche reste lisible,
-  // mais on n'accepte plus de commentaire, quoi que fasse la page.
-  const fiche = await prisma.relectureFiche.findUnique({ where: { ficheSlug } });
-  if (isRelectureClosed(fiche)) {
-    return Response.json(
-      {
-        error: `Relecture terminée le ${formatClosedAt(fiche.reviewDeadline)} : les commentaires sont fermés.`,
-        closed: true,
-      },
-      { status: 403 },
-    );
-  }
-
-  const comment = await prisma.relectureComment.create({
-    data: { ficheSlug, sectionId, sectionLabel, authorName, body, ...annotation },
+  const adherent = await getAdherent();
+  const data = adherent ? await request.json().catch(() => null) : null;
+  const { status, body } = await posterCommentaire({
+    adherent,
+    data,
+    trouverFiche: (ficheSlug) => prisma.relectureFiche.findUnique({ where: { ficheSlug } }),
+    creer: (values) => prisma.relectureComment.create({ data: values }),
   });
-
-  return Response.json(comment, { status: 201 });
+  return Response.json(body, { status });
 }

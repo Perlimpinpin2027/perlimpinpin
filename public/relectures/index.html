@@ -350,7 +350,7 @@ mark.anno-hl.pending{background:var(--hl-strong)}
 </head>
 <body>
 <div class="wrap">
-<div class="adh-bar" style="display:flex;justify-content:flex-end;align-items:center;gap:6px;padding:6px 0 0;font-size:12.5px;color:var(--faint)"><span>Club Perlimpinpin</span><span aria-hidden="true">·</span><span>Connecté</span><span aria-hidden="true">·</span><form method="post" action="/relectures/deconnexion" style="margin:0"><button type="submit" style="font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;text-underline-offset:2px">Se déconnecter</button></form></div>
+<div class="adh-bar" style="display:flex;justify-content:flex-end;align-items:center;gap:6px;padding:6px 0 0;font-size:12.5px;color:var(--faint)"><span>Club Perlimpinpin</span><span aria-hidden="true">·</span><span data-adh-etat>Connecté</span><span aria-hidden="true">·</span><form method="post" action="/relectures/deconnexion" style="margin:0"><button type="submit" style="font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;text-underline-offset:2px">Se déconnecter</button></form></div>
 <header class="pill"><a class="brand" href="#/">Perlimpinpin</a>
 <div class="pill-r"><span class="pill-tag">Espace adhérents</span><a class="pill-link" href="#/archives">Archives</a><a class="btn-dark" href="#/">Brouillons</a></div></header>
 <p class="banner">Brouillon : analyse non publiée, réservée aux adhérents du Club. Merci de ne pas la diffuser.</p>
@@ -504,6 +504,56 @@ Est-ce qu&#x27;on parle du nombre d&#x27;actif pour un retraité ? Si c&#x27;est
   var countEl = document.getElementById("hub-count");
   var API = "/api/relectures/comments";
 
+  // ---------- session adhérent (Club Perlimpinpin) ----------
+  // Les commentaires sont signés côté serveur avec le nom du compte. Si une
+  // requête répond 401, la session a expiré : on le signale, sans toucher au
+  // texte en cours (lien de reconnexion dans un nouvel onglet).
+  var LOGIN_URL = "/relectures/connexion";
+
+  function lienReconnexion() {
+    var a = document.createElement("a");
+    a.href = LOGIN_URL;
+    a.target = "_blank";
+    a.rel = "noopener";
+    a.textContent = "Se reconnecter";
+    return a;
+  }
+
+  function sessionExpiree() {
+    var etat = document.querySelector("[data-adh-etat]");
+    if (!etat) return;
+    etat.textContent = "Votre session a expiré · ";
+    etat.appendChild(lienReconnexion());
+  }
+
+  function erreurSession() {
+    var e = new Error("Votre session a expiré.");
+    e.expired = true;
+    return e;
+  }
+
+  // Message d'erreur d'un formulaire (commentaire ou note).
+  function remplirErreur(p, e, defaut) {
+    if (e && e.expired) {
+      p.textContent = "Votre session a expiré. ";
+      p.appendChild(lienReconnexion());
+      sessionExpiree();
+    } else {
+      p.textContent = (e && e.message) || defaut;
+    }
+  }
+
+  fetch("/api/relectures/moi")
+    .then(function (r) {
+      if (r.status === 401) { sessionExpiree(); return null; }
+      return r.ok ? r.json() : null;
+    })
+    .then(function (moi) {
+      var etat = document.querySelector("[data-adh-etat]");
+      if (moi && moi.nom && etat) etat.textContent = "Connecté en tant que " + moi.nom;
+    })
+    .catch(function () { /* hors ligne : le bandeau garde « Connecté » */ });
+
   var commentsBySection = {}; // sectionId -> array of comments
   var loadedFiche = null;
 
@@ -575,7 +625,10 @@ Est-ce qu&#x27;on parle du nombre d&#x27;actif pour un retraité ? Si c&#x27;est
     loadedFiche = slug;
     commentsBySection = {};
     fetch(API + "?fiche=" + encodeURIComponent(slug))
-      .then(function (r) { return r.ok ? r.json() : []; })
+      .then(function (r) {
+        if (r.status === 401) { sessionExpiree(); return []; }
+        return r.ok ? r.json() : [];
+      })
       .then(function (list) {
         var annots = [];
         (list || []).forEach(function (c) {
@@ -634,7 +687,6 @@ Est-ce qu&#x27;on parle du nombre d&#x27;actif pour un retraité ? Si c&#x27;est
     panel.innerHTML =
       '<ul class="clist">' + itemsHtml + "</ul>" +
       '<form class="cform">' +
-      '<input type="text" name="author" placeholder="Ton nom (optionnel)" maxlength="80">' +
       '<textarea name="body" placeholder="Ton commentaire…" maxlength="4000" required></textarea>' +
       '<button type="submit">Publier le commentaire</button>' +
       '<p class="csent" hidden>Commentaire publié.</p>' +
@@ -680,7 +732,6 @@ Est-ce qu&#x27;on parle du nombre d&#x27;actif pour un retraité ? Si c&#x27;est
     var ficheEl = section.closest("[data-view]");
     var ficheSlug = ficheEl ? ficheEl.getAttribute("data-view") : loadedFiche;
     var sectionLabel = (section.querySelector("h1,h2,h3") || {}).textContent || "";
-    var author = form.author.value.trim();
     var body = form.body.value.trim();
     if (!body) return;
     var btn = form.querySelector("button");
@@ -689,10 +740,11 @@ Est-ce qu&#x27;on parle du nombre d&#x27;actif pour un retraité ? Si c&#x27;est
     fetch(API, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ficheSlug: ficheSlug, sectionId: sectionId, sectionLabel: sectionLabel, authorName: author, body: body }),
+      body: JSON.stringify({ ficheSlug: ficheSlug, sectionId: sectionId, sectionLabel: sectionLabel, body: body }),
     })
       .then(function (r) {
         return r.json().catch(function () { return {}; }).then(function (res) {
+          if (r.status === 401) throw erreurSession();
           if (!r.ok) {
             var e = new Error(res.error || "Échec de l'envoi, réessaie.");
             e.closed = !!res.closed;
@@ -711,7 +763,7 @@ Est-ce qu&#x27;on parle du nombre d&#x27;actif pour un retraité ? Si c&#x27;est
         btn.textContent = "Publier le commentaire";
         var err = document.createElement("p");
         err.className = "cerr";
-        err.textContent = e.message || "Échec de l'envoi, réessaie.";
+        remplirErreur(err, e, "Échec de l'envoi, réessaie.");
         form.appendChild(err);
         // Refus serveur « relecture terminée » : on recharge l'état des chronos,
         // ce qui bascule la fiche en lecture seule.
@@ -902,7 +954,10 @@ Est-ce qu&#x27;on parle du nombre d&#x27;actif pour un retraité ? Si c&#x27;est
 
   function loadChronos() {
     fetch(CHRONO_API)
-      .then(function (r) { return r.ok ? r.json() : { fiches: [] }; })
+      .then(function (r) {
+        if (r.status === 401) { sessionExpiree(); return { fiches: [] }; }
+        return r.ok ? r.json() : { fiches: [] };
+      })
       .then(function (res) {
         if (res.now) applyServerNow(res.now);
         chronoBySlug = {};
@@ -1116,14 +1171,6 @@ Est-ce qu&#x27;on parle du nombre d&#x27;actif pour un retraité ? Si c&#x27;est
     return "« " + (t.length > 90 ? t.slice(0, 90) + "…" : t) + " »";
   }
 
-  function readAuthor() {
-    try { return localStorage.getItem("relectures-auteur") || ""; } catch (e) { return ""; }
-  }
-
-  function saveAuthor(name) {
-    try { localStorage.setItem("relectures-auteur", name); } catch (e) { /* stockage indisponible */ }
-  }
-
   // --- brouillon de note (formulaire) ---
 
   function startDraft(target) {
@@ -1141,10 +1188,8 @@ Est-ce qu&#x27;on parle du nombre d&#x27;actif pour un retraité ? Si c&#x27;est
     form.className = "anote anote-draft";
     form.innerHTML =
       '<p class="anote-q">' + esc(excerpt(target.text)) + "</p>" +
-      '<input type="text" name="author" placeholder="Ton nom (optionnel)" maxlength="80">' +
       '<textarea name="body" placeholder="Ta note…" maxlength="4000" required></textarea>' +
       '<div class="anote-actions"><button type="submit">Valider</button><button type="button" data-anno-cancel>Annuler</button></div>';
-    form.author.value = readAuthor();
     form.addEventListener("submit", function (ev) {
       ev.preventDefault();
       submitDraft();
@@ -1174,8 +1219,6 @@ Est-ce qu&#x27;on parle du nombre d&#x27;actif pour un retraité ? Si c&#x27;est
     var form = d.el;
     var body = form.body.value.trim();
     if (!body) return;
-    var author = form.author.value.trim();
-    saveAuthor(author);
     var t = d.target;
     var btn = form.querySelector('[type="submit"]');
     var err = form.querySelector(".cerr");
@@ -1189,7 +1232,6 @@ Est-ce qu&#x27;on parle du nombre d&#x27;actif pour un retraité ? Si c&#x27;est
         ficheSlug: d.slug,
         sectionId: d.sectionId,
         sectionLabel: (t.section.querySelector("h1,h2,h3") || {}).textContent || "",
-        authorName: author,
         body: body,
         quotedText: t.text,
         startOffset: t.start,
@@ -1198,6 +1240,7 @@ Est-ce qu&#x27;on parle du nombre d&#x27;actif pour un retraité ? Si c&#x27;est
     })
       .then(function (r) {
         return r.json().catch(function () { return {}; }).then(function (res) {
+          if (r.status === 401) throw erreurSession();
           if (!r.ok) throw new Error(res.error || "Envoi impossible, réessaie.");
           return res;
         });
@@ -1219,7 +1262,7 @@ Est-ce qu&#x27;on parle du nombre d&#x27;actif pour un retraité ? Si c&#x27;est
         btn.textContent = "Valider";
         var p = document.createElement("p");
         p.className = "cerr";
-        p.textContent = e.message;
+        remplirErreur(p, e, "Envoi impossible, réessaie.");
         form.appendChild(p);
         var view = document.querySelector('[data-view="' + d.slug + '"]');
         if (view) layoutNotes(view);
