@@ -540,13 +540,21 @@ export async function getVoteMesureLeaderboard() {
 }
 
 // Détail d'une déclaration : la Proposition, son Candidat, et sa dernière
-// Analyse (avec le contenuComplet JSON pour les 17 sections).
-export async function getDeclarationDetail(propositionId) {
+// Analyse PUBLIÉE (avec le contenuComplet JSON pour les 17 sections). Un
+// brouillon n'est jamais renvoyé au site public : pas d'analyse publiée =>
+// analyse null => 404 sur /declarations/[id]. Seule la prévisualisation
+// /test/[id] (rendu dynamique, jamais mis en cache) passe inclureBrouillons
+// pour relire la dernière analyse, brouillon compris.
+export async function getDeclarationDetail(propositionId, inclureBrouillons = false) {
   const proposition = await prisma.proposition.findUnique({
     where: { id: propositionId },
     include: {
       candidat: true,
-      analyses: { orderBy: { createdAt: "desc" }, take: 1 },
+      analyses: {
+        ...(inclureBrouillons ? {} : { where: { statut: "publie" } }),
+        orderBy: { createdAt: "desc" },
+        take: 1,
+      },
     },
   });
 

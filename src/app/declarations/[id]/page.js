@@ -95,7 +95,8 @@ export async function generateMetadata({ params }) {
   const propositionId = Number(id);
   if (!Number.isInteger(propositionId)) return {};
 
-  const declaration = await getDeclarationDetailCached(propositionId);
+  // Métadonnées du site public uniquement (/test/[id] a les siennes) : publiées seules.
+  const declaration = await getDeclarationDetailCached(propositionId, false);
   if (!declaration || !declaration.analyse) return {};
 
   const { analyse } = declaration;
@@ -909,7 +910,9 @@ export default async function DeclarationDetailPage({ params, preview = false, e
     notFound();
   }
 
-  const declaration = await getDeclarationDetailCached(propositionId);
+  // Site public : dernière analyse publiée, 404 s'il n'y en a pas (brouillon
+  // seul). `preview` (/test/[id]) : dernière analyse, brouillon compris.
+  const declaration = await getDeclarationDetailCached(propositionId, preview);
 
   if (!declaration || !declaration.analyse) {
     notFound();
