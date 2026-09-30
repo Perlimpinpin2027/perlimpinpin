@@ -9,6 +9,7 @@ import ScoreDetail from "@/components/ScoreDetail";
 import AccordionSection from "@/components/AccordionSection";
 import MesureObjectifBanner from "@/components/MesureObjectifBanner";
 import MonoTag from "@/components/MonoTag";
+import SupportBanner from "@/components/SupportBanner";
 import EditableBlock from "@/app/test/EditableBlock";
 import { getDeclarationDetail } from "@/lib/queries";
 import { getScoreBadge, PLAFOND_DECLENCHEUR_LABELS } from "@/lib/score";
@@ -1412,6 +1413,18 @@ export default async function DeclarationDetailPage({ params, preview = false, e
             />
           </aside>
         </div>
+
+        {/* Bandeau "Rejoignez-nous" en bas de chaque analyse (même bandeau
+            que la page d'accueil, avec un texte propre aux analyses). */}
+        {!preview ? (
+          <div className="mx-auto mt-10 w-full max-w-6xl">
+            <SupportBanner
+              embedded
+              title={"Vous n’êtes pas d’accord avec cette analyse ?"}
+              text={"Vous pensez que des choses manquent ? Relisez et commentez les analyses avant publication, en adhérant à l’association pour 2 €."}
+            />
+          </div>
+        ) : null}
       </main>
     </div>
   );
