@@ -393,3 +393,20 @@ model RelectureFiche {
   reviewStartedAt DateTime?
   reviewDeadline  DateTime?
 }
+
+// Adhérents de l'association : espace personnel de la page /relectures.
+// Seules les adresses importées (scripts/import-adherents.js) peuvent créer un
+// compte ; l'adhérent choisit lui-même son mot de passe à la première
+// connexion (/relectures/inscription). Session séparée de /live (cookie signé
+// relecture_auth, voir src/lib/relecture-auth-core.js).
+model Adherent {
+  id             Int       @id @default(autoincrement())
+  // Adresse e-mail, toujours en minuscules (identifiant de connexion)
+  email          String    @unique
+  // Nom affiché (ex. "Camille D.")
+  nom            String
+  // Hachage bcrypt ; null = compte pas encore activé
+  motDePasseHash String?
+  activatedAt    DateTime?
+  createdAt      DateTime  @default(now())
+}

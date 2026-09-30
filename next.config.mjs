@@ -10,6 +10,12 @@ const nextConfig = {
   // public/relectures/index.html (pas de fallback "clean URL" sur les
   // fichiers statiques) : réécriture explicite pour que le lien partagé en
   // relecture fonctionne sans /index.html.
+  // Adresse courte du Club Perlimpinpin (espace adhérents). Les redirections
+  // passent avant le proxy : /club n'est pas protégé en soi, c'est la
+  // destination /relectures qui l'est (src/proxy.js).
+  async redirects() {
+    return [{ source: "/club", destination: "/relectures", permanent: true }];
+  },
   async rewrites() {
     return [{ source: "/relectures", destination: "/relectures/index.html" }];
   },
