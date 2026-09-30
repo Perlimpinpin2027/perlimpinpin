@@ -13,7 +13,8 @@
 // Les lignes invalides sont listées et ignorées.
 //
 // Création uniquement : une adresse déjà présente en base n'est jamais modifiée
-// (ni son nom, ni son mot de passe). Chaque création est journalisée dans
+// (ni son nom, ni son mot de passe). Chaque création est journalisée (avec
+// l'hôte Neon écrit, champ « base ») dans
 // logs/insertions.jsonl. Le script utilise DATABASE_URL (.env, donc la
 // production, sauf si DATABASE_URL est définie dans le terminal). Avant
 // d'écrire, il affiche l'hôte Neon ciblé et demande de taper « oui ».
@@ -113,6 +114,9 @@ try {
           email,
           nom,
           source,
+          // Hôte Neon écrit (production ou branche de test) : sans lui, deux
+          // lignes « adherentId 1 » de bases différentes sont indiscernables.
+          base: host,
         });
       } catch (error) {
         // P2002 : adresse créée entre-temps (autre import en parallèle) — on ne touche à rien
