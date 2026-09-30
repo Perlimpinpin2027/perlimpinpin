@@ -66,7 +66,29 @@ console.log(`Adhésions depuis le ${from.toISOString().slice(0, 10)}`);
 console.log(`Base : ${host}`);
 
 const commandes = await listMembershipOrders(config, { from }).catch((error) => fail(error.message));
-const prisma = new PrismaClient({ adapter: new PrismaNeon({ connectionString: process.env.DATABASE_URL }) });
+const client = new PrismaClient({ adapter: new PrismaNeon({ connectionString: process.env.DATABASE_URL }) });
+
+// Migration 20261002100000_add_adherent_helloasso pas encore appliquée sur cette
+// base : la simulation reste possible (comptes existants repérés par e-mail
+// seulement), l'écriture non.
+const colonnes = await client.$queryRaw`
+  SELECT column_name::text AS nom FROM information_schema.columns
+  WHERE table_name = 'Adherent' AND column_name = 'helloassoOrderId'`;
+const migrationAppliquee = colonnes.length > 0;
+let prisma = client;
+if (!migrationAppliquee) {
+  if (values.appliquer) {
+    await client.$disconnect();
+    fail("migration add_adherent_helloasso non appliquée sur cette base : écriture impossible.");
+  }
+  console.log("⚠  Migration add_adherent_helloasso non appliquée : comptes existants repérés par e-mail seulement.");
+  prisma = {
+    adherent: {
+      findFirst: ({ where, select }) =>
+        client.adherent.findFirst({ where: { OR: where.OR.filter((c) => "email" in c) }, select }),
+    },
+  };
+}
 
 const decrire = (r) => {
   const qui = r.email ? `${r.nom} <${masquerEmail(r.email)}>` : "";
@@ -117,5 +139,5 @@ try {
     console.log(`\nRésumé : ${JSON.stringify(resumer(resultats))}. Journal : ${INSERTIONS_LOG_PATH}`);
   }
 } finally {
-  await prisma.$disconnect();
+  await client.$disconnect();
 }
