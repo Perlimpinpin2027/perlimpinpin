@@ -23,9 +23,12 @@
 //     "reponses": [
 //       { "commentaire_id": "<id en base>", "auteur": "Alexis",
 //         "section": "Contexte national", "commentaire": "copie du commentaire",
-//         "reponse": "Réponse de Perlimpinpin" }
+//         "reponse": "Réponse de Perlimpinpin", "retenu": true }
 //     ]
 //   }
+// "retenu" (facultatif, true ou false) : commentaire pris en compte dans la
+// version suivante. scripts/marquer-retenus.js <slug> reporte ces true en base
+// (+20 PerlimpinPOINTS pour l'auteur).
 // La fiche passe alors dans la section « Analyses archivées » : lecture seule,
 // chaque commentaire affiche sa réponse. Les étapes 2 et 3 ne lisent pas ce
 // dossier : le bloc archive n'a aucun effet sur elles.
@@ -411,6 +414,8 @@ function verifierArchive(a) {
   if (!Array.isArray(a.reponses)) return "\"reponses\" doit être une liste (éventuellement vide).";
   const i = a.reponses.findIndex((x) => !x?.commentaire_id || !String(x.reponse ?? "").trim());
   if (i >= 0) return `réponse n° ${i + 1} : "commentaire_id" et "reponse" sont obligatoires.`;
+  const j = a.reponses.findIndex((x) => "retenu" in x && typeof x.retenu !== "boolean");
+  if (j >= 0) return `réponse n° ${j + 1} : "retenu" doit valoir true ou false.`;
   return null;
 }
 

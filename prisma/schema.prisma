@@ -384,6 +384,10 @@ model RelectureComment {
   // reste (SetNull).
   adherentId   Int?
   adherent     Adherent? @relation(fields: [adherentId], references: [id], onDelete: SetNull)
+  // Commentaire retenu, c'est-à-dire pris en compte dans la version suivante
+  // de la fiche (+20 PerlimpinPOINTS). Mis à true uniquement par
+  // scripts/marquer-retenus.js, jamais remis à false automatiquement.
+  retenu       Boolean   @default(false)
 
   @@index([ficheSlug, sectionId])
   @@index([adherentId])
