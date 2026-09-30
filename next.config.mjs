@@ -19,6 +19,28 @@ const nextConfig = {
   async rewrites() {
     return [{ source: "/relectures", destination: "/relectures/index.html" }];
   },
+  // Images de public/ (photos des candidats, logo, bannières) : par défaut
+  // Next.js les sert avec max-age=0, le navigateur les redemande donc à chaque
+  // page (réponse 304, mais une requête CDN quand même). Cache d'un jour, puis
+  // réutilisation pendant une semaine le temps de vérifier : pas « immutable »,
+  // car les noms de fichiers ne changent pas quand une photo est remplacée.
+  // Liste blanche de dossiers : JAMAIS /relectures (page protégée par le proxy).
+  async headers() {
+    const cacheImages = [
+      {
+        key: "Cache-Control",
+        value: "public, max-age=86400, stale-while-revalidate=604800",
+      },
+    ];
+    return [
+      { source: "/photos/:path*", headers: cacheImages },
+      { source: "/logo/:path*", headers: cacheImages },
+      // Écrit encodé : le navigateur demande /banni%C3%A8re/…, et la règle
+      // « /bannière/… » en toutes lettres ne s'applique pas.
+      { source: "/banni%C3%A8re/:path*", headers: cacheImages },
+      { source: "/avatar-placeholder.svg", headers: cacheImages },
+    ];
+  },
 };
 
 export default nextConfig;

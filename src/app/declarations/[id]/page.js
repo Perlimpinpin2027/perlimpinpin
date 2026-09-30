@@ -13,8 +13,18 @@ import EditableBlock from "@/app/test/EditableBlock";
 import { champCritere, texteEditable } from "@/lib/test-edition";
 import { getDeclarationDetail } from "@/lib/queries";
 import { getScoreBadge, PLAFOND_DECLENCHEUR_LABELS } from "@/lib/score";
+import { vignettePhoto } from "@/lib/photo-vignette";
 
-export const dynamic = "force-dynamic";
+// ISR : chaque fiche est calculée à sa première visite, puis servie depuis le
+// cache du CDN et recalculée au plus toutes les 5 minutes (nouvelle analyse,
+// compteurs de votes). generateStaticParams renvoie [] : le build ne lit pas
+// Neon, et dynamicParams = true laisse générer n'importe quel id à la demande.
+export const revalidate = 300;
+export const dynamicParams = true;
+
+export async function generateStaticParams() {
+  return [];
+}
 
 // Mémoïsé par requête (React cache) plutôt qu'appelé deux fois : generateMetadata
 // et la page elle-même ont besoin de la même fiche, et getDeclarationDetail fait
@@ -1014,7 +1024,7 @@ export default async function DeclarationDetailPage({ params, preview = false, e
 
               <div className="mt-6 flex items-center gap-3">
                 <img
-                  src={declaration.candidat.photoUrl || "/avatar-placeholder.svg"}
+                  src={vignettePhoto(declaration.candidat.photoUrl) || "/avatar-placeholder.svg"}
                   alt={declaration.candidat.nom}
                   className="h-11 w-11 shrink-0 rounded-lg object-cover object-top"
                 />

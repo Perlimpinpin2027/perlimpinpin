@@ -11,9 +11,10 @@ import {
   getCandidateRanking,
 } from "@/lib/queries";
 
-// La page dépend de données Neon qui changent (analyses publiées, scores) —
-// rendu dynamique à chaque requête plutôt que figé au build.
-export const dynamic = "force-dynamic";
+// La page dépend de données Neon qui changent (analyses publiées, scores) :
+// ISR, recalculée au plus toutes les 5 minutes et servie depuis le cache du
+// CDN entre-temps (rendu reproductible, voir getFeaturedRotation).
+export const revalidate = 300;
 
 export default async function Home() {
   const [featuredRotation, topDeclarations, rankedCandidates] =

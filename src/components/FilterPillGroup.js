@@ -47,6 +47,7 @@ export default function FilterPillGroup({
       <div className="flex flex-wrap items-center gap-2">
         <Link
           href={buildHref(currentParams, paramKey, null)}
+          prefetch={false}
           className={pillClass(!activeValue)}
         >
           Tous
@@ -59,6 +60,7 @@ export default function FilterPillGroup({
               paramKey,
               activeValue === option.value ? null : option.value,
             )}
+            prefetch={false}
             className={pillClass(activeValue === option.value)}
           >
             {option.label}

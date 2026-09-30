@@ -3,8 +3,10 @@ import Header from "@/components/Header";
 import MonoTag from "@/components/MonoTag";
 import { getAllCandidats } from "@/lib/queries";
 import { formatScore, getScoreBadge } from "@/lib/score";
+import { vignettePhoto } from "@/lib/photo-vignette";
 
-export const dynamic = "force-dynamic";
+// ISR : servie depuis le cache du CDN, recalculée au plus toutes les 5 minutes.
+export const revalidate = 300;
 
 export const metadata = {
   title: "Les candidats | Perlimpinpin",
@@ -51,11 +53,12 @@ export default async function CandidatsPage() {
                 <Link
                   key={candidat.id}
                   href={`/declarations?candidat=${encodeURIComponent(candidat.nom)}`}
+                  prefetch={false}
                   className="flex flex-col gap-4 border-b border-zinc-200 pb-6 transition-opacity hover:opacity-70"
                 >
                   <div className="flex items-center gap-3">
                     <img
-                      src={candidat.photoUrl || "/avatar-placeholder.svg"}
+                      src={vignettePhoto(candidat.photoUrl) || "/avatar-placeholder.svg"}
                       alt={candidat.nom}
                       className="h-16 w-16 shrink-0 rounded-xl object-cover object-top"
                     />

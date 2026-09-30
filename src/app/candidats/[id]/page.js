@@ -4,7 +4,16 @@ import Header from "@/components/Header";
 import { getCandidatDetail } from "@/lib/queries";
 import { formatScore, getScoreBadge } from "@/lib/score";
 
-export const dynamic = "force-dynamic";
+// ISR : chaque page est calculée à sa première visite, puis servie depuis le
+// cache du CDN et recalculée au plus toutes les 5 minutes. generateStaticParams
+// renvoie [] : le build ne lit pas Neon, et dynamicParams = true laisse
+// générer n'importe quelle adresse à la demande.
+export const revalidate = 300;
+export const dynamicParams = true;
+
+export async function generateStaticParams() {
+  return [];
+}
 
 // Blocs de contenu éditorial de la fiche candidat. Chaque entrée est vide
 // pour le moment (contenu à rédiger) — il suffit de remplir `contenu` pour
