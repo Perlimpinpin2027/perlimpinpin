@@ -61,47 +61,32 @@ const STEPS = [
   {
     id: "01",
     icon: ICON_PENCIL,
-    cardTitle: "Reformuler la déclaration",
     input: "declaration_brute",
     output: "declaration_reformulee",
-    title: "La déclaration est reformulée simplement.",
-    body: "On résume la promesse en une phrase claire, sans l'interprétation du candidat ni la nôtre.",
   },
   {
     id: "02",
     icon: ICON_DATABASE,
-    cardTitle: "Rassembler les sources",
     input: "declaration_reformulee",
     output: "corpus_sources",
-    title: "Les sources sont rassemblées et vérifiées.",
-    body: "Données publiques d'abord (Légifrance, INSEE, Cour des comptes...) — jamais une source militante comme preuve d'un fait.",
   },
   {
     id: "03",
     icon: ICON_TARGET,
-    cardTitle: "Situer la mesure dans son contexte",
     input: "corpus_sources",
     output: "mesure_contextualisee",
-    title: "La mesure est replacée dans son contexte.",
-    body: "Dans le programme du candidat, dans la réalité française actuelle, et à l'international quand c'est pertinent.",
   },
   {
     id: "04",
     icon: ICON_BARCHART,
-    cardTitle: "Évaluer selon 5 critères",
     input: "mesure_contextualisee",
     output: "notation_detaillee",
-    title: "La mesure est notée selon cinq critères indépendants.",
-    body: "Cinq critères, chacun noté séparément, pour un total sur 100 points — détail plus bas sur cette page.",
   },
   {
     id: "05",
     icon: ICON_CHECK_CIRCLE,
-    cardTitle: "Qualifier le résultat",
     input: "notation_detaillee",
     output: "verdict_final",
-    title: "Ce qui est établi, probable, discutable et inconnu est distingué explicitement.",
-    body: "Quand une source manque, on l'écrit noir sur blanc — « sources insuffisantes » — plutôt que de deviner.",
   },
 ];
 
@@ -125,9 +110,12 @@ function StepIcon({ icon, active }) {
 // fiable au toucher) : un même état `activeIndex`, mis à jour par
 // onMouseEnter, onFocus et onClick — les trois ne se contredisent jamais
 // puisqu'ils pointent tous vers le même index pour un bouton donné.
-export default function MethodeAnalysisSteps() {
+// `textes` : textes de la page /methode (src/lib/textes/methode.js), lus en
+// base par la page serveur et transmis ici (composant client).
+export default function MethodeAnalysisSteps({ textes = {} }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const active = STEPS[activeIndex];
+  const texteEtape = (index, champ) => textes[`etape${index + 1}.${champ}`] ?? "";
 
   return (
     <div>
@@ -166,7 +154,7 @@ export default function MethodeAnalysisSteps() {
               <StepIcon icon={step.icon} active={index === activeIndex} />
             </div>
             <p className="text-[17px] leading-snug text-zinc-900">
-              {step.cardTitle}
+              {texteEtape(index, "carte")}
             </p>
           </button>
         ))}
@@ -193,10 +181,10 @@ export default function MethodeAnalysisSteps() {
               supplémentaire ajoutée ici pour combler l'espace. */}
           <div className="border-t border-zinc-100 pt-6 sm:border-l sm:border-t-0 sm:pl-10 sm:pt-0">
             <p className="max-w-md text-[22.4px] font-bold leading-snug text-zinc-900">
-              {active.title}
+              {texteEtape(activeIndex, "titre")}
             </p>
             <p className="mt-3 max-w-md text-[14.4px] leading-relaxed text-zinc-500">
-              {active.body}
+              {texteEtape(activeIndex, "texte")}
             </p>
           </div>
         </div>
@@ -214,7 +202,7 @@ export default function MethodeAnalysisSteps() {
         >
           {ICON_INFO}
         </svg>
-        Les détails complets apparaissent au survol de chaque étape.
+        {textes["etapes.note"] ?? ""}
       </p>
     </div>
   );

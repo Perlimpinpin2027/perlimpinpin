@@ -16,10 +16,12 @@
 import accueil from "@/lib/textes/accueil";
 import nousRejoindre from "@/lib/textes/nous-rejoindre";
 import aPropos from "@/lib/textes/a-propos";
+import methode from "@/lib/textes/methode";
 
 export const PAGES_EDITABLES = {
   accueil,
   "a-propos": aPropos,
+  methode,
   "nous-rejoindre": nousRejoindre,
 };
 

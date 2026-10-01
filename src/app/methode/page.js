@@ -1,12 +1,19 @@
 import Header from "@/components/Header";
 import { getScoreBands } from "@/lib/score";
 import MethodeAnalysisSteps from "@/components/MethodeAnalysisSteps";
+import TexteRiche from "@/components/TexteRiche";
+import { enLignes } from "@/lib/textes-site";
+import { lireTextes } from "@/lib/textes-site-serveur";
 
 export const metadata = {
   title: "Méthode — Perlimpinpin",
   description:
     "Comment Perlimpinpin analyse et note les promesses politiques.",
 };
+
+// Page en cache, recalculée au plus tard toutes les heures et immédiatement
+// après une modification depuis /test/textes/methode.
+export const revalidate = 3600;
 
 // Icônes dessinées à la main (formes simples), voir la même remarque dans
 // MethodeAnalysisSteps.js : plus sûr qu'un tracé Heroicons recopié de
@@ -105,36 +112,28 @@ const ICON_CRITERE_ALIGNEMENT = (
   </>
 );
 
+// Icônes des 5 critères et des 4 garde-fous. Les textes viennent de
+// src/lib/textes/methode.js (modifiables depuis /test/textes/methode).
 const criteria = [
   {
     id: "01",
     icon: ICON_CRITERE_OPERATIONNEL,
-    title: "« Est-ce que c'est possible ? » — Opérationnalité & Moyens (30 points)",
-    body: "Trois piliers notés séparément (juridique, budgétaire, moyens humains, 10 points chacun). Si l'un est vraiment défaillant, le sous-total plafonne à 10/30, même si les deux autres sont solides.",
   },
   {
     id: "02",
     icon: ICON_CRITERE_EFFICACITE,
-    title: "« Est-ce que ça marche ? » — Efficacité (30 points)",
-    body: "Le lien de cause à effet est-il direct, indirect, ou quasiment absent ? Et une preuve concrète confirme-t-elle que ça fonctionne pour ce cas précis ?",
   },
   {
     id: "03",
     icon: ICON_CRITERE_REBONDS,
-    title: "« Quels sont les risques de dérive ? » — Effets rebonds & Externalités (20 points)",
-    body: "La mesure risque-t-elle de créer un problème aussi grave que celui qu'elle prétend résoudre ? Reports de coûts, impacts économiques, sociaux ou environnementaux non voulus.",
   },
   {
     id: "04",
     icon: ICON_CRITERE_PREPARATION,
-    title: "« Est-ce que c'est mature ? » — Degré de préparation (10 points)",
-    body: "Un projet détaillé et chiffré, ou un simple slogan de campagne ? Et si des chiffres sont avancés, sont-ils exacts au regard des sources officielles ?",
   },
   {
     id: "05",
     icon: ICON_CRITERE_ALIGNEMENT,
-    title: "« Est-ce que c'est cohérent ? » — Alignement & Logique globale (10 points)",
-    body: "Cohérente avec le reste du programme du candidat, et avec ses votes passés sur des textes comparables. Sans mandat antérieur, seule la cohérence du programme compte.",
   },
 ];
 
@@ -142,30 +141,18 @@ const guardrails = [
   {
     id: "01",
     icon: ICON_SHIELD_CHECK,
-    title: "On ne présume jamais qu'une source est pertinente.",
-    body: "Nos documents de référence servent de base de travail, pas de réponse toute faite. Si une source n'a rien à voir avec la mesure analysée, on le dit.",
   },
   {
     id: "02",
     icon: ICON_DOCUMENT_CHECK,
-    title: "On ne cite jamais une source qu'on n'a pas réellement consultée.",
-    body: null,
   },
   {
     id: "03",
     icon: ICON_CHAT_BUBBLES,
-    title: "On signale les désaccords entre sources",
-    // Pas d'ancre : aucune section du site ne documente spécifiquement
-    // l'arbitrage des désaccords entre sources (voir la demande d'origine —
-    // lien seulement "si ça existe"), donc texte simple plutôt qu'un lien
-    // vers une cible approximative ou trompeuse.
-    body: "plutôt que de trancher arbitrairement en leur faveur.",
   },
   {
     id: "04",
     icon: ICON_CALCULATOR,
-    title: "Le calcul du score final n'est jamais fait par une IA.",
-    body: "C'est toujours notre code qui additionne les points selon les règles ci-dessus, jamais un modèle qui décide du chiffre final à l'instinct.",
   },
 ];
 
@@ -182,7 +169,18 @@ function Tag({ children }) {
   );
 }
 
-export default function MethodePage() {
+// Un paragraphe par ligne, avec *gras* et [liens](/adresse) possibles.
+function Paragraphes({ texte, className }) {
+  return enLignes(texte).map((ligne, index) => (
+    <p key={index} className={className}>
+      <TexteRiche texte={ligne} />
+    </p>
+  ));
+}
+
+export default async function MethodePage() {
+  const t = await lireTextes("methode");
+
   return (
     <div className="flex min-h-screen flex-col bg-page-gradient font-sans">
       <Header />
@@ -193,23 +191,22 @@ export default function MethodePage() {
               consécutifs ("Notre méthode" puis "Comment fonctionne une
               analyse") — un doublon éditorial incorrect (voir la demande
               d'origine). Un seul hero directement au-dessus du pipeline. */}
-          <Tag>/ Méthode</Tag>
+          <Tag>{t["entete.etiquette"]}</Tag>
           <h1 className="mt-[25px] max-w-[520px] text-5xl font-extrabold leading-[1.08] tracking-tight text-zinc-900">
-            Comment fonctionne une analyse
+            {t["entete.titre"]}
           </h1>
           <p className="mt-5 max-w-[390px] text-lg leading-relaxed text-zinc-500">
-            Une chaîne de traitement transparente. Survolez une étape pour
-            voir ce qui se passe.
+            {t["entete.texte"]}
           </p>
 
           <div className="mt-12">
-            <MethodeAnalysisSteps />
+            <MethodeAnalysisSteps textes={t} />
           </div>
 
           {/* Les cinq critères */}
           <div className="mt-16 rounded-2xl border border-zinc-200 bg-white p-6 sm:p-8">
             <h2 className="text-2xl font-bold text-zinc-900">
-              Les cinq critères
+              {t["criteres.titre"]}
             </h2>
 
             <div className="mt-6 grid grid-cols-1 gap-8 sm:grid-cols-3">
@@ -241,10 +238,10 @@ export default function MethodePage() {
                       {`// ${item.id}`}
                     </span>
                     <p className="mt-1 text-sm font-bold leading-snug text-zinc-900">
-                      {item.title}
+                      {t[`critere${index + 1}.titre`]}
                     </p>
                     <p className="mt-1.5 text-sm leading-relaxed text-zinc-500">
-                      {item.body}
+                      {t[`critere${index + 1}.texte`]}
                     </p>
                   </div>
                 </div>
@@ -254,13 +251,12 @@ export default function MethodePage() {
 
           {/* La note finale (Bloc B) */}
           <div className="mt-16">
-            <Tag>// Output_score</Tag>
+            <Tag>{t["note.etiquette"]}</Tag>
             <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-zinc-900 sm:text-4xl">
-              La note finale
+              {t["note.titre"]}
             </h2>
             <p className="mt-3 max-w-2xl text-base leading-relaxed text-zinc-500">
-              Les cinq critères s&apos;additionnent pour produire un score
-              sur 100.
+              {t["note.texte"]}
             </p>
 
             {/* Un seul dégradé continu (7 stops) en fond, sans les bordures
@@ -349,88 +345,31 @@ export default function MethodePage() {
               les blocs de la refonte, conservé tel quel. */}
           <div className="mt-16 max-w-2xl">
             <h2 className="text-2xl font-bold text-zinc-900">
-              D&apos;où vient notre grille
+              {t["grille.titre"]}
             </h2>
 
-            <p className="mt-4 text-sm leading-relaxed text-zinc-600">
-              On n&apos;a pas inventé ces cinq critères dans notre coin. Ils
-              s&apos;inspirent de plusieurs décennies de recherche, en
-              France et à l&apos;international, sur la manière de juger
-              sérieusement une politique publique, notamment les travaux
-              d&apos;Eugene Bardach (Berkeley), l&apos;un des fondateurs de
-              l&apos;analyse des politiques publiques aux États-Unis, et
-              d&apos;Elinor Ostrom, première femme à avoir reçu le prix
-              Nobel d&apos;économie (2009), qui a montré qu&apos;une
-              réforme peut être parfaitement légale sur le papier et
-              pourtant échouer dans les faits parce que le vrai pouvoir de
-              décision appartient à d&apos;autres acteurs que ceux visés
-              par la promesse.
-            </p>
-
-            <p className="mt-4 text-sm leading-relaxed text-zinc-600">
-              En France, Pierre Muller, Yves Surel et Patrice Duran ont
-              posé les bases de l&apos;analyse des politiques publiques. Et
-              l&apos;universitaire italien Giandomenico Majone nous
-              rappelle qu&apos;aucune évaluation n&apos;est jamais
-              totalement neutre : c&apos;est pour ça qu&apos;on rend notre
-              grille et nos sources publiques.
-            </p>
-
-            <p className="mt-4 text-sm leading-relaxed text-zinc-600">
-              Le principe de comparer chaque mesure à un objectif de
-              référence, plutôt qu&apos;à l&apos;objectif tel que le
-              candidat le formule, s&apos;appuie lui aussi sur des cadres
-              reconnus : les critères d&apos;évaluation du Comité d&apos;aide
-              au développement de l&apos;OCDE, la distinction entre
-              réalisation et résultat popularisée par le chercheur français
-              Patrick Gibert, et le Green Book du Trésor britannique,
-              référence en matière d&apos;évaluation des politiques
-              publiques.
-            </p>
+            <Paragraphes
+              texte={t["grille.texte"]}
+              className="mt-4 text-sm leading-relaxed text-zinc-600"
+            />
           </div>
 
           {/* Notre processus de vérification (Bloc E) */}
           <div className="mt-16 max-w-2xl">
             <h2 className="text-2xl font-bold text-zinc-900">
-              Notre processus de vérification
+              {t["verification.titre"]}
             </h2>
 
-            <p className="mt-4 text-sm leading-relaxed text-zinc-600">
-              Chaque analyse passe par plusieurs étapes avant publication,
-              pour limiter les erreurs et les angles morts d&apos;un seul
-              modèle.
-            </p>
-
-            <p className="mt-4 text-sm leading-relaxed text-zinc-600">
-              Une première analyse est effectuée avec Claude, qui soulève
-              les points les plus importants : chiffres et sources,
-              faisabilité juridique, coût, effets attendus, angles morts.
-            </p>
-
-            <p className="mt-4 text-sm leading-relaxed text-zinc-600">
-              Une contre-analyse est ensuite effectuée avec Mistral, un
-              second modèle indépendant, dont le rôle est justement de
-              challenger la première analyse en repérant un chiffre douteux,
-              une affirmation juridique trop tranchée, ou un point
-              structurant qui aurait été oublié.
-            </p>
-
-            <p className="mt-4 text-sm leading-relaxed text-zinc-600">
-              Le résumé final est produit par Claude, qui tranche entre les
-              deux analyses et n&apos;intègre que les remarques réellement
-              fondées.
-            </p>
-
-            <p className="mt-4 text-sm leading-relaxed text-zinc-600">
-              Cette double vérification par IA est ensuite relue par des
-              experts vérificateurs avant toute publication.
-            </p>
+            <Paragraphes
+              texte={t["verification.texte"]}
+              className="mt-4 text-sm leading-relaxed text-zinc-600"
+            />
           </div>
 
           {/* Nos garde-fous (Bloc D) */}
           <div className="mt-16 rounded-2xl border border-zinc-200 bg-white p-6 sm:p-8">
             <h2 className="text-2xl font-bold text-zinc-900">
-              Nos garde-fous
+              {t["gardefous.titre"]}
             </h2>
 
             <div className="mt-6 grid grid-cols-1 gap-8 sm:grid-cols-3">
@@ -462,11 +401,11 @@ export default function MethodePage() {
                       {`// ${item.id}`}
                     </span>
                     <p className="mt-1 text-sm font-bold leading-snug text-zinc-900">
-                      {item.title}
+                      {t[`gardefou${index + 1}.titre`]}
                     </p>
-                    {item.body ? (
+                    {t[`gardefou${index + 1}.texte`] ? (
                       <p className="mt-1.5 text-sm leading-relaxed text-zinc-500">
-                        {item.body}
+                        {t[`gardefou${index + 1}.texte`]}
                       </p>
                     ) : null}
                   </div>
@@ -478,15 +417,12 @@ export default function MethodePage() {
           {/* Ce que Perlimpinpin n'est pas (Bloc F) */}
           <div className="mt-16 mb-16 max-w-2xl">
             <h2 className="text-2xl font-bold text-zinc-900">
-              Ce que Perlimpinpin n&apos;est pas
+              {t["nonpas.titre"]}
             </h2>
-            <p className="mt-4 text-sm leading-relaxed text-zinc-600">
-              Perlimpinpin ne dit pas si une mesure est souhaitable
-              politiquement : ça reste un choix de valeurs, propre à
-              chacun. On évalue si une promesse est réaliste, chiffrée et
-              cohérente avec les contraintes du pays. Le reste,
-              c&apos;est à vous de le décider dans les urnes.
-            </p>
+            <Paragraphes
+              texte={t["nonpas.texte"]}
+              className="mt-4 text-sm leading-relaxed text-zinc-600"
+            />
           </div>
         </div>
       </main>
