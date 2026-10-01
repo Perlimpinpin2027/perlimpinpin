@@ -1,9 +1,11 @@
 // Textes modifiables de la page /methode (voir src/lib/textes-site.js).
 // Ne sont PAS ici : les tranches de score (src/lib/score.js, partagées avec
-// tout le site) et les libellés techniques input/output des 5 étapes.
+// tout le site) et les libellés techniques input/output des 6 étapes.
+// Les étapes utilisent les clés pipelineN.* (les anciennes clés etapeN.* de
+// la version à 5 étapes ne sont plus lues).
 
 const G_ENTETE = "En-tête";
-const G_ETAPES = "Les 5 étapes de l'analyse";
+const G_ETAPES = "Les 6 étapes de l'analyse";
 const G_CRITERES = "Les cinq critères";
 const G_NOTE = "La note finale";
 const G_GRILLE = "D'où vient notre grille";
@@ -25,58 +27,59 @@ const page = {
       defaut: "Une chaîne de traitement transparente. Survolez une étape pour voir ce qui se passe.",
     },
 
-    { cle: "etape1.carte", groupe: G_ETAPES, libelle: "Étape 01 — texte de la carte", defaut: "Reformuler la déclaration" },
-    { cle: "etape1.titre", groupe: G_ETAPES, libelle: "Étape 01 — titre du détail", defaut: "La déclaration est reformulée simplement." },
+    { cle: "pipeline1.carte", groupe: G_ETAPES, libelle: "Étape 01 — texte de la carte", defaut: "Reformuler et rassembler les sources" },
+    { cle: "pipeline1.titre", groupe: G_ETAPES, libelle: "Étape 01 — titre du détail", defaut: "La déclaration est reformulée, puis les sources sont rassemblées." },
     {
-      cle: "etape1.texte",
+      cle: "pipeline1.texte",
       groupe: G_ETAPES,
       libelle: "Étape 01 — texte du détail",
-      defaut: "On résume la promesse en une phrase claire, sans l'interprétation du candidat ni la nôtre.",
+      defaut:
+        "On résume la promesse en une phrase claire, sans l'interprétation du candidat ni la nôtre. Puis on rassemble les sources : données publiques d'abord (Légifrance, INSEE, Cour des comptes...), jamais une source militante comme preuve d'un fait.",
     },
-    { cle: "etape2.carte", groupe: G_ETAPES, libelle: "Étape 02 — texte de la carte", defaut: "Rassembler les sources" },
-    { cle: "etape2.titre", groupe: G_ETAPES, libelle: "Étape 02 — titre du détail", defaut: "Les sources sont rassemblées et vérifiées." },
+    { cle: "pipeline2.carte", groupe: G_ETAPES, libelle: "Étape 02 — texte de la carte", defaut: "Première analyse avec Claude" },
+    { cle: "pipeline2.titre", groupe: G_ETAPES, libelle: "Étape 02 — titre du détail", defaut: "Une première analyse est effectuée avec Claude." },
     {
-      cle: "etape2.texte",
+      cle: "pipeline2.texte",
       groupe: G_ETAPES,
       libelle: "Étape 02 — texte du détail",
       defaut:
-        "Données publiques d'abord (Légifrance, INSEE, Cour des comptes...) — jamais une source militante comme preuve d'un fait.",
+        "Elle soulève les points les plus importants : chiffres et sources, faisabilité juridique, coût, effets attendus, angles morts.",
     },
-    { cle: "etape3.carte", groupe: G_ETAPES, libelle: "Étape 03 — texte de la carte", defaut: "Situer la mesure dans son contexte" },
-    { cle: "etape3.titre", groupe: G_ETAPES, libelle: "Étape 03 — titre du détail", defaut: "La mesure est replacée dans son contexte." },
+    { cle: "pipeline3.carte", groupe: G_ETAPES, libelle: "Étape 03 — texte de la carte", defaut: "Relecture par le Club" },
+    { cle: "pipeline3.titre", groupe: G_ETAPES, libelle: "Étape 03 — titre du détail", defaut: "L'analyse est soumise au Club Perlimpinpin." },
     {
-      cle: "etape3.texte",
+      cle: "pipeline3.texte",
       groupe: G_ETAPES,
       libelle: "Étape 03 — texte du détail",
       defaut:
-        "Dans le programme du candidat, dans la réalité française actuelle, et à l'international quand c'est pertinent.",
+        "Pendant la relecture, ses membres peuvent apporter une source, contester un raisonnement, signaler une erreur ou proposer une autre lecture.",
     },
-    { cle: "etape4.carte", groupe: G_ETAPES, libelle: "Étape 04 — texte de la carte", defaut: "Évaluer selon 5 critères" },
+    { cle: "pipeline4.carte", groupe: G_ETAPES, libelle: "Étape 04 — texte de la carte", defaut: "L'IA intègre les contributions" },
+    { cle: "pipeline4.titre", groupe: G_ETAPES, libelle: "Étape 04 — titre du détail", defaut: "L'IA confronte les contributions aux sources." },
     {
-      cle: "etape4.titre",
-      groupe: G_ETAPES,
-      libelle: "Étape 04 — titre du détail",
-      defaut: "La mesure est notée selon cinq critères indépendants.",
-    },
-    {
-      cle: "etape4.texte",
+      cle: "pipeline4.texte",
       groupe: G_ETAPES,
       libelle: "Étape 04 — texte du détail",
-      defaut: "Cinq critères, chacun noté séparément, pour un total sur 100 points — détail plus bas sur cette page.",
+      defaut:
+        "Elle corrige ses erreurs, nuance ses conclusions ou maintient son analyse lorsque les objections sont insuffisamment étayées, et répond à chaque commentaire.",
     },
-    { cle: "etape5.carte", groupe: G_ETAPES, libelle: "Étape 05 — texte de la carte", defaut: "Qualifier le résultat" },
+    { cle: "pipeline5.carte", groupe: G_ETAPES, libelle: "Étape 05 — texte de la carte", defaut: "Contre-analyse avec Mistral" },
+    { cle: "pipeline5.titre", groupe: G_ETAPES, libelle: "Étape 05 — titre du détail", defaut: "Une contre-analyse est effectuée avec Mistral." },
     {
-      cle: "etape5.titre",
-      groupe: G_ETAPES,
-      libelle: "Étape 05 — titre du détail",
-      defaut: "Ce qui est établi, probable, discutable et inconnu est distingué explicitement.",
-    },
-    {
-      cle: "etape5.texte",
+      cle: "pipeline5.texte",
       groupe: G_ETAPES,
       libelle: "Étape 05 — texte du détail",
       defaut:
-        "Quand une source manque, on l'écrit noir sur blanc — « sources insuffisantes » — plutôt que de deviner.",
+        "Ce second modèle indépendant a pour rôle de challenger l'analyse en repérant un chiffre douteux, une affirmation juridique trop tranchée, ou un point structurant qui aurait été oublié.",
+    },
+    { cle: "pipeline6.carte", groupe: G_ETAPES, libelle: "Étape 06 — texte de la carte", defaut: "Synthèse finale" },
+    { cle: "pipeline6.titre", groupe: G_ETAPES, libelle: "Étape 06 — titre du détail", defaut: "Le résumé final est produit par Claude." },
+    {
+      cle: "pipeline6.texte",
+      groupe: G_ETAPES,
+      libelle: "Étape 06 — texte du détail",
+      defaut:
+        "Il tranche entre les analyses et n'intègre que les remarques réellement fondées.",
     },
     {
       cle: "etapes.note",

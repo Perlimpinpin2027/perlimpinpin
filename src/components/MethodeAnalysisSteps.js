@@ -32,10 +32,19 @@ const ICON_BARCHART = (
     <rect x="16.5" y="9.5" width="3.5" height="9.5" rx="0.5" />
   </>
 );
-const ICON_CHECK_CIRCLE = (
+const ICON_USERS = (
   <>
-    <circle cx="12" cy="12" r="8.25" />
-    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 12.25 10.75 14.75 15.75 9.5" />
+    <circle cx="9" cy="8" r="3" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M3.5 19a5.5 5.5 0 0 1 11 0" />
+    <circle cx="17" cy="9.5" r="2.25" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M16 14.6a4.5 4.5 0 0 1 5 4.4" />
+  </>
+);
+const ICON_SCALE = (
+  <>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v15.5M8 19.5h8M5 7.5h14" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M5 7.5 2.75 13a2.25 2.25 0 0 0 4.5 0L5 7.5Z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M19 7.5 16.75 13a2.25 2.25 0 0 0 4.5 0L19 7.5Z" />
   </>
 );
 const ICON_INFO = (
@@ -46,48 +55,19 @@ const ICON_INFO = (
   </>
 );
 
-// 5 macro-étapes publiques, résumant l'esprit de data/prompt-methodologie.md
-// (section MÉTHODE D'ANALYSE) — représentation volontairement simplifiée du
-// pipeline réel pour l'affichage public (voir la demande d'origine : la
-// maquette cible montre 5 cartes, pas les 7 sous-étapes internes). "Vérifier
-// le lien de cause à effet" et "Comparer à un repère neutre" (étapes 1bis et
-// 1ter du prompt réel, toujours appliquées côté analyse) sont fondues dans
-// cette version publique plutôt qu'affichées comme des cartes séparées :
-// aucun impact sur le prompt IA ni sur scripts/analyze.js, uniquement sur
-// cette illustration. Noms de variables input/output plausibles pour le
-// panneau "console", pas les vrais noms de champs internes (volontaire, pour
-// ne jamais exposer la structure technique réelle au public).
+// 6 étapes publiques, dans l'ordre réel du processus : analyse par Claude,
+// relecture par le Club, révision par l'IA, contre-analyse Mistral, synthèse.
+// Représentation simplifiée pour le public. Les textes (carte, titre, détail)
+// viennent de src/lib/textes/methode.js (clés pipelineN.*). Les noms
+// input/output sont plausibles mais volontairement pas les vrais noms de
+// champs internes (pour ne jamais exposer la structure technique réelle).
 const STEPS = [
-  {
-    id: "01",
-    icon: ICON_PENCIL,
-    input: "declaration_brute",
-    output: "declaration_reformulee",
-  },
-  {
-    id: "02",
-    icon: ICON_DATABASE,
-    input: "declaration_reformulee",
-    output: "corpus_sources",
-  },
-  {
-    id: "03",
-    icon: ICON_TARGET,
-    input: "corpus_sources",
-    output: "mesure_contextualisee",
-  },
-  {
-    id: "04",
-    icon: ICON_BARCHART,
-    input: "mesure_contextualisee",
-    output: "notation_detaillee",
-  },
-  {
-    id: "05",
-    icon: ICON_CHECK_CIRCLE,
-    input: "notation_detaillee",
-    output: "verdict_final",
-  },
+  { id: "01", icon: ICON_DATABASE, input: "declaration_brute", output: "corpus_sources" },
+  { id: "02", icon: ICON_BARCHART, input: "corpus_sources", output: "analyse_initiale" },
+  { id: "03", icon: ICON_USERS, input: "analyse_initiale", output: "contributions_club" },
+  { id: "04", icon: ICON_PENCIL, input: "contributions_club", output: "analyse_revisee" },
+  { id: "05", icon: ICON_TARGET, input: "analyse_revisee", output: "contre_analyse" },
+  { id: "06", icon: ICON_SCALE, input: "contre_analyse", output: "verdict_final" },
 ];
 
 function StepIcon({ icon, active }) {
@@ -115,7 +95,7 @@ function StepIcon({ icon, active }) {
 export default function MethodeAnalysisSteps({ textes = {} }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const active = STEPS[activeIndex];
-  const texteEtape = (index, champ) => textes[`etape${index + 1}.${champ}`] ?? "";
+  const texteEtape = (index, champ) => textes[`pipeline${index + 1}.${champ}`] ?? "";
 
   return (
     <div>
@@ -126,10 +106,13 @@ export default function MethodeAnalysisSteps({ textes = {} }) {
           indépendants entre chaque paire de cartes : le fond blanc de
           chaque carte la masque naturellement là où elle passe derrière,
           ne laissant apparaître le pointillé que dans les intervalles. */}
-      <div className="relative flex flex-col gap-3 sm:grid sm:grid-cols-5 sm:gap-6 sm:gap-y-0 lg:gap-x-16">
+      {/* 6 étapes : empilées sur mobile, 2 lignes de 3 sur tablette, une
+          seule ligne de 6 sur grand écran (le pointillé de fond n'apparaît
+          qu'en une ligne, sinon il traverserait les cartes). */}
+      <div className="relative flex flex-col gap-3 sm:grid sm:grid-cols-3 sm:gap-6 lg:grid-cols-6 lg:gap-x-8 xl:gap-x-12">
         <div
           aria-hidden="true"
-          className="absolute inset-x-0 top-1/2 z-0 hidden border-t-2 border-dashed border-zinc-300 sm:block"
+          className="absolute inset-x-0 top-1/2 z-0 hidden border-t-2 border-dashed border-zinc-300 lg:block"
         />
         {STEPS.map((step, index) => (
           <button
