@@ -29,6 +29,11 @@ export const PAGES_EDITABLES = {
           "L’objectivité ne se décrète pas. Elle se construit.",
         ].join("\n"),
       },
+      {
+        cle: "intro.bouton",
+        libelle: "Introduction — bouton vers l’adhésion",
+        defaut: "Adhérer au Club →",
+      },
 
       // Les 4 cartes numérotées
       { cle: "etape1.titre", libelle: "Carte 01 — titre", defaut: "L’IA analyse" },
@@ -66,52 +71,129 @@ export const PAGES_EDITABLES = {
         ].join("\n"),
       },
 
-      // Les 3 sections sous les cartes
-      { cle: "section1.titre", libelle: "Section 1 — titre", defaut: "Une nouvelle exigence" },
+      // Bloc « Pourquoi nous rejoindre ? » (grille de 4 points)
+      { cle: "pourquoi.titre", libelle: "Pourquoi nous rejoindre — titre", defaut: "Pourquoi nous rejoindre ?" },
       {
-        cle: "section1.texte",
-        libelle: "Section 1 — texte",
-        defaut: [
-          "L’IA rend plus visibles les promesses imprécises, les financements absents ou les contradictions.",
-          "À mesure que les outils d’analyse progressent, les propositions politiques peuvent elles aussi être soumises à davantage d’exigence, de précision et de vérification.",
-        ].join("\n"),
+        cle: "pourquoi.chapeau",
+        libelle: "Pourquoi nous rejoindre — chapeau",
+        defaut: "En adhérant à l’association, vous :",
       },
       {
-        cle: "section2.titre",
-        libelle: "Section 2 — titre",
-        defaut: "Une autre manière d’utiliser l’IA en démocratie",
+        cle: "pourquoi1.titre",
+        libelle: "Point 1 (balance) — titre",
+        defaut: "Défendez une nouvelle exigence dans le débat public",
       },
       {
-        cle: "section2.texte",
-        libelle: "Section 2 — texte",
-        defaut: [
-          "L’intelligence artificielle apporte la vitesse et la capacité d’analyse.",
-          "Les humains apportent l’expertise, la contradiction et le jugement.",
-          "C’est leur combinaison qui fait Perlimpinpin.",
-        ].join("\n"),
+        cle: "pourquoi1.texte",
+        libelle: "Point 1 (balance) — texte",
+        defaut:
+          "Dépassez la rhétorique et les petites phrases. L’IA rend plus visibles les promesses imprécises, les financements absents ou les contradictions : les propositions politiques peuvent désormais être soumises à davantage de précision et de vérification.",
       },
-      { cle: "section3.titre", libelle: "Section 3 — titre", defaut: "Un outil indépendant" },
       {
-        cle: "section3.texte",
-        libelle: "Section 3 — texte",
-        defaut: [
-          "Perlimpinpin est porté par une association indépendante.",
-          "Les adhésions et les dons financent :",
-          "L’indépendance.",
-          "La technologie.",
-          "L’accès aux analyses.",
-        ].join("\n"),
+        cle: "pourquoi2.titre",
+        libelle: "Point 2 (loupe) — titre",
+        defaut: "Faites de l’analyse un bien commun",
+      },
+      {
+        cle: "pourquoi2.texte",
+        libelle: "Point 2 (loupe) — texte",
+        defaut:
+          "L’analyse des propositions politiques ne doit plus être le privilège de quelques experts. Avec le Club, elle devient accessible, vérifiable et ouverte à tous.",
+      },
+      {
+        cle: "pourquoi3.titre",
+        libelle: "Point 3 (personnes) — titre",
+        defaut: "Placez l’humain au centre, propulsé par l’IA",
+      },
+      {
+        cle: "pourquoi3.texte",
+        libelle: "Point 3 (personnes) — texte",
+        defaut:
+          "L’intelligence artificielle apporte la vitesse et la capacité d’analyse. Les humains apportent l’expertise, la contradiction et le jugement. C’est leur combinaison qui fait Perlimpinpin.",
+      },
+      {
+        cle: "pourquoi4.titre",
+        libelle: "Point 4 (fusée) — titre",
+        defaut: "Propulsez un projet citoyen jeune et indépendant",
+      },
+      {
+        cle: "pourquoi4.texte",
+        libelle: "Point 4 (fusée) — texte",
+        defaut:
+          "Soutenez une initiative à ses débuts pour lui donner les moyens de grandir, de se structurer et d’agir durablement dans le paysage démocratique.",
       },
 
-      // Encadré final
-      { cle: "cta.surtitre", libelle: "Encadré final — petit surtitre", defaut: "Rejoignez le Club" },
-      { cle: "cta.titre", libelle: "Encadré final — titre", defaut: "Entrez dans l’aventure." },
+      // Bloc « Un outil indépendant » (carte grisée)
+      { cle: "independance.titre", libelle: "Outil indépendant — titre", defaut: "Un outil indépendant" },
       {
-        cle: "cta.texte",
-        libelle: "Encadré final — texte",
-        defaut: "Faites un don de 2 € sur HelloAsso pour rejoindre le Club Perlimpinpin.",
+        cle: "independance.soustitre",
+        libelle: "Outil indépendant — sous-titre",
+        defaut: "Pourquoi demandons-nous une contribution ?",
       },
-      { cle: "cta.bouton", libelle: "Encadré final — texte du bouton", defaut: "Faire un don de 2 €" },
+      {
+        cle: "independance.texte",
+        libelle: "Outil indépendant — texte (un paragraphe par ligne)",
+        defaut:
+          "Perlimpinpin est porté par une association indépendante. L’outil est gratuit pour les lecteurs, sans publicité et sans financement politique. Pour garantir notre impartialité, nous nous appuyons sur nos adhérents et nos donateurs.",
+      },
+      {
+        cle: "independance.introListe",
+        libelle: "Outil indépendant — phrase avant la liste",
+        defaut: "Les adhésions et les dons financent directement :",
+      },
+      { cle: "independance1.titre", libelle: "Financement 1 — titre", defaut: "La technologie" },
+      {
+        cle: "independance1.texte",
+        libelle: "Financement 1 — texte",
+        defaut:
+          "Analyse des propositions, requêtes aux modèles d’IA, hébergement et maintenance du site : l’IA au service de la démocratie a un coût réel, chaque jour.",
+      },
+      { cle: "independance2.titre", libelle: "Financement 2 — titre", defaut: "L’indépendance" },
+      {
+        cle: "independance2.texte",
+        libelle: "Financement 2 — texte",
+        defaut:
+          "Ni publicité, ni financement politique : c’est le soutien des citoyens qui garantit notre liberté d’analyse.",
+      },
+      { cle: "independance3.titre", libelle: "Financement 3 — titre", defaut: "L’accès aux analyses" },
+      {
+        cle: "independance3.texte",
+        libelle: "Financement 3 — texte",
+        defaut:
+          "Des analyses gratuites pour tous, et un Club vivant : échanges, ateliers de décryptage, événements pour porter nos travaux auprès du grand public.",
+      },
+      {
+        cle: "independance.mention",
+        libelle: "Outil indépendant — mention en bas de carte",
+        defaut: "Association loi 1901 · RNA W941021332",
+      },
+
+      // Bloc d'adhésion final (ancre #adherer)
+      { cle: "adhesion.titre", libelle: "Adhésion — titre", defaut: "Entrez dans le Club Perlimpinpin" },
+      {
+        cle: "adhesion.soustitre",
+        libelle: "Adhésion — sous-titre",
+        defaut:
+          "Rejoignez un collectif d’audit citoyen et donnez du poids aux faits dans le débat public.",
+      },
+      {
+        cle: "adhesion.encadreTitre",
+        libelle: "Adhésion — titre de l’encadré",
+        defaut: "Adhésion à prix libre, à partir de 2 €",
+      },
+      {
+        cle: "adhesion.encadreTexte",
+        libelle: "Adhésion — texte de l’encadré",
+        defaut:
+          "Vous choisissez le montant de votre adhésion. Chaque contribution, quelle qu’elle soit, renforce l’indépendance du projet et fait de vous un membre du Club.",
+      },
+      {
+        cle: "adhesion.reperes",
+        libelle: "Adhésion — repères de montants (petite ligne)",
+        defaut:
+          "Pour vous repérer : 2 € pour rejoindre le Club · 10 € pour soutenir · 24 € pour porter le projet",
+      },
+      { cle: "adhesion.bouton", libelle: "Adhésion — texte du bouton", defaut: "Adhérer sur HelloAsso" },
     ],
   },
 };

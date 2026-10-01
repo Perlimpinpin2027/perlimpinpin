@@ -58,6 +58,9 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
+      // Défilement doux pour les ancres (globals.css), mais changements de
+      // page instantanés : Next coupe le smooth pendant la navigation.
+      data-scroll-behavior="smooth"
       className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
