@@ -430,3 +430,21 @@ model Adherent {
 
   commentaires RelectureComment[]
 }
+
+// Textes modifiables des pages publiques (ex. /nous-rejoindre), édités depuis
+// le mode édition de /test. La liste des textes possibles et leur valeur par
+// défaut sont dans src/lib/textes-site.js : une ligne ici ne fait que
+// REMPLACER un texte par défaut. Pas de ligne = texte par défaut affiché.
+model TexteSite {
+  // Page concernée, ex. "nous-rejoindre"
+  page      String
+  // Clé du texte dans la page, ex. "etape2.titre"
+  cle       String
+  valeur    String
+  // +1 à chaque enregistrement (évite d'écraser la modification d'un autre)
+  version   Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@id([page, cle])
+}
