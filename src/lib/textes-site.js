@@ -15,9 +15,11 @@
 
 import accueil from "@/lib/textes/accueil";
 import nousRejoindre from "@/lib/textes/nous-rejoindre";
+import aPropos from "@/lib/textes/a-propos";
 
 export const PAGES_EDITABLES = {
   accueil,
+  "a-propos": aPropos,
   "nous-rejoindre": nousRejoindre,
 };
 

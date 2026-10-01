@@ -10,7 +10,7 @@ import { enregistrerTexteSite, reinitialiserTexteSite } from "./actions";
 // est dans les actions serveur.
 // Après chaque enregistrement, la page se recharge et ce composant est recréé
 // (sa clé contient la version) : il repart donc toujours du texte en base.
-export default function ChampTexte({ page, cle, libelle, defaut, valeurEnregistree, version }) {
+export default function ChampTexte({ page, cle, libelle, defaut, riche = false, valeurEnregistree, version }) {
   const router = useRouter();
   const valeurActuelle = valeurEnregistree ?? defaut;
   const modifie = valeurEnregistree !== null;
@@ -92,6 +92,14 @@ export default function ChampTexte({ page, cle, libelle, defaut, valeurEnregistr
         </span>
         <span>Ctrl/Cmd + Entrée pour enregistrer</span>
       </div>
+
+      {riche ? (
+        <p className="text-xs text-zinc-500">
+          Mise en forme : <code className="rounded bg-zinc-100 px-1">*texte en gras*</code> ·{" "}
+          <code className="rounded bg-zinc-100 px-1">[texte du lien](/adresse)</code> ou{" "}
+          <code className="rounded bg-zinc-100 px-1">[texte](https://…)</code>
+        </p>
+      ) : null}
 
       {!controle.ok ? <p className="text-xs font-semibold text-red-700">{controle.message}</p> : null}
       {message ? (

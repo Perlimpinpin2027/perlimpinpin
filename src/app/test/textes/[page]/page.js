@@ -100,6 +100,7 @@ export default async function EditionTextesPage({ params }) {
                       cle={champ.cle}
                       libelle={champ.libelle}
                       defaut={champ.defaut}
+                      riche={Boolean(champ.riche)}
                       valeurEnregistree={ligne?.valeur ?? null}
                       version={version}
                     />
