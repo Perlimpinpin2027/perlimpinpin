@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
@@ -81,19 +82,28 @@ export default async function EditionTextesPage({ params }) {
 
           {editeur ? (
             <div className="flex flex-col gap-4">
-              {definition.champs.map((champ) => {
+              {definition.champs.map((champ, index) => {
                 const ligne = enregistres.get(champ.cle);
                 const version = ligne?.version ?? 0;
+                // Titre de rubrique quand on change de groupe.
+                const nouveauGroupe =
+                  champ.groupe && champ.groupe !== definition.champs[index - 1]?.groupe;
                 return (
-                  <ChampTexte
-                    key={`${champ.cle}-${version}`}
-                    page={page}
-                    cle={champ.cle}
-                    libelle={champ.libelle}
-                    defaut={champ.defaut}
-                    valeurEnregistree={ligne?.valeur ?? null}
-                    version={version}
-                  />
+                  <Fragment key={`${champ.cle}-${version}`}>
+                    {nouveauGroupe ? (
+                      <h2 className="mt-6 border-b border-zinc-200 pb-2 text-xl font-extrabold tracking-tight text-zinc-900">
+                        {champ.groupe}
+                      </h2>
+                    ) : null}
+                    <ChampTexte
+                      page={page}
+                      cle={champ.cle}
+                      libelle={champ.libelle}
+                      defaut={champ.defaut}
+                      valeurEnregistree={ligne?.valeur ?? null}
+                      version={version}
+                    />
+                  </Fragment>
                 );
               })}
             </div>

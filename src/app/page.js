@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import Link from "next/link";
 import Header from "@/components/Header";
 import HeroText from "@/components/HeroText";
@@ -5,6 +6,8 @@ import FeaturedCarousel from "@/components/FeaturedCarousel";
 import ThemeTags from "@/components/ThemeTags";
 import BottomColumns from "@/components/BottomColumns";
 import SupportBanner from "@/components/SupportBanner";
+import { enLignes } from "@/lib/textes-site";
+import { lireTextes } from "@/lib/textes-site-serveur";
 import {
   getFeaturedRotation,
   getTopDeclarations,
@@ -17,12 +20,27 @@ import {
 export const revalidate = 300;
 
 export default async function Home() {
-  const [featuredRotation, topDeclarations, rankedCandidates] =
+  const [featuredRotation, topDeclarations, rankedCandidates, t] =
     await Promise.all([
       getFeaturedRotation(),
       getTopDeclarations(6),
       getCandidateRanking(),
+      // Textes modifiables depuis /test/textes/accueil
+      lireTextes("accueil"),
     ]);
+
+  // Titre du bandeau « Rejoignez-nous » : une ligne = un retour à la ligne
+  // (sur grand écran seulement, comme avant).
+  const titreBandeau = enLignes(t["bandeau.titre"]).map((morceau, index) => (
+    <Fragment key={index}>
+      {index > 0 ? (
+        <>
+          <br className="hidden sm:block" />{" "}
+        </>
+      ) : null}
+      {morceau}
+    </Fragment>
+  ));
 
   return (
     <div className="flex min-h-screen flex-col bg-page-gradient font-sans">
@@ -30,7 +48,7 @@ export default async function Home() {
 
       <section className="w-full px-6 py-10 sm:px-8 sm:py-14">
         <div className="mx-auto grid w-full max-w-[1280px] grid-cols-1 items-start gap-8 lg:grid-cols-[2fr_3fr] lg:gap-10">
-          <HeroText />
+          <HeroText textes={t} />
           <FeaturedCarousel items={featuredRotation} />
         </div>
       </section>
@@ -46,11 +64,16 @@ export default async function Home() {
           <BottomColumns
             topDeclarations={topDeclarations}
             rankedCandidates={rankedCandidates}
+            textes={t}
           />
         </div>
       </section>
 
-      <SupportBanner />
+      <SupportBanner
+        title={titreBandeau}
+        text={t["bandeau.texte"]}
+        buttonLabel={t["bandeau.bouton"]}
+      />
 
       <section className="w-full px-6 pb-16 sm:px-8 sm:pb-20">
         <div className="mx-auto flex w-full max-w-[1280px] flex-col items-start justify-between gap-4 rounded-2xl border border-zinc-200 bg-white p-6 sm:flex-row sm:items-center sm:p-8">
@@ -72,11 +95,10 @@ export default async function Home() {
             </svg>
             <div>
               <p className="text-sm font-bold text-zinc-900">
-                Transparence et indépendance
+                {t["transparence.titre"]}
               </p>
               <p className="mt-1 max-w-2xl text-sm leading-relaxed text-zinc-500">
-                Perlimpinpin est un projet éditorial indépendant. Nos analyses
-                sont gratuites, sans publicité et sans influence politique.
+                {t["transparence.texte"]}
               </p>
             </div>
           </div>
@@ -85,7 +107,7 @@ export default async function Home() {
             href="/a-propos"
             className="shrink-0 whitespace-nowrap text-sm font-semibold text-blue-600 transition-colors hover:text-blue-800"
           >
-            En savoir plus sur nous →
+            {t["transparence.lien"]}
           </Link>
         </div>
       </section>

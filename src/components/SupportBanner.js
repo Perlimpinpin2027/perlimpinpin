@@ -16,11 +16,13 @@ const DEFAULT_TITLE = (
 const DEFAULT_TEXT =
   "Relisez, commentez et challengez les analyses avant leur publication en adhérant à l'association pour 2€.";
 
+// `buttonLabel` : texte du bouton (modifiable pour la page d'accueil).
 // `embedded` : le bandeau est posé dans une page qui gère déjà ses marges
 // (ex. page d'analyse) — on retire alors la <section> à marges propres.
 export default function SupportBanner({
   title = DEFAULT_TITLE,
   text = DEFAULT_TEXT,
+  buttonLabel = "Rejoignez-nous →",
   embedded = false,
 }) {
   const card = (
@@ -55,7 +57,7 @@ export default function SupportBanner({
             href="/nous-rejoindre"
             className="inline-flex shrink-0 items-center justify-center gap-2 self-start whitespace-nowrap rounded-full bg-zinc-900 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-zinc-700 sm:self-auto"
           >
-            Rejoignez-nous →
+            {buttonLabel}
           </Link>
         </div>
       </div>

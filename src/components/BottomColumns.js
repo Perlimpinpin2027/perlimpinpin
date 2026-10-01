@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { formatScore, getScoreBadge, getScoreBands } from "@/lib/score";
 import { vignettePhoto } from "@/lib/photo-vignette";
+import { textesParDefaut } from "@/lib/textes-site";
 
 function ColumnHeader({ title, subtitle, linkLabel, linkHref, icon }) {
   return (
@@ -26,18 +27,18 @@ function ColumnHeader({ title, subtitle, linkLabel, linkHref, icon }) {
   );
 }
 
-function TopDeclarationsColumn({ declarations }) {
+function TopDeclarationsColumn({ declarations, t }) {
   return (
     <div className="rounded-2xl border border-zinc-200 bg-white p-6">
       <ColumnHeader
-        title="Dernières déclarations"
-        linkLabel="Voir toutes →"
+        title={t["colonnes.declarations.titre"]}
+        linkLabel={t["colonnes.declarations.lien"]}
         linkHref="/declarations"
       />
 
       {declarations.length === 0 ? (
         <p className="text-sm text-zinc-500">
-          Aucune déclaration analysée pour le moment.
+          {t["colonnes.declarations.vide"]}
         </p>
       ) : (
         <ul className="flex flex-col gap-5">
@@ -88,11 +89,11 @@ function TopDeclarationsColumn({ declarations }) {
   );
 }
 
-function ScoreExplainerColumn() {
+function ScoreExplainerColumn({ t }) {
   return (
     <div className="rounded-2xl border border-zinc-200 bg-white p-6">
       <ColumnHeader
-        title="Comment fonctionne le score ?"
+        title={t["colonnes.score.titre"]}
         icon={
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -113,8 +114,7 @@ function ScoreExplainerColumn() {
       />
 
       <p className="mb-6 text-sm leading-relaxed text-zinc-500">
-        Le Score Perlimpinpin évalue la qualité informationnelle des
-        déclarations sur 100 points.
+        {t["colonnes.score.texte"]}
       </p>
 
       <div className="flex flex-col gap-4">
@@ -159,18 +159,18 @@ function TrendIndicator({ trend, delta }) {
   );
 }
 
-function ReliabilityIndexColumn({ candidates }) {
+function ReliabilityIndexColumn({ candidates, t }) {
   return (
     <div className="rounded-2xl border border-zinc-200 bg-white p-6">
       <ColumnHeader
-        title="Indice de fiabilité des candidats"
-        subtitle="Moyenne arithmétique des propositions des candidats"
-        linkLabel="Voir tous les candidats →"
+        title={t["colonnes.candidats.titre"]}
+        subtitle={t["colonnes.candidats.soustitre"]}
+        linkLabel={t["colonnes.candidats.lien"]}
         linkHref="/candidats"
       />
 
       {candidates.length === 0 ? (
-        <p className="text-sm text-zinc-500">Aucun candidat enregistré.</p>
+        <p className="text-sm text-zinc-500">{t["colonnes.candidats.vide"]}</p>
       ) : (
         <ol className="flex flex-col gap-5">
           {candidates.map((candidate, index) => (
@@ -220,21 +220,21 @@ function ReliabilityIndexColumn({ candidates }) {
       )}
 
       <p className="mt-6 border-t border-zinc-100 pt-4 text-xs leading-relaxed text-zinc-400">
-        Ce score est une moyenne arithmétique des mesures actuellement
-        analysées par l&rsquo;outil. Il ne constitue ni un jugement sur la
-        personne, ni un indice général de crédibilité politique, et évolue
-        au fur et à mesure des analyses.
+        {t["colonnes.candidats.note"]}
       </p>
     </div>
   );
 }
 
-export default function BottomColumns({ topDeclarations, rankedCandidates }) {
+// `textes` : textes de la page d'accueil (src/lib/textes/accueil.js), lus en
+// base par la page. Les textes par défaut servent de secours.
+export default function BottomColumns({ topDeclarations, rankedCandidates, textes }) {
+  const t = { ...textesParDefaut("accueil"), ...textes };
   return (
     <div className="grid w-full grid-cols-1 gap-6 lg:grid-cols-3">
-      <TopDeclarationsColumn declarations={topDeclarations} />
-      <ScoreExplainerColumn />
-      <ReliabilityIndexColumn candidates={rankedCandidates} />
+      <TopDeclarationsColumn declarations={topDeclarations} t={t} />
+      <ScoreExplainerColumn t={t} />
+      <ReliabilityIndexColumn candidates={rankedCandidates} t={t} />
     </div>
   );
 }
