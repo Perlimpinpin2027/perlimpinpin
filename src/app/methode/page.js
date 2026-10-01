@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Header from "@/components/Header";
 import { getScoreBands } from "@/lib/score";
 import MethodeAnalysisSteps from "@/components/MethodeAnalysisSteps";
@@ -364,6 +365,25 @@ export default async function MethodePage() {
               texte={t["verification.texte"]}
               className="mt-4 text-sm leading-relaxed text-zinc-600"
             />
+          </div>
+
+          {/* Le Club Perlimpinpin : la relecture des analyses par les
+              membres, avec un lien vers le bloc d'adhésion de /nous-rejoindre. */}
+          <div className="mt-16 max-w-3xl rounded-3xl border border-zinc-200 bg-gradient-to-br from-slate-100 via-orange-50 to-indigo-100 p-6 sm:p-8">
+            <Tag>{t["club.etiquette"]}</Tag>
+            <h2 className="mt-3 text-2xl font-bold text-zinc-900">
+              {t["club.titre"]}
+            </h2>
+            <Paragraphes
+              texte={t["club.texte"]}
+              className="mt-4 text-sm leading-relaxed text-zinc-700"
+            />
+            <Link
+              href="/nous-rejoindre#adherer"
+              className="mt-6 inline-flex items-center justify-center rounded-full bg-zinc-900 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-zinc-700"
+            >
+              {t["club.bouton"]}
+            </Link>
           </div>
 
           {/* Nos garde-fous (Bloc D) */}

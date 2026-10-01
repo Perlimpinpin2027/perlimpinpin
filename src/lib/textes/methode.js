@@ -8,6 +8,7 @@ const G_CRITERES = "Les cinq critères";
 const G_NOTE = "La note finale";
 const G_GRILLE = "D'où vient notre grille";
 const G_VERIF = "Notre processus de vérification";
+const G_CLUB = "Bloc « Club Perlimpinpin »";
 const G_GARDEFOUS = "Nos garde-fous";
 const G_NONPAS = "Ce que Perlimpinpin n'est pas";
 
@@ -182,11 +183,26 @@ const page = {
       defaut: [
         "Chaque analyse passe par plusieurs étapes avant publication, pour limiter les erreurs et les angles morts d'un seul modèle.",
         "Une première analyse est effectuée avec Claude, qui soulève les points les plus importants : chiffres et sources, faisabilité juridique, coût, effets attendus, angles morts.",
-        "Une contre-analyse est ensuite effectuée avec Mistral, un second modèle indépendant, dont le rôle est justement de challenger la première analyse en repérant un chiffre douteux, une affirmation juridique trop tranchée, ou un point structurant qui aurait été oublié.",
-        "Le résumé final est produit par Claude, qui tranche entre les deux analyses et n'intègre que les remarques réellement fondées.",
-        "Cette double vérification par IA est ensuite relue par des experts vérificateurs avant toute publication.",
+        "*Cette analyse est ensuite soumise au Club Perlimpinpin.* Pendant la relecture, ses membres peuvent apporter une source, contester un raisonnement, signaler une erreur ou proposer une autre lecture.",
+        "À l'issue de la relecture, l'IA confronte ces contributions aux sources : elle corrige ses erreurs, nuance ses conclusions ou maintient son analyse lorsque les objections sont insuffisamment étayées, et répond à chaque commentaire.",
+        "Une contre-analyse est ensuite effectuée avec Mistral, un second modèle indépendant, dont le rôle est justement de challenger l'analyse en repérant un chiffre douteux, une affirmation juridique trop tranchée, ou un point structurant qui aurait été oublié.",
+        "Le résumé final est produit par Claude, qui tranche entre les analyses et n'intègre que les remarques réellement fondées.",
       ].join("\n"),
     },
+
+    { cle: "club.etiquette", groupe: G_CLUB, libelle: "Petite étiquette", defaut: "// Club Perlimpinpin" },
+    { cle: "club.titre", groupe: G_CLUB, libelle: "Titre", defaut: "Le Club challenge nos analyses" },
+    {
+      cle: "club.texte",
+      groupe: G_CLUB,
+      libelle: "Texte (un paragraphe par ligne)",
+      riche: true,
+      defaut: [
+        "Avant publication, chaque analyse est ouverte à la relecture des membres du Club Perlimpinpin. La contradiction fait partie du système.",
+        "Les contributions pertinentes enrichissent le résultat final. Les sources, incertitudes et désaccords restent visibles.",
+      ].join("\n"),
+    },
+    { cle: "club.bouton", groupe: G_CLUB, libelle: "Texte du bouton (mène au bloc d'adhésion de /nous-rejoindre)", defaut: "Rejoindre le Club →" },
 
     { cle: "gardefous.titre", groupe: G_GARDEFOUS, libelle: "Titre du bloc", defaut: "Nos garde-fous" },
     {
