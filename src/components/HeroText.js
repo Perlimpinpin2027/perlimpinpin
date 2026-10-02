@@ -8,6 +8,12 @@ import { enLignes, textesParDefaut } from "@/lib/textes-site";
 // désormais sous le bandeau (src/components/HeroAtouts.js).
 // `documents` : index de recherche (getIndexRecherche), pour les suggestions
 // instantanées de la barre.
+// Espace insécable après les mots de 1 ou 2 lettres (« à », « et », « l'IA »
+// reste entier…) : un petit mot ne reste jamais seul en fin de ligne.
+function sansPetitMotEnFinDeLigne(texte) {
+  return texte.replace(/(^|\s)(\S{1,2}) /g, "$1$2\u00a0");
+}
+
 export default function HeroText({ textes, documents }) {
   const t = { ...textesParDefaut("accueil"), ...textes };
 
@@ -37,7 +43,7 @@ export default function HeroText({ textes, documents }) {
 
       <div className="mt-6 flex max-w-2xl flex-col gap-3 text-lg leading-relaxed text-slate-500 sm:text-xl">
         {enLignes(t["hero.texte"]).map((ligne, index) => (
-          <p key={index}>{ligne}</p>
+          <p key={index}>{sansPetitMotEnFinDeLigne(ligne)}</p>
         ))}
       </div>
 
