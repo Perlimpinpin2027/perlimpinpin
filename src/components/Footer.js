@@ -144,7 +144,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-14 flex flex-col gap-4 border-t border-zinc-200 pt-8 text-sm text-zinc-500 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-14 flex flex-col gap-4 border-t border-zinc-200 pt-8 font-mono text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
           <p>© 2026 Perlimpinpin. Tous droits réservés.</p>
           <ul className="flex flex-wrap items-center gap-x-5 gap-y-2">
             {legalLinks.map((link, index) => (

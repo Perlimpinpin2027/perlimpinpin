@@ -96,7 +96,7 @@ export default async function Home() {
               fill="none"
               stroke="currentColor"
               strokeWidth={1.5}
-              className="mt-0.5 h-6 w-6 shrink-0 text-blue-600"
+              className="mt-0.5 h-6 w-6 shrink-0 text-zinc-400"
               aria-hidden="true"
             >
               <path
@@ -117,7 +117,7 @@ export default async function Home() {
 
           <Link
             href="/a-propos"
-            className="shrink-0 whitespace-nowrap text-sm font-semibold text-blue-600 transition-colors hover:text-blue-800"
+            className="shrink-0 whitespace-nowrap text-sm font-semibold text-zinc-500 transition-colors hover:text-zinc-900"
           >
             {t["transparence.lien"]}
           </Link>
