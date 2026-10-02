@@ -52,7 +52,8 @@ body {
 
 /* Carrousel "Prix Perlimpinpin de la semaine" : glissement directionnel à
    chaque changement de carte, déclenché par le remount React (key={index}
-   côté FeaturedCard) plutôt que par un état de transition manuel. */
+   sur la carte interne de FeaturedCard) plutôt que par un état de
+   transition manuel. */
 @keyframes slide-in-from-right {
   from {
     transform: translateX(24px);
@@ -78,4 +79,32 @@ body {
 }
 .animate-slide-in-left {
   animation: slide-in-from-left 350ms ease-out;
+}
+
+/* Flèches précédent / suivant du carrousel : invisibles et non cliquables
+   par défaut, révélées en fondu quand la souris s'attarde (~100 ms, géré en
+   JS) dans le tiers gauche ou droit de la carte, ou au focus clavier. */
+.carousel-arrow {
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 200ms ease,
+    transform 200ms ease;
+}
+.carousel-arrow[data-visible="true"] {
+  opacity: 0.85;
+  pointer-events: auto;
+}
+.carousel-arrow:focus-visible {
+  opacity: 1;
+}
+.carousel-arrow[data-visible="true"]:hover {
+  opacity: 1;
+  transform: scale(1.08);
+}
+/* Tactile : pas de survol, on navigue au swipe. */
+@media (hover: none) {
+  .carousel-arrow {
+    display: none;
+  }
 }

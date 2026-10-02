@@ -1,15 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getScoreBadge } from "@/lib/score";
 
 const SWIPE_THRESHOLD_PX = 40;
+// Délai avant d'afficher une flèche : évite les clignotements quand la
+// souris ne fait que traverser le bord de la carte.
+const ARROW_REVEAL_DELAY_MS = 100;
 
 // Carte unique "Prix Perlimpinpin de la semaine" : photo à gauche (~40%,
 // ratio fixe quel que soit le candidat), contenu à droite (texte tronqué à
-// hauteur constante), score + bouton en pied de carte. Navigation par les
-// points sur la photo (et swipe sur mobile), sans flèches latérales.
+// hauteur constante), score + bouton en pied de carte. Navigation par des
+// flèches discrètes révélées au survol des tiers gauche/droit, au clavier
+// (← →) et au swipe sur mobile.
 // Reçoit l'état du carrousel (index/total/callbacks) depuis FeaturedCarousel.
 export default function FeaturedCard({
   propositionId,
@@ -23,9 +27,53 @@ export default function FeaturedCard({
   direction = "next",
   onPrev,
   onNext,
-  onSelect,
 }) {
   const touchStartX = useRef(null);
+  // Côté survolé ("left" / "right" / null) une fois le délai écoulé, et
+  // côté en attente pendant ce délai.
+  const [hoverSide, setHoverSide] = useState(null);
+  const pendingSide = useRef(null);
+  const revealTimer = useRef(null);
+
+  useEffect(() => () => clearTimeout(revealTimer.current), []);
+
+  function handleMouseMove(event) {
+    const rect = event.currentTarget.getBoundingClientRect();
+    const ratio = (event.clientX - rect.left) / rect.width;
+    const side = ratio < 1 / 3 ? "left" : ratio > 2 / 3 ? "right" : null;
+    if (side === pendingSide.current) return;
+
+    pendingSide.current = side;
+    clearTimeout(revealTimer.current);
+    if (side === null) {
+      setHoverSide(null);
+    } else {
+      revealTimer.current = setTimeout(() => setHoverSide(side), ARROW_REVEAL_DELAY_MS);
+    }
+  }
+
+  function handleMouseLeave() {
+    pendingSide.current = null;
+    clearTimeout(revealTimer.current);
+    setHoverSide(null);
+  }
+
+  function handleKeyDown(event) {
+    if (total <= 1) return;
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      onPrev?.();
+    } else if (event.key === "ArrowRight") {
+      event.preventDefault();
+      onNext?.();
+    }
+  }
+
+  function handleArrowClick(event, navigate) {
+    event.preventDefault();
+    event.stopPropagation();
+    navigate?.();
+  }
 
   function handleTouchStart(event) {
     touchStartX.current = event.touches[0].clientX;
@@ -62,11 +110,21 @@ export default function FeaturedCard({
     direction === "prev" ? "animate-slide-in-left" : "animate-slide-in-right";
 
   return (
-    // Maquette oct. 2026 : carte seule, sans flèches latérales ni halo
-    // décoratif. On change de carte avec les points sur la photo (ou en
-    // glissant le doigt sur mobile).
-    <div className="relative">
+    // Maquette oct. 2026 : carte seule, sans halo décoratif. Le conteneur
+    // externe reste monté d'une carte à l'autre (survol, focus, flèches) ;
+    // seule la carte interne est remontée (key) pour rejouer l'animation.
+    <div
+      className="relative rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-blue-950 focus-visible:ring-offset-2"
+      tabIndex={total > 1 ? 0 : undefined}
+      role={total > 1 ? "region" : undefined}
+      aria-roledescription={total > 1 ? "carrousel" : undefined}
+      aria-label={total > 1 ? `Prix Perlimpinpin de la semaine, carte ${currentIndex + 1} sur ${total}` : undefined}
+      onMouseMove={total > 1 ? handleMouseMove : undefined}
+      onMouseLeave={total > 1 ? handleMouseLeave : undefined}
+      onKeyDown={handleKeyDown}
+    >
       <div
+        key={currentIndex}
         className={`flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-[0_24px_60px_-30px_rgba(30,41,82,0.35)] ring-1 ring-zinc-100 sm:h-[540px] sm:flex-row ${slideAnimationClass}`}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
@@ -83,28 +141,11 @@ export default function FeaturedCard({
             alt={personName}
             className="absolute inset-0 h-full w-full object-cover object-top"
           />
-
-          {total > 1 ? (
-            <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/35 px-2.5 py-1 backdrop-blur-sm">
-              <span className="text-[11px] font-medium text-white">
-                {currentIndex + 1}/{total}
-              </span>
-              <div className="flex items-center gap-1">
-                {Array.from({ length: total }).map((_, dotIndex) => (
-                  <button
-                    key={dotIndex}
-                    type="button"
-                    aria-label={`Voir la citation ${dotIndex + 1}`}
-                    onClick={() => onSelect?.(dotIndex)}
-                    className={`h-2 w-2 rounded-full transition-colors ${dotIndex === currentIndex ? "bg-white" : "bg-white/40 hover:bg-white/70"}`}
-                  />
-                ))}
-              </div>
-            </div>
-          ) : null}
         </div>
 
-        <div className="flex flex-1 flex-col p-6 sm:p-8">
+        {/* Marge droite élargie (souris uniquement) : réserve la place de
+            la flèche "suivante" pour qu'elle ne recouvre ni texte ni bouton. */}
+        <div className="flex flex-1 flex-col p-6 sm:p-8 [@media(hover:hover)]:pr-14!">
           <p className="text-lg font-medium tracking-tight text-zinc-900">{personName}</p>
           <blockquote className="mt-2 line-clamp-3 shrink-0 pb-0.5 font-sans text-2xl font-bold leading-tight tracking-tight text-blue-950 sm:text-[1.7rem]">
             {quoteText}
@@ -146,6 +187,45 @@ export default function FeaturedCard({
           </Link>
         </div>
       </div>
+
+      {/* Zones de survol (tiers gauche / droit) : purement positionnelles,
+          pointer-events: none pour ne jamais intercepter un clic sur la
+          carte. Seule la flèche, une fois visible, est cliquable. */}
+      {total > 1 ? (
+        <>
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex w-1/3 items-center justify-start pl-3">
+            <CarouselArrow
+              side="left"
+              visible={hoverSide === "left"}
+              onClick={(event) => handleArrowClick(event, onPrev)}
+            />
+          </div>
+          <div className="pointer-events-none absolute inset-y-0 right-0 flex w-1/3 items-center justify-end pr-3">
+            <CarouselArrow
+              side="right"
+              visible={hoverSide === "right"}
+              onClick={(event) => handleArrowClick(event, onNext)}
+            />
+          </div>
+        </>
+      ) : null}
     </div>
+  );
+}
+
+function CarouselArrow({ side, visible, onClick }) {
+  const isLeft = side === "left";
+  return (
+    <button
+      type="button"
+      aria-label={isLeft ? "Carte précédente" : "Carte suivante"}
+      data-visible={visible}
+      onClick={onClick}
+      className="carousel-arrow flex h-9 w-9 items-center justify-center rounded-full bg-white/80 text-blue-950 shadow-md ring-1 ring-black/5 backdrop-blur-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-950"
+    >
+      <svg aria-hidden="true" viewBox="0 0 20 20" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
+        <path d={isLeft ? "M12.5 4.5 7 10l5.5 5.5" : "M7.5 4.5 13 10l-5.5 5.5"} />
+      </svg>
+    </button>
   );
 }
