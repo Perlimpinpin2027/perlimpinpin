@@ -1,12 +1,19 @@
 import { readFileSync, existsSync } from "node:fs";
-import { saveAnalysis } from "./analyze.js";
+import { saveAnalysis, genererVersionBasique } from "./analyze.js";
+import { cleanContenu } from "./lib/clean-text.js";
 import { validateFicheCompleteStructure, checkNotationCoherence } from "./lib/scoring.js";
 
 // Insère en base (statut "brouillon") une fiche dont l'étape 3 a été produite
 // hors pipeline automatisé, à partir du JSON d'étape 3 et, si présent, du
 // contrôle Mistral sauvegardé à côté. Même écriture que le pipeline
-// (saveAnalysis), sans rappeler aucune API. Publier ensuite avec
+// (saveAnalysis), sans relancer les étapes 1 à 3. Publier ensuite avec
 // scripts/publish.js --id <analyseId>.
+//
+// Comme runPipeline, l'étape 3 bis (version basique, seul appel à l'API
+// Claude de ce script) est générée avant l'écriture : version_basique dans la
+// fiche si elle réussit, ancrages dans auditArbitrage, et un échec ne bloque
+// jamais l'import. --sans-version-basique saute cette étape ; --dry-run
+// aussi (rien n'est écrit, donc rien n'est généré).
 
 function parseArgs(argv) {
   const args = {};
@@ -30,7 +37,7 @@ async function main() {
 
   if (!etape3 || !candidat || !theme || !source) {
     console.error(
-      'Usage: node scripts/import-etape3.js --etape3 fiche_etape3.json [--mistral etape2_mistral.json] --candidat "Nom" --theme "Thème" --source "Texte de la proposition" [--dry-run]',
+      'Usage: node scripts/import-etape3.js --etape3 fiche_etape3.json [--mistral etape2_mistral.json] --candidat "Nom" --theme "Thème" --source "Texte de la proposition" [--sans-version-basique] [--dry-run]',
     );
     process.exitCode = 1;
     return;
@@ -65,7 +72,7 @@ async function main() {
     coutPipeline: {
       tokensEtape2: etape2?.usage ?? null,
       tokensEtape3: null,
-      note: "Étapes 1 et 3 produites hors pipeline automatisé ; seule l'étape 2 (Mistral) a consommé des tokens mesurés.",
+      note: "Étapes 1 et 3 produites hors pipeline automatisé ; tokens mesurés : étape 2 (Mistral) et étape 3 bis (version basique, si générée).",
     },
   };
 
@@ -74,8 +81,32 @@ async function main() {
   console.log(`Base  : ${new URL(process.env.DATABASE_URL).host}`);
 
   if (args["dry-run"]) {
-    console.log("--dry-run : rien écrit.");
+    console.log("--dry-run : rien écrit, version basique non générée.");
     return;
+  }
+
+  if (args["sans-version-basique"]) {
+    console.log("Étape 3 bis : sautée (--sans-version-basique).");
+  } else if (!process.env.ANTHROPIC_API_KEY) {
+    console.warn("Étape 3 bis : sautée, ANTHROPIC_API_KEY n'est pas défini (voir votre fichier .env).");
+  } else {
+    // Fiche nettoyée comme dans runPipeline (cleanContenu) : la réponse du
+    // modèle l'est aussi, ce qui garde la comparaison des extraits cohérente.
+    // La fiche enregistrée, elle, reste celle de l'étape 3.
+    // genererVersionBasique ne lève pas d'erreur sur un échec d'API ou de
+    // validation ; le try/catch couvre le reste (prompt illisible…).
+    try {
+      const { versionBasique, ancrages, usage } = await genererVersionBasique(cleanContenu(parsed));
+      pipelineResult.coutPipeline.tokensEtape3bis = usage;
+      if (versionBasique) {
+        parsed.version_basique = versionBasique;
+        // Contrôle interne : dans auditArbitrage, jamais dans contenuComplet (public).
+        pipelineResult.auditArbitrage.push({ type: "ancrages_version_basique", ancrages });
+        console.log("Étape 3 bis : version basique… ✓");
+      }
+    } catch (error) {
+      console.error(`  ⚠️  Étape 3 bis : échec (${error.message}), fiche importée SANS version basique.`);
+    }
   }
 
   const saved = await saveAnalysis({ candidatNom: candidat, theme, source }, pipelineResult);
