@@ -3,27 +3,31 @@ import { formatScore, getScoreBadge, getScoreBands } from "@/lib/score";
 import { vignettePhoto } from "@/lib/photo-vignette";
 import { textesParDefaut } from "@/lib/textes-site";
 
-function ColumnHeader({ title, subtitle, linkLabel, linkHref, icon }) {
+function ColumnHeader({ title, subtitle, icon }) {
   return (
-    <div className="mb-6 flex items-start justify-between gap-4">
-      <div>
-        <h2 className="flex items-center gap-2 text-base font-bold text-zinc-900">
-          {icon}
-          {title}
-        </h2>
-        {subtitle ? (
-          <p className="mt-0.5 text-xs text-zinc-400">{subtitle}</p>
-        ) : null}
-      </div>
-      {linkLabel ? (
-        <Link
-          href={linkHref || "#"}
-          className="shrink-0 text-sm font-semibold text-blue-600 transition-colors hover:text-blue-800"
-        >
-          {linkLabel}
-        </Link>
+    <div className="mb-6">
+      <h2 className="flex items-center gap-2 text-base font-bold text-zinc-900">
+        {icon}
+        {title}
+      </h2>
+      {subtitle ? (
+        <p className="mt-0.5 text-xs text-zinc-400">{subtitle}</p>
       ) : null}
     </div>
+  );
+}
+
+// Lien gris discret sous une liste (« Voir toutes les analyses → »…).
+function VoirTout({ label, href }) {
+  if (!label) return null;
+  return (
+    <Link
+      href={href}
+      prefetch={false}
+      className="mt-6 inline-block text-sm font-semibold text-zinc-500 transition-colors hover:text-zinc-900"
+    >
+      {label}
+    </Link>
   );
 }
 
@@ -32,8 +36,6 @@ function TopDeclarationsColumn({ declarations, t }) {
     <div className="rounded-2xl border border-zinc-200 bg-white p-6">
       <ColumnHeader
         title={t["colonnes.declarations.titre"]}
-        linkLabel={t["colonnes.declarations.lien"]}
-        linkHref="/declarations"
       />
 
       {declarations.length === 0 ? (
@@ -48,7 +50,7 @@ function TopDeclarationsColumn({ declarations, t }) {
               <li key={`${item.name}-${index}`}>
                 <Link
                   href={`/declarations/${item.propositionId}`}
-                  className="-m-2 flex items-start gap-3 rounded-xl p-2 transition-colors hover:bg-zinc-50"
+                  className="-m-2 flex flex-wrap items-start gap-3 rounded-xl p-2 transition-colors hover:bg-zinc-50"
                 >
                   <img
                     src={vignettePhoto(item.photoUrl) || "/avatar-placeholder.svg"}
@@ -61,9 +63,6 @@ function TopDeclarationsColumn({ declarations, t }) {
                     </p>
                     <p className="mt-0.5 line-clamp-2 text-sm font-medium text-zinc-800">
                       &ldquo;{item.quote}&rdquo;
-                    </p>
-                    <p className="mt-1 text-xs text-zinc-400">
-                      {item.date} · {item.theme}
                     </p>
                   </div>
                   <div className="flex shrink-0 flex-col items-end gap-1">
@@ -79,66 +78,54 @@ function TopDeclarationsColumn({ declarations, t }) {
                       {badge.label}
                     </span>
                   </div>
+                  {/* Date + catégorie sur une seule ligne, sur toute la largeur
+                      (sous le texte et le score), alignée avec le texte. */}
+                  <p className="-mt-2 basis-full truncate pl-12 text-xs text-zinc-400">
+                    <span className="whitespace-nowrap">{item.date}</span> · {item.theme}
+                  </p>
                 </Link>
               </li>
             );
           })}
         </ul>
       )}
+
+      <VoirTout label={t["colonnes.declarations.lien"]} href="/declarations" />
     </div>
   );
 }
 
+// Version minimaliste : sans icône, une ligne par palier (fourchette +
+// libellé) et une mini phrase (champ `courte` de src/lib/score.js) — le
+// détail complet est sur /methode.
 function ScoreExplainerColumn({ t }) {
   return (
     <div className="rounded-2xl border border-zinc-200 bg-white p-6">
-      <ColumnHeader
-        title={t["colonnes.score.titre"]}
-        icon={
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={1.5}
-            className="h-5 w-5 shrink-0 text-blue-600"
-            aria-hidden="true"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-            />
-          </svg>
-        }
-      />
+      <ColumnHeader title={t["colonnes.score.titre"]} />
 
-      <p className="mb-6 text-sm leading-relaxed text-zinc-500">
+      <p className="mb-5 text-sm leading-relaxed text-zinc-500">
         {t["colonnes.score.texte"]}
       </p>
 
-      <div className="flex flex-col gap-4">
+      <ul className="flex flex-col divide-y divide-zinc-100">
         {getScoreBands().map((item) => (
-          <div
-            key={item.label}
-            className={`border-l-4 pl-4 ${item.border}`}
-          >
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-sm font-semibold text-zinc-900">
-                {item.min}-{item.max}
+          <li key={item.label} className="py-2.5">
+            <div className="flex items-center justify-between gap-3">
+              <span className="font-mono text-sm tabular-nums text-zinc-500">
+                {item.min}–{item.max}
               </span>
               <span
-                className={`rounded-full px-2 py-0.5 text-xs font-semibold ${item.badge}`}
+                className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${item.badge}`}
               >
                 {item.label}
               </span>
             </div>
-            <p className="mt-1 text-sm text-zinc-500">
-              {item.description}
-            </p>
-          </div>
+            <p className="mt-0.5 text-xs text-zinc-400">{item.courte}</p>
+          </li>
         ))}
-      </div>
+      </ul>
+
+      <VoirTout label={t["colonnes.score.lien"]} href="/methode" />
     </div>
   );
 }
@@ -165,8 +152,6 @@ function ReliabilityIndexColumn({ candidates, t }) {
       <ColumnHeader
         title={t["colonnes.candidats.titre"]}
         subtitle={t["colonnes.candidats.soustitre"]}
-        linkLabel={t["colonnes.candidats.lien"]}
-        linkHref="/candidats"
       />
 
       {candidates.length === 0 ? (
@@ -218,6 +203,10 @@ function ReliabilityIndexColumn({ candidates, t }) {
           ))}
         </ol>
       )}
+
+      <div>
+        <VoirTout label={t["colonnes.candidats.lien"]} href="/candidats" />
+      </div>
 
       <p className="mt-6 border-t border-zinc-100 pt-4 text-xs leading-relaxed text-zinc-400">
         {t["colonnes.candidats.note"]}

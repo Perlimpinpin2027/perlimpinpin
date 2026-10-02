@@ -10,6 +10,8 @@ const SCORE_BANDS = [
     min: 85,
     max: 100,
     label: "Exemplaire",
+    // Version courte de la description (colonne de la page d'accueil).
+    courte: "Pertinente, documentée et facile à appliquer.",
     color: "green-dark",
     description:
       "La mesure est à la fois pertinente, bien conçue, documentée et facilement applicable.",
@@ -18,6 +20,7 @@ const SCORE_BANDS = [
     min: 70,
     max: 84,
     label: "Solide et chiffré",
+    courte: "Étayée par des données solides et réaliste.",
     color: "green",
     description:
       "La mesure est étayée par des données robustes et réaliste dans le cadre actuel.",
@@ -26,6 +29,7 @@ const SCORE_BANDS = [
     min: 55,
     max: 69,
     label: "Plausible sous condition",
+    courte: "Cohérente, mais dépend de conditions incertaines.",
     color: "amber",
     description:
       "La mesure est globalement cohérente mais dépend de conditions de mise en œuvre ou de ressources incertaines.",
@@ -34,6 +38,7 @@ const SCORE_BANDS = [
     min: 35,
     max: 54,
     label: "Partiellement fondé",
+    courte: "Des bases solides, mais des points fragiles.",
     color: "orange",
     description:
       "Une partie des règles proposées existe déjà ou repose sur des bases solides, mais des points restent fragiles.",
@@ -42,6 +47,7 @@ const SCORE_BANDS = [
     min: 20,
     max: 34,
     label: "Fragile",
+    courte: "Trop d’incertitudes ou de contradictions.",
     color: "red",
     description:
       "De nombreuses incertitudes ou contradictions affaiblissent fortement la proposition.",
@@ -50,6 +56,7 @@ const SCORE_BANDS = [
     min: 0,
     max: 19,
     label: "Irréaliste",
+    courte: "Hors-sol ou contraire aux faits ou au droit.",
     color: "red-dark",
     description:
       "La mesure est hors-sol ou en contradiction majeure avec les faits ou le cadre légal.",

@@ -7,6 +7,14 @@ const dateFormatter = new Intl.DateTimeFormat("fr-FR", {
   year: "numeric",
 });
 
+// Date courte (« 28 sept. 2026 ») pour la colonne « Dernières déclarations »
+// de la page d'accueil.
+const dateCourteFormatter = new Intl.DateTimeFormat("fr-FR", {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+});
+
 // Titre court pour l'affichage sur les cartes. Si `titre` n'a pas été
 // généré (anciennes propositions), on retombe sur texteOriginal tronqué.
 function displayTitle(proposition) {
@@ -119,7 +127,7 @@ export async function getTopDeclarations(limit = 3) {
     name: analyse.proposition.candidat.nom,
     photoUrl: analyse.proposition.candidat.photoUrl,
     quote: displayTitle(analyse.proposition),
-    date: dateFormatter.format(analyse.proposition.dateDeclaration),
+    date: dateCourteFormatter.format(analyse.proposition.dateDeclaration),
     theme: analyse.proposition.theme,
     score: analyse.scoreFaisabilite,
   }));

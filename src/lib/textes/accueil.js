@@ -62,20 +62,21 @@ const page = {
 
     // Les 3 colonnes (src/components/BottomColumns.js)
     { cle: "colonnes.declarations.titre", groupe: "Les 3 colonnes", libelle: "Colonne 1 — titre", defaut: "Dernières déclarations" },
-    { cle: "colonnes.declarations.lien", groupe: "Les 3 colonnes", libelle: "Colonne 1 — lien", defaut: "Voir toutes →" },
+    { cle: "colonnes.declarations.lien", groupe: "Les 3 colonnes", libelle: "Colonne 1 — lien en bas", defaut: "Voir toutes les analyses →" },
     {
       cle: "colonnes.declarations.vide",
       groupe: "Les 3 colonnes",
       libelle: "Colonne 1 — message s'il n'y a aucune déclaration",
       defaut: "Aucune déclaration analysée pour le moment.",
     },
-    { cle: "colonnes.score.titre", groupe: "Les 3 colonnes", libelle: "Colonne 2 — titre", defaut: "Comment fonctionne le score ?" },
+    { cle: "colonnes.score.titre", groupe: "Les 3 colonnes", libelle: "Colonne 2 — titre", defaut: "Le score Perlimpinpin IA" },
     {
       cle: "colonnes.score.texte",
       groupe: "Les 3 colonnes",
       libelle: "Colonne 2 — texte",
-      defaut: "Le Score Perlimpinpin évalue la qualité informationnelle des déclarations sur 100 points.",
+      defaut: "Chaque proposition est notée sur 100 points.",
     },
+    { cle: "colonnes.score.lien", groupe: "Les 3 colonnes", libelle: "Colonne 2 — lien en bas", defaut: "Voir la méthode détaillée →" },
     { cle: "colonnes.candidats.titre", groupe: "Les 3 colonnes", libelle: "Colonne 3 — titre", defaut: "Indice de fiabilité des candidats" },
     {
       cle: "colonnes.candidats.soustitre",
@@ -83,7 +84,7 @@ const page = {
       libelle: "Colonne 3 — sous-titre",
       defaut: "Moyenne arithmétique des propositions des candidats",
     },
-    { cle: "colonnes.candidats.lien", groupe: "Les 3 colonnes", libelle: "Colonne 3 — lien", defaut: "Voir tous les candidats →" },
+    { cle: "colonnes.candidats.lien", groupe: "Les 3 colonnes", libelle: "Colonne 3 — lien en bas", defaut: "Voir tous les candidats →" },
     {
       cle: "colonnes.candidats.vide",
       groupe: "Les 3 colonnes",
@@ -95,7 +96,7 @@ const page = {
       groupe: "Les 3 colonnes",
       libelle: "Colonne 3 — note en bas",
       defaut:
-        "Ce score est une moyenne arithmétique des mesures actuellement analysées par l’outil. Il ne constitue ni un jugement sur la personne, ni un indice général de crédibilité politique, et évolue au fur et à mesure des analyses.",
+        "Ce score est une moyenne faite par l’IA qui ne constitue ni un jugement sur la personne, ni un indice général de crédibilité politique, et évolue au fur et à mesure des analyses.",
     },
 
     // Bandeau « Rejoindre » (src/components/SupportBanner.js)
