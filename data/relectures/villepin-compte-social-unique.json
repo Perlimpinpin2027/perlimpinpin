@@ -111,6 +111,12 @@
         "titre": "Titre provisoire",
         "texte": "« Un compte pour tous vos droits sociaux, s'il sait les ouvrir » met en avant la condition centrale de la fiche. Le titre définitif sera fixé à l'étape 3 : convient-il comme base ?"
       }
-    ]
+    ],
+    "archive": {
+      "date": "2026-10-01",
+      "version_suivante": "data/analyses finales/DeVillepin/villepin_compte_social_unique_etape1_v2.json",
+      "synthese": "Aucun commentaire n'a été déposé pendant la relecture. La v2 reprend la fiche après une relecture interne.\n\nCe qui change : le non-recours au RSA est actualisé avec l'étude de la DREES de mai 2026 (entre 33 % et 37 % des foyers éligibles fin 2021, environ 560 000 foyers), avec la nuance que les non-recourants sont en moyenne moins défavorisés que les bénéficiaires. L'exemple australien Robodebt est corrigé : 470 000 dettes calculées à tort (et non 470 000 personnes), et 1,8 milliard de dollars australiens pour l'accord global, annulation de dettes comprise. Le précédent du dossier médical personnel est précisé : il a été lancé en 2004 sous le gouvernement Raffarin, pas sous celui de Dominique de Villepin. Le chiffre de Mon espace santé est mis à jour (24 millions de profils activés en janvier 2026).\n\nAucune note ne change : le score reste de 64 sur 100.",
+      "reponses": []
+    }
   }
 }
