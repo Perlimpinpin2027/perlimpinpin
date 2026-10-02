@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useVueAnalyse } from "@/components/VueAnalyseProvider";
 
 // Carte sticky de la colonne latérale : affiche le score en permanence, et
 // bascule son contenu secondaire (commentaire + bouton -> mini sommaire de
@@ -10,15 +11,25 @@ import Link from "next/link";
 // sentinelle posée par la page (id="resume-sentinel") au viewport, plutôt
 // qu'un IntersectionObserver — la position de scroll seule suffit ici, pas
 // besoin de dépendre du pipeline de rendu/compositing.
+//
+// Fiche avec version basique (VueAnalyseProvider présent) : en vue basique, le
+// sommaire affiche sectionsBasique et le bouton du bas bascule vers la vue
+// expert. La sentinelle n'existe que dans la vue basique : masquée (vue
+// expert), elle renvoie top = 0 et le sommaire reste caché, comme avant. Sans
+// version basique (pas de contexte), rien ne change.
 export default function StickyScoreCard({
   score,
   badge,
   scoreComment,
   sections,
+  sectionsBasique,
   versionMethodologie,
   generationDateLabel,
 }) {
   const [scrolledPast, setScrolledPast] = useState(false);
+  const vueAnalyse = useVueAnalyse();
+  const vueBasique = vueAnalyse?.vue === "basique";
+  const sectionsAffichees = vueBasique && sectionsBasique ? sectionsBasique : sections;
 
   useEffect(() => {
     const sentinel = document.getElementById("resume-sentinel");
@@ -33,7 +44,8 @@ export default function StickyScoreCard({
       window.removeEventListener("scroll", checkPosition);
       window.removeEventListener("resize", checkPosition);
     };
-  }, []);
+    // Revérifié à chaque bascule : la sentinelle apparaît ou disparaît avec la vue basique.
+  }, [vueAnalyse?.vue]);
 
   return (
     <div className="rounded-2xl border border-zinc-200 bg-white p-6">
@@ -57,7 +69,7 @@ export default function StickyScoreCard({
           <span className="mb-1 text-xs font-semibold uppercase tracking-wide text-zinc-400">
             Sur cette page
           </span>
-          {sections.map(({ id, label }) => (
+          {sectionsAffichees.map(({ id, label }) => (
             <a
               key={id}
               href={`#${id}`}
@@ -88,13 +100,24 @@ export default function StickyScoreCard({
         </div>
       ) : null}
 
-      <Link
-        href="#raisonnement-complet"
-        className="mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-zinc-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-zinc-800"
-      >
-        Lire l&apos;analyse détaillée
-        <span aria-hidden="true">→</span>
-      </Link>
+      {vueBasique ? (
+        <button
+          type="button"
+          onClick={() => vueAnalyse.basculer("expert", { defiler: true })}
+          className="mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-zinc-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-zinc-800"
+        >
+          Lire l&apos;analyse détaillée
+          <span aria-hidden="true">→</span>
+        </button>
+      ) : (
+        <Link
+          href="#raisonnement-complet"
+          className="mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-zinc-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-zinc-800"
+        >
+          Lire l&apos;analyse détaillée
+          <span aria-hidden="true">→</span>
+        </Link>
+      )}
     </div>
   );
 }

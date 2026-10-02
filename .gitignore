@@ -56,3 +56,6 @@ dev.db
 /Perlimpinpin Base Documentaire/
 /Claude outputs/
 /tmp/
+
+# Versions basiques locales pour tester la fiche en développement (src/lib/version-basique.js)
+/data/versions-basiques-dev/
