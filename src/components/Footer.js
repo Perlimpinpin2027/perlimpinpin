@@ -90,16 +90,20 @@ function ColumnLabel({ children }) {
 
 export default function Footer() {
   return (
-    <footer className="mt-auto w-full bg-zinc-950 px-6 pt-14 pb-10 text-zinc-300 sm:px-8 sm:pt-16">
+    <footer className="mt-auto w-full bg-zinc-100 px-6 pt-14 pb-10 text-zinc-600 sm:px-8 sm:pt-16">
       <div className="mx-auto w-full max-w-[1280px]">
         <div className="flex flex-col gap-10 md:flex-row md:justify-between">
           <div>
-            <p className="text-2xl font-light uppercase tracking-[0.3em] text-white sm:text-3xl">
-              <span className="text-blue-500">/</span>Perlimpinpin
-            </p>
-            <p className="mt-4 flex items-center gap-2 text-base text-zinc-400">
+            {/* Logo officiel (public/logo/perlimpinpin-logo.png, 615×72). */}
+            <img
+              src="/logo/perlimpinpin-logo.png"
+              alt="Perlimpinpin"
+              width={615}
+              height={72}
+              className="h-6 w-auto sm:h-7"
+            />
+            <p className="mt-4 text-base text-zinc-500">
               Ce que valent vraiment les promesses politiques.
-              <span aria-hidden="true" className="h-2 w-2 rounded-full bg-white" />
             </p>
           </div>
 
@@ -111,7 +115,7 @@ export default function Footer() {
                   <li key={link.href}>
                     <FooterLink
                       href={link.href}
-                      className="text-base text-zinc-200 transition-colors hover:text-white"
+                      className="text-base text-zinc-700 transition-colors hover:text-zinc-950"
                     >
                       {link.label}
                     </FooterLink>
@@ -128,7 +132,7 @@ export default function Footer() {
                     <FooterLink
                       href={href}
                       external
-                      className="flex items-center gap-3 text-base text-zinc-200 transition-colors hover:text-white"
+                      className="flex items-center gap-3 text-base text-zinc-700 transition-colors hover:text-zinc-950"
                     >
                       <Icon />
                       {label}
@@ -140,25 +144,25 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-14 flex flex-col gap-4 border-t border-zinc-800 pt-8 text-sm text-zinc-400 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-14 flex flex-col gap-4 border-t border-zinc-200 pt-8 text-sm text-zinc-500 sm:flex-row sm:items-center sm:justify-between">
           <p>© 2026 Perlimpinpin. Tous droits réservés.</p>
           <ul className="flex flex-wrap items-center gap-x-5 gap-y-2">
             {legalLinks.map((link, index) => (
               <li key={link.label} className="flex items-center gap-5">
                 {index > 0 ? (
-                  <span aria-hidden="true" className="h-4 w-px bg-zinc-700" />
+                  <span aria-hidden="true" className="h-4 w-px bg-zinc-300" />
                 ) : null}
                 <FooterLink
                   href={link.href}
-                  className="transition-colors hover:text-white"
+                  className="transition-colors hover:text-zinc-950"
                 >
                   {link.label}
                 </FooterLink>
               </li>
             ))}
             <li className="flex items-center gap-5">
-              <span aria-hidden="true" className="h-4 w-px bg-zinc-700" />
-              <ManageCookiesButton className="cursor-pointer transition-colors hover:text-white" />
+              <span aria-hidden="true" className="h-4 w-px bg-zinc-300" />
+              <ManageCookiesButton className="cursor-pointer transition-colors hover:text-zinc-950" />
             </li>
           </ul>
         </div>
