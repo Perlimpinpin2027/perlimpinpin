@@ -990,7 +990,7 @@ function buildTeaser(parsed) {
 // précédent (abandonné) — elles restent nullable en base et ne sont pas
 // renseignées ici. contenuComplet porte l'intégralité du résultat, comme
 // avant le pipeline à 4 étapes.
-async function saveAnalysis(item, pipelineResult) {
+export async function saveAnalysis(item, pipelineResult) {
   const { parsed, contreAvisMistral, auditArbitrage, coutPipeline } = pipelineResult;
   const notation = parsed.notation_detaillee ?? {};
   const titre = buildTitre(parsed);
