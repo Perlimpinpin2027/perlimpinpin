@@ -8,8 +8,8 @@ const SWIPE_THRESHOLD_PX = 40;
 
 // Carte unique "Prix Perlimpinpin de la semaine" : photo à gauche (~40%,
 // ratio fixe quel que soit le candidat), contenu à droite (texte tronqué à
-// hauteur constante), score + bouton en pied de carte. Les flèches sont
-// hors de cet ensemble photo+texte, portées par le wrapper du carrousel.
+// hauteur constante), score + bouton en pied de carte. Navigation par les
+// points sur la photo (et swipe sur mobile), sans flèches latérales.
 // Reçoit l'état du carrousel (index/total/callbacks) depuis FeaturedCarousel.
 export default function FeaturedCard({
   propositionId,
@@ -62,19 +62,12 @@ export default function FeaturedCard({
     direction === "prev" ? "animate-slide-in-left" : "animate-slide-in-right";
 
   return (
-    // Padding latéral réservé aux flèches (fix #2) : elles vivent hors de la
-    // carte photo+texte, dans cette marge, jamais superposées à la photo.
-    <div className="relative px-1 sm:px-14">
-      {/* Forme de fond décorative derrière le portrait (voir maquette) :
-          casse l'effet plat du cadre photo. Doit vivre hors de la carte
-          (qui a overflow-hidden) pour pouvoir déborder légèrement de ses
-          bords. */}
+    // Maquette oct. 2026 : carte seule, sans flèches latérales ni halo
+    // décoratif. On change de carte avec les points sur la photo (ou en
+    // glissant le doigt sur mobile).
+    <div className="relative">
       <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -inset-6 -z-10 rounded-[2.5rem] bg-gradient-to-br from-rose-100 via-orange-100 to-blue-100 opacity-70 blur-2xl sm:right-[55%]"
-      />
-      <div
-        className={`flex h-full flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white sm:h-[540px] sm:flex-row ${slideAnimationClass}`}
+        className={`flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-[0_24px_60px_-30px_rgba(30,41,82,0.35)] ring-1 ring-zinc-100 sm:h-[540px] sm:flex-row ${slideAnimationClass}`}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
@@ -103,7 +96,7 @@ export default function FeaturedCard({
                     type="button"
                     aria-label={`Voir la citation ${dotIndex + 1}`}
                     onClick={() => onSelect?.(dotIndex)}
-                    className={`h-1.5 w-1.5 rounded-full transition-colors ${dotIndex === currentIndex ? "bg-white" : "bg-white/40 hover:bg-white/70"}`}
+                    className={`h-2 w-2 rounded-full transition-colors ${dotIndex === currentIndex ? "bg-white" : "bg-white/40 hover:bg-white/70"}`}
                   />
                 ))}
               </div>
@@ -112,12 +105,12 @@ export default function FeaturedCard({
         </div>
 
         <div className="flex flex-1 flex-col p-6 sm:p-8">
-          <p className="text-xl font-bold tracking-tight text-zinc-900">{personName}</p>
-          <blockquote className="mt-2 line-clamp-3 font-sans text-2xl font-bold leading-tight text-zinc-900">
+          <p className="text-lg font-medium tracking-tight text-zinc-900">{personName}</p>
+          <blockquote className="mt-2 line-clamp-3 shrink-0 pb-0.5 font-sans text-2xl font-bold leading-tight tracking-tight text-blue-950 sm:text-[1.7rem]">
             {quoteText}
           </blockquote>
           {verdictDescription ? (
-            <p className="mt-3 line-clamp-5 text-sm leading-relaxed text-zinc-500">
+            <p className="mb-4 mt-3 line-clamp-4 text-base leading-snug text-slate-500">
               {verdictDescription}
             </p>
           ) : null}
@@ -127,8 +120,8 @@ export default function FeaturedCard({
               Même traitement que la carte score sticky des pages de
               déclaration (voir StickyScoreCard), pour une identité visuelle
               cohérente du "score Perlimpinpin" à travers le site. */}
-          <div className="mt-6 border-t border-zinc-100 pt-6">
-            <span className="font-mono text-xs font-bold uppercase tracking-widest text-zinc-500">
+          <div className="mt-auto border-t border-zinc-200 pt-5 max-sm:mt-2">
+            <span className="font-mono text-xs uppercase tracking-widest text-slate-500">
               Score Perlimpinpin
             </span>
             <div className="mt-2 flex items-baseline gap-1.5">
@@ -146,35 +139,13 @@ export default function FeaturedCard({
 
           <Link
             href={`/declarations/${propositionId}`}
-            className="mt-5 inline-flex w-fit items-center gap-1.5 rounded-full bg-zinc-900 px-5 py-2.5 text-sm font-semibold text-white shadow-[0_12px_28px_-10px_rgba(220,38,38,0.45)] transition-colors hover:bg-zinc-800"
+            className="mt-5 flex w-full items-center justify-between gap-2 rounded-xl bg-blue-950 px-6 py-3.5 text-base font-medium text-white transition-colors hover:bg-blue-900"
           >
             Voir l&apos;analyse complète
             <span aria-hidden="true">→</span>
           </Link>
         </div>
       </div>
-
-      {/* Flèches : hors de l'ensemble photo+texte, centrées verticalement
-          sur toute la carte, masquées sur mobile (swipe tactile à la place,
-          voir handleTouchStart/handleTouchEnd ci-dessus). */}
-      <button
-        type="button"
-        aria-label="Citation précédente"
-        onClick={onPrev}
-        disabled={total <= 1}
-        className="absolute left-0 top-1/2 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white text-2xl text-zinc-700 shadow-md ring-1 ring-zinc-200 transition-colors hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-0 sm:flex"
-      >
-        ‹
-      </button>
-      <button
-        type="button"
-        aria-label="Citation suivante"
-        onClick={onNext}
-        disabled={total <= 1}
-        className="absolute right-0 top-1/2 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white text-2xl text-zinc-700 shadow-md ring-1 ring-zinc-200 transition-colors hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-0 sm:flex"
-      >
-        ›
-      </button>
     </div>
   );
 }

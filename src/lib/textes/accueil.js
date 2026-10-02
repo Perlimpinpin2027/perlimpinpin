@@ -7,11 +7,11 @@ const page = {
   chemin: "/",
   champs: [
     // Bandeau principal (src/components/HeroText.js)
-    { cle: "hero.etiquette", groupe: "Bandeau principal", libelle: "Étiquette rouge", defaut: "Présidentielles 2027" },
+    { cle: "hero.etiquette", groupe: "Bandeau principal", libelle: "Petite étiquette au-dessus du titre", defaut: "Présidentielles 2027" },
     {
       cle: "hero.titre",
       groupe: "Bandeau principal",
-      libelle: "Grand titre (le point bleu suit le dernier mot)",
+      libelle: "Grand titre",
       defaut: "Ce que valent vraiment les promesses politiques",
     },
     {
@@ -19,28 +19,45 @@ const page = {
       groupe: "Bandeau principal",
       libelle: "Texte sous le titre",
       defaut:
-        "Perlimpinpin analyse les déclarations des candidats à l'élection présidentielle 2027 avec l'IA et des experts, à partir de sources publiques et d'une méthode transparente.",
+        "Perlimpinpin analyse et note les propositions politiques grâce à l’IA, à une communauté contributive et à des sources transparentes. Analysez, commentez, améliorez.",
     },
-    { cle: "hero.atout1.titre", groupe: "Bandeau principal", libelle: "Atout 01 — titre", defaut: "Analyses générées par l'IA" },
+
+    // Barre de recherche (src/components/SearchBar.js)
+    {
+      cle: "recherche.placeholder",
+      groupe: "Barre de recherche",
+      libelle: "Texte grisé dans la barre",
+      defaut: "Rechercher une proposition, un candidat, un thème…",
+    },
+    { cle: "recherche.exemples.titre", groupe: "Barre de recherche", libelle: "Mot avant les exemples", defaut: "Exemples :" },
+    {
+      cle: "recherche.exemples",
+      groupe: "Barre de recherche",
+      libelle: "Exemples cliquables (un par ligne)",
+      defaut: "prix du carburant\nretraites\nimmigration\npouvoir d'achat",
+    },
+
+    // Les 3 atouts sous le bandeau (src/components/HeroAtouts.js)
+    { cle: "hero.atout1.titre", groupe: "Les 3 atouts", libelle: "Atout 1 — titre", defaut: "Analyses par l’IA" },
     {
       cle: "hero.atout1.texte",
-      groupe: "Bandeau principal",
-      libelle: "Atout 01 — texte",
-      defaut: "Une méthodologie commune et évolutive, appliquée à chaque mesure.",
+      groupe: "Les 3 atouts",
+      libelle: "Atout 1 — texte",
+      defaut: "À partir de sources publiques.",
     },
-    { cle: "hero.atout2.titre", groupe: "Bandeau principal", libelle: "Atout 02 — titre", defaut: "Méthodologie avec des experts" },
+    { cle: "hero.atout2.titre", groupe: "Les 3 atouts", libelle: "Atout 2 — titre", defaut: "Vos commentaires" },
     {
       cle: "hero.atout2.texte",
-      groupe: "Bandeau principal",
-      libelle: "Atout 02 — texte",
-      defaut: "Construite avec économistes, experts et journalistes.",
+      groupe: "Les 3 atouts",
+      libelle: "Atout 2 — texte",
+      defaut: "Pour corriger, nuancer, compléter.",
     },
-    { cle: "hero.atout3.titre", groupe: "Bandeau principal", libelle: "Atout 03 — titre", defaut: "Sources publiques et documentées" },
+    { cle: "hero.atout3.titre", groupe: "Les 3 atouts", libelle: "Atout 3 — titre", defaut: "Une IA qui progresse" },
     {
       cle: "hero.atout3.texte",
-      groupe: "Bandeau principal",
-      libelle: "Atout 03 — texte",
-      defaut: "Données institutionnelles et sources de référence.",
+      groupe: "Les 3 atouts",
+      libelle: "Atout 3 — texte",
+      defaut: "Grâce à la communauté (le Club).",
     },
 
     // Les 3 colonnes (src/components/BottomColumns.js)

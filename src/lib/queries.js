@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { motsCles, correspond } from "@/lib/recherche";
 
 const dateFormatter = new Intl.DateTimeFormat("fr-FR", {
   day: "numeric",
@@ -151,7 +152,10 @@ export async function getCandidateRanking(limit) {
 // Liste des déclarations publiées pour la page /declarations, avec filtres
 // (candidat, thème) et tri (date ou score). Retourne aussi les listes de
 // candidats/thèmes disponibles pour construire les filtres.
-export async function getPublishedDeclarations({ candidat, theme, sort } = {}) {
+// `q` = mots-clés tapés dans la barre de recherche (titre, texte de la
+// déclaration, résumé de l'analyse, candidat, parti, thème ; accents et
+// majuscules ignorés, voir src/lib/recherche.js).
+export async function getPublishedDeclarations({ candidat, theme, sort, q } = {}) {
   const orderBy =
     sort === "score_asc"
       ? [{ scoreFaisabilite: "asc" }]
@@ -205,7 +209,20 @@ export async function getPublishedDeclarations({ candidat, theme, sort } = {}) {
     (a, b) => a.localeCompare(b, "fr"),
   );
 
-  const declarations = analyses.map((analyse) => ({
+  const mots = motsCles(q);
+  const analysesTrouvees = analyses.filter((analyse) =>
+    correspond(mots, [
+      analyse.proposition.titre,
+      analyse.proposition.texteOriginal,
+      analyse.resumeAccueil,
+      analyse.verdict,
+      analyse.proposition.candidat.nom,
+      analyse.proposition.candidat.parti,
+      analyse.proposition.theme,
+    ]),
+  );
+
+  const declarations = analysesTrouvees.map((analyse) => ({
     id: analyse.proposition.id,
     analyseId: analyse.id,
     rang: rankById.get(analyse.id),

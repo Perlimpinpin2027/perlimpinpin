@@ -2,16 +2,25 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import FilterPillGroup from "@/components/FilterPillGroup";
 import MonoTag from "@/components/MonoTag";
+import SearchBar from "@/components/SearchBar";
 import { getPublishedDeclarations } from "@/lib/queries";
 import { getScoreBadge } from "@/lib/score";
 import { vignettePhoto } from "@/lib/photo-vignette";
 
 export const dynamic = "force-dynamic";
 
+// Mots-clés de la barre de recherche (?q=...) : texte nettoyé, 100
+// caractères max, undefined si vide ou mal formé (ex. ?q=a&q=b).
+function lireRecherche(valeur) {
+  if (typeof valeur !== "string") return undefined;
+  return valeur.trim().slice(0, 100) || undefined;
+}
+
 export async function generateMetadata({ searchParams }) {
   const resolvedParams = await searchParams;
   const candidat = resolvedParams?.candidat || undefined;
   const theme = resolvedParams?.theme || undefined;
+  const q = lireRecherche(resolvedParams?.q);
 
   let title = "Déclarations analysées | Perlimpinpin";
   let description =
@@ -26,6 +35,11 @@ export async function generateMetadata({ searchParams }) {
   } else if (theme) {
     title = `${theme} — Déclarations analysées | Perlimpinpin`;
     description = `Déclarations sur le thème ${theme}, notées sur leur réalisme et leur faisabilité par Perlimpinpin.`;
+  }
+
+  if (q) {
+    title = `« ${q} » — Recherche | Perlimpinpin`;
+    description = `Propositions des candidats à la présidentielle 2027 correspondant à « ${q} », notées par Perlimpinpin.`;
   }
 
   return {
@@ -47,19 +61,30 @@ function buildSortHref(currentParams, value) {
   return `/declarations?${params.toString()}`;
 }
 
+function buildHrefSansRecherche(currentParams) {
+  const params = new URLSearchParams(currentParams);
+  params.delete("q");
+  const query = params.toString();
+  return query ? `/declarations?${query}` : "/declarations";
+}
+
 export default async function DeclarationsPage({ searchParams }) {
   const resolvedParams = await searchParams;
   const candidat = resolvedParams?.candidat || undefined;
   const theme = resolvedParams?.theme || undefined;
   const sort = resolvedParams?.sort || "date";
+  // Mots-clés de la barre de recherche (page d'accueil ou ci-dessous).
+  const q = lireRecherche(resolvedParams?.q);
 
   const { declarations, candidats, themes } = await getPublishedDeclarations({
     candidat,
     theme,
     sort,
+    q,
   });
 
   const currentParams = {};
+  if (q) currentParams.q = q;
   if (candidat) currentParams.candidat = candidat;
   if (theme) currentParams.theme = theme;
   if (sort) currentParams.sort = sort;
@@ -79,7 +104,28 @@ export default async function DeclarationsPage({ searchParams }) {
               {declarations.length} déclaration
               {declarations.length > 1 ? "s" : ""} publiée
               {declarations.length > 1 ? "s" : ""}
+              {q ? (
+                <>
+                  {" "}pour «&nbsp;<span className="font-semibold text-zinc-900">{q}</span>&nbsp;» ·{" "}
+                  <Link
+                    href={buildHrefSansRecherche(currentParams)}
+                    prefetch={false}
+                    className="font-semibold text-blue-600 hover:text-blue-800"
+                  >
+                    effacer la recherche
+                  </Link>
+                </>
+              ) : null}
             </p>
+          </div>
+
+          <div className="max-w-2xl">
+            <SearchBar
+              defaultValue={q ?? ""}
+              autres={Object.fromEntries(
+                Object.entries(currentParams).filter(([cle]) => cle !== "q"),
+              )}
+            />
           </div>
 
           <div className="flex flex-col gap-4">
@@ -126,7 +172,9 @@ export default async function DeclarationsPage({ searchParams }) {
 
           {declarations.length === 0 ? (
             <p className="text-sm text-zinc-500">
-              Aucune déclaration ne correspond à ces filtres.
+              {q
+                ? "Aucune proposition analysée ne correspond à cette recherche pour le moment. Essayez un autre mot-clé, ou retirez un filtre."
+                : "Aucune déclaration ne correspond à ces filtres."}
             </p>
           ) : (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

@@ -2,6 +2,7 @@ import { Fragment } from "react";
 import Link from "next/link";
 import Header from "@/components/Header";
 import HeroText from "@/components/HeroText";
+import HeroAtouts from "@/components/HeroAtouts";
 import FeaturedCarousel from "@/components/FeaturedCarousel";
 import ThemeTags from "@/components/ThemeTags";
 import BottomColumns from "@/components/BottomColumns";
@@ -46,10 +47,18 @@ export default async function Home() {
     <div className="flex min-h-screen flex-col bg-page-gradient font-sans">
       <Header />
 
-      <section className="w-full px-6 py-10 sm:px-8 sm:py-14">
-        <div className="mx-auto grid w-full max-w-[1280px] grid-cols-1 items-start gap-8 lg:grid-cols-[2fr_3fr] lg:gap-10">
+      {/* Bandeau principal (maquette oct. 2026) : titre + recherche à
+          gauche, analyse à la une à droite, puis les 3 atouts dessous. */}
+      <section className="w-full px-6 pb-10 pt-12 sm:px-8 sm:pb-14 sm:pt-20">
+        <div className="mx-auto grid w-full max-w-[1280px] grid-cols-1 items-center gap-10 lg:grid-cols-[1.08fr_1fr] lg:gap-14">
           <HeroText textes={t} />
           <FeaturedCarousel items={featuredRotation} />
+        </div>
+      </section>
+
+      <section className="w-full px-6 pb-14 sm:px-8 sm:pb-20">
+        <div className="mx-auto w-full max-w-[1280px]">
+          <HeroAtouts textes={t} />
         </div>
       </section>
 
