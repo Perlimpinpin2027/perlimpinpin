@@ -17,12 +17,14 @@ export default function HeroText({ textes }) {
 
       <h1 className="mt-5 font-sans text-5xl font-extrabold leading-[1.04] tracking-[-0.035em] text-zinc-950 sm:text-6xl xl:text-[3.9rem]">
         {/* Le mot « vraiment » est mis en gris clair et en italique
-            (text-zinc-400), s'il est présent dans le titre. */}
+            (text-zinc-400), s'il est présent dans le titre. mr-[0.15em] :
+            correction d'italique, sinon le « t » penché touche le mot
+            suivant. */}
         {String(t["hero.titre"])
           .split(/(vraiment)/i)
           .map((morceau, index) =>
             index % 2 === 1 ? (
-              <span key={index} className="italic text-zinc-400">
+              <span key={index} className="mr-[0.15em] italic text-zinc-400">
                 {morceau}
               </span>
             ) : (
