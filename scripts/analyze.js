@@ -11,6 +11,9 @@ import {
   validateEtape1Structure,
   validateFicheCompleteStructure,
   checkNotationCoherence,
+  validateVersionBasique,
+  checkChiffresVersionBasique,
+  checkAncragesVersionBasique,
 } from "./lib/scoring.js";
 
 neonConfig.webSocketConstructor = ws;
@@ -91,7 +94,9 @@ function extractStageContent(fullText, headerLabel, nextAnchor) {
 const PROMPT_METHODOLOGIE_PATH = join(__dirname, "..", "data", "prompt-methodologie.md");
 
 function loadMethodologieSections() {
-  const fullText = readFileSync(PROMPT_METHODOLOGIE_PATH, "utf-8");
+  // Les ancres ci-dessous sont écrites avec "\n" : un checkout Windows avec
+  // core.autocrlf=true produit des fins de ligne CRLF qui les feraient échouer.
+  const fullText = readFileSync(PROMPT_METHODOLOGIE_PATH, "utf-8").replace(/\r\n/g, "\n");
 
   const etape2Template = extractStageContent(fullText, "ÉTAPE 2 :", `\n\n${SECTION_BAR}\nÉTAPE 3 :`);
 
@@ -594,6 +599,107 @@ async function arbitrate(etape1, mistralResult) {
   return readStreamedMessage(response);
 }
 
+// --- Étape 3 bis : version basique (Claude) ---------------------------------
+// Texte simplifié pour le grand public, écrit à partir de la fiche finale
+// (après fusion des champs racine de l'étape 3, voir runPipeline). Prompt
+// séparé (data/prompt-version-basique.md) pour ne pas modifier
+// data/prompt-methodologie.md, dont la date sert d'audit
+// (getPromptFileModifiedAt). Cette étape ne bloque jamais le pipeline : en
+// cas d'échec après une nouvelle tentative, la fiche est enregistrée sans
+// version_basique.
+const PROMPT_VERSION_BASIQUE_PATH = join(__dirname, "..", "data", "prompt-version-basique.md");
+
+async function callVersionBasique(userMessage) {
+  const response = await fetchWithTimeout(`${ANTHROPIC_BASE_URL}/messages`, {
+    method: "POST",
+    headers: ANTHROPIC_HEADERS,
+    body: JSON.stringify({
+      model: "claude-sonnet-5",
+      max_tokens: 8000,
+      thinking: { type: "disabled" },
+      messages: [{ role: "user", content: userMessage }],
+      stream: true,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    throw new Error(`Erreur API Anthropic, étape 3 bis (${response.status}) : ${errorBody}`);
+  }
+
+  return readStreamedMessage(response);
+}
+
+function addUsage(total, usage = {}) {
+  const sum = { ...total };
+  for (const [key, value] of Object.entries(usage)) {
+    if (typeof value === "number") sum[key] = (sum[key] ?? 0) + value;
+  }
+  return sum;
+}
+
+// Retourne { versionBasique, ancrages, usage, errors } : versionBasique et
+// ancrages valent null si les deux tentatives ont échoué (errors donne alors
+// la cause du dernier échec), usage cumule les tokens des appels effectués.
+// Les ancrages (extraits de la fiche justifiant chaque phrase) sont un
+// contrôle interne : jamais publiés dans contenuComplet.
+export async function genererVersionBasique(ficheFinale) {
+  const template = readFileSync(PROMPT_VERSION_BASIQUE_PATH, "utf-8").replace(/\r\n/g, "\n");
+  const basePrompt = fillTemplate(template, { fiche_finale: JSON.stringify(ficheFinale, null, 2) });
+  const sourcesUtilisees = ficheFinale.sources_utilisees;
+
+  let usage = {};
+  let errors = [];
+  let nombresIntrouvables = [];
+
+  for (let tentative = 1; tentative <= 2; tentative++) {
+    const userMessage =
+      tentative === 1
+        ? basePrompt
+        : `${basePrompt}
+
+ATTENTION : ta réponse précédente a été refusée pour les raisons suivantes. Corrige-les.
+${errors.map((error) => `- ${error}`).join("\n")}`;
+
+    nombresIntrouvables = [];
+    try {
+      const data = await callVersionBasique(userMessage);
+      usage = addUsage(usage, data.usage);
+      const raw = cleanContenu(extractJson(data));
+      const validation = validateVersionBasique(raw?.version_basique, sourcesUtilisees);
+      if (!validation.valid) {
+        errors = validation.errors;
+      } else {
+        nombresIntrouvables = checkChiffresVersionBasique(validation.versionBasique, ficheFinale);
+        const erreursAncrages = checkAncragesVersionBasique(raw.ancrages, validation.versionBasique, ficheFinale);
+        if (nombresIntrouvables.length === 0 && erreursAncrages.length === 0) {
+          return { versionBasique: validation.versionBasique, ancrages: raw.ancrages, usage, errors: [] };
+        }
+        errors = [
+          ...nombresIntrouvables.map(
+            (nombre) => `Le nombre « ${nombre} » n'apparaît pas dans la fiche finale : retire-le ou remplace-le par un chiffre de la fiche.`,
+          ),
+          ...erreursAncrages,
+        ];
+      }
+    } catch (error) {
+      errors = [error.message];
+    }
+
+    if (tentative === 1) {
+      console.error("  ⚠️  Étape 3 bis : version basique refusée, nouvelle tentative :");
+      for (const error of errors) console.error(`     - ${error}`);
+    }
+  }
+
+  console.error("  ⚠️  Étape 3 bis : ÉCHEC après deux tentatives, fiche conservée SANS version basique.");
+  if (nombresIntrouvables.length > 0) {
+    console.error(`     Nombres introuvables dans la fiche finale : ${nombresIntrouvables.join(", ")}`);
+  }
+  for (const error of errors.slice(nombresIntrouvables.length)) console.error(`     - ${error}`);
+  return { versionBasique: null, ancrages: null, usage, errors };
+}
+
 // --- Estimation de coût -----------------------------------------------------
 
 // Tarifs approximatifs (USD / million de tokens), à ajuster si Anthropic ou
@@ -631,19 +737,22 @@ function estimateMistralCost(usage) {
 
 // usage1 est toujours null : l'étape 1 reste produite manuellement, hors de
 // ce pipeline, donc son coût réel n'est jamais connu ici (voir loadEtape1).
-function buildCoutPipeline({ usage2, usage3 }) {
+function buildCoutPipeline({ usage2, usage3, usage3bis }) {
   const coutEtape2 = estimateMistralCost(usage2);
   const coutEtape3 = estimateClaudeCost(usage3);
+  const coutEtape3bis = estimateClaudeCost(usage3bis);
 
   return {
     tokensEtape1: null,
     tokensEtape2: usage2,
     tokensEtape3: usage3,
+    tokensEtape3bis: usage3bis,
     coutEstimeParEtape: {
       etape2: Number(coutEtape2.toFixed(4)),
       etape3: Number(coutEtape3.toFixed(4)),
+      etape3bis: Number(coutEtape3bis.toFixed(4)),
     },
-    coutEstimeTotal: Number((coutEtape2 + coutEtape3).toFixed(4)),
+    coutEstimeTotal: Number((coutEtape2 + coutEtape3 + coutEtape3bis).toFixed(4)),
     note: "tokensEtape1 non disponible : étape 1 réalisée manuellement, hors pipeline automatisé.",
   };
 }
@@ -715,9 +824,18 @@ async function runPipeline(etape1Input) {
     `  ✓ terminé (score final : ${parsed.notation_detaillee.score_total}/100${parsed.notation_detaillee.plafond_applique ? `, plafond appliqué — déclencheur : ${parsed.notation_detaillee.plafond_declencheur}` : ""})`,
   );
 
+  const { versionBasique, ancrages, usage: usage3bis } = await genererVersionBasique(parsed);
+  if (versionBasique) {
+    parsed.version_basique = versionBasique;
+    // Contrôle interne : dans auditArbitrage, jamais dans contenuComplet (public).
+    auditArbitrage.push({ type: "ancrages_version_basique", ancrages });
+    console.log("Étape 3 bis : version basique… ✓");
+  }
+
   const coutPipeline = buildCoutPipeline({
     usage2: mistralResult?.usage ?? null,
     usage3: data3.usage ?? {},
+    usage3bis,
   });
 
   return {
@@ -1178,7 +1296,9 @@ function printCoutPipeline(coutPipeline) {
   }
   console.log(`  Étape 3 (Claude, arbitrage) : ~$${coutPipeline.coutEstimeParEtape.etape3}`);
   printUsage(coutPipeline.tokensEtape3 ?? {});
-  console.log(`  Coût total estimé (étapes 2+3 seulement) : ~$${coutPipeline.coutEstimeTotal}`);
+  console.log(`  Étape 3 bis (Claude, version basique) : ~$${coutPipeline.coutEstimeParEtape.etape3bis}`);
+  printUsage(coutPipeline.tokensEtape3bis ?? {});
+  console.log(`  Coût total estimé (étapes 2, 3 et 3 bis) : ~$${coutPipeline.coutEstimeTotal}`);
   console.log(`  Note : ${coutPipeline.note}`);
 }
 

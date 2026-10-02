@@ -1,4 +1,4 @@
-import { cache } from "react";
+import { cache, Fragment } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
@@ -14,6 +14,10 @@ import EditableBlock from "@/app/test/EditableBlock";
 import { getDeclarationDetail } from "@/lib/queries";
 import { getScoreBadge, PLAFOND_DECLENCHEUR_LABELS } from "@/lib/score";
 import { vignettePhoto } from "@/lib/photo-vignette";
+import { Section, renderRichText, renderSourceString } from "@/lib/fiche-rendu";
+import { lireVersionBasique } from "@/lib/version-basique";
+import VueBasique, { TOC_SECTIONS_BASIQUE, ID_SOURCES_EXPERT, ScriptVueInitiale } from "@/components/VueBasique";
+import { VueAnalyseProvider, BasculeVue, Vue } from "@/components/VueAnalyseProvider";
 
 // ISR : chaque fiche est calculée à sa première visite, puis servie depuis le
 // cache du CDN et recalculée au plus toutes les 5 minutes (nouvelle analyse,
@@ -323,34 +327,6 @@ const TRUST_ITEMS = [
   },
 ];
 
-function Section({ title, id, children }) {
-  return (
-    <section id={id} className="scroll-mt-24 rounded-2xl border border-zinc-200 bg-white p-6">
-      <h2 className="text-lg font-bold text-zinc-900">{title}</h2>
-      <div className="mt-3 max-w-[68ch] text-sm leading-7 text-zinc-600">
-        {children}
-      </div>
-    </section>
-  );
-}
-
-// Convertit un marquage minimal **gras** en JSX, sans dépendance markdown
-// complète — le contenu vient de fiches où seuls quelques mots-clés (chiffre,
-// source, date, qualificatif) sont mis en avant, jamais des phrases entières.
-function renderRichText(text) {
-  if (typeof text !== "string") return text;
-  return text.split(/(\*\*[^*]+\*\*)/g).map((part, index) => {
-    const match = part.match(/^\*\*([^*]+)\*\*$/);
-    return match ? (
-      <strong key={index} className="font-semibold text-slate-700">
-        {match[1]}
-      </strong>
-    ) : (
-      <span key={index}>{part}</span>
-    );
-  });
-}
-
 // Petits déterminants/articles qui ne doivent jamais se retrouver seuls en
 // fin de ligne pendant que le nom qu'ils introduisent passe à la ligne
 // suivante — espace insécable posée dynamiquement, aucun <br> en dur, valable
@@ -487,28 +463,8 @@ function TextOrList({ value }) {
   return <p>{renderRichText(value)}</p>;
 }
 
-// sources_utilisees : chaîne simple par élément sur les fiches antérieures
-// au schéma V3, objet structuré { id, titre, organisme, url, type, ... }
-// depuis (voir data/prompt-methodologie.md, section SOURCES STRUCTURÉES).
-// TextOrList/renderRichText ne savent afficher que des chaînes ; ce
-// composant dédié gère les deux formes sans faire planter le rendu React
-// sur un objet.
-const SOURCE_STRING_REGEX = /^(.*?),\s*(https?:\/\/\S+)\s*$/;
-function renderSourceString(item) {
-  const match = typeof item === "string" ? item.match(SOURCE_STRING_REGEX) : null;
-  if (!match) return renderRichText(item);
-  return (
-    <a
-      href={match[2]}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="text-inherit underline underline-offset-2 decoration-zinc-400 transition-colors hover:decoration-zinc-900"
-    >
-      {renderRichText(match[1])}
-    </a>
-  );
-}
-
+// sources_utilisees : chaînes ou objets structurés, voir renderSourceString
+// (src/lib/fiche-rendu.js).
 function SourcesList({ value }) {
   if (!value || (Array.isArray(value) && value.length === 0)) {
     return <p className="text-zinc-400">Non renseigné.</p>;
@@ -897,6 +853,12 @@ function Editable({ edition, champ, valeurBrute, multiligne, children }) {
   );
 }
 
+// Contenu d'analyse actuel de la fiche : enveloppé dans la vue expert quand la
+// fiche a une version basique, rendu tel quel sinon.
+function VueExpertSi({ actif, children }) {
+  return actif ? <Vue nom="expert">{children}</Vue> : children;
+}
+
 // `preview` : utilisé par /test/[id] pour relire un brouillon. On y masque les
 // blocs qui écrivent en base (vote, feedback) et le lien de retour pointe vers
 // la liste des brouillons. Sur le site public, `preview` reste faux : rien ne change.
@@ -952,6 +914,11 @@ export default async function DeclarationDetailPage({ params, preview = false, e
     ? TOC_SECTIONS.filter((section) => section.id === "analyse-criteres" || section.id === "verdict")
     : TOC_SECTIONS;
   const claimReviewJsonLd = buildClaimReviewJsonLd(declaration);
+  // Version basique (étape 3 bis) : si elle existe, bascule « Résumé basique /
+  // Résumé expert » ; sinon la page reste exactement comme avant.
+  const versionBasique = lireVersionBasique(contenu, propositionId);
+  const EnveloppeVue = versionBasique ? VueAnalyseProvider : Fragment;
+  const sectionsBasique = versionBasique ? TOC_SECTIONS_BASIQUE : undefined;
 
   return (
     <div className="flex min-h-screen flex-col bg-page-gradient font-sans">
@@ -964,6 +931,7 @@ export default async function DeclarationDetailPage({ params, preview = false, e
       <Header />
 
       <main className="w-full px-6 py-12 sm:px-8 sm:py-16">
+        <EnveloppeVue>
         <div className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-6 lg:grid-cols-[2fr_1fr] lg:items-start lg:gap-x-8">
           {/* Colonne principale : tout le contenu de lecture, empilé dans
               l'ordre. La hauteur de cette colonne détermine la hauteur de
@@ -1031,11 +999,25 @@ export default async function DeclarationDetailPage({ params, preview = false, e
                 score={analyse.scoreFaisabilite}
                 badge={badge}
                 sections={tocSections}
+                sectionsBasique={sectionsBasique}
                 versionMethodologie={analyse.versionMethodologie}
                 generationDateLabel={declaration.generationDateLabel}
               />
             </div>
 
+            {/* Bascule basique/expert, commune aux deux vues, puis la vue basique.
+                Tout ce qui suit jusqu'à la Fiabilité de l'analyse forme la vue
+                expert (contenu inchangé, non réindenté). */}
+            {versionBasique ? (
+              <>
+                <BasculeVue />
+                <Vue nom="basique">
+                  <VueBasique versionBasique={versionBasique} sourcesUtilisees={contenu.sources_utilisees} />
+                </Vue>
+              </>
+            ) : null}
+
+            <VueExpertSi actif={Boolean(versionBasique)}>
             {/* Le résumé de Perlimpinpin IA : traitement "verre dépoli"
                 (GLASS_STYLE) — l'un des deux points d'entrée clés de la
                 lecture, avant le raisonnement détaillé (l'autre étant le
@@ -1363,12 +1345,14 @@ export default async function DeclarationDetailPage({ params, preview = false, e
                 </div>
               </section>
 
-              <Section title="Sources utilisées">
+              <Section id={versionBasique ? ID_SOURCES_EXPERT : undefined} title="Sources utilisées">
                 <SourcesList value={contenu.sources_utilisees} />
               </Section>
 
               {!isV4 ? <FiabiliteSection contenu={contenu} /> : null}
             </div>
+            </VueExpertSi>
+            {versionBasique ? <ScriptVueInitiale /> : null}
 
             {/* Vote sur la mesure elle-même, juste après la Fiabilité de
                 l'analyse — la maquette 413 (public/maquettes) montre "Et
@@ -1421,11 +1405,13 @@ export default async function DeclarationDetailPage({ params, preview = false, e
               score={analyse.scoreFaisabilite}
               badge={badge}
               sections={tocSections}
+              sectionsBasique={sectionsBasique}
               versionMethodologie={analyse.versionMethodologie}
               generationDateLabel={declaration.generationDateLabel}
             />
           </aside>
         </div>
+        </EnveloppeVue>
 
         {/* Bandeau "Rejoignez-nous" en bas de chaque analyse (même bandeau
             que la page d'accueil, avec un texte propre aux analyses). */}

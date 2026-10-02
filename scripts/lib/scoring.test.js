@@ -8,6 +8,9 @@ import {
   CRITERE_ETAPE3_KEYS,
   CRITERE_NOTE_MAX,
   CATEGORIES_OBJECTIF,
+  validateVersionBasique,
+  checkChiffresVersionBasique,
+  checkAncragesVersionBasique,
 } from "./scoring.js";
 
 // --- Fabriques -----------------------------------------------------------
@@ -417,5 +420,114 @@ describe("CRITERE_ETAPE3_KEYS / CRITERE_NOTE_MAX", () => {
 describe("CATEGORIES_OBJECTIF", () => {
   test("contient exactement les 13 domaines de data/objectifs-de-reference.md", () => {
     assert.equal(CATEGORIES_OBJECTIF.length, 13);
+  });
+});
+
+// --- Version basique (étape 3 bis) ----------------------------------------
+
+function makeVersionBasique(overrides = {}) {
+  return {
+    resume: "Le candidat propose un compte social unique.",
+    contexte: "Fin 2021, environ 560 000 foyers ne demandaient pas le RSA.",
+    analyse: "Entre 33 % et 37 % des foyers éligibles ne le demandaient pas.",
+    points_forts: ["Simplifie les démarches", "S'appuie sur des outils existants"],
+    points_faibles: ["Le coût n'est pas chiffré", "Le calendrier reste flou"],
+    faisabilite: "Il faut changer la loi.",
+    sources_principales: [2, 3, 4],
+    ...overrides,
+  };
+}
+
+const SOURCES = ["programme", "presse", "DREES", "Cour des comptes", "CNAF"];
+
+const FICHE_FINALE = {
+  contexte_national: {
+    synthese: "Non-recours au RSA.",
+    texte: "Fin 2021, entre 33 % et 37 % des foyers éligibles, soit environ 560 000 foyers.",
+  },
+  sources_utilisees: SOURCES,
+};
+
+describe("validateVersionBasique", () => {
+  test("accepte une version basique valide", () => {
+    const result = validateVersionBasique(makeVersionBasique(), SOURCES);
+    assert.equal(result.valid, true, result.errors.join("\n"));
+    assert.deepEqual(result.versionBasique.sources_principales, [2, 3, 4]);
+  });
+
+  test("refuse un index de source hors limites", () => {
+    const result = validateVersionBasique(makeVersionBasique({ sources_principales: [0, 1, 5] }), SOURCES);
+    assert.equal(result.valid, false);
+    assert.ok(result.errors.some((error) => error.includes("index 5 hors limites")), result.errors.join("\n"));
+  });
+
+  test("refuse des index en double ou un nombre de sources différent de 3", () => {
+    assert.equal(validateVersionBasique(makeVersionBasique({ sources_principales: [2, 2, 3] }), SOURCES).valid, false);
+    assert.equal(validateVersionBasique(makeVersionBasique({ sources_principales: [2, 3] }), SOURCES).valid, false);
+  });
+
+  test("refuse moins de 2 points forts ou un champ texte vide", () => {
+    assert.equal(validateVersionBasique(makeVersionBasique({ points_forts: ["Un seul"] }), SOURCES).valid, false);
+    assert.equal(validateVersionBasique(makeVersionBasique({ resume: "" }), SOURCES).valid, false);
+  });
+});
+
+describe("checkChiffresVersionBasique", () => {
+  test("ne signale rien quand tous les nombres viennent de la fiche (espace insécable compris)", () => {
+    assert.deepEqual(checkChiffresVersionBasique(makeVersionBasique(), FICHE_FINALE), []);
+  });
+
+  test("détecte un nombre inventé", () => {
+    const vb = makeVersionBasique({ faisabilite: "Cela coûterait 227 millions d'euros." });
+    assert.deepEqual(checkChiffresVersionBasique(vb, FICHE_FINALE), ["227"]);
+  });
+
+  test("ne trouve pas un nombre à l'intérieur d'un autre (200 dans 2000)", () => {
+    const fiche = { texte: "Un budget de 2000 euros." };
+    const vb = makeVersionBasique({ resume: "Un budget de 200 euros.", contexte: "x", analyse: "x" });
+    assert.deepEqual(checkChiffresVersionBasique(vb, fiche), ["200"]);
+  });
+});
+
+describe("checkAncragesVersionBasique", () => {
+  const fiche = {
+    ce_qui_est_etabli: {
+      synthese: "Le non-recours est massif.",
+      texte: "Le **non-recours** au RSA concerne l'un des\nminima sociaux les plus étudiés.",
+    },
+    sources_utilisees: SOURCES,
+  };
+
+  function ancragesPoints(vb, extrait) {
+    return [...vb.points_forts, ...vb.points_faibles].map((texte) => ({ texte, extrait }));
+  }
+
+  test("trouve un extrait malgré les ** et une apostrophe typographique", () => {
+    const vb = makeVersionBasique();
+    const ancrages = ancragesPoints(vb, "Le non-recours au RSA concerne l’un des minima sociaux");
+    assert.deepEqual(checkAncragesVersionBasique(ancrages, vb, fiche), []);
+  });
+
+  test("détecte un extrait inventé", () => {
+    const vb = makeVersionBasique();
+    const ancrages = ancragesPoints(vb, "Le non-recours au RSA concerne l'un des minima sociaux");
+    ancrages[0] = { texte: vb.points_forts[0], extrait: "Le compte réduirait le non-recours de moitié." };
+    const errors = checkAncragesVersionBasique(ancrages, vb, fiche);
+    assert.equal(errors.length, 1);
+    assert.ok(errors[0].includes("ne figure pas mot pour mot"), errors[0]);
+  });
+
+  test("détecte un point sans ancrage", () => {
+    const vb = makeVersionBasique();
+    const ancrages = ancragesPoints(vb, "Le non-recours au RSA concerne l'un des minima sociaux").slice(1);
+    const errors = checkAncragesVersionBasique(ancrages, vb, fiche);
+    assert.equal(errors.length, 1);
+    assert.ok(errors[0].includes(vb.points_forts[0]), errors[0]);
+  });
+
+  test("refuse un tableau vide ou un ancrage mal formé", () => {
+    const vb = makeVersionBasique();
+    assert.ok(checkAncragesVersionBasique([], vb, fiche).length > 0);
+    assert.ok(checkAncragesVersionBasique([{ texte: "x" }], vb, fiche).some((e) => e.startsWith("ancrages.0")));
   });
 });

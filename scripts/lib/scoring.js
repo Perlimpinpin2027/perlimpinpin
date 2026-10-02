@@ -337,3 +337,141 @@ export function validateFicheCompleteStructure(raw) {
   }
   return { valid: true, errors: [], fiche: zodResult.data };
 }
+
+// --- Version basique (étape 3 bis) -----------------------------------------
+// Texte simplifié pour le grand public, produit à partir de la fiche finale
+// (voir data/prompt-version-basique.md). sources_principales désigne 3
+// entrées de sources_utilisees par leur index, jamais par leur texte.
+const PointsSchema = z.array(z.string().min(1)).min(2).max(5);
+
+export const VersionBasiqueSchema = z.object({
+  resume: z.string().min(1),
+  contexte: z.string().min(1),
+  analyse: z.string().min(1),
+  points_forts: PointsSchema,
+  points_faibles: PointsSchema,
+  faisabilite: z.string().min(1),
+  sources_principales: z.array(z.number().int()).length(3),
+});
+
+export function validateVersionBasique(raw, sourcesUtilisees) {
+  const zodResult = VersionBasiqueSchema.safeParse(raw);
+  if (!zodResult.success) {
+    return {
+      valid: false,
+      errors: zodResult.error.issues.map((issue) => `${issue.path.join(".") || "(racine)"}: ${issue.message}`),
+      versionBasique: null,
+    };
+  }
+
+  const nbSources = Array.isArray(sourcesUtilisees) ? sourcesUtilisees.length : 0;
+  const indexes = zodResult.data.sources_principales;
+  const errors = [];
+  if (new Set(indexes).size !== indexes.length) {
+    errors.push(`sources_principales: les 3 index doivent être distincts (reçu ${JSON.stringify(indexes)}).`);
+  }
+  for (const index of indexes) {
+    if (index < 0 || index >= nbSources) {
+      errors.push(`sources_principales: index ${index} hors limites (sources_utilisees contient ${nbSources} entrée(s), index 0 à ${nbSources - 1}).`);
+    }
+  }
+  if (errors.length > 0) return { valid: false, errors, versionBasique: null };
+
+  return { valid: true, errors: [], versionBasique: zodResult.data };
+}
+
+// Contrôle de fidélité : tout nombre écrit dans la version basique doit
+// figurer dans la fiche finale. Les espaces (y compris insécables et fines)
+// servant de séparateurs de milliers sont retirés des deux côtés avant
+// comparaison ; la virgule décimale est conservée telle quelle. Ne contrôle
+// pas les arrondis en toutes lettres (« plus d'un tiers »), laissés au prompt
+// et à la relecture.
+// Le même découpage est appliqué aux deux textes : « fin 2021 560 000 »
+// donne bien « 2021 » et « 560000 », jamais « 2021560000 ». Comparer des
+// nombres entiers (et non des sous-chaînes) évite aussi de trouver « 200 »
+// dans « 2000 » ou « 1,8 » dans « 1,85 ».
+const NOMBRE_REGEX = /\d{1,3}(?:[   ]\d{3})+(?:,\d+)?|\d+(?:,\d+)?/g;
+
+function extraireNombres(text) {
+  return [...text.matchAll(NOMBRE_REGEX)].map((match) => match[0].replace(/[   ]/g, ""));
+}
+
+export function checkChiffresVersionBasique(versionBasique, ficheFinale) {
+  const textes = [
+    versionBasique.resume,
+    versionBasique.contexte,
+    versionBasique.analyse,
+    versionBasique.faisabilite,
+    ...(versionBasique.points_forts ?? []),
+    ...(versionBasique.points_faibles ?? []),
+  ].filter((texte) => typeof texte === "string");
+
+  const nombres = new Set(textes.flatMap(extraireNombres));
+  const reference = new Set(extraireNombres(JSON.stringify(ficheFinale)));
+  return [...nombres].filter((nombre) => !reference.has(nombre));
+}
+
+// Contrôle des ancrages : chaque phrase de la version basique est justifiée
+// par un extrait copié mot pour mot de la fiche (voir « ancrages » dans
+// data/prompt-version-basique.md). Les ancrages restent un contrôle interne,
+// jamais publiés dans contenuComplet.
+function normaliserPassage(text) {
+  return text
+    .replace(/\*\*/g, "")
+    .replace(/’/g, "'")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+}
+
+// Toutes les chaînes de la fiche, séparées par un caractère qui ne peut pas
+// figurer dans un extrait : un extrait ne peut donc pas chevaucher deux champs.
+function collecterChaines(value, acc = []) {
+  if (typeof value === "string") acc.push(value);
+  else if (Array.isArray(value)) value.forEach((item) => collecterChaines(item, acc));
+  else if (value && typeof value === "object") Object.values(value).forEach((item) => collecterChaines(item, acc));
+  return acc;
+}
+
+export function checkAncragesVersionBasique(ancrages, versionBasique, ficheFinale) {
+  if (!Array.isArray(ancrages) || ancrages.length === 0) {
+    return ["ancrages: doit être un tableau non vide d'objets { texte, extrait }."];
+  }
+
+  const errors = [];
+  const valides = [];
+  ancrages.forEach((ancrage, index) => {
+    if (
+      !ancrage ||
+      typeof ancrage.texte !== "string" ||
+      typeof ancrage.extrait !== "string" ||
+      !ancrage.texte.trim() ||
+      !ancrage.extrait.trim()
+    ) {
+      errors.push(`ancrages.${index}: doit être un objet { texte, extrait } avec deux chaînes non vides.`);
+    } else {
+      valides.push(ancrage);
+    }
+  });
+
+  const fiche = collecterChaines(ficheFinale).map(normaliserPassage).join("\u0000");
+  for (const ancrage of valides) {
+    if (!fiche.includes(normaliserPassage(ancrage.extrait))) {
+      errors.push(`L'extrait « ${ancrage.extrait} » (pour « ${ancrage.texte} ») ne figure pas mot pour mot dans la fiche.`);
+    }
+  }
+
+  const textesAncres = new Set(valides.map((ancrage) => normaliserPassage(ancrage.texte)));
+  for (const [champ, points] of [
+    ["points_forts", versionBasique.points_forts ?? []],
+    ["points_faibles", versionBasique.points_faibles ?? []],
+  ]) {
+    for (const point of points) {
+      if (!textesAncres.has(normaliserPassage(point))) {
+        errors.push(`${champ} : le point « ${point} » n'a aucun ancrage dont le texte lui est égal.`);
+      }
+    }
+  }
+
+  return errors;
+}
