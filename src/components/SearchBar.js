@@ -1,68 +1,222 @@
-import Link from "next/link";
+"use client";
 
-// Barre de recherche par mots-clés (maquette de la page d'accueil).
-// Simple formulaire HTML : « Entrée » ou la flèche envoie vers
-// /declarations?q=..., qui affiche les propositions analysées correspondantes
-// (filtre dans src/lib/queries.js -> getPublishedDeclarations). Fonctionne
-// sans JavaScript et n'ajoute aucun appel réseau à la page d'accueil.
+import { useId, useMemo, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { creerMoteur, LIMITE_SUGGESTIONS } from "@/lib/recherche";
+
+// Barre de recherche façon « Spotlight » (page d'accueil).
+//
+// - Avec `documents` (index fourni par la page, voir getIndexRecherche) :
+//   suggestions instantanées pendant la frappe, calculées dans le navigateur
+//   (src/lib/recherche.js), sans aucun appel réseau. 4 lignes maximum : un
+//   raccourci « Thème » ou « Candidat » éventuel, puis les propositions.
+// - Sans `documents` (page /declarations) : simple champ de recherche.
+// Dans les deux cas, « Entrée » sans suggestion choisie envoie vers
+// /declarations?q=... (fonctionne aussi sans JavaScript).
+
+const TYPE_LIBELLE = { theme: "Thème", candidat: "Candidat", proposition: "Proposition" };
+
+function lienRaccourci({ type, libelle }) {
+  const param = type === "theme" ? "theme" : "candidat";
+  return `/declarations?${param}=${encodeURIComponent(libelle)}`;
+}
+
+function Fleche({ className = "h-5 w-5" }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      className={className}
+      aria-hidden="true"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12h15m0 0-6-6m6 6-6 6" />
+    </svg>
+  );
+}
+
 export default function SearchBar({
   placeholder = "Rechercher une proposition, un candidat, un thème…",
   defaultValue = "",
   exemples = [],
   exemplesTitre = "Exemples :",
   autres = {},
+  documents = null,
 }) {
+  const router = useRouter();
+  const idListe = useId();
+  const [requete, setRequete] = useState(defaultValue);
+  const [ouvert, setOuvert] = useState(false);
+  const [actif, setActif] = useState(-1);
+
+  // Index construit une seule fois (quelques millisecondes pour quelques
+  // centaines de propositions).
+  const moteur = useMemo(
+    () => (documents?.length ? creerMoteur(documents) : null),
+    [documents],
+  );
+
+  // Lignes affichées sous la barre (4 maximum), recalculées à chaque frappe.
+  const lignes = useMemo(() => {
+    if (!moteur || requete.trim().length < 2) return [];
+    const { raccourci, propositions } = moteur.suggestions(requete, LIMITE_SUGGESTIONS);
+    const resultat = [];
+    if (raccourci) {
+      resultat.push({
+        cle: `${raccourci.type}:${raccourci.libelle}`,
+        type: raccourci.type,
+        titre: raccourci.libelle,
+        detail: "Voir toutes les analyses liées",
+        href: lienRaccourci(raccourci),
+      });
+    }
+    for (const doc of propositions) {
+      resultat.push({
+        cle: `proposition:${doc.id}`,
+        type: "proposition",
+        titre: doc.titre,
+        detail: [doc.candidat, doc.theme].filter(Boolean).join(" · "),
+        href: `/declarations/${doc.propositionId}`,
+      });
+    }
+    return resultat;
+  }, [moteur, requete]);
+
+  const panneauVisible = ouvert && moteur !== null && requete.trim().length >= 2;
+
+  function changerRequete(event) {
+    setRequete(event.target.value);
+    setActif(-1);
+    setOuvert(true);
+  }
+
+  function gererTouche(event) {
+    if (!panneauVisible) return;
+    if (event.key === "ArrowDown" && lignes.length > 0) {
+      event.preventDefault();
+      setActif((i) => (i + 1) % lignes.length);
+    } else if (event.key === "ArrowUp" && lignes.length > 0) {
+      event.preventDefault();
+      setActif((i) => (i <= 0 ? lignes.length - 1 : i - 1));
+    } else if (event.key === "Escape") {
+      setOuvert(false);
+      setActif(-1);
+    } else if (event.key === "Enter" && actif >= 0 && lignes[actif]) {
+      // Suggestion choisie au clavier : on y va directement. Sinon, Entrée
+      // envoie le formulaire (tous les résultats sur /declarations?q=...).
+      event.preventDefault();
+      setOuvert(false);
+      router.push(lignes[actif].href);
+    }
+  }
+
   return (
     <div className="w-full">
-      <form action="/declarations" method="get" role="search" className="relative">
-        {/* Filtres déjà actifs (page /declarations) conservés lors d'une
-            nouvelle recherche. */}
-        {Object.entries(autres).map(([cle, valeur]) => (
-          <input key={cle} type="hidden" name={cle} value={valeur} />
-        ))}
-        <label htmlFor="recherche-q" className="sr-only">
-          Rechercher dans les propositions analysées
-        </label>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={2}
-          className="pointer-events-none absolute left-6 top-1/2 h-6 w-6 -translate-y-1/2 text-zinc-900"
-          aria-hidden="true"
-        >
-          <circle cx="11" cy="11" r="7" />
-          <path strokeLinecap="round" d="m20 20-3.5-3.5" />
-        </svg>
-        <input
-          id="recherche-q"
-          type="search"
-          name="q"
-          defaultValue={defaultValue}
-          placeholder={placeholder}
-          autoComplete="off"
-          enterKeyHint="search"
-          className="h-16 w-full rounded-full border border-zinc-200 bg-white pl-16 pr-16 sm:pr-20 text-base text-zinc-900 shadow-[0_18px_40px_-20px_rgba(30,41,82,0.35)] outline-none transition placeholder:text-slate-400 max-sm:placeholder:text-[15px] focus:border-blue-300 focus:ring-4 focus:ring-blue-100 sm:h-[72px] sm:text-lg [&::-webkit-search-cancel-button]:hidden"
-        />
-        <button
-          type="submit"
-          aria-label="Lancer la recherche"
-          className="absolute right-2 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-gradient-to-br from-sky-100 via-violet-100 to-rose-100 text-zinc-900 transition hover:brightness-95 sm:h-14 sm:w-14"
-        >
+      <div className="relative">
+        <form action="/declarations" method="get" role="search" className="relative z-20">
+          {/* Filtres déjà actifs (page /declarations) conservés lors d'une
+              nouvelle recherche. */}
+          {Object.entries(autres).map(([cle, valeur]) => (
+            <input key={cle} type="hidden" name={cle} value={valeur} />
+          ))}
+          <label htmlFor={`${idListe}-q`} className="sr-only">
+            Rechercher dans les propositions analysées
+          </label>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
             strokeWidth={2}
-            className="h-6 w-6"
+            className="pointer-events-none absolute left-6 top-1/2 h-6 w-6 -translate-y-1/2 text-zinc-900"
             aria-hidden="true"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12h15m0 0-6-6m6 6-6 6" />
+            <circle cx="11" cy="11" r="7" />
+            <path strokeLinecap="round" d="m20 20-3.5-3.5" />
           </svg>
-        </button>
-      </form>
+          <input
+            id={`${idListe}-q`}
+            type="search"
+            name="q"
+            value={requete}
+            onChange={changerRequete}
+            onKeyDown={gererTouche}
+            onFocus={() => setOuvert(true)}
+            onBlur={() => setOuvert(false)}
+            placeholder={placeholder}
+            autoComplete="off"
+            enterKeyHint="search"
+            role={moteur ? "combobox" : undefined}
+            aria-autocomplete={moteur ? "list" : undefined}
+            aria-expanded={moteur ? panneauVisible : undefined}
+            aria-controls={moteur ? `${idListe}-liste` : undefined}
+            aria-activedescendant={
+              panneauVisible && actif >= 0 ? `${idListe}-${actif}` : undefined
+            }
+            className="h-16 w-full rounded-full border border-zinc-200 bg-white pl-16 pr-16 sm:pr-20 text-base text-zinc-900 shadow-[0_18px_40px_-20px_rgba(30,41,82,0.35)] outline-none transition placeholder:text-slate-400 max-sm:placeholder:text-[15px] focus:border-blue-300 focus:ring-4 focus:ring-blue-100 sm:h-[72px] sm:text-lg [&::-webkit-search-cancel-button]:hidden"
+          />
+          <button
+            type="submit"
+            aria-label="Lancer la recherche"
+            className="absolute right-2 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-gradient-to-br from-sky-100 via-violet-100 to-rose-100 text-zinc-900 transition hover:brightness-95 sm:h-14 sm:w-14"
+          >
+            <Fleche className="h-6 w-6" />
+          </button>
+        </form>
+
+        {panneauVisible ? (
+          <div
+            // Empêche la perte du focus (et donc la fermeture) avant le clic.
+            onMouseDown={(event) => event.preventDefault()}
+            className="absolute inset-x-0 top-full z-10 -mt-1 overflow-hidden rounded-3xl bg-white/95 p-2 shadow-[0_24px_60px_-24px_rgba(30,41,82,0.35)] ring-1 ring-zinc-200/80 backdrop-blur-xl"
+          >
+            {lignes.length === 0 ? (
+              <p className="px-4 py-3 font-mono text-xs text-slate-500">
+                Aucune proposition analysée ne correspond pour le moment.
+              </p>
+            ) : (
+              <ul id={`${idListe}-liste`} role="listbox" className="divide-y divide-zinc-100">
+                {lignes.map((ligne, index) => (
+                  <li
+                    key={ligne.cle}
+                    id={`${idListe}-${index}`}
+                    role="option"
+                    aria-selected={index === actif}
+                  >
+                    <Link
+                      href={ligne.href}
+                      prefetch={false}
+                      onMouseEnter={() => setActif(index)}
+                      onClick={() => setOuvert(false)}
+                      className={`flex items-center gap-4 rounded-2xl px-4 py-2.5 transition-colors ${
+                        index === actif ? "bg-zinc-100/80" : "hover:bg-zinc-50"
+                      }`}
+                    >
+                      <div className="min-w-0 flex-1">
+                        <p className="flex items-baseline gap-3">
+                          <span className="truncate text-base font-semibold tracking-tight text-zinc-900">
+                            {ligne.titre}
+                          </span>
+                          <span className="shrink-0 font-mono text-[11px] uppercase tracking-widest text-slate-400">
+                            {TYPE_LIBELLE[ligne.type]}
+                          </span>
+                        </p>
+                        <p className="mt-0.5 truncate font-mono text-xs text-slate-500">
+                          {ligne.detail}
+                        </p>
+                      </div>
+                      <Fleche className="h-5 w-5 shrink-0 text-zinc-700" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        ) : null}
+      </div>
 
       {exemples.length > 0 ? (
         <p className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 pl-2 font-mono text-xs text-slate-500">

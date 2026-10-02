@@ -72,9 +72,10 @@ export default async function DeclarationsPage({ searchParams }) {
   const resolvedParams = await searchParams;
   const candidat = resolvedParams?.candidat || undefined;
   const theme = resolvedParams?.theme || undefined;
-  const sort = resolvedParams?.sort || "date";
   // Mots-clés de la barre de recherche (page d'accueil ou ci-dessous).
   const q = lireRecherche(resolvedParams?.q);
+  // Avec une recherche, les résultats sont classés par pertinence par défaut.
+  const sort = resolvedParams?.sort || (q ? "pertinence" : "date");
 
   const { declarations, candidats, themes } = await getPublishedDeclarations({
     candidat,
@@ -150,7 +151,10 @@ export default async function DeclarationsPage({ searchParams }) {
                 Trier
               </p>
               <div className="flex flex-wrap gap-2">
-                {sortOptions.map((option) => (
+                {(q
+                  ? [{ value: "pertinence", label: "Pertinence" }, ...sortOptions]
+                  : sortOptions
+                ).map((option) => (
                   <Link
                     key={option.value}
                     href={buildSortHref(currentParams, option.value)}

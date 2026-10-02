@@ -13,6 +13,7 @@ import {
   getFeaturedRotation,
   getTopDeclarations,
   getCandidateRanking,
+  getIndexRecherche,
 } from "@/lib/queries";
 
 // La page dépend de données Neon qui changent (analyses publiées, scores) :
@@ -21,13 +22,15 @@ import {
 export const revalidate = 300;
 
 export default async function Home() {
-  const [featuredRotation, topDeclarations, rankedCandidates, t] =
+  const [featuredRotation, topDeclarations, rankedCandidates, t, indexRecherche] =
     await Promise.all([
       getFeaturedRotation(),
       getTopDeclarations(4),
       getCandidateRanking(5),
       // Textes modifiables depuis /test/textes/accueil
       lireTextes("accueil"),
+      // Données de la barre de recherche (recherche faite dans le navigateur)
+      getIndexRecherche(),
     ]);
 
   // Titre du bandeau « Rejoignez-nous » : une ligne = un retour à la ligne
@@ -51,7 +54,7 @@ export default async function Home() {
           gauche, analyse à la une à droite, puis les 3 atouts dessous. */}
       <section className="w-full px-6 pb-10 pt-12 sm:px-8 sm:pb-14 sm:pt-20">
         <div className="mx-auto grid w-full max-w-[1280px] grid-cols-1 items-center gap-10 lg:grid-cols-[1.08fr_1fr] lg:gap-14">
-          <HeroText textes={t} />
+          <HeroText textes={t} documents={indexRecherche} />
           <FeaturedCarousel items={featuredRotation} />
         </div>
       </section>

@@ -6,7 +6,9 @@ import { enLignes, textesParDefaut } from "@/lib/textes-site";
 // src/lib/textes/accueil.js (prop `textes`, lue en base par la page
 // d'accueil, modifiables depuis /test/textes/accueil). Les 3 atouts sont
 // désormais sous le bandeau (src/components/HeroAtouts.js).
-export default function HeroText({ textes }) {
+// `documents` : index de recherche (getIndexRecherche), pour les suggestions
+// instantanées de la barre.
+export default function HeroText({ textes, documents }) {
   const t = { ...textesParDefaut("accueil"), ...textes };
 
   return (
@@ -44,6 +46,7 @@ export default function HeroText({ textes }) {
           placeholder={t["recherche.placeholder"]}
           exemplesTitre={t["recherche.exemples.titre"]}
           exemples={enLignes(t["recherche.exemples"])}
+          documents={documents}
         />
       </div>
     </div>

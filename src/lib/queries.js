@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { motsCles, correspond } from "@/lib/recherche";
+import { creerMoteur } from "@/lib/recherche";
 
 const dateFormatter = new Intl.DateTimeFormat("fr-FR", {
   day: "numeric",
@@ -21,6 +21,47 @@ function displayTitle(proposition) {
   if (proposition.titre) return proposition.titre;
   const text = proposition.texteOriginal;
   return text.length > 80 ? `${text.slice(0, 79).trimEnd()}…` : text;
+}
+
+// Document indexé par le moteur de recherche (src/lib/recherche.js) pour une
+// analyse publiée (avec sa proposition et son candidat). id = id de
+// l'analyse (unique), propositionId = lien vers /declarations/[id].
+function documentRecherche(analyse) {
+  return {
+    id: analyse.id,
+    propositionId: analyse.proposition.id,
+    titre: displayTitle(analyse.proposition),
+    candidat: analyse.proposition.candidat.nom,
+    theme: analyse.proposition.theme,
+    resume: analyse.resumeAccueil ?? analyse.verdict?.slice(0, 400) ?? "",
+    texte: analyse.proposition.texteOriginal.slice(0, 600),
+  };
+}
+
+// Données de la barre de recherche de la page d'accueil : une ligne courte
+// par analyse publiée, envoyée au navigateur avec la page (déjà en cache
+// ISR), puis la recherche se fait entièrement côté navigateur, sans appel
+// réseau à chaque frappe.
+export async function getIndexRecherche() {
+  const analyses = await prisma.analyse.findMany({
+    where: { statut: "publie" },
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      resumeAccueil: true,
+      verdict: true,
+      proposition: {
+        select: {
+          id: true,
+          titre: true,
+          texteOriginal: true,
+          theme: true,
+          candidat: { select: { nom: true } },
+        },
+      },
+    },
+  });
+  return analyses.map(documentRecherche);
 }
 
 // Le champ `theme` des propositions est un texte libre saisi lors de
@@ -160,9 +201,9 @@ export async function getCandidateRanking(limit) {
 // Liste des déclarations publiées pour la page /declarations, avec filtres
 // (candidat, thème) et tri (date ou score). Retourne aussi les listes de
 // candidats/thèmes disponibles pour construire les filtres.
-// `q` = mots-clés tapés dans la barre de recherche (titre, texte de la
-// déclaration, résumé de l'analyse, candidat, parti, thème ; accents et
-// majuscules ignorés, voir src/lib/recherche.js).
+// `q` = mots-clés tapés dans la barre de recherche (moteur tolérant aux
+// fautes et aux accents, voir src/lib/recherche.js). sort = "pertinence"
+// classe les résultats de la recherche du plus au moins pertinent.
 export async function getPublishedDeclarations({ candidat, theme, sort, q } = {}) {
   const orderBy =
     sort === "score_asc"
@@ -217,18 +258,18 @@ export async function getPublishedDeclarations({ candidat, theme, sort, q } = {}
     (a, b) => a.localeCompare(b, "fr"),
   );
 
-  const mots = motsCles(q);
-  const analysesTrouvees = analyses.filter((analyse) =>
-    correspond(mots, [
-      analyse.proposition.titre,
-      analyse.proposition.texteOriginal,
-      analyse.resumeAccueil,
-      analyse.verdict,
-      analyse.proposition.candidat.nom,
-      analyse.proposition.candidat.parti,
-      analyse.proposition.theme,
-    ]),
-  );
+  // Recherche (même moteur que la barre de la page d'accueil, sans limite
+  // de nombre) : on garde les analyses trouvées, dans l'ordre de pertinence
+  // si le tri « pertinence » est demandé.
+  let analysesTrouvees = analyses;
+  if (q) {
+    const trouvees = creerMoteur(analyses.map(documentRecherche)).rechercher(q, Infinity);
+    const rang = new Map(trouvees.map((doc, index) => [doc.id, index]));
+    analysesTrouvees = analyses.filter((analyse) => rang.has(analyse.id));
+    if (sort === "pertinence") {
+      analysesTrouvees.sort((a, b) => rang.get(a.id) - rang.get(b.id));
+    }
+  }
 
   const declarations = analysesTrouvees.map((analyse) => ({
     id: analyse.proposition.id,
