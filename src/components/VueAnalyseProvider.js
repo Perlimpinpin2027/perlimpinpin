@@ -121,7 +121,9 @@ export function BasculeVue() {
 }
 
 // Conteneur d'une vue : masqué (hidden) quand ce n'est pas la vue courante.
-export function Vue({ nom, children }) {
+// `className` : mise en page propre à une vue (la vue expert sépare ses blocs
+// par des traits plutôt que par un simple espacement).
+export function Vue({ nom, className = "flex flex-col gap-6", children }) {
   const { vue } = useVueAnalyse();
   return (
     <div
@@ -130,7 +132,7 @@ export function Vue({ nom, children }) {
       aria-labelledby={ID_ONGLET[nom]}
       hidden={vue !== nom}
       suppressHydrationWarning
-      className="flex flex-col gap-6"
+      className={className}
     >
       {children}
     </div>
