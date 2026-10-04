@@ -106,6 +106,93 @@
         "titre": "Titre provisoire",
         "texte": "Le titre « Des robots à la place des immigrés ? Le Japon dément » résume le constat principal mais reste appuyé. Le titre définitif sera fixé à l'étape 3 : faut-il en proposer un plus neutre ?"
       }
-    ]
+    ],
+    "archive": {
+      "date": "2026-10-04",
+      "version_suivante": "data/analyses finales/Zemmour/zemmour_robots_immigration_etape1_v2.json",
+      "synthese": "La v2 retient comme lecture principale de la mesure l'automatisation pour moins recruter à l'étranger (le remplacement de salariés en poste devient un risque secondaire), donne plus de poids au scénario de long terme et à l'effet d'attraction des emplois peu qualifiés sur l'immigration irrégulière, et corrige le lien non établi entre l'épargne européenne et le financement des robots. Le score passe de 31 à 36/100 (« partiellement fondé ») : efficacité 6 à 9/30, effets rebonds 8 à 10/20 ; juridique 5 à 6/10 sans effet sur l'opérationnalité, toujours plafonnée à 10/30.",
+      "reponses": [
+        {
+          "commentaire_id": "cmus84vs6000104gxydpg3vlo",
+          "auteur": "Nori H.",
+          "section": "Des robots à la place des immigrés ? Le Japon dément",
+          "commentaire": "Je pense que la japon ne s'exprime pas, il y a un leger abus de langage",
+          "reponse": "Tu as raison, « le Japon dément » prête au pays une prise de position qu'il n'a pas eue : c'est un raccourci. Ce qui est établi, c'est que les chiffres japonais (record de travailleurs étrangers, robots qui accompagnent une hausse de l'emploi des soignants) contredisent l'argument du candidat.\n\nLe titre définitif est fixé à l'étape suivante : je transmets ta remarque pour qu'il parle des chiffres et pas du pays. La v2 ne contient pas de titre, elle n'est donc pas modifiée sur ce point.",
+          "retenu": false
+        },
+        {
+          "commentaire_id": "cmus90plg000004kxyc0pbfh3",
+          "auteur": "Arno F.",
+          "section": "Points de jugement à valider",
+          "commentaire": "oui mais il faut réflechir à long terme : ce qui est vrai ajd ne le sera plus dans 15 ans",
+          "reponse": "Bonne remarque, et elle a fait bouger la v2. La note de 2/10 sur les moyens techniques reste, parce que le candidat promet d'« investir vite » : à l'horizon du prochain quinquennat, ces robots n'existeront pas à l'échelle voulue (même Morgan Stanley, plutôt optimiste, projette environ 13 millions de robots humanoïdes dans le monde en 2035, surtout en usine et en entrepôt).\n\nEn revanche, la v2 dit maintenant clairement que le pari devient plus crédible au-delà de 2035-2040, dans l'analyse par critères et dans la partie sur le long terme.",
+          "retenu": true
+        },
+        {
+          "commentaire_id": "cmus98xjq000004i3hshd310p",
+          "auteur": "Arno F.",
+          "section": "Analyse par critères",
+          "commentaire": "je ne pense pas que ce soit ca la visée de Zemmour mais plutot de réduire l'effet d'immigration / appel d'air car la france n'aura pas besoin de pourvoir des métiers qui deviennent automatisés",
+          "reponse": "D'accord, c'est la lecture la plus cohérente avec l'objectif qu'il affiche, et la v1 mettait trop en avant l'autre lecture. La v2 retient donc comme lecture principale : automatiser pour que la France n'ait plus besoin de pourvoir ces emplois par l'immigration, et donc moins d'« appel d'air ».\n\nLe remplacement de salariés en poste reste mentionné comme un risque, parce que certaines de ses formules vont dans ce sens (« remplacer les salariés étrangers », « inverser le mouvement »), mais il ne fonde plus les notes. Conséquences : effets rebonds de 8 à 10/20, juridique de 5 à 6/10 (sans effet sur le total, qui reste plafonné à 10/30), et un nouveau passage en efficacité sur l'effet d'attraction des emplois peu qualifiés.",
+          "retenu": true
+        },
+        {
+          "commentaire_id": "cmus9b2s4000104i3xr00xqhc",
+          "auteur": "Nori H.",
+          "section": "Points de jugement à valider",
+          "commentaire": "et ça concerne des emplois dans les français ne veulent pas",
+          "reponse": "C'est en partie couvert par la fiche : les chiffres de la DARES montrent que les immigrés sont surreprésentés dans les métiers pénibles et peu qualifiés. Dire que les Français « ne veulent pas » de ces emplois est plus discuté : les salaires et les conditions de travail jouent aussi, et le candidat lui-même conteste l'idée d'« immigrés indispensables ».\n\nCe point ne change pas le raisonnement sur les 13,5 % de titres de séjour pour motif de travail, donc pas de modification dans la v2.",
+          "retenu": false
+        },
+        {
+          "commentaire_id": "cmus9c7ea000204i3i3rb5yfh",
+          "auteur": "Arno F.",
+          "section": "Longévité des effets",
+          "commentaire": "ne penses tu pas qu'il peut y avoir des progrès tels que les emplois immigrés n'aient plus besoin d'être pourvus ?",
+          "reponse": "Oui, c'est possible, et la v1 l'écartait trop vite. La v2 réécrit la partie sur le long terme : si les progrès se confirment, une partie des emplois peu qualifiés pourrait ne plus avoir à être pourvue, ce qui réduirait le besoin de main-d'œuvre étrangère, y compris non déclarée. C'est désormais présenté comme la vraie chance de la mesure, avec les projections de Morgan Stanley comme ordre de grandeur.\n\nDeux réserves restent : ce scénario n'est pas acquis (au Japon et en Corée du Sud, robots et immigration de travail progressent ensemble), et il ne touche pas les arrivées pour études, famille ou asile. Avec ta remarque précédente, l'efficacité passe de 6 à 9/30, toujours en zone fragile.",
+          "retenu": true
+        },
+        {
+          "commentaire_id": "cmus9p3wk000304i3fbm8lrdn",
+          "auteur": "Nori H.",
+          "section": "Points de jugement à valider",
+          "commentaire": "Si Zemmour parle bien d'immigration alors oui on peut catégoriser immigration. Mais si l'objectif est l'emploi et chômage alors il ne faut pas catégoriser au risque de perdre en crédibilité et d'utiliser des données bancales pour cette analyse",
+          "reponse": "Je garde « Immigration » : le candidat présente lui-même la mesure comme une réponse à l'immigration (« des robots à la place des immigrés »), et l'objectif affiché est de réduire le recours à la main-d'œuvre immigrée. L'emploi n'est pas le but, c'est le moyen.\n\nLes effets sur l'emploi (salaires et emploi des moins diplômés) sont bien analysés, mais dans les effets rebonds, ce qui évite de juger la mesure sur un objectif qu'elle ne revendique pas. Pas de modification dans la v2.",
+          "retenu": false
+        },
+        {
+          "commentaire_id": "cmus9sd9p000404i3iarhscph",
+          "auteur": "Nori H.",
+          "section": "Points de jugement à valider",
+          "commentaire": "je propose : Zemmour veut remplacer le beur par la machine",
+          "reponse": "Je ne retiens pas cette proposition. Le titre doit rester neutre et factuel, et le mot employé est un terme qui désigne une origine ethnique : il n'a pas sa place sur Perlimpinpin. Le candidat parle d'« immigrés » en général, pas d'une origine précise.\n\nPour rappel, les commentaires du Club portent sur les sources et la méthode, et restent courtois envers tout le monde, candidats compris.",
+          "retenu": false
+        },
+        {
+          "commentaire_id": "cmusa0fvw000504i3vz0x0j69",
+          "auteur": "Nori H.",
+          "section": "Le résumé de Perlimpinpin IA",
+          "commentaire": "il faut ici profiter de cette occasion merveilleuse pour préciser le souhait de Zemmour : réduire l'effectif d'origine étrangère à l'emploi, augmenter le chômage, créer des inégalités supplémentaires, aggraver le contexte social racial actuellement et prôner son factif Grand Remplacement dans sa petite tête de raciste de fils de chacal",
+          "reponse": "Je ne retiens pas ce commentaire. Perlimpinpin juge si une mesure tient (son mécanisme, ses chiffres, ses effets), pas les intentions qu'on prête au candidat : la fiche ne peut affirmer que ce qu'elle peut sourcer. Les insultes visant un candidat n'ont pas leur place dans le Club, quel que soit son bord.\n\nSur le fond, les risques que tu évoques en partie (chômage, effets sur les salariés les moins qualifiés) sont déjà analysés dans les effets rebonds, avec leurs sources.",
+          "retenu": false
+        },
+        {
+          "commentaire_id": "cmusa6ofe000604i32pbkzmbn",
+          "auteur": "Nori H.",
+          "section": "Mesure initiale",
+          "commentaire": "ne pas faire de raccourci trop rapide entre l'épargne européen et virer remplacer les immigrés",
+          "reponse": "Bien vu. En revérifiant, la mention de l'épargne européenne (« 37 000 milliards d'euros ») ne vient que d'un seul compte rendu de presse de son discours de rentrée, et aucune citation directe ne la relie au financement des robots.\n\nLa v2 corrige donc la reformulation de la mesure (le montant est présenté comme une mention séparée, sans lien établi), retire cet argument de l'analyse du budget et de la préparation, et le signale dans les limites. Les notes ne bougent pas : elles ne reposaient pas sur ce point.",
+          "retenu": true
+        },
+        {
+          "commentaire_id": "cmusao8f6000704i3jksd2tue",
+          "auteur": "Nori H.",
+          "section": "Mesure reformulée",
+          "commentaire": "immigrés maghrébins et surtout algériens et algériennes",
+          "reponse": "Je ne retiens pas cette précision. Dans les déclarations rapportées, le candidat parle des « immigrés » et des « salariés étrangers » en général, sans viser une nationalité. La fiche ne peut pas lui attribuer une cible qu'il n'a pas formulée.\n\nPour information, selon l'INSEE, les personnes nées en Algérie représentent 12,6 % des immigrés en France en 2025 : ce chiffre ne dit rien, à lui seul, de la cible de la mesure.",
+          "retenu": false
+        }
+      ]
+    }
   }
 }
