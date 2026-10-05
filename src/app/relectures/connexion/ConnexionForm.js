@@ -14,7 +14,7 @@ export default function ConnexionForm() {
   }, [state]);
 
   return (
-    <form action={formAction} className="flex flex-col gap-4">
+    <form action={formAction} className="flex flex-col gap-5">
       <div>
         <label htmlFor="relecture-email" className={labelClass}>
           Adresse e-mail
