@@ -534,9 +534,9 @@ describe("checkAncragesVersionBasique", () => {
 });
 
 describe("checkLongueursAccueil (avertissement non bloquant)", () => {
-  test("aucun avertissement dans les limites (35 / 60 caractères)", () => {
+  test("aucun avertissement dans les limites (35 / 200 caractères)", () => {
     assert.deepEqual(
-      checkLongueursAccueil({ titre_fiche: "a".repeat(35), teaser_accueil: "b".repeat(60) }),
+      checkLongueursAccueil({ titre_fiche: "a".repeat(35), teaser_accueil: "b".repeat(200) }),
       [],
     );
   });
@@ -544,11 +544,11 @@ describe("checkLongueursAccueil (avertissement non bloquant)", () => {
   test("signale chaque champ trop long avec sa longueur réelle", () => {
     const avertissements = checkLongueursAccueil({
       titre_fiche: "Des robots pour remplacer les travailleurs immigrés",
-      teaser_accueil: "c".repeat(61),
+      teaser_accueil: "c".repeat(201),
     });
     assert.equal(avertissements.length, 2);
     assert.match(avertissements[0], /titre_fiche trop long : 51 caractères \(maximum 35\)/);
-    assert.match(avertissements[1], /teaser_accueil trop long : 61 caractères \(maximum 60\)/);
+    assert.match(avertissements[1], /teaser_accueil trop long : 201 caractères \(maximum 200\)/);
   });
 
   test("champs absents ou non textuels : rien à signaler", () => {

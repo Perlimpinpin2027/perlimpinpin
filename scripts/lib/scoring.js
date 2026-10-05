@@ -343,7 +343,7 @@ export function validateFicheCompleteStructure(raw) {
 // au-delà, la carte « à la une » de l'accueil les coupe. Contrôle NON
 // bloquant : renvoie des messages d'avertissement, jamais un refus du JSON.
 export const TITRE_FICHE_MAX = 35;
-export const TEASER_ACCUEIL_MAX = 60;
+export const TEASER_ACCUEIL_MAX = 200;
 
 export function checkLongueursAccueil({ titre_fiche: titre, teaser_accueil: teaser } = {}) {
   const avertissements = [];

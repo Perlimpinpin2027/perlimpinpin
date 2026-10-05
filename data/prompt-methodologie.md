@@ -6,7 +6,7 @@ L'analyse, les notes, la qualification juridique, l'arbitrage et le calcul final
 
 (Version fusionnée du 5 octobre 2026 : réunit les règles d'analyse et de notation les plus récentes et le format de sortie en accordéon. Ce fichier est identique dans le projet Claude « Perlimpinpin » et dans `data/prompt-methodologie.md` : toute modification doit être reportée aux deux endroits.)
 
-(Mise à jour du 5 octobre 2026 : nouvelles règles pour `titre_fiche` (35 caractères maximum, titre raccourci de la proposition) et pour `teaser_accueil` / `phrase_teasing` (une phrase de teasing de 60 caractères maximum), afin qu'ils s'affichent en entier sur la page d'accueil.)
+(Mise à jour du 5 octobre 2026 : nouvelles règles pour `titre_fiche` (35 caractères maximum, titre raccourci de la proposition) et pour `teaser_accueil` / `phrase_teasing` (une phrase de teasing de 60 caractères maximum), afin qu'ils s'affichent en entier sur la page d'accueil. Le 6 octobre 2026, la limite de `teaser_accueil` / `phrase_teasing` passe à 200 caractères : une ou deux phrases.)
 
 ================================================================================
 ÉTAPE 1 : Claude (Analyse initiale)
@@ -777,7 +777,7 @@ Aller à l'essentiel, avec des phrases naturelles et plutôt courtes. Style clai
 
 **Sections en accordéon dès l'étape 1.** Les 13 sections listées dans « Sections en accordéon (synthese + texte) » (voir Étape 3) sont produites dès l'étape 1 sous la forme `{ "synthese": "...", "texte": "..." }` : `synthese` en une phrase de 20 mots maximum (220 caractères au plus), qui commence par la conclusion et reste fidèle au `texte` ; `texte` = le contenu complet de la section. `impact_environnement` et `impact_temporel_et_sectoriel` valent `null` (l'objet entier) quand ils ne s'appliquent pas, jamais un objet aux champs vides. Les autres champs texte (`nature_et_existant`, `analyse_par_criteres`, `verdict_final`, `niveau_de_confiance`, `resume_court`, `phrase_teasing`) restent de simples chaînes.
 
-**Phrase de teasing.** `phrase_teasing` suit dès l'étape 1 les mêmes règles que `teaser_accueil` (voir Étape 3, « Teaser accueil ») : une seule phrase de 60 caractères maximum, qui crée une tension ou une question sans jamais révéler le score ni le verdict, fidèle au contenu de la fiche.
+**Phrase de teasing.** `phrase_teasing` suit dès l'étape 1 les mêmes règles que `teaser_accueil` (voir Étape 3, « Teaser accueil ») : une ou deux phrases, 200 caractères maximum (espaces compris), qui crée une tension ou une question sans jamais révéler le score ni le verdict, fidèle au contenu de la fiche.
 
 Pas de tirets cadratins. Expliquer brièvement chaque note. Sourcer toute affirmation déterminante.
 
@@ -963,8 +963,11 @@ En **3 à 7 phrases**, dire clairement où la mesure tient et où elle ne tient 
 « à la une » de la page d'accueil. Son rôle est de donner envie d'ouvrir la
 fiche, pas de la résumer.
 
-- **Une seule phrase, 60 caractères maximum** (espaces compris). Elle doit
+- **Une ou deux phrases, 200 caractères maximum** (espaces compris). Elle doit
   s'afficher en entier sur la carte, sans coupure.
+- Tout chiffre cité doit dire ce qu'il mesure (stock ou montant par an,
+  montant annoncé ou estimé) : ne jamais opposer deux chiffres de nature
+  différente sans le préciser.
 - Ton de teasing : créer une tension, une surprise ou une question
   (un argument du candidat qui se retourne, un chiffre qui étonne, un
   « mais » qui intrigue). Les points de suspension sont permis une fois.

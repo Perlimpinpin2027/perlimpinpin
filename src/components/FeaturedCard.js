@@ -10,8 +10,8 @@ const SWIPE_THRESHOLD_PX = 40;
 const ARROW_REVEAL_DELAY_MS = 100;
 
 // Carte unique "Prix Perlimpinpin de la semaine" : photo à gauche (~40%,
-// ratio fixe quel que soit le candidat), contenu à droite (texte tronqué à
-// hauteur constante), score + bouton en pied de carte. Navigation par des
+// ratio fixe quel que soit le candidat), contenu à droite (titre tronqué à
+// 3 lignes, teaser d'accueil affiché en entier), score + bouton en pied de carte. Navigation par des
 // flèches discrètes révélées au survol des tiers gauche/droit, au clavier
 // (← →) et au swipe sur mobile.
 // Reçoit l'état du carrousel (index/total/callbacks) depuis FeaturedCarousel.
@@ -125,17 +125,18 @@ export default function FeaturedCard({
     >
       <div
         key={currentIndex}
-        className={`flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-[0_24px_60px_-30px_rgba(30,41,82,0.35)] ring-1 ring-zinc-100 sm:h-[540px] sm:flex-row ${slideAnimationClass}`}
+        className={`flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-[0_24px_60px_-30px_rgba(30,41,82,0.35)] ring-1 ring-zinc-100 sm:min-h-[540px] sm:flex-row ${slideAnimationClass}`}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        {/* Photo : hauteur fixe sur desktop (celle de la carte, elle-même
-            fixée en dur ci-dessus — sm:h-[540px] — plutôt que dérivée du
-            contenu) pour que la photo remplisse tout l'espace disponible,
-            comme avant le premier correctif, tout en restant constante
-            d'un candidat à l'autre. Sur mobile (empilé), pas de risque
-            d'étirement croisé : aspect-ratio suffit. */}
-        <div className="relative aspect-[4/5] w-full shrink-0 sm:aspect-auto sm:h-full sm:w-2/5">
+        {/* Photo : sur desktop, étirée sur toute la hauteur de la carte
+            (sm:h-auto + étirement flex par défaut), elle-même de 540 px au
+            minimum — sm:min-h-[540px] ci-dessus — pour rester constante d'un
+            candidat à l'autre. Hauteur minimale et non fixe : un teaser
+            d'accueil long (jusqu'à 200 caractères, affiché sans coupure)
+            agrandit la carte au lieu de rogner le bouton. Sur mobile
+            (empilé), pas de risque d'étirement croisé : aspect-ratio suffit. */}
+        <div className="relative aspect-[4/5] w-full shrink-0 sm:aspect-auto sm:h-auto sm:w-2/5">
           <img
             src={personPhotoUrl || "/avatar-placeholder.svg"}
             alt={personName}
@@ -151,7 +152,7 @@ export default function FeaturedCard({
             {quoteText}
           </blockquote>
           {verdictDescription ? (
-            <p className="mb-4 mt-3 line-clamp-4 text-base leading-snug text-slate-500">
+            <p className="mb-4 mt-3 text-base leading-snug text-slate-500">
               {verdictDescription}
             </p>
           ) : null}
