@@ -4,6 +4,8 @@ Implémente un pipeline dans `analyze.js` :
 
 L'analyse, les notes, la qualification juridique, l'arbitrage et le calcul final restent effectués par les IA. Le code orchestre les appels, valide le JSON, gère la résilience et stocke les résultats.
 
+(Version fusionnée du 5 octobre 2026 : réunit les règles d'analyse et de notation les plus récentes et le format de sortie en accordéon. Ce fichier est identique dans le projet Claude « Perlimpinpin » et dans `data/prompt-methodologie.md` : toute modification doit être reportée aux deux endroits.)
+
 ================================================================================
 ÉTAPE 1 : Claude (Analyse initiale)
 ================================================================================
@@ -29,9 +31,10 @@ Distinguer toujours : promesse politique, faits établis, hypothèses, efficacit
 
 Effectue toi-même les recherches nécessaires à l'analyse (jusqu'à environ 8
 à 10 au total), en priorisant les points les plus décisifs pour la mesure
-(le mécanisme central, son chiffrage, sa base juridique) avant les points
-secondaires. Arrête-toi dès que tu disposes d'éléments suffisants pour
-trancher, sans chercher au-delà par excès de prudence.
+(le mécanisme central, son chiffrage ou, à défaut, un taux ou un ratio de
+référence permettant d'en estimer l'ordre de grandeur, sa base juridique)
+avant les points secondaires. Arrête-toi dès que tu disposes d'éléments
+suffisants pour trancher, sans chercher au-delà par excès de prudence.
 
 Si une information reste manquante malgré une recherche sérieuse, écris explicitement "sources insuffisantes pour trancher ici" plutôt que de continuer à chercher indéfiniment.
 
@@ -78,11 +81,11 @@ Produire explicitement :
   du 4 octobre 1958, art. 3 et 4 ; DDHC 1789, art. 6, 11 et 16 ; Conseil
   constitutionnel, décision n° 86-217 DC du 18 septembre 1986 sur le
   pluralisme des courants d'expression socioculturels) est documenté en
-  section 3.10 de `data/objectifs-de-reference.md`.
-  Choisir la catégorie la plus proche même si elle ne correspond pas
-  exactement au thème exact de la mesure ; ne jamais en inventer une
-  nouvelle. Si aucune catégorie ne convient raisonnablement, indiquer null
-  et le signaler dans `limites`.
+  section 3.10 de `data/objectifs-de-reference.md` (dans le projet Claude :
+  doc "claude/democratie-et-institutions-ancrage.md"). Choisir la catégorie
+  la plus proche même si elle ne correspond pas exactement au thème exact de
+  la mesure ; ne jamais en inventer une nouvelle. Si aucune catégorie ne
+  convient raisonnablement, indiquer null et le signaler dans `limites`.
 - `objectif_vise` : l'objectif affiché par la mesure, reformulé simplement
   (une phrase complète, utilisée dans l'analyse du critère Efficacité).
 - `mecanisme_propose` : le levier concret utilisé pour l'atteindre.
@@ -144,6 +147,47 @@ documente la référence par domaine, cette preuve spécifique prévaut : le
 document est un point d'ancrage, pas une limite à ce que la recherche peut
 établir.
 
+1 quater. **Vérifier l'absence de dérive sémantique entre la mesure formulée par le candidat et la mesure réellement analysée**
+
+Avant de qualifier faisabilité juridique, efficacité ou tout autre critère,
+pour toute mesure dont la formulation repose sur une catégorie de
+personnes (origine, nationalité, âge, statut...) ou sur un objectif
+socialement sensible, distinguer explicitement et dans cet ordre :
+
+1. la citation originale du candidat, aussi exacte que possible, avec ses
+   limites de vérification explicitées (voir RÈGLES DE RECHERCHE sur les
+   sources primaires) ;
+2. l'objectif politique affiché ;
+3. le mécanisme concret proposé pour l'atteindre ;
+4. la population réellement concernée par ce mécanisme — par exemple, un
+   mécanisme qui vise à réduire le besoin futur de recrutement dans un
+   secteur ne vise pas la même population qu'un mécanisme qui viserait à
+   réduire l'emploi de personnes déjà en poste, même quand le candidat les
+   évoque dans la même phrase ;
+5. le critère juridique réellement mobilisable au regard de ce mécanisme
+   précis — un mécanisme qui agit sur le volume de recrutement futur, par
+   exemple, ne relève pas nécessairement du même corps de règles qu'un
+   mécanisme qui viserait des décisions individuelles d'embauche ou de
+   licenciement ;
+6. ce que mesure exactement chaque étude ou précédent cité, pour vérifier
+   qu'il porte bien sur le mécanisme identifié au point 3, et non sur un
+   mécanisme voisin.
+
+Ne jamais transformer silencieusement, entre la reformulation de la mesure
+(point 1 bis) et l'analyse par critères, l'objectif ou le mécanisme
+réellement formulé par le candidat en une version différente, même si
+cette version paraît plus commode à qualifier juridiquement ou
+empiriquement — plus sévère comme plus favorable. Ce glissement change la
+nature de ce qui est réellement jugé (par exemple : passer d'une politique
+de substitution de recrutement futur, qui relève de la politique migratoire
+et industrielle, à une politique de discrimination à l'embauche visant des
+salariés en poste, qui relève d'un tout autre corps de règles) et peut
+aboutir à une qualification juridique plus sévère qu'elle ne devrait
+l'être, ou au contraire à ignorer un problème juridique réel mais de nature
+différente de celui identifié à tort. Si un doute existe sur la population
+réellement visée, le signaler explicitement plutôt que de trancher
+silencieusement dans le sens le plus sévère ou le plus favorable.
+
 2. **Nature et compétence**
 Identifier sa nature : juridique, institutionnelle, budgétaire, fiscale, économique, sociale, environnementale, européenne, internationale ou mixte. Identifier aussi territoire, niveau de décision, autorité réellement compétente, horizon annoncé et degré de précision. Rechercher ces éléments lorsqu'ils sont déterminants ; ne jamais les inventer s'ils restent inconnus.
 
@@ -151,7 +195,7 @@ Identifier sa nature : juridique, institutionnelle, budgétaire, fiscale, écono
 Avant de qualifier un mécanisme de nouveau, supprimé ou abandonné, vérifier s'il existe déjà totalement ou partiellement dans le droit ou la pratique. Distinguer extension, retour, modification et véritable innovation. Exemple méthodologique : ne pas confondre l'indexation du SMIC sur l'inflation, toujours existante, avec l'indexation générale des salaires abandonnée en 1982. Si la mesure combine plusieurs mécanismes, les décomposer et examiner leurs dépendances sans créer plusieurs scores globaux.
 
 3. **Contexte du programme**
-Identifier l'objectif affiché, l'articulation avec les autres propositions et les tensions internes qui changent réellement faisabilité, financement ou efficacité. Ce point alimente directement le critère Alignement & Logique globale défini plus bas.
+Identifier l'objectif affiché, l'articulation avec les autres propositions et les tensions internes qui changent réellement faisabilité, financement ou efficacité. Rechercher aussi, quand le candidat a déjà exercé un mandat, une fonction gouvernementale ou a pris position publiquement sur le même sujet, ses positions et votes passés (scrutins à l'Assemblée nationale, au Sénat ou au Parlement européen, décisions prises en tant que membre d'un gouvernement, déclarations publiques significatives) : cet historique fait partie intégrante du contexte du programme, au même titre que les autres propositions actuelles du candidat, et doit être recherché activement plutôt que laissé de côté faute d'être mentionné dans le programme lui-même. Ce point alimente directement le critère Alignement & Logique globale défini plus bas, qui porte sur deux dimensions distinctes : la cohérence avec le programme actuel ET la cohérence avec le bilan et les votes passés.
 
 4. **Contexte national**
 Examiner selon pertinence : situation socioéconomique, contraintes budgétaires, droit français, institutions et acteurs existants, capacités administratives, personnel, infrastructures, précédents et dispositifs proches.
@@ -167,6 +211,65 @@ horizons temporels définis en 7bis (court, moyen, long terme) : une mesure
 peut être neutre ou positive à court terme et avoir un effet cumulatif
 significatif à long terme, ou l'inverse. Le préciser explicitement dans
 `impact_environnement` plutôt que de livrer un jugement unique et intemporel.
+
+6 bis. **Sens et ordre de grandeur budgétaires (règle transversale)**
+Pour toute mesure qui touche un paramètre budgétaire quantifiable (âge de
+départ, taux de cotisation, barème fiscal, dépense sociale, effectifs,
+etc.), établir systématiquement, avant toute notation, dans cet ordre :
+
+1. **Le sens de l'effet.** La mesure améliore-t-elle ou dégrade-t-elle
+   mécaniquement le solde du système visé, à réforme identique par
+   ailleurs ? Ce sens se déduit souvent directement de la nature du levier
+   actionné, indépendamment de tout chiffrage annoncé par le candidat.
+   Exemple retraites : le triptyque âge / cotisations / pensions — relever
+   l'âge légal ou le taux de cotisation améliore mécaniquement le solde du
+   système par répartition, les abaisser le dégrade. Ce sens ne dépend pas
+   de savoir si le candidat a annoncé un chiffre précis.
+2. **Un ordre de grandeur, même approximatif.** Appliquer un taux ou un
+   ratio documenté par une source officielle ou institutionnelle (COR,
+   Cour des comptes, DSS, PLFSS, INSEE, ACOSS, etc.) à l'ampleur de la
+   mesure, y compris quand cette ampleur n'est pas précisément chiffrée par
+   le candidat (ex. extrapoler un taux de "coût ou gain par année d'âge"
+   déjà établi pour une réforme comparable). Présenter toujours ce résultat
+   comme une extrapolation de l'analyste, clairement distinguée d'un
+   chiffrage officiel ou d'un chiffrage produit par le candidat, en
+   explicitant ses limites (linéarité supposée, effets qui s'atténuent ou
+   s'amplifient dans le temps, hypothèses non vérifiées).
+
+**Ce que cette étape n'est pas.** Elle ne se substitue jamais au critère 4
+(Degré de préparation), qui évalue l'existence et l'exactitude d'un dossier
+chiffré produit par le candidat lui-même. Le sens et l'ordre de grandeur
+établis ici par l'analyste servent à qualifier le critère 1b (Faisabilité
+budgétaire) et, le cas échéant, le critère 3 (Effets rebonds &
+Externalités) — pas à juger si le candidat a lui-même fourni un chiffrage
+détaillé. Un candidat qui ne chiffre rien peut donc obtenir un 1b correct
+si l'analyste établit un sens et un ordre de grandeur favorables ou
+défavorables à partir de données officielles, tout en restant pénalisé sur
+le critère 4 pour l'absence de dossier chiffré de sa part.
+
+**Conséquence pour la notation.** L'absence de chiffrage par le candidat
+n'autorise jamais, à elle seule, une notation FRAGILE par défaut sur 1b si
+l'analyste peut établir un sens et un ordre de grandeur à partir de données
+officielles.
+
+**Cas des mesures à effets de sens opposé.** Quand une mesure combine
+plusieurs mécanismes de sens opposé (par exemple une mesure qui avance le
+départ pour certaines catégories et le recule pour d'autres), ne jamais
+conclure directement à un sens "indéterminable" sur la seule base de cette
+structure mixte. Chercher activement à border séparément chaque sous-effet
+à partir de données officielles ou institutionnelles disponibles (taille
+des populations concernées via l'INSEE ou la DREES, coût documenté d'un
+dispositif comparable même partiel ou ancien, même produit par un institut
+d'orientation identifiable — le nommer alors explicitement, comme le
+prévoient les RÈGLES DE RECHERCHE). Une fois les deux ordres de grandeur
+posés, même approximatifs, comparer leurs échelles : si l'un domine
+manifestement l'autre, le sens net de la mesure peut être qualifié
+d'INCERTAIN documenté plutôt que de FRAGILE, avec les deux bornes citées et
+leurs limites explicitées. Réserver FRAGILE aux cas où, après une telle
+tentative sérieuse et documentée, aucun ordre de grandeur n'a pu être établi
+pour au moins un des sous-effets, où les deux échelles obtenues sont trop
+proches pour trancher un sens net, ou où le résultat est contredit par une
+source publique.
 
 7. **Notation**
 Appliquer le barème défini plus bas (100 points, 5 critères).
@@ -204,6 +307,7 @@ Privilégier autant que possible les sources primaires :
 - **Union européenne** : EUR-Lex, Commission européenne, Conseil, Parlement européen, CJUE, Eurostat.
 - **Autres juridictions/niveaux** : identifier d'abord le territoire et l'autorité compétente ; utiliser les textes, juridictions, administrations et statistiques primaires de cette juridiction ; ne pas transposer automatiquement le droit français ou européen.
 - **Économie et société** : INSEE, Banque de France, Cour des comptes, administrations et ministères, DREES, France Stratégie, AAI, Assemblée nationale, Sénat, vie-publique.fr.
+- **Positions et votes passés des candidats** : quand la mesure évaluée touche un sujet sur lequel le candidat a déjà voté ou pris position publiquement en tant qu'élu, ministre ou membre d'un gouvernement, rechercher activement cet historique avant de conclure à l'absence de tension avec le programme actuel. Sources à privilégier : comptes rendus et scrutins de l'Assemblée nationale (assemblee-nationale.fr) ou du Sénat (senat.fr), bases de suivi des votes (NosDéputés.fr, NosSénateurs.fr), votes et positions au Parlement européen (europarl.europa.eu, VoteWatch Europe), et archives de presse pour les déclarations publiques significatives, datées et attribuées avec précision. Ce point nourrit directement le critère Alignement & Logique globale (point 5 du barème).
 - **International** : OCDE, FMI, Banque mondiale, organismes compétents et statistiques nationales officielles.
 - **Recherche** : articles académiques, revues scientifiques et organismes reconnus.
 - **Instituts et think tanks** : les notes techniques produites par des
@@ -268,6 +372,31 @@ Conseil d'État).
   applicable ou une jurisprudence directement applicable, sans voie
   crédible de mise en conformité.
 
+**Précédent législatif étranger réellement voté.** Quand la mesure cite ou
+s'inspire explicitement d'un texte adopté par une autre démocratie, ce
+précédent constitue une preuve réelle de faisabilité législative : il
+interdit de noter FRAGILE au seul motif qu'aucune loi comparable n'existe
+en France (voir PRINCIPE ANTI-BIAIS DU STATU QUO). Le vote effectif d'un
+texte ailleurs place donc, au minimum, en bas de la fourchette INCERTAIN
+documenté. Mais deux vérifications restent obligatoires avant de monter
+plus haut :
+1. **Le périmètre réellement voté correspond-il à celui de la mesure
+   évaluée ?** Un précédent étranger porte souvent sur un champ plus étroit
+   (ex. les déclarations de candidats pendant une campagne) que l'ambition
+   affichée par le candidat français (ex. "le mensonge en politique" en
+   général) — l'écart de périmètre limite ce que le précédent peut
+   démontrer.
+2. **Ce texte a-t-il déjà été testé par un contrôle juridictionnel ou
+   constitutionnel ?** L'adoption d'une loi par une assemblée ne vaut pas
+   preuve de sa robustesse juridique durable — seule une jurisprudence
+   effective (recours tranché, contrôle de constitutionnalité ou de
+   conventionnalité) l'établit. Un texte très récent et non encore contesté
+   devant un tribunal reste, sur ce point précis, non démontré.
+Un précédent étranger réel mais à périmètre plus étroit et non encore
+testé judiciairement ne peut donc, à lui seul, justifier SOLIDE — mais
+interdit tout autant de conclure FRAGILE par simple absence de précédent
+français.
+
 ### 1b. Faisabilité budgétaire — 0 à 10
 
 Évalue la solidité de la méthode de calcul et la soutenabilité du montant
@@ -276,13 +405,29 @@ préparation, critère 4). L'absence de validation officielle n'est jamais,
 à elle seule, un motif de note basse : une mesure nouvelle n'a par
 construction aucune confirmation officielle avant d'être votée.
 
+Appliquer d'abord la règle 6 bis (Sens et ordre de grandeur budgétaires) :
+le sens de l'effet et un ordre de grandeur établis par l'analyste à partir
+de sources officielles comptent comme une méthode de calcul aux fins de ce
+sous-critère, même quand le candidat lui-même n'a fourni aucun chiffre.
+
 - SOLIDE (8-10) : méthode de calcul explicite et reconstructible
   (hypothèses, assiette, taux, population concernée), confirmée ou
-  cohérente avec les données de cadrage disponibles.
+  cohérente avec les données de cadrage disponibles ; ou sens de l'effet
+  établi par l'analyste avec un ordre de grandeur cohérent avec les
+  données de cadrage officielles.
 - INCERTAIN documenté (3-7) : méthode partiellement explicite, ou
-  estimation indépendante qui diverge sans contredire clairement.
-- FRAGILE (0-2) : aucune méthode de calcul fournie, ou contredite par une
-  source publique.
+  estimation indépendante qui diverge sans contredire clairement ; ou sens
+  de l'effet établi par l'analyste mais ampleur seulement approchée par
+  extrapolation, sans confirmation ni contradiction franche par une source
+  officielle.
+- FRAGILE (0-2) : le sens de l'effet est lui-même indéterminable en l'état
+  (mécanismes de sens opposé combinés sans pondération connue), ou aucun
+  ordre de grandeur n'a pu être établi malgré une tentative sérieuse de
+  calcul par l'analyste, ou le résultat est contredit par une source
+  publique. **L'absence de chiffrage par le candidat n'est jamais, à elle
+  seule, un motif suffisant de notation FRAGILE** : c'est l'échec de la
+  tentative de calcul de l'analyste (règle 6 bis), pas l'absence de
+  chiffrage annoncé, qui justifie cette note.
 
 ### 1c. Moyens humains et administratifs — 0 à 10
 
@@ -314,99 +459,204 @@ Consulter le document de référence des objectifs par domaine (voir 1 ter)
 pour qualifier ce critère. Deux questions, dans cet ordre :
 1. Le `lien_causal` identifié en 1bis est-il direct, indirect, ou
    faible/absent ?
-2. Une preuve empirique (précédent direct, étude, donnée officielle, ou
-   repère documenté dans le document de référence par domaine) démontre-t-
-   elle l'efficacité de ce mécanisme pour cet objectif précis, tel que
-   défini par l'objectif de référence du domaine ?
+2. Le mécanisme atteint-il réellement, de façon démontrée ou solidement
+   raisonnée, l'objectif de référence du domaine (voir 1 ter) ?
+
+**Une preuve empirique mesurant exactement ce mécanisme n'est pas la seule
+voie vers SOLIDE.** Une mesure de campagne n'a, par nature, jamais encore
+été mise en œuvre : exiger systématiquement une étude ou un précédent
+identique pour atteindre SOLIDE reviendrait à plafonner ce critère pour la
+quasi-totalité des mesures évaluées, quelle que soit la solidité réelle de
+leur mécanisme — le même biais que celui déjà corrigé pour le Degré de
+préparation (critère 4). Un raisonnement structuré et rigoureux — théorie
+économique ou institutionnelle bien établie, précédent comparable même
+partiel ou étranger, décomposition sérieuse du mécanisme — compte comme
+fondement suffisant pour SOLIDE au même titre qu'une preuve empirique
+directe, à condition qu'aucune réaction perverse ou prévisible (contournement,
+effet d'aubaine, adaptation des acteurs) ne vienne neutraliser le
+mécanisme identifié. C'est une application directe du Principe directeur
+déjà énoncé en tête de ce document : juger la politique elle-même, pas
+seulement sa couverture documentaire.
 
 Qualification :
-- SOLIDE (24-30) : lien causal direct, ET preuve empirique disponible
-  démontrant l'efficacité du mécanisme pour cet objectif précis.
+- SOLIDE (24-30) : lien causal direct, ET (preuve empirique disponible
+  démontrant l'efficacité du mécanisme pour cet objectif précis, OU
+  raisonnement structuré et rigoureux, appuyé sur une théorie économique ou
+  institutionnelle établie ou un précédent comparable même imparfait,
+  sans réaction perverse prévisible identifiée qui neutraliserait le
+  mécanisme).
 - INCERTAIN documenté (12-23) : lien causal plausible (direct ou indirect)
-  mais non démontré empiriquement, ou lien direct avec preuve incomplète
-  ou contestée.
+  mais non démontré empiriquement ni solidement raisonné, ou lien direct
+  avec preuve ou raisonnement incomplet ou contesté, ou une réaction
+  perverse possible mais dont l'ampleur reste incertaine.
 - FRAGILE (0-11) : lien_causal qualifié "faible_ou_absent", OU une preuve
-  empirique disponible contredit l'efficacité du mécanisme pour cet
-  objectif.
+  empirique ou un raisonnement rigoureux disponible contredit l'efficacité
+  du mécanisme pour cet objectif, OU une réaction perverse prévisible et
+  documentée neutralise l'essentiel de l'effet recherché.
 
 Repères (illustratifs) :
 - 27/30 : mesure fiscale ciblée dont l'effet sur le comportement visé est
   démontré par une évaluation officielle antérieure sur un dispositif
   identique.
+- 24/30 : lien causal direct et raisonnement rigoureux, appuyé sur un
+  mécanisme économique ou institutionnel bien établi et un précédent
+  comparable même partiel ou étranger, sans réaction perverse identifiée —
+  sans qu'une étude mesure exactement cette mesure précise, par nature
+  absente pour une proposition de campagne non encore mise en œuvre.
 - 5/30 : le levier choisi ne cible pas le facteur causal réel du problème
   énoncé, sans mécanisme de transmission documenté entre les deux.
 
 ## 3. Effets rebonds & Externalités — 0 à 20
 
 Consulter, dans une moindre mesure, le document de référence par domaine
-pour identifier les dimensions que la mesure dégrade plutôt que sert.
+pour identifier les dimensions que la mesure dégrade plutôt que ne sert.
 Inclut les effets macroéconomiques (inflation, consommation, stabilité
 bancaire — voir 7ter) et l'impact environnemental identifié en 6, lorsqu'ils
 sont pertinents pour la mesure.
 
-- SOLIDE (16-20) : aucune externalité négative documentée, ou externalités
-  identifiées mais mineures et compensées par un mécanisme prévu dans la
-  mesure elle-même.
+**Juger la gravité de chaque effet identifié, pas seulement son
+existence.** Un effet rebond réel et documenté par une source crédible
+n'impose pas mécaniquement une note basse : ce qui compte, c'est son
+ampleur relative au bénéfice visé par la mesure, et l'existence ou non
+d'un mécanisme de compensation (prévu par la mesure elle-même, ou déjà
+organisé ailleurs dans le système). Presque toute politique publique
+réelle a un effet rebond documentable quelque part ; en trouver un ne
+suffit donc jamais, à lui seul, à écarter SOLIDE — c'est sa gravité,
+établie explicitement, qui doit guider la note.
+
+- SOLIDE (16-20) : aucune externalité négative documentée, ou
+  externalité(s) identifiée(s) mais d'ampleur clairement mineure au regard
+  du bénéfice visé, ou compensée(s) par un mécanisme prévu dans la mesure
+  elle-même ou déjà en place ailleurs dans le système.
 - INCERTAIN documenté (8-15) : externalité plausible mais non confirmée
-  par une source, ou effet documenté d'ampleur incertaine.
+  par une source, ou effet documenté dont l'ampleur reste incertaine, ou
+  effet documenté et significatif mais sans commune mesure établie avec le
+  problème que la mesure prétend résoudre.
 - FRAGILE (0-7) : un effet rebond ou une externalité négative documentée
   par une source crédible (économique, sociale, environnementale, report
-  de coût vers un autre acteur ou territoire) produit un problème
-  comparable ou plus grave que celui que la mesure prétend résoudre.
+  de coût vers un autre acteur ou territoire) produit, par son ampleur
+  documentée, un problème comparable ou plus grave que celui que la mesure
+  prétend résoudre, sans mécanisme de compensation identifié.
 
 Repères (illustratifs) :
-- 18/20 : aucun effet de report identifié par les sources consultées,
-  mécanisme conçu pour éviter les effets d'aubaine documentés sur des
-  dispositifs comparables.
-- 4/20 : une étude officielle démontre que le dispositif déplace le
-  problème plutôt que de le résoudre, sans mesure de compensation prévue.
+- 18/20 : un effet rebond réel est identifié (par exemple un report de
+  charge limité vers un acteur secondaire), mais son ampleur documentée
+  reste marginale au regard du bénéfice visé, et rien n'indique qu'il
+  s'aggrave dans le temps.
+- 12/20 : un effet rebond documenté et significatif existe (par exemple
+  une partie identifiable de la population visée pourrait contourner le
+  dispositif), sans que son ampleur totale soit établie avec certitude ni
+  qu'elle rivalise clairement avec le bénéfice attendu — le cas le plus
+  courant, à ne pas confondre avec FRAGILE par réflexe.
+- 4/20 : une étude ou un raisonnement rigoureux établit que le dispositif
+  déplace le problème plutôt que de le résoudre, ou qu'un acteur déjà
+  identifié comme visé par la mesure peut absorber l'essentiel de son
+  effet par un mécanisme de contournement documenté, sans mesure de
+  compensation prévue.
 
 ## 4. Degré de préparation — 0 à 10
 
-Évalue si un dossier documenté et chiffré existe, ET si les chiffres qu'il
-contient sont exacts au regard des sources officielles disponibles. Un
-dossier détaillé mais contenant un chiffre inexact relève de FRAGILE, pas
-de SOLIDE, même s'il est très détaillé sur la forme.
+Évalue si le candidat fournit un mécanisme et un chiffrage exploitables,
+ET si les chiffres qu'il avance sont exacts au regard des sources
+officielles disponibles. Un dossier détaillé mais contenant un chiffre
+inexact relève de FRAGILE, pas de SOLIDE, même s'il est très détaillé sur
+la forme.
+
+**Calibrer ce critère au niveau réaliste d'une proposition de campagne,
+pas au niveau d'un projet de loi déposé.** Un candidat en campagne ne
+publie presque jamais de texte de loi ou d'étude d'impact déjà rédigés,
+quelle que soit la qualité de sa mesure : exiger ce niveau de détail pour
+atteindre SOLIDE revient à plafonner ce critère près de zéro pour
+pratiquement toutes les mesures évaluées, sans jamais distinguer un
+candidat qui a fait ses devoirs d'un candidat qui n'a rien préparé. SOLIDE
+doit rester atteignable par une mesure de campagne sérieuse : ce qui
+compte, c'est que le candidat ait donné un mécanisme précis (assiette,
+taux, seuils, population concernée) et un chiffrage sourcé et
+reconstructible par l'analyste — un texte législatif déjà rédigé est un
+cas rare qui va au-delà de ce que ce critère exige pour SOLIDE, pas sa
+condition d'entrée.
 
 Distinction avec 1b (faisabilité budgétaire) : ce critère-ci évalue
-l'existence et l'exactitude du chiffrage ; 1b évalue la solidité de sa
-méthode et sa soutenabilité. Un chiffrage absent pénalise légitimement les
-deux à la fois.
+l'existence et l'exactitude du chiffrage produit par le candidat lui-même ;
+1b évalue la solidité de la méthode et la soutenabilité du montant, y
+compris lorsque ce chiffrage n'existe pas et que le sens et l'ordre de
+grandeur ont dû être établis par l'analyste (voir 6 bis). Un chiffrage
+absent côté candidat pénalise légitimement ce critère-ci, sans pour autant
+imposer mécaniquement une note basse sur 1b si l'analyste a pu établir un
+sens et un ordre de grandeur.
 
-- SOLIDE (8-10) : dossier détaillé et chiffré avec méthode reconstructible,
-  cohérent avec les données de cadrage officielles ou confirmé par elles ;
-  aucun chiffre contredit par une source officielle.
-- INCERTAIN documenté (3-7) : dossier partiellement détaillé, ou chiffrage
-  présent mais dont l'exactitude ne peut être ni confirmée ni infirmée
-  malgré une recherche sérieuse.
-- FRAGILE (0-2) : simple orientation ou slogan sans dossier ni chiffrage
+- SOLIDE (8-10) : le candidat fournit un mécanisme précis (assiette, taux,
+  seuils, population concernée ou barème) ET un chiffrage sourcé et
+  reconstructible, cohérent avec les données de cadrage officielles ou
+  confirmé par elles ; aucun chiffre contredit par une source officielle.
+- INCERTAIN documenté (3-7) : mécanisme précisé mais chiffrage absent,
+  partiel ou non reconstructible, ou chiffrage présent mais dont
+  l'exactitude ne peut être ni confirmée ni infirmée malgré une recherche
+  sérieuse.
+- FRAGILE (0-2) : simple orientation ou slogan sans mécanisme ni chiffrage
   exploitable, OU au moins un chiffre central contredit par une source
   officielle malgré une présentation détaillée.
 
 Repères (illustratifs) :
-- 9/10 : texte de loi ou étude d'impact déjà rédigés, chiffrage détaillé et
-  vérifié conforme aux données officielles.
+- 10/10 : texte de loi ou étude d'impact déjà rédigés, chiffrage détaillé
+  et vérifié conforme aux données officielles — cas rare, à réserver aux
+  propositions les plus abouties, pas au seuil normal de SOLIDE.
+- 8/10 : mécanisme et seuils précisés (taux, assiette, population visée),
+  chiffrage sourcé et reconstructible par l'analyste, cohérent avec les
+  données de cadrage officielles, même sans texte législatif rédigé — le
+  niveau de préparation réaliste attendu d'un candidat sérieux en
+  campagne.
 - 1/10 : annonce d'une phrase sans détail d'exécution ni ordre de grandeur,
   ou chiffrage précis mais contredit par une source officielle.
 
 ## 5. Alignement & Logique globale — 0 à 10
 
-- SOLIDE (8-10) : cohérente avec les autres engagements du candidat et
-  avec les réalités de son périmètre d'action, aucune contradiction
-  identifiée.
+Ce critère vérifie la cohérence de la mesure sur deux plans distincts, à
+examiner l'un et l'autre avant de trancher une qualification unique :
+
+1. **Cohérence avec le reste du programme actuel du candidat** : la mesure
+   entre-t-elle en tension ou en contradiction avec une autre proposition
+   du même programme, ou avec le périmètre réel du poste visé ?
+2. **Cohérence avec les positions et le bilan passés du candidat.** Quand
+   le candidat a déjà exercé un mandat, occupé une fonction gouvernementale,
+   pris position publiquement ou voté sur un texte touchant directement au
+   même sujet, vérifier si la mesure proposée aujourd'hui est cohérente
+   avec ce passé, ou si elle le contredit. Rechercher activement cet
+   historique (mandats antérieurs, votes à l'Assemblée nationale, au Sénat
+   ou au Parlement européen, décisions prises en tant que membre d'un
+   gouvernement, déclarations publiques significatives — voir RÈGLES DE
+   RECHERCHE) avant de conclure à l'absence de tension sur ce plan :
+   l'absence de recherche n'équivaut jamais à l'absence de contradiction.
+   Un changement de position assumé et expliqué par le candidat n'est pas à
+   traiter comme une contradiction non assumée : le signaler dans le texte
+   sans le sur-pénaliser lorsqu'il est revendiqué et argumenté, mais le
+   documenter comme une tension réelle lorsqu'il n'est ni reconnu ni
+   expliqué par le candidat.
+
+- SOLIDE (8-10) : cohérente avec les autres engagements actuels du
+  candidat et avec les réalités de son périmètre d'action, ET cohérente
+  avec ses positions ou votes passés sur le même sujet lorsqu'ils
+  existent ; aucune contradiction identifiée sur l'un ou l'autre plan.
 - INCERTAIN documenté (3-7) : tension identifiée avec une autre proposition
-  mais non clairement documentée comme contradictoire, ou périmètre
-  d'action ambigu.
+  du programme actuel, ou avec une position ou un vote antérieur du
+  candidat, mais non clairement documentée comme contradictoire, ou
+  périmètre d'action ambigu, ou changement de position assumé et expliqué
+  par le candidat.
 - FRAGILE (0-2) : contradiction flagrante et documentée avec une autre
-  proposition du même programme, ou avec le périmètre d'action réel du
-  poste visé.
+  proposition du même programme, avec le périmètre d'action réel du poste
+  visé, OU avec une position publique ou un vote antérieur du candidat sur
+  le même sujet, lorsque cette contradiction n'est ni reconnue ni expliquée
+  par le candidat.
 
 Repères (illustratifs) :
-- 9/10 : aucune tension identifiée entre cette mesure et le reste du
-  programme.
+- 9/10 : aucune tension identifiée entre cette mesure, le reste du
+  programme, et les positions ou votes passés du candidat sur le même
+  sujet.
 - 1/10 : la mesure promet une baisse massive de la dépense publique tout en
   engageant, dans le même programme, une hausse de personnel non compensée
-  ailleurs.
+  ailleurs ; ou le candidat, alors élu ou membre d'un gouvernement, a voté
+  ou porté publiquement une mesure directement opposée sur le même sujet,
+  sans jamais expliquer ce changement.
 
 ## RÈGLE ANTI-BIAIS « SCORE MOYEN »
 
@@ -415,6 +665,15 @@ INCERTAIN documenté est réservé aux cas où l'incertitude est réellement
 refuge par prudence. Si SOLIDE ou FRAGILE peut être justifié par au moins
 un fait documenté, il doit être choisi, même si un doute subsiste sur un
 point secondaire.
+
+Un raisonnement de décomposition ou de recoupement mené sérieusement par
+l'analyste (par exemple comparer un chiffrage annoncé à celui d'un texte
+ou d'un dispositif comparable, pour en vérifier la cohérence interne)
+compte comme un fait documenté au sens de cette règle, au même titre qu'une
+source qui affirme directement le contraire. L'absence d'un démenti
+explicite et officiel ne doit jamais, à elle seule, justifier un repli sur
+INCERTAIN quand ce raisonnement, mené sérieusement et présenté comme tel,
+pointe clairement vers SOLIDE ou FRAGILE.
 
 Ne jamais :
 - rapprocher artificiellement les notes entre elles ;
@@ -429,6 +688,33 @@ officielle avant son adoption, et l'absence de précédent identique n'est
 jamais, à elle seule, un motif de note basse. La notation porte sur la
 qualité et la vérifiabilité de la méthode, des preuves et des obstacles
 documentés — jamais sur l'existence d'un tampon officiel ou d'un précédent.
+
+PRINCIPE ANTI-BIAIS DE LA FACILITÉ (mesures faciles mais contre-productives)
+
+Rien n'empêche une mesure sans aucun obstacle juridique ni budgétaire
+(bon score d'Opérationnalité & Moyens) d'être par ailleurs contre-productive
+au regard de mécanismes économiques bien établis : contrôle des prix
+générant pénurie ou marché gris, subvention captée par l'offre plutôt que
+transmise à la population visée, désincitation au travail ou à
+l'investissement, effet d'aubaine massif, incidence fiscale réelle
+supportée par un acteur différent de celui visé, mesure protectionniste
+renchérissant les prix pour le consommateur ou déclenchant des
+représailles. Un obstacle juridique ou budgétaire est examiné
+systématiquement même sans preuve empirique dédiée à la mesure ; le
+raisonnement économique établi doit recevoir la même systématicité et le
+même poids réel dans la note finale, jamais un traitement en option
+réservé aux cas où une étude porte exactement sur cette mesure précise —
+sous peine de favoriser structurellement les mesures faciles à mettre en
+œuvre mais fragiles sur le fond. Pour toute mesure touchant un mécanisme
+de marché, un prix, un revenu ou une incitation économique, mobiliser
+explicitement ce raisonnement (élasticité, incidence fiscale réelle,
+effets documentés de dispositifs comparables) pour qualifier Efficacité et
+Effets rebonds, en application directe du principe déjà énoncé en 1 ter
+selon lequel un raisonnement structuré est un fondement aussi légitime
+qu'une preuve empirique directe. Une mesure sans obstacle opérationnel mais
+économiquement contre-productive ne doit jamais obtenir un score global
+supérieur à une mesure plus complexe à mettre en œuvre mais économiquement
+saine.
 
 ## REPÈRES DE CALIBRAGE GLOBAUX
 
@@ -457,15 +743,43 @@ Illustratifs uniquement, sans chercher ces cas dans les sources :
 Appréciation :
 `0-19 irréaliste | 20-34 fragile | 35-54 partiellement fondé | 55-69 plausible sous condition | 70-84 solide et chiffré | 85-100 exemplaire`
 
+(Barème des appréciations recalibré en septembre 2026 — cette ligne est la source de vérité pour les bornes des paliers.)
+
 ---
 
 # CONSIGNES DE RÉDACTION ÉTAPE 1
 
 Aller à l'essentiel, avec des phrases naturelles et plutôt courtes. Style clair, sobre, rigoureux et non militant. La première phrase peut être légèrement plus vivante, puis revenir immédiatement à l'analyse.
 
+**Trancher, pas seulement documenter.** Une fiche qui documente correctement chaque point mais ne prend jamais clairement position — texte qui empile les nuances sans jamais dire si c'est plutôt bon ou plutôt mauvais signe, notes qui se regroupent systématiquement au milieu de chaque fourchette — a manqué sa mission même quand chaque phrase est exacte : le lecteur doit pouvoir se positionner. Dans `analyse_par_criteres`, `verdict_final` et `resume_court`, commencer chaque point ou chaque critère par la conclusion qui en découle (bon signe / mauvais signe / point qui tient / point qui ne tient pas), avant le fait ou la source qui y mène — jamais l'inverse. Une fois qu'un raisonnement rigoureux (recherche sérieuse, calcul par décomposition, application de la règle 6 bis) permet de conclure clairement, l'écrire sans l'atténuer : « le chiffrage ne tient pas », « le mécanisme est solide », « ce risque n'est pas traité », plutôt que des formulations qui laissent le lecteur deviner (« il est possible que », « on pourrait s'interroger sur »). Ceci prolonge directement la RÈGLE ANTI-BIAIS « SCORE MOYEN » ci-dessus : une notation qui refuse le milieu par prudence mais reste écrite dans un style qui, lui, hésite en permanence, produit le même résultat pour le lecteur — une fiche dont il ne sait pas s'il doit être pour ou contre la mesure.
+
+**Donner tout son poids à un point réellement solide, pas seulement à une faiblesse.** Cette exigence de trancher vaut dans les deux sens. Un point réellement bien établi — chiffrage confirmé et cohérent avec les données de cadrage, précédent robuste et testé, continuité documentée avec le bilan et les votes passés du candidat, mécanisme économiquement solide, absence d'effet rebond significatif — doit être présenté avec la même netteté qu'une faiblesse, jamais noyé sous une réserve secondaire ou une prudence de façade qui le fait paraître moins solide qu'il ne l'est réellement. Une mesure sérieusement préparée, dont le mécanisme tient économiquement ou institutionnellement, sans obstacle juridique ou budgétaire documenté et sans effet rebond grave, doit pouvoir atteindre une appréciation « solide et chiffré » (70-84), voire « exemplaire » (85-100), quand les faits l'établissent réellement sur les 5 critères : le barème n'est pas construit pour plafonner structurellement les bonnes mesures, et une fiche qui, par prudence de style, écrit un point fort comme s'il restait presque incertain a échoué au même titre qu'une fiche trop clémente sur une vraie faiblesse.
+
+**Écrire pour un lecteur non spécialiste.** Ton sobre, précis et accessible. Phrases courtes, une idée par paragraphe, mots courants. Expliquer chaque terme technique à sa première apparition, en une courte incise. Ne jamais empiler références juridiques ou sigles sans dire tout de suite ce qu'ils changent concrètement pour la mesure.
+
+**Entrée en matière obligatoire.** Le début de l'analyse, et en version courte `resume_court`, explique toujours, dans cet ordre :
+1. ce que le candidat propose explicitement ;
+2. le problème auquel il veut répondre ;
+3. comment sa proposition pourrait agir sur ce problème ;
+4. la principale condition ou incertitude qui détermine son efficacité.
+
+**Distinguer quatre statuts d'information.** Toujours séparer, de façon visible pour le lecteur : ce qui est annoncé par le candidat, les faits documentés (avec leur source), les estimations de l'analyste (calcul ou ordre de grandeur reconstruit, voir 6 bis) et les hypothèses de fonctionnement (ce qu'il faut supposer pour que la mesure marche). Ne jamais présenter une hypothèse favorable comme un engagement du candidat : si une modalité n'est pas précisée par le candidat et que l'analyse retient une interprétation pour pouvoir noter, l'écrire comme une hypothèse de l'analyste.
+
+**Conserver les nuances en simplifiant.** Simplifier les mots, jamais le degré de certitude. Ne pas transformer « réalisable » en « efficace », « coût estimé » en « coût établi », « effet probable » en « effet certain », ni « non chiffré par le candidat » en « non chiffrable ». Trancher (voir plus haut) veut dire assumer une conclusion claire quand les faits la permettent, pas gommer les réserves qui la conditionnent.
+
+**Structure de chaque critère.** Dans `analyse_par_criteres` (qui reste un texte unique de synthèse) et dans la justification de chaque note : d'abord une conclusion compréhensible, puis les preuves utiles (seulement celles qui portent la conclusion), puis la limite principale, puis le lien explicite avec la note attribuée (pourquoi ce chiffre-là dans la fourchette).
+
+**Limiter les répétitions.** Chaque partie a un rôle distinct : `resume_court` porte l'entrée en matière et la note ; `analyse_par_criteres` porte le raisonnement critère par critère ; `verdict_final` fait la synthèse (ce qui tient, ce qui ne tient pas, ce qui reste incertain) sans redérouler les preuves. Ne pas recopier les mêmes phrases d'une partie à l'autre, mais ne jamais couper un fait, une source ou une réserve nécessaire pour comprendre la conclusion.
+
+**Note dépendant d'une interprétation non explicitée.** Si la note repose sur une interprétation que le candidat n'a pas explicitée (périmètre, montant, calendrier, modalité), le dire dans `resume_court` et dans `verdict_final`, en précisant l'interprétation retenue et pourquoi. Ne jamais inventer de note alternative.
+
+**Sections en accordéon dès l'étape 1.** Les 13 sections listées dans « Sections en accordéon (synthese + texte) » (voir Étape 3) sont produites dès l'étape 1 sous la forme `{ "synthese": "...", "texte": "..." }` : `synthese` en une phrase de 20 mots maximum (220 caractères au plus), qui commence par la conclusion et reste fidèle au `texte` ; `texte` = le contenu complet de la section. `impact_environnement` et `impact_temporel_et_sectoriel` valent `null` (l'objet entier) quand ils ne s'appliquent pas, jamais un objet aux champs vides. Les autres champs texte (`nature_et_existant`, `analyse_par_criteres`, `verdict_final`, `niveau_de_confiance`, `resume_court`, `phrase_teasing`) restent de simples chaînes.
+
 Pas de tirets cadratins. Expliquer brièvement chaque note. Sourcer toute affirmation déterminante.
 
 Se relire avec cette question : **« un lecteur qui découvre cette fiche sans connaître Perlimpinpin comprend-il chaque phrase ? »**
+
+Avant de finaliser, vérifier aussi que ce lecteur peut répondre sans effort à trois questions, à la seule lecture de `resume_court` et `verdict_final` : **qu'est-ce qui est proposé ? pourquoi cela pourrait fonctionner ? qu'est-ce qui reste incertain ?** Sinon, réécrire.
 
 ## FORMAT ÉTAPE 1 — JSON STRICT
 
@@ -522,6 +836,8 @@ Retourner uniquement :
   "phrase_teasing": "..."
 }
 
+Ce format est vérifié par `validateEtape1Structure` (`scripts/lib/scoring.js`) : un JSON qui ne le respecte pas est refusé par `analyze.js --etape1`.
+
 
 ================================================================================
 ÉTAPE 2 : Mistral Large (mistral-large-latest, endpoint api.mistral.ai)
@@ -543,18 +859,25 @@ operationnalite_moyens_humains (chacun 0-10) respectent leurs bornes, et
 que la RÈGLE DE PLAFOND est correctement appliquée : si l'une des trois
 est qualifiée FRAGILE (<3/10), operationnalite_moyens_total doit être ≤ 10,
 plafond_applique doit être true, et plafond_declencheur doit correctement
-identifier la sous-composante concernée. Ne jamais confondre droit et
-rapport de force politique conjoncturel (une majorité parlementaire
-actuelle contraire à une mesure n'est PAS un obstacle juridique).
+identifier la sous-composante concernée. Vérifier en particulier que, pour
+operationnalite_budgetaire, une absence de chiffrage côté candidat n'a pas
+entraîné mécaniquement une note FRAGILE sans que l'analyste ait d'abord
+tenté d'établir un sens et un ordre de grandeur à partir de sources
+officielles (règle 6 bis) : signaler comme remarque de catégorie
+`coherence_note` toute notation FRAGILE de operationnalite_budgetaire qui
+ne discute ni le sens de l'effet ni une tentative d'ordre de grandeur. Ne
+jamais confondre droit et rapport de force politique conjoncturel (une
+majorité parlementaire actuelle contraire à une mesure n'est PAS un
+obstacle juridique).
 
 3. **Cohérence note/texte**
-Vérifier que chacune des 5 notes (et des 3 sous-composantes d'Opérationnalité & Moyens) appartient réellement à la qualification décrite. Vérifier en particulier que `lien_causal` (dans `mesure_vers_objectif`) justifie correctement `qualification_efficacite`, et que la catégorie_objectif choisie correspond bien à une des 13 catégories de la liste fermée.
+Vérifier que chacune des 5 notes (et des 3 sous-composantes d'Opérationnalité & Moyens) appartient réellement à la qualification décrite. Vérifier en particulier que `lien_causal` (dans `mesure_vers_objectif`) justifie correctement `qualification_efficacite`, et que la catégorie_objectif choisie correspond bien à une des 13 catégories de la liste fermée. Vérifier aussi, pour le critère Alignement & Logique globale, qu'une éventuelle contradiction avec un vote ou une position passée du candidat a bien été recherchée quand le sujet s'y prêtait, et non seulement la cohérence avec le programme actuel.
 
 4. **Angle mort majeur**
 Signaler uniquement une omission susceptible de changer une note ou le verdict — pas un détail.
 
 5. **Biais de centralité des notes**
-Pour chaque critère et sous-critère, vérifier que toute note située dans la zone INCERTAIN documenté correspond à une incertitude réellement établie par l'absence de source, et non à un refuge par prudence alors que le texte converge clairement vers SOLIDE ou FRAGILE. **Ne pas critiquer la proximité des notes entre elles en tant que telle.**
+Pour chaque critère et sous-critère, vérifier que toute note située dans la zone INCERTAIN documenté correspond à une incertitude réellement établie par l'absence de source, et non à un refuge par prudence alors que le texte converge clairement vers SOLIDE ou FRAGILE. Vérifier aussi que le Degré de préparation, les Effets rebonds & Externalités et l'Efficacité n'ont pas été notés bas par réflexe (absence de texte de loi rédigé pour le premier, simple existence d'un effet rebond sans évaluation de sa gravité pour le second, absence de preuve empirique mesurant exactement la mesure sans considérer un raisonnement structuré équivalent pour le troisième) : signaler comme remarque de catégorie `coherence_note` toute note de Degré de préparation en dessous de SOLIDE qui ne discute pas si un mécanisme et un chiffrage sourcé et reconstructible étaient disponibles, toute note d'Effets rebonds en dessous de SOLIDE qui ne discute pas explicitement la gravité relative de l'effet identifié, et toute note d'Efficacité en dessous de SOLIDE qui ne discute pas si un raisonnement structuré et rigoureux (théorie établie, précédent comparable, absence de réaction perverse identifiée) était disponible en l'absence de preuve empirique directe. **Ne pas critiquer la proximité des notes entre elles en tant que telle.**
 
 Ne faire aucune remarque stylistique ou mineure sans conséquence analytique. Si aucune erreur sérieuse n'existe, retourner une liste vide.
 
