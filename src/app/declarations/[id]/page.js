@@ -1294,6 +1294,7 @@ export default async function DeclarationDetailPage({ params, preview = false, e
               sectionsBasique={sectionsBasique}
               versionMethodologie={analyse.versionMethodologie}
               generationDateLabel={declaration.generationDateLabel}
+              enBrefNotation={isNouveauBaremeV5 ? notation : null}
             />
           </aside>
         </div>

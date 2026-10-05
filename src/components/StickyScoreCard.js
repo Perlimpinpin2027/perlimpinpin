@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useVueAnalyse } from "@/components/VueAnalyseProvider";
+import ScoreEnBref from "@/components/ScoreEnBref";
 
 // Carte sticky de la colonne latérale : affiche le score en permanence, et
 // bascule son contenu secondaire (commentaire + bouton -> mini sommaire de
@@ -25,6 +26,7 @@ export default function StickyScoreCard({
   sectionsBasique,
   versionMethodologie,
   generationDateLabel,
+  enBrefNotation,
 }) {
   const [scrolledPast, setScrolledPast] = useState(false);
   const vueAnalyse = useVueAnalyse();
@@ -63,6 +65,10 @@ export default function StickyScoreCard({
       >
         {badge.label}
       </div>
+
+      {/* Récap "En bref" des 5 critères : seulement si la page le fournit
+          (barème 2026, carte de l'aside lg+). */}
+      {enBrefNotation ? <ScoreEnBref notation={enBrefNotation} /> : null}
 
       {scrolledPast ? (
         <nav className="mt-4 flex flex-col gap-1 border-t border-zinc-100 pt-4">
