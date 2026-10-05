@@ -10,7 +10,7 @@ import AccordionSection from "@/components/AccordionSection";
 import MesureObjectifBanner from "@/components/MesureObjectifBanner";
 import MonoTag from "@/components/MonoTag";
 import SupportBanner from "@/components/SupportBanner";
-import EditableBlock from "@/app/test/EditableBlock";
+import Editable from "@/app/test/Editable";
 import { getDeclarationDetail } from "@/lib/queries";
 import { getScoreBadge, PLAFOND_DECLENCHEUR_LABELS } from "@/lib/score";
 import { vignettePhoto } from "@/lib/photo-vignette";
@@ -835,24 +835,6 @@ function FiabiliteSection({ contenu }) {
   );
 }
 
-// Ajoute le crayon de modification autour d'un bloc, seulement en mode édition
-// (/test/[id] pour un éditeur). Sans `edition` (site public, amis, non-éditeur),
-// renvoie le bloc tel quel : aucun composant client, aucune donnée en plus.
-function Editable({ edition, champ, valeurBrute, multiligne, children }) {
-  if (!edition) return children;
-  return (
-    <EditableBlock
-      champ={champ}
-      valeurBrute={valeurBrute}
-      analyseId={edition.analyseId}
-      versionAttendue={edition.versionAttendue}
-      multiligne={multiligne}
-    >
-      {children}
-    </EditableBlock>
-  );
-}
-
 // Contenu d'analyse actuel de la fiche : enveloppé dans la vue expert quand la
 // fiche a une version basique, rendu tel quel sinon.
 function VueExpertSi({ actif, children }) {
@@ -1012,7 +994,13 @@ export default async function DeclarationDetailPage({ params, preview = false, e
               <>
                 <BasculeVue />
                 <Vue nom="basique">
-                  <VueBasique versionBasique={versionBasique} sourcesUtilisees={contenu.sources_utilisees} />
+                  {/* Crayons seulement si la version basique est en base (pas
+                      celle lue en local dans data/versions-basiques-dev). */}
+                  <VueBasique
+                    versionBasique={versionBasique}
+                    sourcesUtilisees={contenu.sources_utilisees}
+                    edition={versionBasique === contenu.version_basique ? edition : null}
+                  />
                 </Vue>
               </>
             ) : null}

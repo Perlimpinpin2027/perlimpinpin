@@ -276,3 +276,109 @@ test("test-enregistrer.js n'écrit qu'avec updateMany (analyse) et update (propo
   assert.doesNotMatch(source, /\.(create|createMany|delete|deleteMany|upsert)\(/);
   assert.doesNotMatch(source, /\$executeRaw|\$queryRaw/);
 });
+
+// --- Version basique ---------------------------------------------------------
+
+const VERSION_BASIQUE = {
+  resume: "Résumé simple d'origine, assez long.",
+  contexte: "Contexte d'origine, assez long pour être valide.",
+  analyse: "Analyse d'origine, assez longue pour être valide.",
+  faisabilite: "Faisabilité d'origine, assez longue pour être valide.",
+  points_forts: ["Premier point fort", "Second point fort"],
+  points_faibles: ["Premier point faible", "Second point faible"],
+  sources_principales: [0, 2],
+};
+const ANALYSE_BASIQUE = { ...ANALYSE, contenuComplet: { ...CONTENU, version_basique: VERSION_BASIQUE } };
+
+test("version basique : modification d'un texte, seule la sous-clé change, aucune colonne dérivée", async () => {
+  const { prisma, journal, appels } = fausseBase({ analyse: ANALYSE_BASIQUE, ecrituresAutorisees: true });
+  const texte = "Un nouveau contexte, simple et clair.";
+  const resultat = await enregistrerTexteCore(entree({ champ: "version_basique.contexte", valeur: `  ${texte}\r\n` }), {
+    isEditor: editeur,
+    prisma,
+    dryRun: false,
+  });
+
+  assert.equal(resultat.ok, true);
+  assert.equal(resultat.champ, "version_basique.contexte");
+  assert.equal(resultat.avant, VERSION_BASIQUE.contexte);
+  assert.equal(resultat.apres, texte);
+  assert.deepEqual(journal.filter((a) => /update|\$transaction/.test(a)), ["$transaction", "tx.analyse.updateMany"]);
+
+  const [, args] = appels[0];
+  assert.deepEqual(Object.keys(args.data).sort(), ["contenuComplet", "updatedAt"]); // ni teaser, ni titre
+  const ecrit = args.data.contenuComplet;
+  assert.deepEqual(ecrit.version_basique, { ...VERSION_BASIQUE, contexte: texte });
+  assert.deepEqual(ecrit.version_basique.sources_principales, [0, 2]);
+  assert.deepEqual(ecrit.notation_detaillee, CONTENU.notation_detaillee);
+  for (const cle of Object.keys(CONTENU)) assert.deepEqual(ecrit[cle], CONTENU[cle], cle);
+  // L'objet lu en base n'a pas été modifié en place.
+  assert.equal(ANALYSE_BASIQUE.contenuComplet.version_basique.contexte, VERSION_BASIQUE.contexte);
+});
+
+test("version basique : modification d'une liste, enregistrée en tableau de chaînes", async () => {
+  const { prisma, appels } = fausseBase({ analyse: ANALYSE_BASIQUE, ecrituresAutorisees: true });
+  const resultat = await enregistrerTexteCore(
+    entree({ champ: "version_basique.points_forts", valeur: "Point A\n\n  Point B  \nPoint C\n" }),
+    { isEditor: editeur, prisma, dryRun: false },
+  );
+
+  assert.equal(resultat.ok, true);
+  assert.deepEqual(resultat.avant, VERSION_BASIQUE.points_forts);
+  assert.deepEqual(resultat.apres, ["Point A", "Point B", "Point C"]);
+  const ecrit = appels[0][1].data.contenuComplet;
+  assert.deepEqual(ecrit.version_basique.points_forts, ["Point A", "Point B", "Point C"]);
+  assert.deepEqual(ecrit.version_basique.points_faibles, VERSION_BASIQUE.points_faibles);
+  assert.deepEqual(ecrit.version_basique.sources_principales, VERSION_BASIQUE.sources_principales);
+  assert.deepEqual(ecrit.notation_detaillee, CONTENU.notation_detaillee);
+});
+
+test("version basique : simulation d'une liste → nombre de points, aucune écriture", async () => {
+  const { prisma, journal } = fausseBase({ analyse: ANALYSE_BASIQUE, ecrituresAutorisees: false });
+  const resultat = await enregistrerTexteCore(entree({ champ: "version_basique.points_faibles", valeur: "A\nB\nC" }), {
+    isEditor: editeur,
+    prisma,
+    dryRun: true,
+  });
+  assert.deepEqual(resultat, {
+    ok: true,
+    simulation: true,
+    message: "[Simulation] La liste serait enregistrée (3 points).",
+  });
+  assert.ok(!journal.includes("$transaction"));
+  assert.ok(journal.every((appel) => !/update/i.test(appel)));
+});
+
+test("version basique : 1 point, 6 points ou ** refusés sans toucher la base", async () => {
+  const cas = [
+    [entree({ champ: "version_basique.points_forts", valeur: "Un seul point" }), /au moins 2 points/],
+    [entree({ champ: "version_basique.points_faibles", valeur: "A\nB\nC\nD\nE\nF" }), /5 points au maximum/],
+    [entree({ champ: "version_basique.points_forts", valeur: "Un\n**Deux**" }), /sans gras/],
+    [entree({ champ: "version_basique.resume", valeur: "Un résumé avec un **mot** en gras." }), /sans gras/],
+    [entree({ champ: "version_basique.sources_principales", valeur: "0\n1" }), /ne peut pas être modifié/],
+  ];
+  for (const [saisie, attendu] of cas) {
+    const { prisma, journal } = fausseBase({ analyse: ANALYSE_BASIQUE, ecrituresAutorisees: true });
+    const resultat = await enregistrerTexteCore(saisie, { isEditor: editeur, prisma, dryRun: false });
+    assert.equal(resultat.ok, false, JSON.stringify(saisie));
+    assert.match(resultat.message, attendu, JSON.stringify(saisie));
+    assert.deepEqual(journal, [], JSON.stringify(saisie));
+  }
+});
+
+test("version basique : fiche sans version_basique en base → refus clair, aucune écriture", async () => {
+  for (const dryRun of [false, true]) {
+    for (const contenuComplet of [CONTENU, { ...CONTENU, version_basique: null }]) {
+      const { prisma, journal } = fausseBase({ analyse: { ...ANALYSE, contenuComplet }, ecrituresAutorisees: true });
+      const resultat = await enregistrerTexteCore(
+        entree({ champ: "version_basique.analyse", valeur: "Une analyse simple et assez longue." }),
+        { isEditor: editeur, prisma, dryRun },
+      );
+      assert.deepEqual(resultat, {
+        ok: false,
+        message: "Cette fiche n'a pas de version basique : elle ne peut pas être modifiée.",
+      });
+      assert.ok(!journal.includes("$transaction"));
+    }
+  }
+});

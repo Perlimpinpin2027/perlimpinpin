@@ -1,4 +1,4 @@
-import { appliquerModification, validerTexte } from "./test-edition.js";
+import { CHAMPS_EDITABLES, appliquerModification, lireChamp, validerTexte } from "./test-edition.js";
 
 // Logique de « Enregistrer » d'un texte modifié depuis /test/[id], SANS
 // dépendance à Next ni à la vraie base : contrôle d'accès, client Prisma et mode
@@ -61,6 +61,13 @@ export async function enregistrerTexteCore(entree, { isEditor, prisma, dryRun })
     );
   }
 
+  // Champ de la version basique sur une fiche qui n'en a pas (en base).
+  const chemin = CHAMPS_EDITABLES[champ].chemin;
+  const parent = chemin ? analyse.contenuComplet?.[chemin[0]] : null;
+  if (chemin && (parent === null || typeof parent !== "object" || Array.isArray(parent))) {
+    return refus("Cette fiche n'a pas de version basique : elle ne peut pas être modifiée.");
+  }
+
   // 4. Concurrence : quelqu'un a-t-il modifié le brouillon depuis l'ouverture de la page ?
   if (analyse.updatedAt.toISOString() !== versionAttendue) return refus(CONFLIT);
 
@@ -74,14 +81,16 @@ export async function enregistrerTexteCore(entree, { isEditor, prisma, dryRun })
     return refus("Ce brouillon ne peut pas être modifié : son contenu n'a pas la forme attendue.");
   }
   const { contenu, derives } = modification;
-  const avant = analyse.contenuComplet?.[champ];
+  const avant = lireChamp(analyse.contenuComplet, champ);
 
   // Simulation : on valide tout, on n'écrit RIEN.
   if (dryRun) {
     return {
       ok: true,
       simulation: true,
-      message: `[Simulation] Le texte serait enregistré (${controle.valeur.length} caractères).`,
+      message: Array.isArray(controle.valeur)
+        ? `[Simulation] La liste serait enregistrée (${controle.valeur.length} points).`
+        : `[Simulation] Le texte serait enregistré (${controle.valeur.length} caractères).`,
     };
   }
 
@@ -125,6 +134,6 @@ export async function enregistrerTexteCore(entree, { isEditor, prisma, dryRun })
     propositionId: analyse.propositionId,
     champ,
     avant,
-    apres: contenu[champ],
+    apres: lireChamp(contenu, champ),
   };
 }

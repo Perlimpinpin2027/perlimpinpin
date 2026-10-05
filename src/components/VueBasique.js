@@ -1,10 +1,14 @@
 import { Section, renderRichText, SOURCE_STRING_REGEX } from "@/lib/fiche-rendu";
 import { LienVersExpert } from "@/components/VueAnalyseProvider";
 import { ID_VUE, ID_ONGLET } from "@/lib/vue-analyse";
+import Editable from "@/app/test/Editable";
 
 // Vue « Résumé basique » de la fiche : contenuComplet.version_basique, texte
 // simplifié pour le grand public (étape 3 bis, voir scripts/analyze.js).
 // Composant serveur : tout le texte est dans le HTML, même vue masquée.
+// `edition` : { analyseId, versionAttendue } pour un éditeur (/test/[id]) :
+// crayon sur les textes et les listes de points (pas sur les sources). Sans
+// `edition` (site public), le rendu est exactement le même qu'avant.
 
 // Sommaire « Sur cette page » de la vue basique (voir StickyScoreCard).
 export const TOC_SECTIONS_BASIQUE = [
@@ -140,20 +144,25 @@ function CarteSource({ source }) {
   );
 }
 
-export default function VueBasique({ versionBasique, sourcesUtilisees }) {
+export default function VueBasique({ versionBasique, sourcesUtilisees, edition = null }) {
   const sources = Array.isArray(sourcesUtilisees) ? sourcesUtilisees : [];
   const principales = (versionBasique.sources_principales ?? [])
     .filter((index) => Number.isInteger(index) && index >= 0 && index < sources.length)
     .map((index) => decrireSource(sources[index]))
     .filter(Boolean);
 
+  // Marge à droite pour que le texte ne passe pas sous le crayon.
+  const margeCrayon = edition ? " pr-11" : "";
+
   return (
     <>
       <section id="basique-resume" className="scroll-mt-24 rounded-2xl border border-zinc-200 bg-white p-4 sm:p-6">
         <h2 className="sr-only">En résumé</h2>
-        <p className="rounded-xl bg-zinc-50 p-5 text-base leading-relaxed text-zinc-700 sm:p-6 sm:text-lg">
-          {renderRichText(versionBasique.resume)}
-        </p>
+        <Editable edition={edition} champ="version_basique.resume" valeurBrute={versionBasique.resume} multiligne>
+          <p className={`rounded-xl bg-zinc-50 p-5 text-base leading-relaxed text-zinc-700 sm:p-6 sm:text-lg${margeCrayon}`}>
+            {renderRichText(versionBasique.resume)}
+          </p>
+        </Editable>
       </section>
       {/* Repère de StickyScoreCard : le sommaire « Sur cette page » apparaît une
           fois ce point dépassé. Posé UNIQUEMENT dans la vue basique : masqué,
@@ -161,32 +170,42 @@ export default function VueBasique({ versionBasique, sourcesUtilisees }) {
       <div id="resume-sentinel" aria-hidden="true" />
 
       <Section id="basique-contexte" title="Contexte">
-        <p>{renderRichText(versionBasique.contexte)}</p>
+        <Editable edition={edition} champ="version_basique.contexte" valeurBrute={versionBasique.contexte} multiligne>
+          <p className={edition ? "pr-11" : undefined}>{renderRichText(versionBasique.contexte)}</p>
+        </Editable>
       </Section>
 
       <Section id="basique-analyse" title="Analyse de la proposition">
-        <p>{renderRichText(versionBasique.analyse)}</p>
+        <Editable edition={edition} champ="version_basique.analyse" valeurBrute={versionBasique.analyse} multiligne>
+          <p className={edition ? "pr-11" : undefined}>{renderRichText(versionBasique.analyse)}</p>
+        </Editable>
       </Section>
 
       <Section id="basique-points" title="Points forts et limites">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <ListePoints
-            titre="Points forts"
-            points={versionBasique.points_forts}
-            fondClass="border-emerald-100 bg-emerald-50/60"
-            Icone={IconeCoche}
-          />
-          <ListePoints
-            titre="Points faibles"
-            points={versionBasique.points_faibles}
-            fondClass="border-red-100 bg-red-50/60"
-            Icone={IconeCroix}
-          />
+          <Editable edition={edition} champ="version_basique.points_forts" valeurBrute={versionBasique.points_forts} multiligne>
+            <ListePoints
+              titre="Points forts"
+              points={versionBasique.points_forts}
+              fondClass="border-emerald-100 bg-emerald-50/60"
+              Icone={IconeCoche}
+            />
+          </Editable>
+          <Editable edition={edition} champ="version_basique.points_faibles" valeurBrute={versionBasique.points_faibles} multiligne>
+            <ListePoints
+              titre="Points faibles"
+              points={versionBasique.points_faibles}
+              fondClass="border-red-100 bg-red-50/60"
+              Icone={IconeCroix}
+            />
+          </Editable>
         </div>
       </Section>
 
       <Section id="basique-faisabilite" title="Faisabilité et mise en œuvre">
-        <p>{renderRichText(versionBasique.faisabilite)}</p>
+        <Editable edition={edition} champ="version_basique.faisabilite" valeurBrute={versionBasique.faisabilite} multiligne>
+          <p className={edition ? "pr-11" : undefined}>{renderRichText(versionBasique.faisabilite)}</p>
+        </Editable>
       </Section>
 
       <Section id="basique-sources" title="Sources principales">

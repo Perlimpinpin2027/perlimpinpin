@@ -4,7 +4,10 @@ import { readFileSync } from "node:fs";
 import {
   CHAMPS_EDITABLES,
   appliquerModification,
+  lireChamp,
+  lirePoints,
   normaliserTexte,
+  valeurEnTexte,
   truncateTeaser,
   truncateTitre,
   validerTexte,
@@ -28,8 +31,45 @@ const CONTENU = {
   nul: null,
 };
 
-test("liste blanche : seulement titre_fiche et resume_court, avec leurs limites", () => {
-  assert.deepEqual(Object.keys(CHAMPS_EDITABLES).sort(), ["resume_court", "titre_fiche"]);
+test("liste blanche : titre_fiche, resume_court et les champs de la version basique, avec leurs limites", () => {
+  assert.deepEqual(Object.keys(CHAMPS_EDITABLES).sort(), [
+    "resume_court",
+    "titre_fiche",
+    "version_basique.analyse",
+    "version_basique.contexte",
+    "version_basique.faisabilite",
+    "version_basique.points_faibles",
+    "version_basique.points_forts",
+    "version_basique.resume",
+  ]);
+  for (const sousCle of ["resume", "contexte", "analyse", "faisabilite"]) {
+    const regles = CHAMPS_EDITABLES[`version_basique.${sousCle}`];
+    assert.deepEqual([regles.chemin, regles.type, regles.multiligne, regles.min, regles.max, regles.sansGras], [
+      ["version_basique", sousCle],
+      "texte",
+      true,
+      20,
+      1500,
+      true,
+    ]);
+  }
+  for (const sousCle of ["points_forts", "points_faibles"]) {
+    const regles = CHAMPS_EDITABLES[`version_basique.${sousCle}`];
+    assert.deepEqual([regles.chemin, regles.type, regles.minPoints, regles.maxPoints, regles.maxParPoint], [
+      ["version_basique", sousCle],
+      "liste",
+      2,
+      5,
+      160,
+    ]);
+  }
+  // Aucune colonne dérivée pour la version basique.
+  for (const [champ, regles] of Object.entries(CHAMPS_EDITABLES)) {
+    if (regles.chemin) assert.deepEqual(regles.derives("x"), {}, champ);
+  }
+  // Les champs existants n'ont pas de chemin : ils restent à la racine.
+  assert.equal(CHAMPS_EDITABLES.titre_fiche.chemin, undefined);
+  assert.equal(CHAMPS_EDITABLES.resume_court.chemin, undefined);
   assert.deepEqual(
     [CHAMPS_EDITABLES.titre_fiche.multiligne, CHAMPS_EDITABLES.titre_fiche.min, CHAMPS_EDITABLES.titre_fiche.max],
     [false, 3, 300],
@@ -97,6 +137,10 @@ test("champ hors liste blanche refusé (notes, scores, verdict, noms hérités d
     "constructor",
     "__proto__",
     "toString",
+    "version_basique",
+    "version_basique.sources_principales",
+    "version_basique.__proto__",
+    "notation_detaillee.solidite_faits_total",
     "",
     undefined,
     null,
@@ -227,7 +271,8 @@ test("truncateTeaser : court, long avec fin de phrase, long sans ponctuation", (
 // et compare leurs résultats aux nôtres sur de nombreux textes.
 function extraire(source, constante, fonction) {
   const declaration = source.match(new RegExp(`const ${constante} = \\d+;`))?.[0];
-  const corps = source.match(new RegExp(`function ${fonction}\\(text\\) \\{[\\s\\S]*?\\n\\}\\n`))?.[0];
+  // \r? : le fichier peut être extrait avec des fins de ligne Windows (CRLF).
+  const corps = source.match(new RegExp(`function ${fonction}\\(text\\) \\{[\\s\\S]*?\\r?\\n\\}\\r?\\n`))?.[0];
   assert.ok(declaration && corps, `${fonction} introuvable dans scripts/analyze.js`);
   return new Function(`${declaration}\n${corps}\nreturn ${fonction};`)();
 }
@@ -267,4 +312,141 @@ test("test-edition.js reste autonome : aucun import (ni Next, ni base, ni analyz
   const source = readFileSync(new URL("../src/lib/test-edition.js", import.meta.url), "utf8");
   assert.doesNotMatch(source, /^\s*import\s/m);
   assert.doesNotMatch(source, /require\(/);
+});
+
+// --- Version basique (contenuComplet.version_basique) ------------------------
+
+const VERSION_BASIQUE = {
+  resume: "Résumé simple d'origine, assez long pour être valide.",
+  contexte: "Contexte d'origine, assez long pour être valide.",
+  analyse: "Analyse d'origine, assez long pour être valide.",
+  faisabilite: "Faisabilité d'origine, assez long pour être valide.",
+  points_forts: ["Premier point fort", "Second point fort"],
+  points_faibles: ["Premier point faible", "Second point faible", "Troisième point faible"],
+  sources_principales: [0, 1],
+};
+const CONTENU_BASIQUE = { ...CONTENU, version_basique: VERSION_BASIQUE };
+
+test("version basique : texte valide accepté (multiligne), limites 20 à 1500", () => {
+  for (const sousCle of ["resume", "contexte", "analyse", "faisabilite"]) {
+    const champ = `version_basique.${sousCle}`;
+    assert.deepEqual(validerTexte(champ, "  Un texte simple\r\nsur deux lignes.  "), {
+      ok: true,
+      valeur: "Un texte simple\nsur deux lignes.",
+    });
+    assert.match(validerTexte(champ, "Trop court.").message, /trop court/);
+    assert.equal(validerTexte(champ, "a".repeat(20)).ok, true);
+    assert.equal(validerTexte(champ, "a".repeat(1500)).ok, true);
+    assert.match(validerTexte(champ, "a".repeat(1501)).message, /trop long : 1501 caractères, maximum 1500/);
+  }
+});
+
+test("version basique : ** refusé dans les textes et les listes, même équilibré", () => {
+  for (const sousCle of ["resume", "contexte", "analyse", "faisabilite"]) {
+    const resultat = validerTexte(`version_basique.${sousCle}`, "Un texte avec un **mot** en gras, assez long.");
+    assert.equal(resultat.ok, false);
+    assert.equal(resultat.message, "La version basique s'affiche sans gras : retirez les **.");
+  }
+  for (const sousCle of ["points_forts", "points_faibles"]) {
+    const resultat = validerTexte(`version_basique.${sousCle}`, "Un point\nUn **autre** point");
+    assert.equal(resultat.ok, false);
+    assert.equal(resultat.message, "La version basique s'affiche sans gras : retirez les **.");
+  }
+});
+
+test("version basique : liste valide → tableau de chaînes, lignes vides et espaces ignorés", () => {
+  assert.deepEqual(validerTexte("version_basique.points_forts", "\n  Un premier point  \r\n\r\n\nUn second point\n\n"), {
+    ok: true,
+    valeur: ["Un premier point", "Un second point"],
+  });
+  assert.deepEqual(validerTexte("version_basique.points_faibles", "A\nB\nC\nD\nE"), {
+    ok: true,
+    valeur: ["A", "B", "C", "D", "E"],
+  });
+  assert.equal(validerTexte("version_basique.points_forts", `${"a".repeat(160)}\nb`).ok, true);
+});
+
+test("version basique : liste de 1 point ou de 6 points refusée, point de plus de 160 caractères refusé", () => {
+  const un = validerTexte("version_basique.points_forts", "Un seul point\n\n");
+  assert.equal(un.ok, false);
+  assert.equal(un.message, "Il faut au moins 2 points (un par ligne) : 1 saisi.");
+
+  const six = validerTexte("version_basique.points_faibles", "A\nB\nC\nD\nE\nF");
+  assert.equal(six.ok, false);
+  assert.equal(six.message, "5 points au maximum (un par ligne) : 6 saisis.");
+
+  const long = validerTexte("version_basique.points_forts", `Court\n${"a".repeat(161)}`);
+  assert.equal(long.ok, false);
+  assert.equal(long.message, "Le point 2 est trop long : 161 caractères, maximum 160.");
+
+  assert.match(validerTexte("version_basique.points_forts", "  \n\n ").message, /vide/);
+});
+
+test("lirePoints, valeurEnTexte et lireChamp", () => {
+  assert.deepEqual(lirePoints(" a \r\n\r\n b \n"), ["a", "b"]);
+  assert.equal(valeurEnTexte("version_basique.points_forts", ["Un", "Deux"]), "Un\nDeux");
+  assert.equal(valeurEnTexte("version_basique.points_forts", undefined), "");
+  assert.equal(valeurEnTexte("resume_court", "Texte"), "Texte");
+  assert.equal(lireChamp(CONTENU_BASIQUE, "version_basique.contexte"), VERSION_BASIQUE.contexte);
+  assert.equal(lireChamp(CONTENU_BASIQUE, "titre_fiche"), CONTENU.titre_fiche);
+  assert.equal(lireChamp(CONTENU, "version_basique.contexte"), undefined);
+  assert.equal(lireChamp(CONTENU_BASIQUE, "notation_detaillee"), undefined);
+});
+
+test("appliquerModification : texte de la version basique, seule la sous-clé visée change", () => {
+  const avant = structuredClone(CONTENU_BASIQUE);
+  const { contenu, derives } = appliquerModification(CONTENU_BASIQUE, "version_basique.contexte", "Nouveau contexte.");
+  assert.deepEqual(CONTENU_BASIQUE, avant); // objet d'origine intact
+  assert.deepEqual(derives, {});
+  assert.deepEqual(contenu, {
+    ...CONTENU_BASIQUE,
+    version_basique: { ...VERSION_BASIQUE, contexte: "Nouveau contexte." },
+  });
+  assert.deepEqual(contenu.version_basique.sources_principales, [0, 1]);
+  assert.deepEqual(contenu.notation_detaillee, CONTENU.notation_detaillee);
+});
+
+test("appliquerModification : liste de la version basique enregistrée en tableau", () => {
+  const points = ["Un", "Deux", "Trois"];
+  const { contenu, derives } = appliquerModification(CONTENU_BASIQUE, "version_basique.points_faibles", points);
+  assert.deepEqual(derives, {});
+  assert.deepEqual(contenu.version_basique.points_faibles, ["Un", "Deux", "Trois"]);
+  assert.notEqual(contenu.version_basique.points_faibles, points); // copie, pas la même référence
+  assert.deepEqual(contenu.version_basique.points_forts, VERSION_BASIQUE.points_forts);
+  assert.deepEqual(contenu.version_basique.sources_principales, VERSION_BASIQUE.sources_principales);
+  assert.deepEqual(contenu.notation_detaillee, CONTENU.notation_detaillee);
+  for (const cle of Object.keys(CONTENU)) assert.deepEqual(contenu[cle], CONTENU[cle], cle);
+  assert.deepEqual(Object.keys(contenu).sort(), Object.keys(CONTENU_BASIQUE).sort());
+});
+
+test("appliquerModification : sous-clé absente de la version basique → seule celle-ci est ajoutée", () => {
+  const { contexte: _absent, ...sansContexte } = VERSION_BASIQUE;
+  const { contenu } = appliquerModification(
+    { ...CONTENU, version_basique: sansContexte },
+    "version_basique.contexte",
+    "Un contexte ajouté.",
+  );
+  assert.deepEqual(contenu.version_basique, { ...sansContexte, contexte: "Un contexte ajouté." });
+});
+
+test("appliquerModification : fiche sans version_basique (ou illisible) refusée", () => {
+  for (const versionBasique of [undefined, null, "texte", ["liste"], 42]) {
+    const contenu = versionBasique === undefined ? CONTENU : { ...CONTENU, version_basique: versionBasique };
+    assert.throws(
+      () => appliquerModification(contenu, "version_basique.resume", "Un résumé valide et assez long."),
+      /pas de version basique/,
+    );
+  }
+});
+
+test("appliquerModification : type de valeur vérifié (liste = tableau de chaînes, texte = chaîne)", () => {
+  assert.throws(() => appliquerModification(CONTENU_BASIQUE, "version_basique.points_forts", "Un\nDeux"), TypeError);
+  assert.throws(() => appliquerModification(CONTENU_BASIQUE, "version_basique.points_forts", ["Un", 2]), TypeError);
+  assert.throws(() => appliquerModification(CONTENU_BASIQUE, "version_basique.resume", ["Un", "Deux"]), TypeError);
+});
+
+test("appliquerModification : les champs racine n'altèrent pas la version basique", () => {
+  const { contenu } = appliquerModification(CONTENU_BASIQUE, "resume_court", "Un nouveau résumé IA, assez long.");
+  assert.deepEqual(contenu.version_basique, VERSION_BASIQUE);
+  assert.equal(contenu.resume_court, "Un nouveau résumé IA, assez long.");
 });

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { CHAMPS_EDITABLES, normaliserTexte, validerTexte } from "@/lib/test-edition";
+import { CHAMPS_EDITABLES, lirePoints, normaliserTexte, validerTexte, valeurEnTexte } from "@/lib/test-edition";
 import { enregistrerTexte } from "./actions";
 
 // Petit crayon de modification d'un texte de la fiche (réservé au mode édition :
@@ -20,9 +20,12 @@ export default function EditableBlock({
 }) {
   const router = useRouter();
   const regles = CHAMPS_EDITABLES[champ];
+  const estListe = regles.type === "liste";
+  // Une liste (tableau de points) s'édite en texte, un point par ligne.
+  const texteInitial = valeurEnTexte(champ, valeurBrute);
 
   const [edition, setEdition] = useState(false);
-  const [texte, setTexte] = useState(valeurBrute);
+  const [texte, setTexte] = useState(texteInitial);
   const [message, setMessage] = useState(null); // { type: "erreur" | "info", texte }
   const [enregistre, setEnregistre] = useState(false);
   const [enCours, startTransition] = useTransition();
@@ -62,11 +65,13 @@ export default function EditableBlock({
   }, [edition, multiligne, texte]);
 
   const controle = validerTexte(champ, texte);
-  const inchange = normaliserTexte(texte) === normaliserTexte(valeurBrute);
+  const inchange = normaliserTexte(texte) === normaliserTexte(texteInitial);
   const longueur = normaliserTexte(texte).length;
+  const points = estListe ? lirePoints(texte) : [];
+  const pointLePlusLong = Math.max(0, ...points.map((point) => point.length));
 
   function ouvrir() {
-    setTexte(valeurBrute);
+    setTexte(texteInitial);
     setMessage(null);
     setEnregistre(false);
     setEdition(true);
@@ -152,7 +157,7 @@ export default function EditableBlock({
     );
   }
 
-  const idChamp = `edition-${champ}`;
+  const idChamp = `edition-${champ.replace(/\./g, "-")}`;
   const classesChamp =
     "mt-2 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-zinc-900 focus:outline-none focus:ring-2 focus:ring-blue-200 disabled:opacity-60";
 
@@ -190,13 +195,37 @@ export default function EditableBlock({
       )}
 
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-xs text-zinc-500">
-        <span className={longueur < regles.min || longueur > regles.max ? "font-semibold text-red-700" : ""}>
-          {longueur} / {regles.max} caractères
-        </span>
+        {estListe ? (
+          <span
+            className={
+              points.length < regles.minPoints ||
+              points.length > regles.maxPoints ||
+              pointLePlusLong > regles.maxParPoint
+                ? "font-semibold text-red-700"
+                : ""
+            }
+          >
+            {points.length} point{points.length > 1 ? "s" : ""} ({regles.minPoints} à {regles.maxPoints}) · ligne la
+            plus longue : {pointLePlusLong} / {regles.maxParPoint} caractères
+          </span>
+        ) : (
+          <span className={longueur < regles.min || longueur > regles.max ? "font-semibold text-red-700" : ""}>
+            {longueur} / {regles.max} caractères
+          </span>
+        )}
         <span>Échap pour annuler · Ctrl/Cmd + Entrée pour enregistrer</span>
       </div>
 
-      {multiligne ? (
+      {estListe ? (
+        <p className="text-xs text-zinc-500">
+          Un point par ligne ({regles.minPoints} à {regles.maxPoints} points, {regles.maxParPoint} caractères au plus
+          chacun). Pas de gras dans la version basique.
+        </p>
+      ) : regles.sansGras ? (
+        <p className="text-xs text-zinc-500">
+          Le texte s&apos;affiche en un seul paragraphe. Pas de gras dans la version basique.
+        </p>
+      ) : multiligne ? (
         <p className="text-xs text-zinc-500">
           Une ligne vide sépare deux paragraphes. Entourez un mot de deux étoiles pour le mettre en gras :
           **mot**
