@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import ContactModal from "./ContactModal";
 import NewsletterModal from "./NewsletterModal";
 
 // Onglets du centre de la barre (maquette : Déclarations, Candidats,
@@ -56,11 +55,36 @@ function SendIcon() {
   );
 }
 
-function ChatIcon({ className }) {
+// Lien « CLUB » vers l'espace adhérents (/relectures), lettres aux couleurs
+// du logo Club Perlimpinpin (public/logo/club-perlimpinpin.webp) avec un
+// léger halo. Simple <a> et non <Link> : /relectures est un fichier
+// statique de public/ protégé par le proxy, il faut une vraie navigation.
+const CLUB_LETTRES = [
+  ["C", "#fb9a4b"],
+  ["L", "#4fbf8f"],
+  ["U", "#a47ff5"],
+  ["B", "#f4649a"],
+];
+
+function ClubLink({ className = "", onClick }) {
   return (
-    <IconBase className={className}>
-      <path d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" />
-    </IconBase>
+    <a
+      href="/relectures"
+      onClick={onClick}
+      aria-label="Club Perlimpinpin (espace adhérents)"
+      title="Club Perlimpinpin"
+      className={`inline-flex items-center gap-[0.32em] text-sm font-semibold tracking-normal transition-opacity hover:opacity-80 ${className}`}
+    >
+      {CLUB_LETTRES.map(([lettre, couleur]) => (
+        <span
+          key={lettre}
+          aria-hidden="true"
+          style={{ color: couleur, textShadow: `0 0 10px ${couleur}66` }}
+        >
+          {lettre}
+        </span>
+      ))}
+    </a>
   );
 }
 
@@ -72,12 +96,10 @@ function Divider() {
 export default function Header() {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isContactOpen, setIsContactOpen] = useState(false);
   const [isNewsletterOpen, setIsNewsletterOpen] = useState(false);
   // Identité stable : sinon chaque re-render du header (ex. isScrolled au
   // scroll) recrée cette fonction et redéclenche l'effet de fermeture
-  // automatique de ContactModal, qui l'a en dépendance.
-  const closeContact = useCallback(() => setIsContactOpen(false), []);
+  // automatique de la modale, qui l'a en dépendance.
   const closeNewsletter = useCallback(() => setIsNewsletterOpen(false), []);
   // Ombre un peu plus marquée une fois la page scrollée, pour bien détacher
   // la barre flottante du contenu qui défile dessous.
@@ -153,8 +175,8 @@ export default function Header() {
           </ul>
         </nav>
 
-        {/* Groupe de droite (maquette) : Newsletter | Go! | bulle de contact,
-            séparés par de petits traits verticaux. */}
+        {/* Groupe de droite : Newsletter | Go! | CLUB, séparés par de petits
+            traits verticaux. Le contact est passé dans le pied de page. */}
         <div className="hidden shrink-0 items-center gap-4 lg:flex xl:gap-5">
           <button
             type="button"
@@ -183,16 +205,7 @@ export default function Header() {
 
           <Divider />
 
-          {/* Contact : icône seule, ouvre la fenêtre de contact. */}
-          <button
-            type="button"
-            onClick={() => setIsContactOpen(true)}
-            aria-label="Nous contacter"
-            title="Nous contacter"
-            className="flex shrink-0 items-center text-zinc-700 transition-colors hover:text-zinc-950"
-          >
-            <ChatIcon />
-          </button>
+          <ClubLink className="shrink-0" />
         </div>
 
         <button
@@ -259,17 +272,7 @@ export default function Header() {
                   </Link>
                 </li>
                 <li>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsMenuOpen(false);
-                      setIsContactOpen(true);
-                    }}
-                    className="flex w-full items-center gap-2 py-3 text-base font-medium text-zinc-700 transition-colors hover:text-zinc-950"
-                  >
-                    <ChatIcon />
-                    Nous contacter
-                  </button>
+                  <ClubLink className="py-3 text-base" onClick={() => setIsMenuOpen(false)} />
                 </li>
               </ul>
             </nav>
@@ -277,7 +280,6 @@ export default function Header() {
         </>
       ) : null}
 
-      <ContactModal open={isContactOpen} onClose={closeContact} />
       <NewsletterModal open={isNewsletterOpen} onClose={closeNewsletter} />
     </header>
   );

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import ManageCookiesButton from "./ManageCookiesButton";
+import ContactFooterButton from "./ContactFooterButton";
 
 // Mêmes routes que la barre de navigation (voir Header.js) : toutes existent.
 const platformLinks = [
@@ -160,6 +161,10 @@ export default function Footer() {
                 </FooterLink>
               </li>
             ))}
+            <li className="flex items-center gap-5">
+              <span aria-hidden="true" className="h-4 w-px bg-zinc-300" />
+              <ContactFooterButton className="cursor-pointer transition-colors hover:text-zinc-950" />
+            </li>
             <li className="flex items-center gap-5">
               <span aria-hidden="true" className="h-4 w-px bg-zinc-300" />
               <ManageCookiesButton className="cursor-pointer transition-colors hover:text-zinc-950" />
