@@ -133,20 +133,22 @@ export default function NewsletterModal({ open, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="fixed inset-0 bg-black/40" aria-hidden="true" onClick={onClose} />
+      <div className="fixed inset-0 bg-zinc-900/30 backdrop-blur-sm" aria-hidden="true" onClick={onClose} />
 
+      {/* Style du site (oct. 2026) : carte blanche, bord fin, ombre douce,
+          titres en Geist — plus de cadre noir épais ni de titre à empattements. */}
       <div
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="newsletter-modal-title"
-        className="relative w-full max-w-lg rounded-[2rem] border-2 border-zinc-900 bg-[#fdfbf9] px-6 py-10 text-center shadow-xl sm:px-10 sm:py-12"
+        className="relative w-full max-w-md rounded-3xl border border-zinc-200/70 bg-white px-6 py-8 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_24px_60px_-16px_rgba(0,0,0,0.18)] sm:px-8 sm:py-9"
       >
         <button
           type="button"
           onClick={onClose}
           aria-label="Fermer"
-          className="absolute right-5 top-5 flex h-8 w-8 items-center justify-center rounded-full text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-700"
+          className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-700"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -163,28 +165,24 @@ export default function NewsletterModal({ open, onClose }) {
           </svg>
         </button>
 
-        <p className="flex items-center justify-center gap-3 text-xs font-semibold uppercase tracking-[0.2em] text-zinc-400">
-          <span className="h-px w-6 bg-zinc-300" aria-hidden="true" />
-          Restez informé
-          <span className="h-px w-6 bg-zinc-300" aria-hidden="true" />
-        </p>
+        <p className="font-mono text-xs uppercase tracking-[0.12em] text-zinc-400">Newsletter</p>
 
-        <h2 id="newsletter-modal-title" className="mt-4 font-serif text-3xl font-bold text-zinc-900 sm:text-4xl">
-          Recevez la <span className="font-normal text-zinc-400">newsletter</span>
+        <h2 id="newsletter-modal-title" className="mt-3 pr-8 text-[26px] font-semibold leading-tight tracking-[-0.03em] text-zinc-900 sm:text-[28px]">
+          Restez informé
         </h2>
 
-        <p className="mx-auto mt-4 max-w-sm text-sm leading-relaxed text-zinc-600">
+        <p className="mt-2 text-[15px] leading-relaxed text-zinc-500">
           Analyses, nouvelles déclarations et coulisses de Perlimpinpin, directement dans votre boîte mail.
         </p>
 
         {status === "success" ? (
-          <p className="mt-8 text-sm font-medium text-zinc-700">Merci, vous êtes inscrit·e !</p>
+          <p className="mt-6 text-sm font-medium text-zinc-700">Merci, vous êtes inscrit·e !</p>
         ) : status === "already" ? (
-          <p className="mt-8 text-sm font-medium text-zinc-700">
+          <p className="mt-6 text-sm font-medium text-zinc-700">
             Cette adresse est déjà inscrite à la newsletter.
           </p>
         ) : (
-          <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-4">
+          <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
             {/* Honeypot : caché visuellement et aux lecteurs d'écran, jamais rempli par un humain. */}
             <div className="hidden" aria-hidden="true">
               <label htmlFor="newsletter-website">Site web</label>
@@ -198,7 +196,7 @@ export default function NewsletterModal({ open, onClose }) {
               />
             </div>
 
-            <div className="flex items-center gap-1 rounded-full border-2 border-zinc-900 bg-white p-1.5 pl-5">
+            <div className="flex items-center gap-1 rounded-full border border-zinc-200 bg-white p-1.5 pl-4 transition-colors focus-within:border-zinc-400 focus-within:ring-4 focus-within:ring-zinc-900/5">
               <label htmlFor="newsletter-email" className="sr-only">
                 Votre adresse e-mail
               </label>
@@ -209,12 +207,12 @@ export default function NewsletterModal({ open, onClose }) {
                 placeholder="Votre adresse e-mail"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
-                className="min-w-0 flex-1 bg-transparent text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none"
+                className="min-w-0 flex-1 bg-transparent text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:outline-none"
               />
               <button
                 type="submit"
                 disabled={submitting}
-                className="flex shrink-0 items-center gap-2 rounded-full bg-zinc-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-40"
+                className="flex shrink-0 items-center gap-2 rounded-full bg-zinc-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-700 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 {submitting ? "Envoi…" : "S'inscrire"}
                 <ArrowRightIcon />
@@ -228,14 +226,14 @@ export default function NewsletterModal({ open, onClose }) {
                 checked={consent}
                 onChange={(event) => setConsent(event.target.checked)}
                 aria-label="J'accepte de recevoir les communications de Perlimpinpin et confirme avoir lu et accepté la politique de confidentialité."
-                className="mt-0.5 h-4 w-4 shrink-0 rounded border-zinc-300 text-zinc-900 focus:ring-2 focus:ring-blue-200"
+                className="mt-0.5 h-4 w-4 shrink-0 rounded border-zinc-300 accent-zinc-900 focus:ring-2 focus:ring-zinc-300"
               />
               <span>
                 J&apos;accepte de recevoir les communications de Perlimpinpin et confirme avoir lu et accepté
                 la{" "}
                 <Link
                   href="/confidentialite"
-                  className="text-zinc-700 underline underline-offset-2 transition-colors hover:text-zinc-950"
+                  className="text-zinc-700 underline decoration-zinc-300 underline-offset-4 transition-colors hover:text-zinc-950 hover:decoration-zinc-900"
                 >
                   politique de confidentialité
                 </Link>
