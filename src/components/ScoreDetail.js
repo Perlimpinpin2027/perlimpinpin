@@ -155,7 +155,7 @@ export default function ScoreDetail({ notation, score }) {
   );
 
   return (
-    <section className="rounded-2xl border border-zinc-200 bg-white p-6">
+    <section>
       <h2 className="text-2xl font-bold tracking-tight text-zinc-900">Détail du score</h2>
 
       <div className="mt-4 flex flex-col">
