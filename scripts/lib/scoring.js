@@ -338,6 +338,28 @@ export function validateFicheCompleteStructure(raw) {
   return { valid: true, errors: [], fiche: zodResult.data };
 }
 
+// Longueurs maximales de titre_fiche et teaser_accueil (étape 3, sections
+// « ### Titre » et « ### Teaser accueil » de data/prompt-methodologie.md) :
+// au-delà, la carte « à la une » de l'accueil les coupe. Contrôle NON
+// bloquant : renvoie des messages d'avertissement, jamais un refus du JSON.
+export const TITRE_FICHE_MAX = 35;
+export const TEASER_ACCUEIL_MAX = 60;
+
+export function checkLongueursAccueil({ titre_fiche: titre, teaser_accueil: teaser } = {}) {
+  const avertissements = [];
+  if (typeof titre === "string" && titre.trim().length > TITRE_FICHE_MAX) {
+    avertissements.push(
+      `titre_fiche trop long : ${titre.trim().length} caractères (maximum ${TITRE_FICHE_MAX}) — « ${titre.trim()} »`,
+    );
+  }
+  if (typeof teaser === "string" && teaser.trim().length > TEASER_ACCUEIL_MAX) {
+    avertissements.push(
+      `teaser_accueil trop long : ${teaser.trim().length} caractères (maximum ${TEASER_ACCUEIL_MAX}) — « ${teaser.trim()} »`,
+    );
+  }
+  return avertissements;
+}
+
 // --- Version basique (étape 3 bis) -----------------------------------------
 // Texte simplifié pour le grand public, produit à partir de la fiche finale
 // (voir data/prompt-version-basique.md). sources_principales désigne 3

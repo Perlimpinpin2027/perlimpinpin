@@ -11,6 +11,7 @@ import {
   validateVersionBasique,
   checkChiffresVersionBasique,
   checkAncragesVersionBasique,
+  checkLongueursAccueil,
 } from "./scoring.js";
 
 // --- Fabriques -----------------------------------------------------------
@@ -529,5 +530,30 @@ describe("checkAncragesVersionBasique", () => {
     const vb = makeVersionBasique();
     assert.ok(checkAncragesVersionBasique([], vb, fiche).length > 0);
     assert.ok(checkAncragesVersionBasique([{ texte: "x" }], vb, fiche).some((e) => e.startsWith("ancrages.0")));
+  });
+});
+
+describe("checkLongueursAccueil (avertissement non bloquant)", () => {
+  test("aucun avertissement dans les limites (35 / 60 caractères)", () => {
+    assert.deepEqual(
+      checkLongueursAccueil({ titre_fiche: "a".repeat(35), teaser_accueil: "b".repeat(60) }),
+      [],
+    );
+  });
+
+  test("signale chaque champ trop long avec sa longueur réelle", () => {
+    const avertissements = checkLongueursAccueil({
+      titre_fiche: "Des robots pour remplacer les travailleurs immigrés",
+      teaser_accueil: "c".repeat(61),
+    });
+    assert.equal(avertissements.length, 2);
+    assert.match(avertissements[0], /titre_fiche trop long : 51 caractères \(maximum 35\)/);
+    assert.match(avertissements[1], /teaser_accueil trop long : 61 caractères \(maximum 60\)/);
+  });
+
+  test("champs absents ou non textuels : rien à signaler", () => {
+    assert.deepEqual(checkLongueursAccueil({}), []);
+    assert.deepEqual(checkLongueursAccueil(), []);
+    assert.deepEqual(checkLongueursAccueil({ titre_fiche: null, teaser_accueil: 42 }), []);
   });
 });

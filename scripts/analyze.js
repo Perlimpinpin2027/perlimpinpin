@@ -11,6 +11,7 @@ import {
   validateEtape1Structure,
   validateFicheCompleteStructure,
   checkNotationCoherence,
+  checkLongueursAccueil,
   validateVersionBasique,
   checkChiffresVersionBasique,
   checkAncragesVersionBasique,
@@ -459,6 +460,16 @@ Retourne uniquement le JSON corrigé, structuré exactement comme l'original (m�
   return readStreamedMessage(response);
 }
 
+// Avertit sans jamais bloquer ni tronquer : titre_fiche/teaser_accueil plus
+// longs que les maximums de data/prompt-methodologie.md (voir
+// checkLongueursAccueil dans scripts/lib/scoring.js) sont écrits tels quels.
+export function warnLongueursAccueil(fiche, label) {
+  const avertissements = checkLongueursAccueil(fiche);
+  if (avertissements.length === 0) return;
+  console.warn(`  ⚠️  ${label} : LONGUEUR HORS RÈGLE (JSON accepté, à raccourcir) :`);
+  for (const avertissement of avertissements) console.warn(`     - ${avertissement}`);
+}
+
 // Avertit sans jamais bloquer ni corriger : voir scripts/lib/scoring.js,
 // checkNotationCoherence (le calcul final reste la responsabilité du modèle).
 function warnNotationCoherence(notation, label) {
@@ -820,6 +831,7 @@ async function runPipeline(etape1Input) {
     verdict_final: arbitrage3.verdict_final ?? ficheComplete.verdict_final,
     verdict_conclusion: arbitrage3.verdict_conclusion,
   });
+  warnLongueursAccueil(parsed, "Étape 3");
   console.log(
     `  ✓ terminé (score final : ${parsed.notation_detaillee.score_total}/100${parsed.notation_detaillee.plafond_applique ? `, plafond appliqué — déclencheur : ${parsed.notation_detaillee.plafond_declencheur}` : ""})`,
   );

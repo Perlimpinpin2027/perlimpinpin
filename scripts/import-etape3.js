@@ -1,5 +1,5 @@
 import { readFileSync, existsSync } from "node:fs";
-import { saveAnalysis, genererVersionBasique } from "./analyze.js";
+import { saveAnalysis, genererVersionBasique, warnLongueursAccueil } from "./analyze.js";
 import { cleanContenu } from "./lib/clean-text.js";
 import { validateFicheCompleteStructure, checkNotationCoherence } from "./lib/scoring.js";
 
@@ -64,6 +64,8 @@ async function main() {
     process.exitCode = 1;
     return;
   }
+
+  warnLongueursAccueil(parsed, "Étape 3");
 
   const pipelineResult = {
     parsed,

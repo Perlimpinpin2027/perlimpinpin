@@ -6,6 +6,8 @@ L'analyse, les notes, la qualification juridique, l'arbitrage et le calcul final
 
 (Version fusionnée du 5 octobre 2026 : réunit les règles d'analyse et de notation les plus récentes et le format de sortie en accordéon. Ce fichier est identique dans le projet Claude « Perlimpinpin » et dans `data/prompt-methodologie.md` : toute modification doit être reportée aux deux endroits.)
 
+(Mise à jour du 5 octobre 2026 : nouvelles règles pour `titre_fiche` (35 caractères maximum, titre raccourci de la proposition) et pour `teaser_accueil` / `phrase_teasing` (une phrase de teasing de 60 caractères maximum), afin qu'ils s'affichent en entier sur la page d'accueil.)
+
 ================================================================================
 ÉTAPE 1 : Claude (Analyse initiale)
 ================================================================================
@@ -775,6 +777,8 @@ Aller à l'essentiel, avec des phrases naturelles et plutôt courtes. Style clai
 
 **Sections en accordéon dès l'étape 1.** Les 13 sections listées dans « Sections en accordéon (synthese + texte) » (voir Étape 3) sont produites dès l'étape 1 sous la forme `{ "synthese": "...", "texte": "..." }` : `synthese` en une phrase de 20 mots maximum (220 caractères au plus), qui commence par la conclusion et reste fidèle au `texte` ; `texte` = le contenu complet de la section. `impact_environnement` et `impact_temporel_et_sectoriel` valent `null` (l'objet entier) quand ils ne s'appliquent pas, jamais un objet aux champs vides. Les autres champs texte (`nature_et_existant`, `analyse_par_criteres`, `verdict_final`, `niveau_de_confiance`, `resume_court`, `phrase_teasing`) restent de simples chaînes.
 
+**Phrase de teasing.** `phrase_teasing` suit dès l'étape 1 les mêmes règles que `teaser_accueil` (voir Étape 3, « Teaser accueil ») : une seule phrase de 60 caractères maximum, qui crée une tension ou une question sans jamais révéler le score ni le verdict, fidèle au contenu de la fiche.
+
 Pas de tirets cadratins. Expliquer brièvement chaque note. Sourcer toute affirmation déterminante.
 
 Se relire avec cette question : **« un lecteur qui découvre cette fiche sans connaître Perlimpinpin comprend-il chaque phrase ? »**
@@ -922,14 +926,26 @@ CONTRÔLE MISTRAL :
 La structure publique reste identique : `titre_fiche`, `resume_court`, `teaser_accueil`, `verdict_final`, `verdict_conclusion` et `analyse_par_criteres`.
 
 ### Titre
-Court, accrocheur, sans nom du candidat, environ 70 caractères maximum.
-Le titre doit tenir sans troncature dans l'espace d'affichage de la carte
-(environ 45 à 50 caractères visibles avant qu'une coupure n'intervienne).
-Si l'idée nécessite plus de mots, structurer les 45-50 premiers caractères
-comme une unité de sens autonome et compréhensible même coupée, plutôt que
-de laisser la coupure tomber au milieu d'un complément indispensable.
-Préférer une formulation courte et complète à une formulation longue mais
-tronquée.
+`titre_fiche` est le titre de la proposition elle-même : il est affiché en
+tête de la fiche et sur la carte « à la une » de la page d'accueil. Il
+reprend fidèlement ce que propose le candidat, en version raccourcie.
+
+- **35 caractères maximum** (espaces compris), environ 5 à 6 mots. Il doit
+  tenir en entier sur deux lignes de la carte d'accueil, sans coupure.
+- Décrit la mesure, jamais le verdict : aucune appréciation, aucune note,
+  aucun mot comme « irréaliste », « solide », « fragile ».
+- Sans nom du candidat ni de son parti, sans guillemets, sans point final.
+- Mots courants, pas de sigle non expliqué ; garder le mot qui identifie
+  immédiatement le sujet (« robots », « SMIC », « loyers », « retraite »...).
+- Raccourcir la formulation du candidat sans en changer le sens (même
+  population visée, même mécanisme ; voir 1 quater sur la dérive
+  sémantique) : ni plus sévère, ni plus favorable que la mesure réelle.
+
+Exemples de forme (pas des textes à reprendre) :
+« Des robots pour remplacer les travailleurs immigrés » (51 caractères,
+trop long) → « Des robots plutôt que des immigrés » (34 caractères).
+« Abaisser l'âge légal de départ à la retraite à 62 ans » → « La retraite
+à 62 ans ».
 
 ### Verdict final
 Réécrire en **3 à 5 phrases courtes**, critiques et incisives : commencer par ce qui est solidement établi, introduire ensuite la limite principale, puis conclure clairement sur les dimensions solides et fragiles. Rester factuel, sourcé et non partisan.
@@ -943,9 +959,26 @@ En plus de `verdict_final`, produire `verdict_conclusion` : une phrase unique et
 En **3 à 7 phrases**, dire clairement où la mesure tient et où elle ne tient pas. Ton humain, fluide, légèrement engageant lorsque le sujet s'y prête, sans devenir partisan ni administratif. Structure le résumé en courts paragraphes (séparés par un saut de ligne vide) lorsqu'il existe une rupture logique entre deux idées — par exemple entre ce que propose la mesure et ce qui en limite la portée. Ne crée pas un nouveau paragraphe à chaque phrase : 2 paragraphes suffisent en général, exceptionnellement 3 si une troisième idée s'en détache réellement.
 
 ### Teaser accueil
-Conserver le rendu en **deux phrases** : d'abord un résumé court et impactant, puis une question qui donne envie d'ouvrir la fiche sur la solidité concrète de la mesure, sans employer les mots « réaliste » ou « réalisme ». Le ton peut être engageant, jamais clickbait, partisan ou exagéré.
+`teaser_accueil` est la description affichée sous le titre sur la carte
+« à la une » de la page d'accueil. Son rôle est de donner envie d'ouvrir la
+fiche, pas de la résumer.
 
-teaser_accueil est limité côté base de données à 250 caractères, coupure possible avant la fin. Rédiger la première phrase (le résumé) pour qu'elle tienne à elle seule en 120 caractères maximum, afin que la seconde phrase (la question) ait de bonnes chances de ne pas être coupée. Si les deux ne tiennent vraiment pas ensemble, privilégier la complétude du résumé plutôt que de risquer une question tronquée en fin de champ.
+- **Une seule phrase, 60 caractères maximum** (espaces compris). Elle doit
+  s'afficher en entier sur la carte, sans coupure.
+- Ton de teasing : créer une tension, une surprise ou une question
+  (un argument du candidat qui se retourne, un chiffre qui étonne, un
+  « mais » qui intrigue). Les points de suspension sont permis une fois.
+- Ne jamais révéler le score, l'appréciation ou le verdict : pas de note,
+  pas de « fragile », « solide », « irréaliste », « réaliste », « réalisme ».
+- Ne pas répéter les mots du titre.
+- Engageant, jamais clickbait, partisan, moqueur ou exagéré : la tension
+  annoncée doit être réellement traitée dans la fiche et fidèle à son
+  contenu (aucune information absente de la fiche).
+
+Exemples de forme (pas des textes à reprendre) :
+« Le Japon, cité en modèle, fait… exactement l'inverse. »
+« Une idée qui séduit… jusqu'aux chiffres. »
+« Moins chère qu'annoncé, mais pour qui ? »
 
 ### Analyse par critères
 
