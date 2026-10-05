@@ -9,12 +9,13 @@ import ScoreDetail from "@/components/ScoreDetail";
 import AccordionSection from "@/components/AccordionSection";
 import MesureObjectifBanner from "@/components/MesureObjectifBanner";
 import MonoTag from "@/components/MonoTag";
+import EtapeRaisonnement from "@/components/EtapeRaisonnement";
 import SupportBanner from "@/components/SupportBanner";
 import EditableBlock from "@/app/test/EditableBlock";
 import { getDeclarationDetail } from "@/lib/queries";
 import { getScoreBadge, PLAFOND_DECLENCHEUR_LABELS } from "@/lib/score";
 import { vignettePhoto } from "@/lib/photo-vignette";
-import { Section, renderRichText, renderSourceString } from "@/lib/fiche-rendu";
+import { renderRichText, renderSourceString } from "@/lib/fiche-rendu";
 import { lireVersionBasique } from "@/lib/version-basique";
 import VueBasique, { TOC_SECTIONS_BASIQUE, ID_SOURCES_EXPERT, ScriptVueInitiale } from "@/components/VueBasique";
 import { VueAnalyseProvider, BasculeVue, Vue } from "@/components/VueAnalyseProvider";
@@ -204,15 +205,6 @@ const ICON_SHIELD = (
     d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z"
   />
 );
-// Check-circle pour le titre "Verdict final" — distinct d'ICON_SHIELD (déjà
-// utilisé pour "Niveau de confiance" dans FiabiliteSection, plus bas sur la
-// page) pour ne pas dupliquer la même icône sur deux titres différents.
-const ICON_CHECK_CIRCLE = (
-  <>
-    <circle cx="12" cy="12" r="8.25" />
-    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 12.25 10.75 14.75 15.75 9.5" />
-  </>
-);
 const ICON_WARNING = (
   <path
     strokeLinecap="round"
@@ -267,30 +259,16 @@ const CRITERE_ICONS = {
   alignement_logique: ICON_ALIGNEMENT,
 };
 
-// Traitement "verre dépoli" des deux points d'entrée clés d'une fiche
-// déclaration (résumé IA en haut, verdict final en bas du raisonnement) :
-// fond semi-transparent légèrement teinté + flou d'arrière-plan, qui laisse
-// deviner le dégradé de la page (.bg-page-gradient) en transparence.
+// "Fiabilité de l'analyse" : traitement "liquid glass", pour que ce bloc de
+// méta-information ressorte visuellement — fond neutre semi-transparent +
+// flou d'arrière-plan, ombre légère portée par la classe Tailwind sur
+// l'élément, jamais dans ce style inline.
 // backdrop-filter posé en style inline plutôt qu'en classe CSS/Tailwind :
 // une fois passé par l'autoprefixer du build (Lightning CSS, voir
 // postcss.config.mjs), la propriété ne survit pas de façon fiable dans une
 // classe globale — même problème déjà rencontré sur le header sticky, voir
 // le commentaire dans Header.js. L'inline style pose la valeur finale
 // directement dans le DOM, sans passer par cette étape.
-const GLASS_STYLE = {
-  backgroundColor: "rgba(239, 246, 255, 0.55)",
-  backdropFilter: "blur(20px) saturate(160%)",
-  WebkitBackdropFilter: "blur(20px) saturate(160%)",
-  border: "1px solid rgba(191, 219, 254, 0.5)",
-};
-
-// "Fiabilité de l'analyse" : traitement "liquid glass" distinct du blanc
-// plein utilisé par les Section génériques, pour que ce bloc de méta-
-// information ressorte visuellement — fond neutre semi-transparent (pas de
-// teinte bleue comme GLASS_STYLE, ce bloc n'est pas un point d'entrée de
-// lecture) + ombre légère portée par la classe Tailwind sur l'élément,
-// jamais dans ce style inline (voir commentaire de GLASS_STYLE sur
-// backdrop-filter).
 const FIABILITE_GLASS_STYLE = {
   backgroundColor: "rgba(244, 244, 245, 0.55)",
   backdropFilter: "blur(16px) saturate(140%)",
@@ -362,14 +340,12 @@ function splitIntoParagraphs(text) {
 
 function TeaserParagraphs({ text }) {
   if (typeof text !== "string" || text.trim().length === 0) {
-    return (
-      <p className="mt-3 text-lg leading-relaxed text-zinc-800 sm:text-xl">Résumé à venir.</p>
-    );
+    return <p className="text-base leading-relaxed text-zinc-700">Résumé à venir.</p>;
   }
   const paragraphs = splitIntoParagraphs(text);
 
   return (
-    <div className="mt-3 flex flex-col gap-4 text-lg leading-relaxed text-zinc-800 sm:text-xl">
+    <div className="flex flex-col gap-4 text-base leading-relaxed text-zinc-700">
       {paragraphs.map((paragraph, index) => (
         <p key={index}>{renderRichText(attacherPetitsMots(paragraph))}</p>
       ))}
@@ -759,11 +735,9 @@ function ConfidenceGauge({ level }) {
   );
 }
 
-// Traitement "liquid glass" distinct (FIABILITE_GLASS_STYLE, fond neutre —
-// pas la teinte bleue de GLASS_STYLE, ni le fond clair uni du bloc Verdict
-// final) : "Niveau de confiance"/"Limites identifiées" sont une information
-// secondaire/méta sur
-// l'analyse elle-même, pas un point de contenu au même niveau que le
+// Traitement "liquid glass" distinct (FIABILITE_GLASS_STYLE, fond neutre) :
+// "Niveau de confiance"/"Limites identifiées" sont une information
+// secondaire/méta sur l'analyse elle-même, pas un point de contenu au même niveau que le
 // raisonnement, mais doivent tout de même se détacher visuellement du reste
 // de la page (voir la demande d'origine).
 function FiabiliteSection({ contenu }) {
@@ -853,10 +827,20 @@ function Editable({ edition, champ, valeurBrute, multiligne, children }) {
   );
 }
 
+// Mise en page éditoriale de la vue expert : pas de cartes, des blocs séparés
+// par un trait fin (y compris au-dessus du premier, sous la bascule).
+const CLASSE_VUE_EXPERT = "flex flex-col divide-y divide-zinc-200 border-t border-zinc-200 *:py-8";
+
 // Contenu d'analyse actuel de la fiche : enveloppé dans la vue expert quand la
-// fiche a une version basique, rendu tel quel sinon.
+// fiche a une version basique, dans un simple conteneur de même style sinon.
 function VueExpertSi({ actif, children }) {
-  return actif ? <Vue nom="expert">{children}</Vue> : children;
+  return actif ? (
+    <Vue nom="expert" className={CLASSE_VUE_EXPERT}>
+      {children}
+    </Vue>
+  ) : (
+    <div className={CLASSE_VUE_EXPERT}>{children}</div>
+  );
 }
 
 // `preview` : utilisé par /test/[id] pour relire un brouillon. On y masque les
@@ -919,6 +903,69 @@ export default async function DeclarationDetailPage({ params, preview = false, e
   const versionBasique = lireVersionBasique(contenu, propositionId);
   const EnveloppeVue = versionBasique ? VueAnalyseProvider : Fragment;
   const sectionsBasique = versionBasique ? TOC_SECTIONS_BASIQUE : undefined;
+
+  // Étapes du « raisonnement complet », dans l'ordre d'affichage. Seules les
+  // étapes réellement présentes sont gardées, puis numérotées sans trou au
+  // rendu (EtapeRaisonnement).
+  // Schéma V4 : contenuComplet ne porte plus les notes de travail internes de
+  // l'analyste (mesure_reformulee, contexte_*, ce_qui_est_etabli/probable/
+  // discutable/inconnu, angles_morts, analyse_longevites…) — elles restent dans
+  // analyseCanonique, jamais exposée au front-end (voir scripts/analyze.js,
+  // buildContenuCompletV4). Ces étapes sont donc réservées aux fiches
+  // antérieures au pipeline à 4 étapes.
+  // impact_environnement et impact_temporel_et_sectoriel sont nullables (voir
+  // data/prompt-methodologie.md) : étape omise quand ils sont absents.
+  const etapesRaisonnement = [
+    !isV4 && { titre: "Mesure reformulée", contenu: <AccordionSection value={contenu.mesure_reformulee} /> },
+    !isV4 && {
+      titre: "Mise en contexte dans le programme",
+      contenu: <AccordionSection value={contenu.contexte_programme} />,
+    },
+    !isV4 && {
+      id: "contexte",
+      titre: "Contexte national",
+      contenu: <AccordionSection value={contenu.contexte_national} splitParagraphs />,
+    },
+    !isV4 && {
+      titre: "Contexte international",
+      contenu: <AccordionSection value={contenu.contexte_international} splitParagraphs />,
+    },
+    !isV4 &&
+      contenu.impact_environnement && {
+        titre: "Impact environnemental",
+        contenu: <AccordionSection value={contenu.impact_environnement} />,
+      },
+    {
+      id: "analyse-criteres",
+      titre: "Analyse par critères",
+      contenu: <CriteresCards criteres={contenu.analyse_par_criteres} notation={notation} />,
+    },
+    !isV4 && { titre: "Longévité des effets", contenu: <AccordionSection value={contenu.analyse_longevites} /> },
+    !isV4 &&
+      contenu.impact_temporel_et_sectoriel && {
+        titre: "Impact temporel et sectoriel",
+        contenu: <AccordionSection value={contenu.impact_temporel_et_sectoriel} />,
+      },
+    !isV4 && { titre: "Ce qui est établi", contenu: <AccordionSection value={contenu.ce_qui_est_etabli} /> },
+    !isV4 && { titre: "Ce qui est probable", contenu: <AccordionSection value={contenu.ce_qui_est_probable} /> },
+    !isV4 && { titre: "Ce qui est discutable", contenu: <AccordionSection value={contenu.ce_qui_est_discutable} /> },
+    !isV4 && { titre: "Ce qui est inconnu", contenu: <AccordionSection value={contenu.ce_qui_est_inconnu} /> },
+    !isV4 && {
+      id: "angles-morts",
+      titre: "Angles morts et effets de bord",
+      contenu: <AccordionSection value={contenu.angles_morts} />,
+    },
+    {
+      id: "verdict",
+      titre: "Verdict final",
+      contenu: <VerdictBody verdict={contenu.verdict_final} conclusion={contenu.verdict_conclusion} />,
+    },
+    {
+      id: versionBasique ? ID_SOURCES_EXPERT : undefined,
+      titre: "Sources utilisées",
+      contenu: <SourcesList value={contenu.sources_utilisees} />,
+    },
+  ].filter(Boolean);
 
   return (
     <div className="flex min-h-screen flex-col bg-page-gradient font-sans">
@@ -1018,50 +1065,19 @@ export default async function DeclarationDetailPage({ params, preview = false, e
             ) : null}
 
             <VueExpertSi actif={Boolean(versionBasique)}>
-            {/* Le résumé de Perlimpinpin IA : traitement "verre dépoli"
-                (GLASS_STYLE) — l'un des deux points d'entrée clés de la
-                lecture, avant le raisonnement détaillé (l'autre étant le
-                Verdict final plus bas, qui a son propre traitement, voir
-                VerdictBody).
+            {/* Résumé : simples paragraphes, sans titre ni carte.
                 Texte intégral de contenu.resume_court (pas analyse.teaser,
                 qui est une version tronquée à 500 caractères + "…" dérivée
                 de resume_court pour d'autres usages — voir buildTeaser dans
-                scripts/analyze.js). Le lien "Voir le raisonnement complet"
-                sert uniquement à naviguer vers le détail plus bas sur la
-                page, jamais à masquer une partie du résumé. */}
+                scripts/analyze.js). pr-11 en mode édition : place du crayon. */}
             <Editable
               edition={typeof contenu.resume_court === "string" ? edition : null}
               champ="resume_court"
               valeurBrute={contenu.resume_court}
               multiligne
             >
-              <section className="rounded-2xl p-6 sm:p-8" style={GLASS_STYLE}>
-                <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-zinc-900">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={1.5}
-                    className="h-4 w-4 text-blue-500"
-                    aria-hidden="true"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456Z"
-                    />
-                  </svg>
-                  Le résumé de Perlimpinpin IA
-                </h2>
+              <section aria-label="Résumé de l'analyse" className={`max-w-[68ch]${edition ? " pr-11" : ""}`}>
                 <TeaserParagraphs text={contenu.resume_court} />
-                <Link
-                  href="#raisonnement-complet"
-                  className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-zinc-900 transition-colors hover:text-zinc-600"
-                >
-                  Voir le raisonnement complet
-                  <span aria-hidden="true">→</span>
-                </Link>
               </section>
             </Editable>
 
@@ -1083,7 +1099,7 @@ export default async function DeclarationDetailPage({ params, preview = false, e
             {isNouveauBaremeV5 ? (
               <ScoreDetail notation={notation} score={analyse.scoreFaisabilite} />
             ) : (
-            <div className="rounded-2xl border border-zinc-200 bg-white p-6">
+            <div>
               <span className="text-xs font-bold uppercase tracking-widest text-zinc-500">
                 Détail du score
               </span>
@@ -1162,16 +1178,16 @@ export default async function DeclarationDetailPage({ params, preview = false, e
             )}
 
             {/* Extrait analysé */}
-            <section className="rounded-2xl border border-zinc-200 bg-white p-6 sm:p-8">
+            <section>
               <div className="flex flex-wrap items-center justify-between gap-3">
-                <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-zinc-500">
+                <h2 className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widest text-zinc-400">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
                     strokeWidth={1.5}
-                    className="h-4 w-4 text-zinc-400"
+                    className="h-3.5 w-3.5 text-zinc-300"
                     aria-hidden="true"
                   >
                     <path
@@ -1202,155 +1218,37 @@ export default async function DeclarationDetailPage({ params, preview = false, e
                 </span>
               </div>
 
-              <blockquote className="mt-4 text-base leading-relaxed text-zinc-700">
+              <blockquote className="mt-3 text-sm leading-relaxed text-zinc-600">
                 &ldquo;{declaration.texteOriginal}&rdquo;
               </blockquote>
             </section>
 
-            {/* Raisonnement complet */}
-            <div id="raisonnement-complet" className="flex scroll-mt-24 flex-col gap-6">
+            {/* Raisonnement complet : liste numérotée d'étapes à plat,
+                séparées par un trait fin (voir etapesRaisonnement plus haut). */}
+            <div id="raisonnement-complet" className="scroll-mt-24">
               {/* font-sans pour la même raison que le H1 plus haut : aucune
                   maquette fournie (voir public/maquettes) ne montre de
-                  titre en serif sur cette page ni ailleurs sur le site. Pas
-                  de capture de cette section précise dans le lot actuel,
-                  donc à revalider si une maquette de "Raisonnement complet"
-                  apparaît, mais laisser du serif ici alors que le H1
-                  au-dessus est repassé en sans créerait une incohérence
-                  visuelle sur la même page. */}
+                  titre en serif sur cette page ni ailleurs sur le site. */}
               <h2 className="font-sans text-2xl font-bold text-zinc-900">
                 Le raisonnement complet
               </h2>
 
-              {/* Schéma V4 : contenuComplet ne porte plus les notes de
-                  travail internes de l'analyste (mesure_reformulee,
-                  contexte_*, ce_qui_est_etabli/probable/discutable/inconnu,
-                  angles_morts, niveau_de_confiance, limites) — elles restent
-                  dans analyseCanonique, jamais exposée au front-end (voir
-                  scripts/analyze.js, buildContenuCompletV4). Ce bloc reste
-                  donc réservé aux fiches antérieures au pipeline à 4 étapes. */}
-              {!isV4 ? (
-                <>
-                  <Section title="Mesure reformulée">
-                    <AccordionSection value={contenu.mesure_reformulee} />
-                  </Section>
-
-                  <Section title="Mise en contexte dans le programme">
-                    <AccordionSection value={contenu.contexte_programme} />
-                  </Section>
-
-                  {/* Empilé plutôt qu'en 2 colonnes : la colonne principale
-                      de cette page (2fr d'une grille 2fr/1fr, elle-même
-                      plafonnée à max-w-6xl) ne laisse qu'environ 360px par
-                      sous-colonne une fois divisée en deux — sous la barre
-                      des 65-70 caractères/ligne visée plus haut, quelle que
-                      soit la largeur d'écran (le plafond max-w-6xl ne bouge
-                      pas). Empilées, ces deux sections profitent de toute la
-                      largeur de la colonne (jusqu'à max-w-[68ch] du Section
-                      générique), donc plus lisibles que côte à côte ici. */}
-                  <div id="contexte" className="scroll-mt-24 flex flex-col gap-6">
-                    <Section title="Contexte national">
-                      <AccordionSection value={contenu.contexte_national} splitParagraphs />
-                    </Section>
-                    <Section title="Contexte international">
-                      <AccordionSection value={contenu.contexte_international} splitParagraphs />
-                    </Section>
-                    {/* impact_environnement : nullable (voir data/prompt-
-                        methodologie.md), absent jusqu'ici de tout affichage
-                        public — ajoutée ici car listée par le format
-                        accordéon, dans la même famille "mise en contexte"
-                        que les deux ci-dessus. */}
-                    {contenu.impact_environnement ? (
-                      <Section title="Impact environnemental">
-                        <AccordionSection value={contenu.impact_environnement} />
-                      </Section>
-                    ) : null}
-                  </div>
-                </>
-              ) : null}
-
-              <Section id="analyse-criteres" title="Analyse par critères">
-                <CriteresCards criteres={contenu.analyse_par_criteres} notation={notation} />
-              </Section>
-
-              {/* analyse_longevites (requis) et impact_temporel_et_sectoriel
-                  (nullable) : comme impact_environnement ci-dessus, ces deux
-                  champs existaient déjà côté données mais n'avaient encore
-                  aucun affichage public — ajoutés ici car listés par le
-                  format accordéon, juste après la notation puisqu'ils la
-                  prolongent dans le temps (pérennité, effets différés). */}
-              {!isV4 ? (
-                <div className="flex flex-col gap-6">
-                  <Section title="Longévité des effets">
-                    <AccordionSection value={contenu.analyse_longevites} />
-                  </Section>
-                  {contenu.impact_temporel_et_sectoriel ? (
-                    <Section title="Impact temporel et sectoriel">
-                      <AccordionSection value={contenu.impact_temporel_et_sectoriel} />
-                    </Section>
-                  ) : null}
-                </div>
-              ) : null}
-
-              {!isV4 ? (
-                <>
-                  <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                    <Section title="Ce qui est établi">
-                      <AccordionSection value={contenu.ce_qui_est_etabli} />
-                    </Section>
-                    <Section title="Ce qui est probable">
-                      <AccordionSection value={contenu.ce_qui_est_probable} />
-                    </Section>
-                    <Section title="Ce qui est discutable">
-                      <AccordionSection value={contenu.ce_qui_est_discutable} />
-                    </Section>
-                    <Section title="Ce qui est inconnu">
-                      <AccordionSection value={contenu.ce_qui_est_inconnu} />
-                    </Section>
-                  </div>
-
-                  <Section id="angles-morts" title="Angles morts et effets de bord">
-                    <AccordionSection value={contenu.angles_morts} />
-                  </Section>
-                </>
-              ) : null}
-
-              {/* Verdict final : même carte que les autres sections (Section
-                  générique, voir plus haut) plutôt que le traitement "fond
-                  clair + gros texte" d'une tentative précédente, jugé
-                  incohérent avec le reste de la page (voir la demande
-                  d'origine). Icône dans le titre comme "Le résumé de
-                  Perlimpinpin IA"/"Extrait analysé" plus haut, à l'échelle
-                  text-lg du Section générique plutôt que leur petite
-                  eyebrow uppercase. */}
-              <section
-                id="verdict"
-                className="scroll-mt-24 rounded-2xl border border-zinc-200 bg-white p-6"
-              >
-                <h2 className="flex items-center gap-2 text-lg font-bold text-zinc-900">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={1.5}
-                    className="h-5 w-5 shrink-0 text-emerald-600"
-                    aria-hidden="true"
-                  >
-                    {ICON_CHECK_CIRCLE}
-                  </svg>
-                  Verdict final
-                </h2>
-                <div className="mt-3 max-w-[68ch] text-sm leading-7 text-zinc-600">
-                  <VerdictBody verdict={contenu.verdict_final} conclusion={contenu.verdict_conclusion} />
-                </div>
-              </section>
-
-              <Section id={versionBasique ? ID_SOURCES_EXPERT : undefined} title="Sources utilisées">
-                <SourcesList value={contenu.sources_utilisees} />
-              </Section>
-
-              {!isV4 ? <FiabiliteSection contenu={contenu} /> : null}
+              <div className="mt-3 divide-y divide-zinc-200">
+                {etapesRaisonnement.map((etape, index) => (
+                  <EtapeRaisonnement key={etape.titre} numero={index + 1} titre={etape.titre} id={etape.id}>
+                    {etape.contenu}
+                  </EtapeRaisonnement>
+                ))}
+              </div>
             </div>
+
+            {/* Fiabilité de l'analyse : bloc à part de la vue expert, séparé
+                du raisonnement par le même trait que les autres blocs. */}
+            {!isV4 ? (
+              <div>
+                <FiabiliteSection contenu={contenu} />
+              </div>
+            ) : null}
             </VueExpertSi>
             {versionBasique ? <ScriptVueInitiale /> : null}
 
