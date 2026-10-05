@@ -6,7 +6,7 @@ import path from "node:path";
 import {
   CLES, CLES_OBJECTIF, CLES_NOTATION, CLES_RELECTURE, CLES_RELECTURE_FACULTATIVES, DATA_DIR, RelectureError,
   ajouter, ficheEnLigne, fichesExistantes, lancer, parseDuree, redigerMail, slugDepuisChemin, verifierFiche,
-  estNuit, finVersDuree, partiesParis, proposerFinJournee,
+  estNuit, finVersDuree, partiesParis, proposerFinJournee, erreursVersionSuivante,
 } from "./relecture.js";
 
 // Outil scripts/relecture.js (aucun accès réseau : fetch simulé, dossiers temporaires).
@@ -18,6 +18,21 @@ const fixture = () => {
   delete fiche.relecture.archive;
   return fiche;
 };
+
+// Les 13 sections en accordéon { synthese, texte } du format Étape 1 (validateEtape1Structure).
+const SECTIONS_ACCORDEON = [
+  "mesure_reformulee", "contexte_programme", "contexte_national", "contexte_international",
+  "impact_environnement", "analyse_longevites", "impact_temporel_et_sectoriel", "ce_qui_est_etabli",
+  "ce_qui_est_probable", "ce_qui_est_discutable", "ce_qui_est_inconnu", "angles_morts", "limites",
+];
+// La même fiche au format du pipeline : chaque section texte devient { synthese, texte }.
+const enAccordeon = (fiche) => {
+  for (const k of SECTIONS_ACCORDEON) {
+    if (typeof fiche[k] === "string") fiche[k] = { synthese: `Synthèse de ${k}.`, texte: fiche[k] };
+  }
+  return fiche;
+};
+const ficheAccordeon = () => enAccordeon(fixture());
 
 function tmp() {
   return mkdtempSync(path.join(tmpdir(), "relecture-test-"));
@@ -100,13 +115,13 @@ test("slugDepuisChemin : nom de fichier = slug, format contrôlé", () => {
 test("ajouter : copie la fiche puis lance la génération", () => {
   const dir = tmp();
   const src = path.join(tmp(), "nouvelle-fiche.json");
-  writeFileSync(src, JSON.stringify(fixture(), null, 2));
+  writeFileSync(src, JSON.stringify(ficheAccordeon(), null, 2));
   let builds = 0;
   const out = capture();
   const slug = ajouter(src, { dataDir: dir, build: () => builds++, log: out.log });
   assert.equal(slug, "nouvelle-fiche");
   assert.equal(builds, 1);
-  assert.deepEqual(JSON.parse(readFileSync(path.join(dir, "nouvelle-fiche.json"), "utf8")), fixture());
+  assert.deepEqual(JSON.parse(readFileSync(path.join(dir, "nouvelle-fiche.json"), "utf8")), ficheAccordeon());
   assert.match(out.texte(), /Vérifie localhost:3000\/relectures, puis commite et push\./);
   rmSync(dir, { recursive: true });
 });
@@ -117,13 +132,13 @@ test("ajouter : refuse un slug existant, un JSON invalide ou une fiche non confo
   const build = () => assert.fail("la génération ne doit pas être lancée");
 
   writeFileSync(path.join(dir, "deja-la.json"), "{}");
-  writeFileSync(path.join(srcDir, "deja-la.json"), JSON.stringify(fixture()));
+  writeFileSync(path.join(srcDir, "deja-la.json"), JSON.stringify(ficheAccordeon()));
   assert.throws(() => ajouter(path.join(srcDir, "deja-la.json"), { dataDir: dir, build }), /existe déjà/);
 
   writeFileSync(path.join(srcDir, "casse.json"), "{ pas du json");
   assert.throws(() => ajouter(path.join(srcDir, "casse.json"), { dataDir: dir, build }), /JSON invalide/);
 
-  const f = fixture();
+  const f = ficheAccordeon();
   delete f.relecture;
   writeFileSync(path.join(srcDir, "sans-relecture.json"), JSON.stringify(f));
   assert.throws(() => ajouter(path.join(srcDir, "sans-relecture.json"), { dataDir: dir, build }), /Fiche refusée/);
@@ -135,10 +150,49 @@ test("ajouter : refuse un slug existant, un JSON invalide ou une fiche non confo
   rmSync(srcDir, { recursive: true });
 });
 
+test("ajouter : refuse une fiche en texte simple (format Étape 1), accepte la même en accordéon", () => {
+  const dir = tmp();
+  const srcDir = tmp();
+  const simple = path.join(srcDir, "fiche-texte-simple.json");
+  writeFileSync(simple, JSON.stringify(fixture()));
+  assert.throws(
+    () => ajouter(simple, { dataDir: dir, build: () => assert.fail("la génération ne doit pas être lancée") }),
+    (e) =>
+      e instanceof RelectureError &&
+      /Fiche refusée/.test(e.message) &&
+      /format Étape 1 : contexte_national: /.test(e.message) &&
+      /format Étape 1 : limites: /.test(e.message) &&
+      !/impact_environnement/.test(e.message), // null : accepté
+  );
+  assert.equal(existsSync(path.join(dir, "fiche-texte-simple.json")), false);
+
+  const accordeon = path.join(srcDir, "fiche-accordeon.json");
+  writeFileSync(accordeon, JSON.stringify(ficheAccordeon()));
+  assert.equal(ajouter(accordeon, { dataDir: dir, build: () => {}, log: () => {} }), "fiche-accordeon");
+
+  // Synthèse manquante dans une seule section : refusée, champ nommé.
+  const f = ficheAccordeon();
+  delete f.angles_morts.synthese;
+  writeFileSync(path.join(srcDir, "sans-synthese.json"), JSON.stringify(f));
+  assert.throws(() => ajouter(path.join(srcDir, "sans-synthese.json"), { dataDir: dir, build: () => {} }), /angles_morts\.synthese/);
+  rmSync(dir, { recursive: true });
+  rmSync(srcDir, { recursive: true });
+});
+
+test("erreursVersionSuivante : texte simple refusé, accordéon accepté, score incohérent refusé", () => {
+  const { relecture, ...simple } = fixture();
+  assert.ok(erreursVersionSuivante(simple).some((e) => e.startsWith("contexte_programme")));
+  const conforme = enAccordeon(simple);
+  assert.deepEqual(erreursVersionSuivante(conforme), []);
+  conforme.notation_detaillee.score_total += 1;
+  assert.match(erreursVersionSuivante(conforme).join("\n"), /score : score_total incohérent/);
+  assert.ok(erreursVersionSuivante(null).length > 0);
+});
+
 test("ajouter : fiche retirée si la génération échoue", () => {
   const dir = tmp();
   const src = path.join(tmp(), "echec-build.json");
-  writeFileSync(src, JSON.stringify(fixture()));
+  writeFileSync(src, JSON.stringify(ficheAccordeon()));
   assert.throws(
     () => ajouter(src, { dataDir: dir, build: () => { throw new Error("boom"); }, log: () => {} }),
     /génération de la page a échoué/,

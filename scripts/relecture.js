@@ -1,7 +1,8 @@
 // Outil de relecture des fiches en brouillon (/relectures).
 //
 //   node scripts/relecture.js ajouter <chemin/fiche.json>
-//     Vérifie la fiche (JSON, clés, cohérence du score), la copie dans
+//     Vérifie la fiche (JSON, clés, cohérence du score, format Étape 1 avec
+//     sections en accordéon { synthese, texte }), la copie dans
 //     data/relectures/<slug>.json puis régénère public/relectures/index.html.
 //
 //   node scripts/relecture.js lancer <slug> [durée | --fin HH:MM] [--dry-run]
@@ -20,7 +21,7 @@ import { execFileSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import dotenv from "dotenv";
-import { checkNotationCoherence } from "./lib/scoring.js";
+import { checkNotationCoherence, validateEtape1Structure } from "./lib/scoring.js";
 import { formatClosedAt } from "../src/lib/relecture.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -93,6 +94,28 @@ export function verifierFiche(fiche) {
   return erreurs;
 }
 
+// Format Étape 1 du pipeline (sections en accordéon { synthese, texte }, voir
+// validateEtape1Structure dans scripts/lib/scoring.js), sans le bloc
+// `relecture` propre à la page. Contrôlé à l'ajout d'une fiche et, dans
+// scripts/publier-relecture.js, sur la version suivante. Les fiches déjà
+// présentes dans data/relectures/ (texte simple) ne sont pas revalidées.
+export function erreursFormatEtape1(fiche) {
+  if (!fiche || typeof fiche !== "object" || Array.isArray(fiche)) return ["(racine) : objet attendu."];
+  const { relecture, ...analyse } = fiche;
+  return validateEtape1Structure(analyse).errors;
+}
+
+// Version suivante (data/analyses finales/…) avant publication : format
+// Étape 1 et cohérence du score (scripts/publier-relecture.js).
+export function erreursVersionSuivante(fiche) {
+  const erreurs = erreursFormatEtape1(fiche);
+  const notation = fiche?.notation_detaillee;
+  if (notation && typeof notation === "object" && !erreurs.some((e) => e.startsWith("notation_detaillee"))) {
+    erreurs.push(...checkNotationCoherence(notation).map((e) => `score : ${e}`));
+  }
+  return erreurs;
+}
+
 export function slugDepuisChemin(chemin) {
   const slug = path.basename(chemin).replace(/\.json$/i, "");
   if (!SLUG_PATTERN.test(slug)) {
@@ -122,6 +145,7 @@ export function ajouter(chemin, { dataDir = DATA_DIR, build = lancerBuild, log =
     throw new RelectureError(`JSON invalide : ${e.message}`);
   }
   const erreurs = verifierFiche(fiche);
+  if (fiche && typeof fiche === "object") erreurs.push(...erreursFormatEtape1(fiche).map((e) => `format Étape 1 : ${e}`));
   if (erreurs.length) throw new RelectureError(`Fiche refusée :\n- ${erreurs.join("\n- ")}`);
 
   writeFileSync(cible, brut.endsWith("\n") ? brut : brut + "\n");

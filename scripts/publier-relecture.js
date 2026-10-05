@@ -21,13 +21,16 @@
 //         Les autres fichiers modifiés ne sont jamais inclus.
 //
 // Garde-fous : branche main uniquement, copie à jour avec origin/main,
-// bloc archive présent, version suivante présente et JSON valide.
+// bloc archive présent, version suivante présente, JSON valide et au format
+// Étape 1 du pipeline (sections en accordéon, score cohérent), y compris en
+// simulation.
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { createInterface } from "node:readline/promises";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
+import { erreursVersionSuivante } from "./relecture.js";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const USAGE = "Usage : node scripts/publier-relecture.js <slug> [--commentaires | --publier]";
@@ -104,10 +107,18 @@ const fichiers = [source, "public/relectures/index.html"];
 const suivante = archive.version_suivante;
 if (suivante) {
   if (!existsSync(join(ROOT, suivante))) fail(`version suivante introuvable : ${suivante}`);
+  let ficheSuivante;
   try {
-    JSON.parse(readFileSync(join(ROOT, suivante), "utf8"));
+    ficheSuivante = JSON.parse(readFileSync(join(ROOT, suivante), "utf8"));
   } catch {
     fail(`version suivante illisible (JSON invalide) : ${suivante}`);
+  }
+  const erreursSuivante = erreursVersionSuivante(ficheSuivante);
+  if (erreursSuivante.length) {
+    fail(
+      `version suivante non conforme : ${suivante}\n- ${erreursSuivante.join("\n- ")}\n` +
+        "La version suivante doit être au format Étape 1 du pipeline (sections en accordéon { synthese, texte }).",
+    );
   }
   fichiers.push(suivante);
 } else {

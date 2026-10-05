@@ -9,6 +9,12 @@
 // Le slug (nom du fichier sans .json) sert d'identifiant data-fiche/data-view :
 // c'est la clé des commentaires et des chronos en base, il ne doit pas changer.
 //
+// Sections en accordéon : depuis la méthodologie fusionnée (5 octobre 2026),
+// les 13 sections exigées par validateEtape1Structure (scripts/lib/scoring.js)
+// sont des objets { "synthese": "...", "texte": "..." }. La synthèse est
+// affichée en tête de section (<p class="synthese">, toujours visible), puis
+// le texte. Les fiches plus anciennes, en texte simple, s'affichent comme avant.
+//
 // Dans les champs texte, une ligne vide ("\n\n") sépare les paragraphes. Sans
 // ligne vide, le texte est découpé automatiquement en paragraphes de quelques
 // phrases.
@@ -39,7 +45,7 @@
 
 import { readFileSync, writeFileSync, readdirSync } from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { checkNotationCoherence } from "./lib/scoring.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -141,6 +147,26 @@ function ps(text) {
   return paragraphes(text).map((p) => "<p>" + esc(p) + "</p>").join("");
 }
 
+// Section en accordéon { synthese, texte } ou texte simple (fiches antérieures).
+// texte peut être une liste de points (cf. TextOrArray dans scripts/lib/scoring.js).
+function estAccordeon(v) {
+  return v != null && typeof v === "object" && !Array.isArray(v);
+}
+
+function texteDe(v) {
+  const t = estAccordeon(v) ? v.texte : v;
+  return Array.isArray(t) ? t.join("\n\n") : t;
+}
+
+function syntheseHtml(v) {
+  return estAccordeon(v) && v.synthese ? '<p class="synthese">' + esc(v.synthese) + "</p>" : "";
+}
+
+// Synthèse en tête (si accordéon), puis le texte découpé en paragraphes.
+function section(v) {
+  return syntheseHtml(v) + ps(texteDe(v));
+}
+
 // Découpe analyse_par_criteres selon les intitulés « Critère (n/max) : ».
 function decouperCriteres(text) {
   const noms = CRITERES.map((c) => c.nom).join("|");
@@ -232,7 +258,7 @@ function renderCriteres(slug, fiche) {
   }).join("");
 }
 
-function renderVue(slug, fiche) {
+export function renderVue(slug, fiche) {
   const r = fiche.relecture;
   const n = fiche.notation_detaillee;
   const tier = tierOf(n.score_total);
@@ -277,7 +303,7 @@ ${a ? renderArchiveBanner(a) : '<p class="anno-help">Survolez un paragraphe ou s
 
   const score = `<section class="score tier-${tier.cls}" id="${id("score")}" data-comment-target><p class="label">Score Perlimpinpin</p><div class="score-top"><div class="big"><span class="n">${n.score_total}</span><span class="d">/100</span></div><div class="appr"><span class="v">${tier.label}</span></div>${cbtn(id("score"), "Commenter la notation")}</div><p class="f-meta">Analyse réalisée avec Perlimpinpin 1.0 · étape 1 (brouillon) · ${date}</p><p><button class="linkarrow" type="button" data-goto="${id("raisonnement")}">Lire l&#x27;analyse détaillée →</button></p></section>\n`;
 
-  const mesureInitiale = block(id("mesure-initiale"), "Mesure initiale", ps(r.mesure_initiale ?? paragraphes(fiche.mesure_reformulee)[0]));
+  const mesureInitiale = block(id("mesure-initiale"), "Mesure initiale", ps(r.mesure_initiale ?? paragraphes(texteDe(fiche.mesure_reformulee))[0]));
   const objectif = block(id("objectif"), "Objectif visé", ps(mvo.objectif_vise));
 
   const extrait = r.extrait
@@ -289,19 +315,19 @@ ${a ? renderArchiveBanner(a) : '<p class="anno-help">Survolez un paragraphe ou s
     `<dt>Mécanisme proposé</dt><dd>${esc(mvo.mecanisme_propose)}</dd><dt>Lien de cause à effet</dt><dd>${esc(LIENS[mvo.lien_causal] ?? mvo.lien_causal)}</dd></dl>`;
   const raisonnement =
     `<section class="block" id="${id("raisonnement")}">\n  <div class="block-head"><h2>Le raisonnement complet</h2></div>\n  <p class="note">Chaque sous-section se commente séparément. La note découle de la qualification de chaque critère, jamais l'inverse.</p>\n  <div class="stack">` +
-    subBlock(id("mesure-reformulee"), "Mesure reformulée", ps(fiche.mesure_reformulee) + dl + '<p class="mini">Vérification et existant</p>' + ps(fiche.nature_et_existant)) +
-    subBlock(id("programme"), "Mise en contexte dans le programme", ps(fiche.contexte_programme)) +
-    subBlock(id("national"), "Contexte national", ps(fiche.contexte_national)) +
-    subBlock(id("international"), "Contexte international", ps(fiche.contexte_international)) +
+    subBlock(id("mesure-reformulee"), "Mesure reformulée", section(fiche.mesure_reformulee) + dl + '<p class="mini">Vérification et existant</p>' + ps(fiche.nature_et_existant)) +
+    subBlock(id("programme"), "Mise en contexte dans le programme", section(fiche.contexte_programme)) +
+    subBlock(id("national"), "Contexte national", section(fiche.contexte_national)) +
+    subBlock(id("international"), "Contexte international", section(fiche.contexte_international)) +
     `<h3 class="mini" id="${id("criteres")}">Analyse par critères</h3>` +
     renderCriteres(slug, fiche) +
     `</div></section>\n`;
 
-  const longevite = block(id("longevite"), "Longévité des effets", ps(fiche.analyse_longevites));
-  const impact = fiche.impact_temporel_et_sectoriel ? block(id("impact"), "Impact temporel et sectoriel", ps(fiche.impact_temporel_et_sectoriel)) : "";
+  const longevite = block(id("longevite"), "Longévité des effets", section(fiche.analyse_longevites));
+  const impact = fiche.impact_temporel_et_sectoriel ? block(id("impact"), "Impact temporel et sectoriel", section(fiche.impact_temporel_et_sectoriel)) : "";
 
   const certCard = (key, titre) =>
-    `<article class="block-card" id="${id(key)}" data-comment-target><div class="bc-head"><h2>${titre}</h2>${cbtn(id(key))}</div><div class="body">${ps(fiche[key])}</div></article>`;
+    `<article class="block-card" id="${id(key)}" data-comment-target><div class="bc-head"><h2>${titre}</h2>${cbtn(id(key))}</div><div class="body">${section(fiche[key])}</div></article>`;
   const cert =
     '<div class="cert-grid">' +
     certCard("ce_qui_est_etabli", "Ce qui est établi") +
@@ -310,7 +336,7 @@ ${a ? renderArchiveBanner(a) : '<p class="anno-help">Survolez un paragraphe ou s
     certCard("ce_qui_est_inconnu", "Ce qui est inconnu") +
     "</div>\n";
 
-  const angles = block(id("angles"), "Angles morts et effets de bord", ps(fiche.angles_morts));
+  const angles = block(id("angles"), "Angles morts et effets de bord", section(fiche.angles_morts));
 
   const verdict = block(
     id("verdict"),
@@ -323,14 +349,17 @@ ${a ? renderArchiveBanner(a) : '<p class="anno-help">Survolez un paragraphe ou s
 
   const sources = block(id("sources"), "Sources utilisées", `<ol class="src">${(fiche.sources_utilisees ?? []).map(sourceLi).join("")}</ol>`);
 
-  const limites = String(fiche.limites ?? "").includes("\n\n") ? paragraphes(fiche.limites) : phrases(String(fiche.limites ?? ""));
+  const limitesTexte = String(texteDe(fiche.limites) ?? "");
+  const limites = limitesTexte.includes("\n\n") ? paragraphes(limitesTexte) : phrases(limitesTexte);
   const niveau = r.niveau_confiance ?? String(fiche.niveau_de_confiance).split(/[\s.,;:]/)[0];
   const fiabilite = block(
     id("fiabilite"),
     "Fiabilité de l&#x27;analyse",
     `<h3 class="mini">Niveau de confiance</h3><p>${chipConfiance(niveau)}</p>` +
       ps(fiche.niveau_de_confiance) +
-      `<h3 class="mini">Limites identifiées</h3><ul class="plist">` +
+      `<h3 class="mini">Limites identifiées</h3>` +
+      syntheseHtml(fiche.limites) +
+      `<ul class="plist">` +
       limites.map((l) => "<li>" + esc(l) + "</li>").join("") +
       "</ul>",
   );
@@ -451,29 +480,33 @@ function chargerFiches() {
   return fiches.sort((a, b) => b.fiche.relecture.date.localeCompare(a.fiche.relecture.date) || a.slug.localeCompare(b.slug));
 }
 
-const fiches = chargerFiches();
-const brouillons = fiches.filter(({ fiche }) => !fiche.relecture.archive);
-// Archives : les plus récemment archivées d'abord.
-const archives = fiches
-  .filter(({ fiche }) => fiche.relecture.archive)
-  .sort((a, b) => b.fiche.relecture.archive.date.localeCompare(a.fiche.relecture.archive.date) || a.slug.localeCompare(b.slug));
+function main() {
+  const fiches = chargerFiches();
+  const brouillons = fiches.filter(({ fiche }) => !fiche.relecture.archive);
+  // Archives : les plus récemment archivées d'abord.
+  const archives = fiches
+    .filter(({ fiche }) => fiche.relecture.archive)
+    .sort((a, b) => b.fiche.relecture.archive.date.localeCompare(a.fiche.relecture.archive.date) || a.slug.localeCompare(b.slug));
 
-// { slug: { idCommentaire: réponse } }, lu par la page pour afficher chaque réponse sous son commentaire.
-const reponses = Object.fromEntries(
-  archives.map(({ slug, fiche }) => [slug, Object.fromEntries(fiche.relecture.archive.reponses.map((x) => [x.commentaire_id, x.reponse]))]),
-);
-const reponsesJson = JSON.stringify(reponses).replace(/</g, "\\u003c");
+  // { slug: { idCommentaire: réponse } }, lu par la page pour afficher chaque réponse sous son commentaire.
+  const reponses = Object.fromEntries(
+    archives.map(({ slug, fiche }) => [slug, Object.fromEntries(fiche.relecture.archive.reponses.map((x) => [x.commentaire_id, x.reponse]))]),
+  );
+  const reponsesJson = JSON.stringify(reponses).replace(/</g, "\\u003c");
 
-const html = readFileSync(TEMPLATE_PATH, "utf8")
-  .replace("{{FILTRES}}", () => renderFiltres(brouillons))
-  .replace("{{CARTES}}", () => brouillons.map(({ slug, fiche }) => renderCarte(slug, fiche)).join(""))
-  .replace("{{NB_ARCHIVES}}", () => String(archives.length))
-  .replace("{{ARCHIVES}}", () =>
-    archives.length
-      ? archives.map(({ slug, fiche }) => renderCarte(slug, fiche)).join("")
-      : '<p class="cempty">Aucune analyse archivée pour l’instant.</p>',
-  )
-  .replace("{{VUES}}", () => [...brouillons, ...archives].map(({ slug, fiche }) => renderVue(slug, fiche)).join("\n\n\n"))
-  .replace("{{REPONSES}}", () => reponsesJson);
-writeFileSync(OUTPUT_PATH, html);
-console.log(`✓ ${path.relative(ROOT, OUTPUT_PATH)} : ${brouillons.length} brouillon(s) (${brouillons.map((f) => f.slug).join(", ") || "aucun"}), ${archives.length} archivée(s) (${archives.map((f) => f.slug).join(", ") || "aucune"}).`);
+  const html = readFileSync(TEMPLATE_PATH, "utf8")
+    .replace("{{FILTRES}}", () => renderFiltres(brouillons))
+    .replace("{{CARTES}}", () => brouillons.map(({ slug, fiche }) => renderCarte(slug, fiche)).join(""))
+    .replace("{{NB_ARCHIVES}}", () => String(archives.length))
+    .replace("{{ARCHIVES}}", () =>
+      archives.length
+        ? archives.map(({ slug, fiche }) => renderCarte(slug, fiche)).join("")
+        : '<p class="cempty">Aucune analyse archivée pour l’instant.</p>',
+    )
+    .replace("{{VUES}}", () => [...brouillons, ...archives].map(({ slug, fiche }) => renderVue(slug, fiche)).join("\n\n\n"))
+    .replace("{{REPONSES}}", () => reponsesJson);
+  writeFileSync(OUTPUT_PATH, html);
+  console.log(`✓ ${path.relative(ROOT, OUTPUT_PATH)} : ${brouillons.length} brouillon(s) (${brouillons.map((f) => f.slug).join(", ") || "aucun"}), ${archives.length} archivée(s) (${archives.map((f) => f.slug).join(", ") || "aucune"}).`);
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) main();
