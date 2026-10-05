@@ -61,7 +61,7 @@ const host = hoteDe(process.env.DATABASE_URL);
 if (!host) fail("DATABASE_URL illisible.");
 
 console.log(`HelloAsso : ${config.apiBase} ${config.sandbox ? "(SANDBOX)" : "(PRODUCTION)"}`);
-console.log(`Formulaire : ${config.organisation} / ${config.formulaire}`);
+console.log(`Formulaire : ${config.organisation} / ${config.formulaires.join(", ")}`);
 console.log(`Adhésions depuis le ${from.toISOString().slice(0, 10)}`);
 console.log(`Base : ${host}`);
 

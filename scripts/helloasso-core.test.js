@@ -17,7 +17,7 @@ import {
 // Adhésions HelloAsso → comptes Adherent : validation de la commande relue via
 // l'API, nom affiché, idempotence. Ni réseau, ni vraie base.
 
-const CONFIG = { organisation: "perlimpinpin", formulaire: "adhesion-club", sandbox: false };
+const CONFIG = { organisation: "perlimpinpin", formulaires: ["adhesion-club", "adhesion-annuelle"], sandbox: false };
 
 // Commande au format de l'API v5 (GET /orders/{id}, schéma OrderDetail)
 function commande(modifs = {}) {
@@ -39,6 +39,16 @@ test("commande valide : bonne organisation, bon formulaire, paiement autorisé",
   assert.deepEqual(valide(commande()), { valide: true });
   // slugs comparés sans tenir compte de la casse
   assert.equal(valide(commande({ formSlug: "Adhesion-Club", organizationSlug: "PERLIMPINPIN" })).valide, true);
+});
+
+test("plusieurs formulaires : chacun accepté, slug inconnu refusé", () => {
+  assert.equal(valide(commande({ formSlug: "adhesion-annuelle" })).valide, true);
+  assert.equal(valide(commande({ formSlug: "ADHESION-ANNUELLE" })).valide, true);
+  assert.equal(valide(commande({ formSlug: "adhesion-mensuelle" })).raison, "autre formulaire");
+  // un seul formulaire configuré : l'autre est refusé
+  assert.equal(valide(commande({ formSlug: "adhesion-annuelle" }), { formulaires: ["adhesion-club"] }).raison, "autre formulaire");
+  assert.equal(valide(commande(), { formulaires: [] }).valide, false);
+  assert.equal(notificationHorsAdhesion({ formType: "Membership", formSlug: "Adhesion-Annuelle" }, CONFIG), false);
 });
 
 test("mauvais formulaire, mauvais type, autre organisation : refusée", () => {
@@ -114,11 +124,17 @@ test("configuration : fail closed si une variable manque", () => {
     HELLOASSO_API_BASE: "https://api.helloasso-sandbox.com/v5/",
   };
   const config = lireConfigHelloasso(env);
+  assert.deepEqual(config.formulaires, ["adhesion-club"]);
   assert.equal(config.apiBase, "https://api.helloasso-sandbox.com");
   assert.equal(config.sandbox, true);
   assert.equal(lireConfigHelloasso({ ...env, HELLOASSO_API_BASE: "https://api.helloasso.com" }).sandbox, false);
   assert.equal(lireConfigHelloasso({ ...env, HELLOASSO_CLIENT_SECRET: "" }), null);
   assert.equal(lireConfigHelloasso({ ...env, HELLOASSO_API_BASE: "http://api.helloasso.com" }), null);
+  // liste de formulaires séparés par des virgules (espaces et vides ignorés)
+  const deux = lireConfigHelloasso({ ...env, HELLOASSO_MEMBERSHIP_FORM_SLUG: " mensuel-slug , annuel-slug ," });
+  assert.deepEqual(deux.formulaires, ["mensuel-slug", "annuel-slug"]);
+  assert.equal(lireConfigHelloasso({ ...env, HELLOASSO_MEMBERSHIP_FORM_SLUG: " , ," }), null);
+  assert.equal(lireConfigHelloasso({ ...env, HELLOASSO_MEMBERSHIP_FORM_SLUG: undefined }), null);
   assert.equal(lireTokenWebhook({ HELLOASSO_WEBHOOK_TOKEN: "court" }), null);
   assert.equal(lireTokenWebhook({ HELLOASSO_WEBHOOK_TOKEN: "x".repeat(32) }), "x".repeat(32));
 });

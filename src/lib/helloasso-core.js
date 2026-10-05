@@ -23,6 +23,7 @@ const ETATS_ARTICLE_ANNULE = new Set(["Canceled", "Refused", "Deleted", "Abandon
 
 const egauxSansCasse = (a, b) =>
   typeof a === "string" && typeof b === "string" && a.trim().toLowerCase() === b.trim().toLowerCase();
+const formulaireConnu = (slug, formulaires) => Array.isArray(formulaires) && formulaires.some((f) => egauxSansCasse(slug, f));
 
 // Comparaison à temps constant (hachés d'abord : longueurs égales, et la
 // longueur du secret ne se devine pas au temps de réponse).
@@ -33,17 +34,21 @@ export function secretsEgaux(recu, attendu) {
 }
 
 // Configuration lue dans l'environnement, ou null si un réglage manque
-// (les routes répondent alors 503 : fail closed).
+// (les routes répondent alors 503 : fail closed). HELLOASSO_MEMBERSHIP_FORM_SLUG
+// peut lister plusieurs formulaires séparés par des virgules (mensuel, annuel…).
 export function lireConfigHelloasso(env = process.env) {
   const config = {
     clientId: env.HELLOASSO_CLIENT_ID?.trim(),
     clientSecret: env.HELLOASSO_CLIENT_SECRET?.trim(),
     organisation: env.HELLOASSO_ORGANIZATION_SLUG?.trim(),
-    formulaire: env.HELLOASSO_MEMBERSHIP_FORM_SLUG?.trim(),
+    formulaires: (env.HELLOASSO_MEMBERSHIP_FORM_SLUG ?? "")
+      .split(",")
+      .map((f) => f.trim())
+      .filter(Boolean),
     // Avec ou sans « /v5 » final : on garde la racine (le jeton est sous /oauth2)
     apiBase: env.HELLOASSO_API_BASE?.trim().replace(/\/+$/, "").replace(/\/v5$/i, ""),
   };
-  if (Object.values(config).some((v) => !v)) return null;
+  if (Object.values(config).some((v) => !v) || config.formulaires.length === 0) return null;
   try {
     if (new URL(config.apiBase).protocol !== "https:") return null;
   } catch {
@@ -87,16 +92,16 @@ export function lireNotification(corps) {
 // de relire l'API). Les champs absents ne font rien écarter : la relecture tranchera.
 export function notificationHorsAdhesion(notif, config) {
   if (notif.formType && notif.formType !== "Membership") return true;
-  if (notif.formSlug && !egauxSansCasse(notif.formSlug, config.formulaire)) return true;
+  if (notif.formSlug && !formulaireConnu(notif.formSlug, config.formulaires)) return true;
   return false;
 }
 
 // { valide: true } ou { valide: false, raison } pour une commande relue via l'API.
-export function adhesionValide(order, { organisation, formulaire, accepterPreprod = false } = {}) {
+export function adhesionValide(order, { organisation, formulaires, accepterPreprod = false } = {}) {
   if (!order || !Number.isSafeInteger(order.id)) return { valide: false, raison: "commande illisible" };
   if (!egauxSansCasse(order.organizationSlug, organisation)) return { valide: false, raison: "autre organisation" };
   if (order.formType !== "Membership") return { valide: false, raison: "pas une adhésion" };
-  if (!egauxSansCasse(order.formSlug, formulaire)) return { valide: false, raison: "autre formulaire" };
+  if (!formulaireConnu(order.formSlug, formulaires)) return { valide: false, raison: "autre formulaire" };
 
   const articles = Array.isArray(order.items) ? order.items : [];
   const adhesions = articles.filter((a) => a?.type === "Membership" && !ETATS_ARTICLE_ANNULE.has(a?.state));
@@ -152,7 +157,7 @@ export function extraireAdherent(order) {
 export async function enregistrerAdhesion({ prisma, order, config, simulation = false }) {
   const verdict = adhesionValide(order, {
     organisation: config.organisation,
-    formulaire: config.formulaire,
+    formulaires: config.formulaires,
     accepterPreprod: config.sandbox,
   });
   if (!verdict.valide) return { resultat: "ignoree", raison: verdict.raison, orderId: order?.id ?? null };

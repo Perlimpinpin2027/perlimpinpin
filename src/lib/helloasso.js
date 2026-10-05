@@ -1,5 +1,5 @@
 // Client de l'API HelloAsso v5 (lecture seule) : jeton OAuth2, lecture d'une
-// commande, liste des commandes du formulaire d'adhésion. Utilisé par les routes
+// commande, liste des commandes des formulaires d'adhésion. Utilisé par les routes
 // /api/helloasso/* et par scripts/helloasso-sync.js (imports relatifs, sans « @/ »).
 // Aucun secret ni e-mail n'est journalisé ici.
 //
@@ -118,22 +118,30 @@ export async function getOrder(config, orderId) {
   return lire(config, `/orders/${orderId}`, `commande ${orderId}`);
 }
 
-// Toutes les commandes du formulaire d'adhésion depuis `from` (Date), toutes pages.
+// Toutes les commandes des formulaires d'adhésion depuis `from` (Date), toutes pages.
 export async function listMembershipOrders(config, { from }) {
+  const commandes = [];
+  for (const formulaire of config.formulaires) {
+    commandes.push(...(await listerFormulaire(config, formulaire, from)));
+  }
+  return commandes;
+}
+
+async function listerFormulaire(config, formulaire, from) {
   const base =
     `/organizations/${encodeURIComponent(config.organisation)}` +
-    `/forms/Membership/${encodeURIComponent(config.formulaire)}/orders`;
+    `/forms/Membership/${encodeURIComponent(formulaire)}/orders`;
   const commandes = [];
   let continuationToken = null;
   for (let page = 1; page <= PAGES_MAX; page += 1) {
     const params = new URLSearchParams({ from: from.toISOString(), pageSize: String(TAILLE_PAGE), sortOrder: "Asc" });
     if (continuationToken) params.set("continuationToken", continuationToken);
-    const json = await lire(config, `${base}?${params}`, `adhésions (page ${page})`);
+    const json = await lire(config, `${base}?${params}`, `adhésions ${formulaire} (page ${page})`);
     const donnees = Array.isArray(json.data) ? json.data : [];
     commandes.push(...donnees);
     const suivant = json.pagination?.continuationToken;
     if (donnees.length < TAILLE_PAGE || !suivant || suivant === continuationToken) return commandes;
     continuationToken = suivant;
   }
-  throw new HelloassoError(`plus de ${PAGES_MAX} pages d'adhésions : réduire la période`, { passagere: false });
+  throw new HelloassoError(`plus de ${PAGES_MAX} pages d'adhésions (${formulaire}) : réduire la période`, { passagere: false });
 }
