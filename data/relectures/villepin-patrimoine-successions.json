@@ -1,0 +1,140 @@
+{
+  "mesure_reformulee": {
+    "synthese": "Villepin veut un impôt unique sur toute la fortune, des droits de succession renforcés et des donations totalement exonérées.",
+    "texte": "Dans son « big bang » fiscal présenté fin août 2026, Dominique de Villepin propose « un impôt unique sur le patrimoine, incluant l'ensemble des sources de la fortune », et « une imposition unique renforcée des successions, en contrepartie d'une défiscalisation intégrale des transmissions de son vivant ». Il ajoute que cet impôt sur le patrimoine doit rapporter davantage que les dispositifs actuels.\n\nLa mesure combine donc trois leviers : **taxer à nouveau l'ensemble de la fortune** (et non plus seulement l'immobilier, comme l'actuel impôt sur la fortune immobilière), **alourdir les droits payés au décès**, et **supprimer tout impôt sur les donations faites de son vivant**. **Le candidat ne donne ni taux, ni seuil, ni assiette précise, ni chiffrage.** L'analyse retient l'interprétation littérale : toute donation, quel que soit son montant, serait exonérée."
+  },
+  "mesure_vers_objectif": {
+    "objectif_court": "Taxer plus justement le patrimoine et l'héritage",
+    "categorie_objectif": "Fiscalité et pouvoir d'achat",
+    "objectif_vise": "Réduire les inégalités de patrimoine et faire contribuer davantage les grandes fortunes, tout en encourageant la transmission du patrimoine de son vivant.",
+    "mecanisme_propose": "Un impôt annuel sur l'ensemble du patrimoine, des droits de succession plus lourds au décès, et l'exonération totale des donations.",
+    "lien_causal": "indirect"
+  },
+  "nature_et_existant": "Mesure fiscale, qui relève de la loi de finances. Aucun des trois leviers n'est inédit. Un impôt sur l'ensemble de la fortune a existé jusqu'en 2017 (l'ISF, qui rapportait 4,2 milliards d'euros cette année-là) ; il a été remplacé en 2018 par l'impôt sur la fortune immobilière (IFI), limité à l'immobilier, qui a rapporté 1,3 milliard net sa première année. Les droits de succession et de donation (« droits de mutation à titre gratuit ») ont rapporté 20,8 milliards d'euros en 2023, dont 16,6 milliards pour les seules successions ; les donations représentent donc environ 4,2 milliards (calcul de l'analyste par différence). Les donations bénéficient déjà d'un régime favorable : abattement de 100 000 euros par parent et par enfant, renouvelable tous les quinze ans. La mesure est donc à la fois un retour (l'ISF), un durcissement (successions) et une extension radicale d'un avantage existant (donations).",
+  "contexte_programme": {
+    "synthese": "Un volet d'un « big bang » fiscal qui vise neuf grands impôts et 3 % de déficit.",
+    "texte": "La proposition fait partie d'un programme plus large, présenté comme une « nouvelle abolition des privilèges » : réduction du système à **neuf grands impôts**, suppression des niches fiscales et sociales, CSG à taux unique avec transfert de plus de 200 milliards de cotisations, et **retour du déficit public à 3 % du PIB d'ici la fin du quinquennat**. Le candidat dit vouloir que l'impôt sur le patrimoine rapporte plus qu'aujourd'hui, sans en donner le montant.\n\nSur le bilan passé, deux éléments comptent. **Comme Premier ministre, Dominique de Villepin a fait voter en 2006 le bouclier fiscal à 60 %**, qui plafonnait notamment l'ISF : c'est l'inverse d'un impôt sur la fortune renforcé. La même loi de finances pour 2006 a **réduit de dix à six ans le délai de rappel des donations**, ce qui allégeait l'impôt sur les donations répétées : la défiscalisation des donations prolonge donc une orientation ancienne. En 2025, il s'est dit favorable à « repenser et adapter des mécanismes comme l'ISF ou la taxe Zucman », ce qui montre une évolution sur la fortune, sans qu'il revienne explicitement sur le bouclier fiscal."
+  },
+  "contexte_national": {
+    "synthese": "L'héritage pèse de plus en plus lourd, et les donations servent déjà à réduire l'impôt sur les transmissions.",
+    "texte": "**Le poids de l'héritage a fortement augmenté** : selon le Conseil d'analyse économique (CAE, 2021), le patrimoine hérité représente environ 60 % du patrimoine total, contre 35 % dans les années 1970, et le flux annuel de transmissions dépasse 15 % du PIB. Les transmissions sont très concentrées : la moitié des Français hérite de moins de 70 000 euros sur toute sa vie, quand le 1 % le mieux doté reçoit en moyenne plus de 4,2 millions.\n\nLe même rapport montre que **l'impôt sur les transmissions est déjà largement contourné par les ménages les plus aisés**, grâce à l'assurance-vie (4 à 5 milliards d'euros d'avantage fiscal estimé), aux pactes Dutreil sur les entreprises (2 à 3 milliards), aux démembrements de propriété et aux donations anticipées. Le CAE recommande l'inverse d'une exonération des donations : **taxer l'ensemble de ce qu'une personne reçoit au cours de sa vie, donations comprises**, en élargissant l'assiette et en baissant les taux pour la majorité.\n\nSur la fortune, le comité d'évaluation de France Stratégie et le Sénat ont documenté le passage de l'ISF à l'IFI : coût net d'environ 2,9 milliards en 2018 et réallocations des patrimoines de l'immobilier vers les actifs financiers. Sur le plan constitutionnel, un impôt sur la fortune est possible, mais le Conseil constitutionnel exige qu'il tienne compte des capacités contributives et ne devienne pas confiscatoire (décisions de 2012)."
+  },
+  "contexte_international": {
+    "synthese": "Au Royaume-Uni, l'exonération des donations anticipées est la principale voie d'évitement de l'impôt sur les successions.",
+    "texte": "**Le Royaume-Uni offre le précédent le plus proche** : les donations y sont exonérées si le donateur survit sept ans. L'Institute for Fiscal Studies (Advani et Sturrock, 2023) montre que ce régime permet aux ménages disposant d'un patrimoine liquide important de sortir leurs biens de l'assiette, ce qui rend l'impôt **régressif au sommet** ; le flux annuel de donations y atteint environ 20 % du flux d'héritages. L'IFS recommande d'allonger le délai, de supprimer la réduction progressive ou de taxer les donations sur toute la vie. La proposition française irait plus loin que le Royaume-Uni : **exonération immédiate, sans condition de délai**.\n\nTransposabilité : le précédent britannique est partiel (délai de sept ans, autres exonérations), mais il porte exactement sur le mécanisme en cause, l'écart de traitement entre donation et succession. Sur l'impôt sur la fortune, la plupart des pays de l'OCDE l'ont supprimé ; seuls quelques-uns le conservent (Suisse, Norvège, Espagne), ce que la fiche ne détaille pas faute de source consultée."
+  },
+  "impact_environnement": null,
+  "analyse_par_criteres": "Opérationnalité & Moyens (19/30) : la mesure est faisable, mais son bilan budgétaire est très incertain. Le volet juridique tient (8/10) : réinstaurer un impôt sur la fortune, relever les droits de succession ou exonérer les donations relève d'une loi de finances ordinaire, sous réserve de ne pas créer une charge confiscatoire, ce que le Conseil constitutionnel contrôle depuis 2012 ; sans taux annoncés, ce risque ne peut pas être évalué précisément. Le volet budgétaire est faible (3/10) : les effets vont en sens opposé. Selon notre estimation, un retour à un impôt sur toute la fortune pourrait rapporter de l'ordre de 2 à 3 milliards de plus que l'IFI (l'ISF rapportait 4,2 milliards en 2017), alors que l'exonération des donations ferait perdre d'emblée environ 4,2 milliards, avant même tout changement de comportement. Si les grandes fortunes donnent de leur vivant pour échapper aux droits de succession, une partie des 16,6 milliards de droits de succession serait aussi menacée. Le sens net ne peut pas être tranché, d'où 3/10 et non FRAGILE : l'incertitude est réelle, pas un montant établi et défavorable. Les moyens humains existent (8/10) : l'administration fiscale a géré l'ISF jusqu'en 2017 et gère déjà les donations.\n\nEfficacité (11/30, FRAGILE) : le volet sur la fortune peut servir l'objectif, mais le volet sur les héritages se neutralise lui-même. Renforcer les droits au décès tout en exonérant totalement les donations crée une voie de contournement évidente : les ménages qui ont un gros patrimoine et les moyens de s'organiser donneront avant leur décès. Ce sont précisément les patrimoines que la mesure veut faire contribuer. Le précédent britannique (IFS, 2023) montre que l'exonération des donations, même conditionnée à sept ans de survie, rend l'impôt sur les successions régressif au sommet. L'impôt « renforcé » pèserait surtout sur ceux qui n'ont pas anticipé : décès imprévus, patrimoines modestes ou peu liquides comme la résidence principale. Le point positif est réel : accélérer les transmissions vers des héritiers plus jeunes. Mais le CAE recommande d'atteindre cet objectif en taxant tout ce qui est reçu sur la vie, pas en exonérant les donations. D'où 11/30 : le volet fortune garde un effet plausible, le volet héritage est en grande partie annulé par une réaction prévisible.\n\nEffets rebonds & Externalités (8/20, INCERTAIN) : l'effet secondaire principal est un report de la charge fiscale vers les héritages non planifiés, souvent plus modestes, ce qui va à l'encontre de l'égalité devant l'impôt. S'y ajoutent les risques déjà observés avec l'ISF : départs de contribuables et réallocation des patrimoines, dont l'ampleur dépend de taux non connus. Sur la dette, le programme vise 3 % de déficit mais ne chiffre pas la perte liée aux donations. D'où 8/20 : l'effet régressif est documenté par raisonnement et par le précédent britannique, mais son ampleur dépend des paramètres non publiés.\n\nDegré de préparation (2/10, FRAGILE) : la mesure tient en deux phrases, sans taux, seuil, assiette, traitement des biens professionnels ni chiffrage. D'où 2/10.\n\nAlignement & Logique globale (5/10, INCERTAIN) : la cohérence est partielle. L'exonération des donations prolonge l'allègement voté par son gouvernement en 2006 (rappel fiscal ramené de dix à six ans). Mais le bouclier fiscal créé la même année plafonnait l'ISF, à rebours d'un impôt sur la fortune renforcé ; le candidat a évolué depuis (favorable en 2025 à « repenser » l'ISF), sans revenir explicitement sur ce choix. Surtout, exonérer les donations coûte des recettes dans un programme qui vise 3 % de déficit et se présente comme une « abolition des privilèges », alors que ce sont les plus aisés qui peuvent le plus donner de leur vivant. D'où 5/10.",
+  "analyse_longevites": {
+    "synthese": "La perte sur les donations serait immédiate, l'érosion des droits de succession progressive à mesure que les familles s'adaptent.",
+    "texte": "À court terme (0 à 2 ans), l'exonération des donations ferait **perdre immédiatement environ 4,2 milliards d'euros** de droits, et déclencherait probablement une vague de donations anticipées. L'impôt sur la fortune rapporterait dès la première année, selon des paramètres inconnus. À moyen terme (2 à 7 ans), **les grandes fortunes auraient le temps de transmettre de leur vivant**, ce qui réduirait la base des droits de succession que la mesure veut renforcer. À long terme (plus de 7 ans), l'impôt sur les successions porterait surtout sur les transmissions non anticipées, tandis que les héritiers recevraient plus tôt, ce qui peut favoriser l'installation des jeunes générations."
+  },
+  "impact_temporel_et_sectoriel": {
+    "synthese": "Effets limités sur l'inflation et les banques, mais des patrimoines déplacés et une consommation des jeunes ménages possiblement soutenue.",
+    "texte": "Inflation et pouvoir d'achat : **aucun effet direct identifiable** sur les prix. Consommation : des donations plus précoces pourraient soutenir l'achat de logement ou la consommation de ménages plus jeunes, effet plausible mais non chiffré. Stabilité bancaire : pas d'effet attendu, hormis une réallocation des placements (assurance-vie, actifs financiers) selon l'assiette retenue pour l'impôt sur la fortune, comme observé lors du passage de l'ISF à l'IFI."
+  },
+  "ce_qui_est_etabli": {
+    "synthese": "Les montants en jeu, la concentration de l'héritage et le contournement par les donations sont documentés.",
+    "texte": "Les droits de succession et de donation ont rapporté **20,8 milliards d'euros en 2023, dont 16,6 milliards pour les successions**. L'ISF rapportait 4,2 milliards en 2017, l'IFI 1,3 milliard net en 2018. Le patrimoine hérité représente environ 60 % du patrimoine total (CAE, 2021). Au Royaume-Uni, **l'exonération des donations permet aux plus aisés de réduire leurs droits de succession** (IFS, 2023). Le candidat n'a publié ni taux ni chiffrage."
+  },
+  "ce_qui_est_probable": {
+    "synthese": "Les grandes fortunes transmettraient de leur vivant, vidant en partie l'impôt renforcé sur les successions.",
+    "texte": "Au vu du précédent britannique et du raisonnement économique, **les ménages les plus aisés anticiperaient massivement leurs transmissions** pour échapper aux droits de succession renforcés. L'impôt au décès pèserait alors surtout sur les transmissions non préparées. Le bilan budgétaire net de la mesure serait probablement inférieur à ce qu'annonce le candidat."
+  },
+  "ce_qui_est_discutable": {
+    "synthese": "L'intérêt d'accélérer les transmissions vers les jeunes est réel, mais l'exonération totale n'est pas le seul moyen.",
+    "texte": "On peut défendre que des donations plus précoces sont **utiles économiquement**, en aidant des héritiers plus jeunes à investir ou se loger. C'est sans doute l'intention du candidat. Mais le CAE propose d'atteindre cet objectif autrement, en taxant de la même façon tout ce qui est reçu sur une vie et en baissant les taux pour la majorité. Le rendement d'un impôt sur toute la fortune dépend aussi fortement de son assiette (biens professionnels inclus ou non) et des départs de contribuables, dont l'ampleur fait débat."
+  },
+  "ce_qui_est_inconnu": {
+    "synthese": "Ni taux, ni seuils, ni assiette, ni rendement attendu : l'essentiel des paramètres reste à définir.",
+    "texte": "On ignore **le seuil et les taux** de l'impôt sur le patrimoine, s'il inclut les biens professionnels, la résidence principale ou l'assurance-vie, **les nouveaux taux des droits de succession**, et si l'exonération des donations serait plafonnée ou soumise à un délai. On ignore aussi comment cet impôt s'articulerait avec la taxe foncière et le plafonnement exigé par le juge constitutionnel. Sources insuffisantes pour trancher sur le rendement net."
+  },
+  "angles_morts": {
+    "synthese": "La faille de l'exonération des donations, son coût et ses perdants ne sont pas traités par la proposition.",
+    "texte": "**La proposition ne prévoit aucune règle anti-contournement** (délai de survie, rappel des donations au décès), alors que c'est le point qui décide de son efficacité. **Les perdants** sont les familles qui n'ont pas pu ou pas su anticiper, souvent avec un patrimoine peu liquide. **Le coût de l'exonération des donations** n'apparaît pas dans un programme qui vise 3 % de déficit. Des alternatives mieux documentées existent pour le même objectif : taxation des héritages reçus sur la vie (CAE), suppression des niches comme l'assurance-vie ou le pacte Dutreil. Test de symétrie : la même analyse s'appliquerait à toute mesure, de droite comme de gauche, qui alourdit un impôt tout en ouvrant une voie d'exonération sur le même patrimoine."
+  },
+  "notation_detaillee": {
+    "operationnalite_juridique": 8,
+    "qualification_juridique": "SOLIDE",
+    "operationnalite_budgetaire": 3,
+    "qualification_budgetaire": "INCERTAIN",
+    "operationnalite_moyens_humains": 8,
+    "qualification_moyens_humains": "SOLIDE",
+    "operationnalite_moyens_total": 19,
+    "plafond_applique": false,
+    "plafond_declencheur": null,
+    "efficacite": 11,
+    "qualification_efficacite": "FRAGILE",
+    "effets_rebonds_externalites": 8,
+    "qualification_effets_rebonds": "INCERTAIN",
+    "degre_preparation": 2,
+    "qualification_preparation": "FRAGILE",
+    "alignement_logique": 5,
+    "qualification_alignement": "INCERTAIN",
+    "score_total": 45,
+    "appreciation": "partiellement fondé"
+  },
+  "verdict_final": "Ce qui tient : la mesure est juridiquement faisable, l'administration sait gérer un impôt sur toute la fortune, et elle répond à un constat établi, le poids croissant et très concentré de l'héritage.\n\nCe qui ne tient pas : alourdir les droits de succession tout en exonérant totalement les donations ouvre une porte de sortie que les plus grandes fortunes emprunteront, comme le montre le précédent britannique. L'impôt renforcé pèserait alors surtout sur ceux qui n'ont pas anticipé, et l'exonération coûterait d'emblée environ 4 milliards d'euros. Ce qui reste incertain : le rendement réel, faute de taux et de seuils. L'analyse retient une exonération des donations sans plafond ni délai, conformément à la formulation du candidat.",
+  "sources_utilisees": [
+    "LCP, « Présidentielle 2027 : Dominique Villepin veut une nouvelle abolition des privilèges et un big bang fiscal », 28 août 2026 : https://lcp.fr/actualites/presidentielle-2027-dominique-villepin-veut-une-nouvelle-abolition-des-privileges-et-un",
+    "MoneyVox, « Présidentielle 2027 : pour sortir d'un système féodal, Villepin propose un big bang fiscal » : https://www.moneyvox.fr/impot/actualites/110169/presidentielle-2027-pour-sortir-un-systeme-feodal-villepin-propose-un-big-bang-fiscal",
+    "MonVote2027, fiche Dominique de Villepin (citations de l'article « Big Bang : la règle républicaine », La France humaniste, et du JDD 2025) : https://monvote2027.fr/candidat/devillepin",
+    "Sénat, exposé des motifs de la proposition de loi n° 190 (2025-2026), chiffres DMTG 2023 et citation de la Cour des comptes 2024 : https://www.senat.fr/leg/exposes-des-motifs/ppl25-190-expose.html",
+    "Conseil d'analyse économique, note n° 69, « Repenser l'héritage », décembre 2021 : https://cae-eco.fr/static/pdf/cae-note069.pdf",
+    "Sénat, rapport n° 42 (2019-2020), transformation de l'ISF en IFI : premier bilan : https://www.senat.fr/rap/r19-042-1/r19-042-15.html",
+    "Institute for Fiscal Studies, Advani et Sturrock, « Reforming inheritance tax », Green Budget 2023 : https://ifs.org.uk/publications/reforming-inheritance-tax",
+    "BOFiP archives, 7 G-4-06 du 27 avril 2006 (loi de finances pour 2006, rappel des donations ramené de dix à six ans) : https://bofip-archives.impots.gouv.fr/bofip/21939-AIDA.html/identifiant=7G-4-06-20060427",
+    "Wikipédia, « Bouclier fiscal » (création par la loi de finances pour 2006, gouvernement Villepin) : https://fr.wikipedia.org/wiki/Bouclier_fiscal",
+    "Études fiscales internationales, contrôle du caractère confiscatoire par le Conseil constitutionnel (décisions 2012-654 DC et 2012-662 DC) : https://www.etudes-fiscales-internationales.com/apps/m/prelevements-obligatoires-confiscatoires-le-controle-du-cons.html",
+    "Congrès des notaires 2026, « La taxation des donations » (abattements, rappel fiscal de 15 ans) : https://www.rapport-congresdesnotaires.fr/2026-rapport-du-122e-congres/la-taxation-des-donations"
+  ],
+  "niveau_de_confiance": "Moyen. Élevé sur les montants en jeu et sur le mécanisme de contournement, documenté par le précédent britannique et le CAE. Faible sur le rendement net, faute de taux, de seuils et d'assiette publiés par le candidat. La citation exacte n'a pas pu être vérifiée sur le document original du parti.",
+  "limites": {
+    "synthese": "Sans paramètres chiffrés, l'analyse retient l'interprétation littérale d'une exonération totale des donations.",
+    "texte": "**Le candidat n'ayant publié ni taux ni seuils, l'analyse retient une exonération des donations sans plafond ni délai**, conformément à sa formulation (« défiscalisation intégrale »). Si un plafond ou un délai de survie était ajouté, le jugement sur l'efficacité changerait. Le texte original du parti n'a pas pu être consulté directement : les citations proviennent de reprises de presse. Le document de référence des objectifs par domaine n'était pas disponible ; l'efficacité a été jugée à l'aune de l'égalité devant l'impôt en fonction des facultés contributives (article 13 de la Déclaration de 1789), dont l'ancrage pour la fiscalité reste à vérifier. Les estimations budgétaires sont celles de l'analyste, en ordre de grandeur."
+  },
+  "resume_court": "Dominique de Villepin propose un impôt unique sur toute la fortune, des droits de succession renforcés et l'exonération totale des donations faites de son vivant. Il veut répondre au poids croissant et très concentré de l'héritage, et faire contribuer davantage les grandes fortunes.\n\nLe volet fortune est faisable, mais le volet héritage se contredit : exonérer les donations permet aux plus aisés d'éviter les droits de succession renforcés en donnant avant leur décès. L'analyse retient une exonération sans plafond ni délai, faute de précision du candidat. Note : 45/100.",
+  "phrase_teasing": "Et si tout le monde donnait avant de mourir ?",
+  "relecture": {
+    "titre": "Taxer la fortune, exonérer les donations : la porte de sortie",
+    "candidat": "Dominique de Villepin",
+    "parti": "La France humaniste",
+    "theme": "Fiscalité et pouvoir d'achat",
+    "date": "2026-10-06",
+    "version": 1,
+    "mesure_initiale": "Dominique de Villepin propose un impôt unique sur le patrimoine incluant l'ensemble des sources de la fortune, et une imposition unique renforcée des successions, en contrepartie d'une défiscalisation intégrale des transmissions faites de son vivant.",
+    "extrait": {
+      "citation": "« Une imposition unique renforcée des successions, en contrepartie d'une défiscalisation intégrale des transmissions de son vivant »",
+      "source": "Dominique de Villepin, « Big Bang : la règle républicaine », La France humaniste, repris par LCP (28 août 2026) et MonVote2027 · Non vérifié sur le document original"
+    },
+    "verdict_tient": "la mesure est juridiquement faisable, l'administration a déjà géré un impôt sur toute la fortune, et elle répond à un constat établi, le poids croissant et très concentré de l'héritage.",
+    "verdict_flou": "exonérer totalement les donations ouvre une porte de sortie aux plus grandes fortunes, qui pourront donner avant leur décès et échapper aux droits renforcés. L'exonération coûterait d'emblée environ 4 milliards, et aucun taux ni seuil n'est publié.",
+    "niveau_confiance": "Moyen",
+    "questions": [
+      {
+        "titre": "Citation et interprétation retenue",
+        "texte": "Le texte original du parti (« Big Bang : la règle républicaine ») n'a pas pu être consulté directement. La fiche retient une exonération des donations sans plafond ni délai. Quelqu'un dispose-t-il du document complet, ou d'une précision du candidat (plafond, délai de survie, rappel au décès) ?"
+      },
+      {
+        "titre": "Efficacité notée 11/30 : le contournement par les donations",
+        "texte": "La note FRAGILE repose sur un raisonnement : avec des donations exonérées et des successions plus taxées, les grandes fortunes donneront de leur vivant. L'appui principal est le précédent britannique (IFS, 2023), où l'exonération après sept ans rend l'impôt régressif au sommet. Le comité juge-t-il ce raisonnement assez solide pour une note FRAGILE, ou l'effet positif d'une transmission plus précoce vers les jeunes mérite-t-il plus de poids ?"
+      },
+      {
+        "titre": "Faisabilité budgétaire notée 3/10",
+        "texte": "Selon notre estimation : environ +2 à 3 milliards pour l'impôt sur toute la fortune (par rapport à l'IFI), environ -4,2 milliards de droits de donation perdus, et une érosion incertaine des 16,6 milliards de droits de succession. Ces ordres de grandeur paraissent-ils raisonnables au comité, et connaît-il une source plus récente sur le rendement de l'IFI ?"
+      },
+      {
+        "titre": "Alignement noté 5/10 : le bouclier fiscal de 2006",
+        "texte": "La fiche relève une tension entre la proposition et le bouclier fiscal créé par le gouvernement Villepin en 2006, qui plafonnait l'ISF. Faut-il en tenir compte vingt ans après, alors que le candidat s'est dit favorable en 2025 à « repenser » l'ISF ?"
+      },
+      {
+        "titre": "Objectif de référence",
+        "texte": "Le document de référence des objectifs par domaine n'était pas disponible. L'efficacité a été jugée à l'aune de l'égalité devant l'impôt selon les facultés contributives (article 13 de la Déclaration de 1789). Ce repère convient-il ?"
+      },
+      {
+        "titre": "Titre et teasing provisoires",
+        "texte": "Titre court proposé : « Taxer la fortune, pas les donations ». Teasing : « Et si tout le monde donnait avant de mourir ? ». Faut-il les formuler autrement ?"
+      }
+    ]
+  }
+}
