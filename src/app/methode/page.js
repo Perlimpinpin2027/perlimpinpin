@@ -392,15 +392,19 @@ export default async function MethodePage() {
               {t["gardefous.titre"]}
             </h2>
 
-            <div className="mt-6 grid grid-cols-1 gap-8 sm:grid-cols-3">
+            <div className="mt-6 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
               {guardrails.map((item, index) => (
                 <div
                   key={item.id}
-                  className={
-                    index > 0
-                      ? "flex flex-col gap-3 sm:border-l sm:border-zinc-200 sm:pl-6"
-                      : "flex flex-col gap-3"
-                  }
+                  // Séparateur vertical sauf sur la 1re carte de chaque ligne :
+                  // 2 colonnes (sm) → cartes 2 et 4 ; 4 colonnes (lg) → cartes 2, 3 et 4.
+                  className={[
+                    "flex flex-col gap-3",
+                    index % 2 === 1 && "sm:border-l sm:border-zinc-200 sm:pl-6",
+                    index % 4 === 2 && "lg:border-l lg:border-zinc-200 lg:pl-6",
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
                 >
                   <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-zinc-100 text-zinc-600">
                     <svg
