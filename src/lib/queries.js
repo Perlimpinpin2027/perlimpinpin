@@ -391,6 +391,15 @@ export async function getAllCandidats() {
   }));
 }
 
+// Moyenne des scores des fiches publiées d'un candidat, arrondie à l'entier
+// (null sans fiche). Partagée par la grille /candidats et la page
+// /candidats/[id] : le score affiché doit être identique aux deux endroits.
+function moyenneArrondie(scores) {
+  return scores.length
+    ? Math.round(scores.reduce((total, score) => total + score, 0) / scores.length)
+    : null;
+}
+
 // Scores des candidats pour les cartes /candidats, indexés par nom complet
 // ("Marine Tondelier") : moyenne des scores de leurs fiches publiées,
 // arrondie à l'entier (null sans fiche publiée), et nombre de fiches.
@@ -416,27 +425,61 @@ export async function getScoresCandidats() {
           id: candidat.id,
           photoUrl: candidat.photoUrl,
           nombreFiches: scores.length,
-          scoreMoyen: scores.length
-            ? Math.round(scores.reduce((total, score) => total + score, 0) / scores.length)
-            : null,
+          scoreMoyen: moyenneArrondie(scores),
         },
       ];
     }),
   );
 }
 
-// Détail d'un candidat pour sa fiche /candidats/[id].
-export async function getCandidatDetail(id) {
-  const candidat = await prisma.candidat.findUnique({ where: { id } });
+// Page /candidats/[id] : le candidat, son score moyen (même calcul que la
+// grille) et ses déclarations publiées au format des cartes de /declarations,
+// triées par score décroissant. Deux requêtes en parallèle : le candidat avec
+// ses analyses publiées, et le rang chronologique global "ANALYSE_XXX" (même
+// calcul que getPublishedDeclarations). null si le candidat n'existe pas.
+export async function getCandidatAvecDeclarations(id) {
+  const [candidat, rankRows] = await Promise.all([
+    prisma.candidat.findUnique({
+      where: { id },
+      include: {
+        propositions: { include: { analyses: { where: { statut: "publie" } } } },
+      },
+    }),
+    prisma.$queryRaw`
+      SELECT id, ROW_NUMBER() OVER (ORDER BY "createdAt" ASC) AS rang
+      FROM "Analyse"
+      WHERE statut = 'publie'
+    `,
+  ]);
 
   if (!candidat) return null;
+
+  const rankById = new Map(rankRows.map((row) => [Number(row.id), Number(row.rang)]));
+
+  const declarations = candidat.propositions
+    .flatMap((proposition) =>
+      proposition.analyses.map((analyse) => ({
+        id: proposition.id,
+        analyseId: analyse.id,
+        rang: rankById.get(analyse.id),
+        titre: displayTitle(proposition),
+        candidatNom: candidat.nom,
+        candidatParti: candidat.parti,
+        candidatPhotoUrl: candidat.photoUrl,
+        theme: proposition.theme,
+        dateLabel: dateFormatter.format(proposition.dateDeclaration),
+        score: analyse.scoreFaisabilite,
+      })),
+    )
+    .sort((a, b) => b.score - a.score);
 
   return {
     id: candidat.id,
     nom: candidat.nom,
     parti: candidat.parti,
     photoUrl: candidat.photoUrl,
-    scoreMoyen: candidat.scoreMoyen,
+    scoreMoyen: moyenneArrondie(declarations.map((d) => d.score)),
+    declarations,
   };
 }
 
