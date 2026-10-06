@@ -1,0 +1,447 @@
+{
+  "_meta": {
+    "description": "Parcours des 11 candidats couverts par Perlimpinpin, pour la page /candidats. Les listes sont triées par importance : la carte affiche les 2 premiers éléments de chaque rubrique.",
+    "date_verification": "2026-10-05",
+    "statut": "VALIDÉ éditorialement le 2026-10-06 (choix : note judiciaire affichée, rubrique 'Hors mandat électif', points à vérifier masqués)",
+    "regle": "Chaque ligne doit pouvoir être retrouvée dans au moins une des sources listées pour le candidat. Les éléments incertains sont dans 'points_a_verifier' et NE doivent PAS être affichés tant qu'ils ne sont pas confirmés.",
+    "affichage": {
+      "rubriques_carte": [
+        "mandat_actuel",
+        "experience_politique",
+        "hors_mandat_electif",
+        "etudes"
+      ],
+      "note_contexte": "affichée sur la carte quand présente (même règle pour tout candidat)",
+      "points_a_verifier": "jamais affichés"
+    },
+    "ajout_2026_10_06": "Ajout de David Lisnard et Fabien Roussel (aucune fiche publiée à ce jour → carte 'Analyse en cours')."
+  },
+  "candidats": [
+    {
+      "slug": "marine-le-pen",
+      "prenom": "Marine",
+      "nom": "Le Pen",
+      "parti": "Rassemblement national",
+      "mandat_actuel": [
+        "Députée du Pas-de-Calais (11e circonscription) depuis 2017",
+        "Présidente du groupe RN à l'Assemblée nationale depuis 2022"
+      ],
+      "experience_politique": [
+        "Présidente du Front national / RN (2011–2021)",
+        "Députée européenne (2004–2017)",
+        "Conseillère régionale (Nord-Pas-de-Calais puis Hauts-de-France, 1998–2021)",
+        "Candidate à la présidentielle (2012, 2017, 2022)"
+      ],
+      "etudes": [
+        "Université Paris II Panthéon-Assas : maîtrise de droit, DEA de droit pénal",
+        "CAPA (certificat d'aptitude à la profession d'avocat)"
+      ],
+      "note_contexte": "Condamnée en appel le 7 juillet 2026 (affaire des assistants parlementaires européens du FN) : 45 mois d'inéligibilité dont 30 avec sursis ; la part ferme ayant déjà été exécutée, elle peut se présenter en 2027. Pourvoi en cassation formé.",
+      "sources": [
+        {
+          "label": "Wikipédia FR",
+          "url": "https://fr.wikipedia.org/wiki/Marine_Le_Pen"
+        },
+        {
+          "label": "Wikipédia EN",
+          "url": "https://en.wikipedia.org/wiki/Marine_Le_Pen"
+        },
+        {
+          "label": "Le Club des Juristes – décision d'appel",
+          "url": "https://www.leclubdesjuristes.com/justice/affaire-des-assistants-parlementaires-du-fn-coup-darret-a-la-candidature-de-marine-le-pen-16827/"
+        }
+      ],
+      "points_a_verifier": [],
+      "hors_mandat_electif": [
+        "Avocate au barreau de Paris (1992–1998)",
+        "Directrice du service juridique du FN (à partir de 1998)"
+      ]
+    },
+    {
+      "slug": "jean-luc-melenchon",
+      "prenom": "Jean-Luc",
+      "nom": "Mélenchon",
+      "parti": "La France insoumise",
+      "mandat_actuel": [
+        "Aucun mandat électif depuis 2022"
+      ],
+      "experience_politique": [
+        "Ministre délégué à l'Enseignement professionnel (2000–2002)",
+        "Député des Bouches-du-Rhône (2017–2022)",
+        "Député européen (2009–2017)",
+        "Sénateur de l'Essonne (1986–2000, 2004–2010)",
+        "Candidat à la présidentielle (2012, 2017, 2022)",
+        "Fondateur du Parti de gauche (2008) et de La France insoumise (2016)"
+      ],
+      "etudes": [
+        "Université de Franche-Comté (Besançon) : licence de philosophie"
+      ],
+      "sources": [
+        {
+          "label": "Wikipédia FR",
+          "url": "https://fr.wikipedia.org/wiki/Jean-Luc_M%C3%A9lenchon"
+        },
+        {
+          "label": "Wikipédia EN",
+          "url": "https://en.wikipedia.org/wiki/Jean-Luc_M%C3%A9lenchon"
+        }
+      ],
+      "points_a_verifier": [
+        "CAPES : mentionné par deux résumés mais non confirmé par une source primaire – ne pas afficher sans vérification.",
+        "Licence de lettres modernes en plus de la licence de philosophie : à confirmer."
+      ],
+      "hors_mandat_electif": [
+        "Professeur de français en lycée technique (Jura, années 1970)",
+        "Journaliste à la presse locale du Jura (années 1970)"
+      ]
+    },
+    {
+      "slug": "edouard-philippe",
+      "prenom": "Édouard",
+      "nom": "Philippe",
+      "parti": "Horizons",
+      "mandat_actuel": [
+        "Maire du Havre (réélu en mars 2026)",
+        "Président d'Horizons (parti fondé en 2021)"
+      ],
+      "experience_politique": [
+        "Premier ministre (2017–2020)",
+        "Maire du Havre (2010–2017, puis depuis 2020)",
+        "Député de Seine-Maritime (2012–2017)"
+      ],
+      "etudes": [
+        "Sciences Po Paris",
+        "ENA (promotion Marc-Bloch, 1997)"
+      ],
+      "sources": [
+        {
+          "label": "Wikipédia FR",
+          "url": "https://fr.wikipedia.org/wiki/%C3%89douard_Philippe"
+        },
+        {
+          "label": "CNews – réélection au Havre (22/03/2026)",
+          "url": "https://www.cnews.fr/france/2026-03-22/municipales-2026-edouard-philippe-reelu-la-mairie-du-havre-et-rempile-pour-un"
+        }
+      ],
+      "points_a_verifier": [],
+      "hors_mandat_electif": [
+        "Directeur des affaires publiques d'Areva (2007–2010)",
+        "Avocat (cabinet Debevoise & Plimpton, 2004–2007)",
+        "Membre du Conseil d'État (1997–2004)"
+      ]
+    },
+    {
+      "slug": "raphael-glucksmann",
+      "prenom": "Raphaël",
+      "nom": "Glucksmann",
+      "parti": "Place publique",
+      "mandat_actuel": [
+        "Député européen depuis 2019 (réélu en 2024)",
+        "Coprésident de Place publique (mouvement cofondé en 2018)"
+      ],
+      "experience_politique": [
+        "Tête de liste PS–Place publique aux européennes (2019, 2024)"
+      ],
+      "etudes": [
+        "Sciences Po Paris",
+        "Classe préparatoire littéraire (lycée Henri-IV)"
+      ],
+      "sources": [
+        {
+          "label": "Wikipédia FR",
+          "url": "https://fr.wikipedia.org/wiki/Rapha%C3%ABl_Glucksmann"
+        },
+        {
+          "label": "Wikipédia EN",
+          "url": "https://en.wikipedia.org/wiki/Rapha%C3%ABl_Glucksmann"
+        }
+      ],
+      "points_a_verifier": [
+        "Dates exactes du rôle de conseiller en Géorgie (2009–2012 selon une source, 2005–2012 évoqué ailleurs).",
+        "Diplôme de Sciences Po obtenu ou non : on affiche seulement l'établissement.",
+        "Rôle de conseiller de M. Saakachvili en Géorgie : retiré de l'affichage (dates contradictoires)."
+      ],
+      "hors_mandat_electif": [
+        "Réalisateur de documentaires (dont « Tuez-les tous ! », 2004)",
+        "Directeur de la rédaction du Nouveau Magazine littéraire (2017–2018)",
+        "Essayiste"
+      ]
+    },
+    {
+      "slug": "gabriel-attal",
+      "prenom": "Gabriel",
+      "nom": "Attal",
+      "parti": "Renaissance",
+      "mandat_actuel": [
+        "Député des Hauts-de-Seine (10e circonscription)",
+        "Président du groupe Ensemble pour la République (depuis 2024) et secrétaire général de Renaissance (depuis décembre 2024)"
+      ],
+      "experience_politique": [
+        "Premier ministre (janvier–septembre 2024)",
+        "Ministre de l'Éducation nationale (2023–2024)",
+        "Ministre délégué aux Comptes publics (2022–2023)",
+        "Porte-parole du gouvernement (2020–2022)",
+        "Secrétaire d'État auprès du ministre de l'Éducation nationale (2018–2020)"
+      ],
+      "etudes": [
+        "Sciences Po Paris : master d'affaires publiques"
+      ],
+      "sources": [
+        {
+          "label": "Wikipédia FR",
+          "url": "https://fr.wikipedia.org/wiki/Gabriel_Attal"
+        },
+        {
+          "label": "Wikipédia EN",
+          "url": "https://en.wikipedia.org/wiki/Gabriel_Attal"
+        }
+      ],
+      "points_a_verifier": [
+        "Licence de droit à Assas : une source dit 'obtenue', l'autre 'études non terminées' – ne pas afficher avant confirmation.",
+        "Licence de droit à Assas (obtenue ou non) : retirée de l'affichage en attendant confirmation."
+      ],
+      "hors_mandat_electif": [
+        "Conseiller au cabinet de la ministre de la Santé Marisol Touraine (2012–2017)"
+      ]
+    },
+    {
+      "slug": "marine-tondelier",
+      "prenom": "Marine",
+      "nom": "Tondelier",
+      "parti": "Les Écologistes",
+      "mandat_actuel": [
+        "Secrétaire nationale des Écologistes (depuis décembre 2022)",
+        "Conseillère régionale des Hauts-de-France (depuis 2021)"
+      ],
+      "experience_politique": [
+        "Conseillère municipale d'opposition à Hénin-Beaumont (élue en 2014 et en 2020)"
+      ],
+      "etudes": [
+        "Sciences Po Lille (2009)"
+      ],
+      "sources": [
+        {
+          "label": "Wikipédia FR",
+          "url": "https://fr.wikipedia.org/wiki/Marine_Tondelier"
+        },
+        {
+          "label": "Wikipédia EN",
+          "url": "https://en.wikipedia.org/wiki/Marine_Tondelier"
+        },
+        {
+          "label": "Résultats municipales 2026 Hénin-Beaumont",
+          "url": "https://mesinfos.fr/elections/municipales-2026/62110-henin-beaumont-62427"
+        }
+      ],
+      "points_a_verifier": [
+        "Fin du mandat municipal en mars 2026 : elle n'était plus tête de liste ; vérifier qu'elle n'a pas été réélue sur la liste d'Inès Taourit (3 sièges).",
+        "Établissement du master santé à confirmer.",
+        "Master en management des établissements de santé : retiré de l'affichage (établissement non confirmé)."
+      ],
+      "hors_mandat_electif": [
+        "Déléguée générale de la fédération Atmo France, réseau de surveillance de la qualité de l'air (2017–2022)",
+        "Collaboratrice parlementaire (2011–2017)"
+      ]
+    },
+    {
+      "slug": "bruno-retailleau",
+      "prenom": "Bruno",
+      "nom": "Retailleau",
+      "parti": "Les Républicains",
+      "mandat_actuel": [
+        "Président des Républicains (depuis mai 2025)",
+        "Sénateur de la Vendée (réélu en septembre 2026)"
+      ],
+      "experience_politique": [
+        "Ministre de l'Intérieur (septembre 2024 – octobre 2025)",
+        "Président du groupe LR au Sénat (2014–2024)",
+        "Sénateur de la Vendée (depuis 2004)",
+        "Président du conseil régional des Pays de la Loire (2015–2017)",
+        "Président du conseil général de la Vendée (2010–2015)",
+        "Député de la Vendée (1994–1997)"
+      ],
+      "etudes": [
+        "Université de Nantes : maîtrise de sciences économiques"
+      ],
+      "sources": [
+        {
+          "label": "Wikipédia FR",
+          "url": "https://fr.wikipedia.org/wiki/Bruno_Retailleau"
+        },
+        {
+          "label": "Wikipédia EN",
+          "url": "https://en.wikipedia.org/wiki/Bruno_Retailleau"
+        },
+        {
+          "label": "Public Sénat – retour au Sénat (nov. 2025)",
+          "url": "https://www.publicsenat.fr/actualites/politique/sa-determination-reste-totale-de-retour-au-senat-bruno-retailleau-retrouve-sa-base-arriere"
+        },
+        {
+          "label": "Europe 1 – réélection sénatoriales 2026",
+          "url": "https://www.europe1.fr/politique/senatoriales-le-candidat-lr-a-la-presidentielle-bruno-retailleau-reelu-en-vendee-1107383"
+        }
+      ],
+      "points_a_verifier": [
+        "Diplôme de Sciences Po obtenu ou simple passage : à confirmer.",
+        "Intitulé exact du rôle au Puy du Fou (président de la société ? dates 1989–2001 ?).",
+        "Sciences Po Paris (1985) : retiré de l'affichage en attendant confirmation du diplôme."
+      ],
+      "hors_mandat_electif": [
+        "Directeur général de l'école Sciencescom à Nantes (1987–1994)",
+        "Cofondateur et dirigeant du Puy du Fou, metteur en scène de la Cinéscénie"
+      ]
+    },
+    {
+      "slug": "eric-zemmour",
+      "prenom": "Éric",
+      "nom": "Zemmour",
+      "parti": "Reconquête",
+      "mandat_actuel": [
+        "Aucun mandat électif",
+        "Président de Reconquête (parti fondé fin 2021)"
+      ],
+      "experience_politique": [
+        "Candidat à la présidentielle 2022 (7,07 %)",
+        "Candidat aux législatives 2022 dans le Var (éliminé au 1er tour)"
+      ],
+      "etudes": [
+        "Sciences Po Paris (diplômé en 1979)",
+        "A échoué deux fois au concours de l'ENA"
+      ],
+      "sources": [
+        {
+          "label": "Wikipédia FR",
+          "url": "https://fr.wikipedia.org/wiki/%C3%89ric_Zemmour"
+        }
+      ],
+      "points_a_verifier": [],
+      "hors_mandat_electif": [
+        "Journaliste politique au Figaro (1996–2009) puis chroniqueur (jusqu'en 2021)",
+        "Chroniqueur radio et télévision (RTL, France 2, Paris Première, CNews)",
+        "Essayiste"
+      ]
+    },
+    {
+      "slug": "dominique-de-villepin",
+      "prenom": "Dominique",
+      "nom": "de Villepin",
+      "parti": "La France humaniste",
+      "mandat_actuel": [
+        "Aucun mandat électif (n'en a jamais exercé)",
+        "Fondateur et président de La France humaniste (juin 2025)"
+      ],
+      "experience_politique": [
+        "Premier ministre (2005–2007)",
+        "Ministre de l'Intérieur (2004–2005)",
+        "Ministre des Affaires étrangères (2002–2004)",
+        "Secrétaire général de l'Élysée (1995–2002)"
+      ],
+      "etudes": [
+        "Sciences Po Paris",
+        "ENA (promotion Voltaire, 1980)"
+      ],
+      "sources": [
+        {
+          "label": "Wikipédia FR",
+          "url": "https://fr.wikipedia.org/wiki/Dominique_de_Villepin"
+        },
+        {
+          "label": "Wikipédia EN",
+          "url": "https://en.wikipedia.org/wiki/Dominique_de_Villepin"
+        },
+        {
+          "label": "CNews – lancement de La France humaniste (24/06/2025)",
+          "url": "https://www.cnews.fr/france/2025-06-24/justice-sociale-et-ordre-republicain-dominique-de-villepin-lance-son-propre-parti"
+        }
+      ],
+      "points_a_verifier": [],
+      "hors_mandat_electif": [
+        "Avocat et consultant en stratégie internationale (depuis 2008)",
+        "Diplomate (1980–1995 : Washington, New Delhi)"
+      ]
+    },
+    {
+      "slug": "david-lisnard",
+      "prenom": "David",
+      "nom": "Lisnard",
+      "parti": "Nouvelle Énergie",
+      "mandat_actuel": [
+        "Maire de Cannes depuis 2014 (réélu en 2020 et en mars 2026)",
+        "Président de l'Association des maires de France (depuis 2021, réélu en 2023)"
+      ],
+      "experience_politique": [
+        "Président de Nouvelle Énergie (mouvement fondé en 2014)",
+        "Premier adjoint au maire de Cannes (2008–2014)",
+        "Adjoint au maire de Cannes (2001–2008)"
+      ],
+      "hors_mandat_electif": [
+        "Chef d'entreprise (magasins de vêtements pour enfants)",
+        "Directeur de cabinet et attaché parlementaire du député-maire Jacques Pélissard (1996–1999)"
+      ],
+      "etudes": [
+        "Sciences Po Bordeaux (1992)"
+      ],
+      "sources": [
+        {
+          "label": "Wikipédia FR",
+          "url": "https://fr.wikipedia.org/wiki/David_Lisnard"
+        },
+        {
+          "label": "AMF – réélection à la présidence (22/11/2023)",
+          "url": "https://www.amf.asso.fr/documents-election-instances-lamfconfiance-renouvelee-au-president-david-lisnard-au-bureau-au-comite-directeur-/41975"
+        },
+        {
+          "label": "Cannes Actus – réélection municipales 2026",
+          "url": "https://cannes-actus.com/politique/resultats-municipales-2026-a-cannes-le-maire-sortant-david-lisnard-reelu-tres-largement-des-le-premier-tour/"
+        }
+      ],
+      "points_a_verifier": [
+        "Présidence de l'AMF : une nouvelle élection a lieu après les municipales 2026 (Lisnard candidat face à Philippe Laurent). Mettre à jour la ligne après le résultat.",
+        "Présidence de l'agglomération Cannes Pays de Lérins (depuis 2017) et vice-présidence du département des Alpes-Maritimes : statut après 2026 non confirmé, retirées de l'affichage.",
+        "Dates de l'activité de commerce de vêtements non confirmées : affichée sans dates."
+      ]
+    },
+    {
+      "slug": "fabien-roussel",
+      "prenom": "Fabien",
+      "nom": "Roussel",
+      "parti": "Parti communiste français",
+      "mandat_actuel": [
+        "Secrétaire national du PCF (depuis novembre 2018)",
+        "Maire de Saint-Amand-les-Eaux (depuis janvier 2025, réélu en mars 2026)"
+      ],
+      "experience_politique": [
+        "Député du Nord (20e circonscription, 2017–2024)",
+        "Candidat à la présidentielle 2022 (2,28 %)"
+      ],
+      "hors_mandat_electif": [
+        "Journaliste reporter d'images (dont France 3)",
+        "Conseiller en communication de Michelle Demessine, secrétaire d'État au Tourisme (1997), puis collaborateur des députés Alain Bocquet et Jean-Jacques Candelier"
+      ],
+      "etudes": [
+        "CFPJ (Centre de formation des journalistes) : formation de journaliste reporter d'images"
+      ],
+      "sources": [
+        {
+          "label": "Wikipédia FR",
+          "url": "https://fr.wikipedia.org/wiki/Fabien_Roussel"
+        },
+        {
+          "label": "Wikipédia EN",
+          "url": "https://en.wikipedia.org/wiki/Fabien_Roussel"
+        },
+        {
+          "label": "Le Singulier – réélection municipales 2026",
+          "url": "https://lesinguliersete.fr/fabien-roussel-sassure-la-mairie-de-saint-amand-les-eaux-des-le-premier-tour/"
+        },
+        {
+          "label": "LCP – désigné candidat du PCF (06/09/2026)",
+          "url": "https://lcp.fr/actualites/fabien-roussel-officiellement-candidat-du-pcf-a-l-election-presidentielle-de-2027-441389"
+        }
+      ],
+      "points_a_verifier": [
+        "Dates exactes des activités de journaliste : non confirmées, affichées sans dates."
+      ]
+    }
+  ]
+}

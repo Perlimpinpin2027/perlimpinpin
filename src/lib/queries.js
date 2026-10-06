@@ -391,6 +391,40 @@ export async function getAllCandidats() {
   }));
 }
 
+// Scores des candidats pour les cartes /candidats, indexés par nom complet
+// ("Marine Tondelier") : moyenne des scores de leurs fiches publiées,
+// arrondie à l'entier (null sans fiche publiée), et nombre de fiches.
+export async function getScoresCandidats() {
+  const candidats = await prisma.candidat.findMany({
+    include: {
+      propositions: {
+        include: {
+          analyses: { where: { statut: "publie" }, select: { scoreFaisabilite: true } },
+        },
+      },
+    },
+  });
+
+  return new Map(
+    candidats.map((candidat) => {
+      const scores = candidat.propositions.flatMap((proposition) =>
+        proposition.analyses.map((analyse) => analyse.scoreFaisabilite),
+      );
+      return [
+        candidat.nom,
+        {
+          id: candidat.id,
+          photoUrl: candidat.photoUrl,
+          nombreFiches: scores.length,
+          scoreMoyen: scores.length
+            ? Math.round(scores.reduce((total, score) => total + score, 0) / scores.length)
+            : null,
+        },
+      ];
+    }),
+  );
+}
+
 // Détail d'un candidat pour sa fiche /candidats/[id].
 export async function getCandidatDetail(id) {
   const candidat = await prisma.candidat.findUnique({ where: { id } });
