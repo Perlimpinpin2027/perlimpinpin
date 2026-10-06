@@ -8,7 +8,7 @@ const dateFormatter = new Intl.DateTimeFormat("fr-FR", {
 });
 
 // Date courte (ex. 5/10/2026) pour la ligne « Analyse réalisée le … » de la fiche.
-const dateCourteFormatter = new Intl.DateTimeFormat("fr-FR", {
+const dateChiffresFormatter = new Intl.DateTimeFormat("fr-FR", {
   day: "numeric",
   month: "numeric",
   year: "numeric",
@@ -751,7 +751,7 @@ export async function getDeclarationDetail(propositionId, inclureBrouillons = fa
     // Date de génération affichée en haut de la fiche ("Perlimpinpin
     // {version} · généré le ..."), à partir de analyse.createdAt — distincte
     // de dateLabel ci-dessus, qui est la date de la déclaration elle-même.
-    generationDateLabel: analyse ? dateCourteFormatter.format(analyse.createdAt) : null,
+    generationDateLabel: analyse ? dateChiffresFormatter.format(analyse.createdAt) : null,
     feedbackCounts,
     voteMesureCounts,
   };
