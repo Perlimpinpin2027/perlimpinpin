@@ -134,15 +134,23 @@ h3{margin:0}
 .chrono-btn{font-size:12.5px;font-weight:500;background:var(--ink);color:var(--ink-inv);border:0;border-radius:999px;padding:6px 14px;cursor:pointer}
 .chrono-btn:disabled{opacity:.6;cursor:default}
 .chrono-err{flex-basis:100%;margin:0;color:var(--bad);font-size:12.5px}
-.chrono-run{display:grid;gap:7px;margin-top:2px}
-.chrono-left{color:var(--orange);font-weight:500;font-variant-numeric:tabular-nums;margin:0 2px}
-.chrono-bar{height:3px;max-width:360px;border-radius:99px;background:var(--track);overflow:hidden}
-.chrono-bar i{display:block;height:100%;width:0;background:var(--orange);transition:width 1s linear}
+/* Couleur selon la part du temps restant : > 50 % vert, 20-50 % orange, < 20 % rouge. */
+.fcard > .chrono{grid-column:1 / -1}
+.chrono-run{display:grid;gap:6px;margin-top:2px;--chrono-c:var(--ok)}
+.chrono-run.is-mid{--chrono-c:var(--orange)}
+.chrono-run.is-low{--chrono-c:var(--bad)}
+.chrono-run.is-closed{--chrono-c:var(--faint)}
+.chrono-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:2px 16px}
+.chrono-head .chrono-line{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 10px}
+.chrono-left{color:var(--chrono-c);font-family:var(--mono);font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.3}
+.chrono-bar{height:10px;width:100%;border-radius:999px;background:var(--track);overflow:hidden}
+.chrono-bar i{display:block;height:100%;width:0;border-radius:999px;background:var(--chrono-c);transition:width .8s ease-out,background-color .4s}
+@media (prefers-reduced-motion:reduce){.chrono-bar i{transition:none}}
+.chrono-last{margin:0;font-size:12.5px;font-weight:600;color:var(--bad)}
 .chrono-ghost{font-size:12.5px;font-weight:500;background:none;color:var(--ink);border:1px solid var(--rule);border-radius:999px;padding:5px 12px;cursor:pointer}
 .chrono-ghost:hover{border-color:var(--ink)}
 .chrono-ghost:disabled{opacity:.6;cursor:default}
-.chrono-run + .chrono-form,.chrono-done + .chrono-form{margin-top:8px}
-.chrono-done{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin:2px 0 0;font-family:var(--mono);font-size:12px;color:var(--faint)}
+.chrono-run + .chrono-form{margin-top:8px}
 .done-badge{display:inline-flex;align-items:center;gap:7px;background:var(--ok-soft);color:var(--ok);border-radius:999px;padding:3px 11px;font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.02em}
 .done-badge::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
 .closed-banner{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:0 0 18px;padding:12px 16px;border:1px solid var(--rule);border-radius:14px;background:var(--surface);font-size:13.5px;color:var(--muted)}
@@ -455,7 +463,7 @@ mark.anno-hl.pending{background:var(--hl-strong)}
 </aside>
 <div class="filters" role="group" aria-label="Filtrer par thème"><button class="chipf" type="button" data-cat="all" aria-pressed="true">Tous<i>4</i></button><button class="chipf" type="button" data-cat="Logement" aria-pressed="false" disabled>Logement<i>0</i></button><button class="chipf" type="button" data-cat="Perspectives économiques, pouvoir d&#x27;achat, inflation &amp; fiscalité" aria-pressed="false" disabled>Économie &amp; pouvoir d&#x27;achat<i>0</i></button><button class="chipf" type="button" data-cat="IA &amp; Numérique" aria-pressed="false" disabled>IA &amp; Numérique<i>0</i></button><button class="chipf" type="button" data-cat="Éducation nationale" aria-pressed="false" disabled>Éducation nationale<i>0</i></button><button class="chipf" type="button" data-cat="Sécurité &amp; Justice" aria-pressed="false" disabled>Sécurité &amp; Justice<i>0</i></button><button class="chipf" type="button" data-cat="Santé &amp; Hôpital" aria-pressed="false" disabled>Santé &amp; Hôpital<i>0</i></button><button class="chipf" type="button" data-cat="Retraites" aria-pressed="false" disabled>Retraites<i>0</i></button><button class="chipf" type="button" data-cat="Emploi &amp; Chômage" aria-pressed="false" disabled>Emploi &amp; Chômage<i>0</i></button><button class="chipf" type="button" data-cat="Énergie &amp; Climat" aria-pressed="false" disabled>Énergie &amp; Climat<i>0</i></button><button class="chipf" type="button" data-cat="Alimentation &amp; Agriculture" aria-pressed="false" disabled>Alimentation &amp; Agriculture<i>0</i></button><button class="chipf" type="button" data-cat="Immigration" aria-pressed="false" disabled>Immigration<i>0</i></button><button class="chipf" type="button" data-cat="Démocratie et institutions" aria-pressed="false">Démocratie et institutions<i>1</i></button><button class="chipf" type="button" data-cat="Fiscalité et pouvoir d&#x27;achat" aria-pressed="false">Fiscalité et pouvoir d&#x27;achat<i>2</i></button><button class="chipf" type="button" data-cat="Emploi et chômage" aria-pressed="false">Emploi et chômage<i>1</i></button></div>
 <p class="count" id="hub-count"></p>
-<div class="list list-brouillons"><article class="fcard tier-fragile" data-fiche="retailleau-interdiction-lfi" data-cat="Démocratie et institutions"><div class="main"><p class="badge-cat">Démocratie et institutions · Bruno Retailleau</p><h2><a class="fcard-link" href="#/retailleau-interdiction-lfi">Interdire LFI : l&#x27;outil existe, la preuve manque</a></h2><p class="teaser">Un parti dissous peut-il vraiment disparaître ?</p><p class="meta"><span>Étape 1</span><span>Version 1</span><span>6 octobre 2026</span><span data-statut>À relire</span></p><div class="chrono" data-chrono="retailleau-interdiction-lfi"></div></div><div class="fscore"><span class="n">26<small>/100</small></span><span class="tierl">Fragile</span><span class="go" aria-hidden="true">→</span></div></article><article class="fcard tier-partiel" data-fiche="roussel-confiscation-profits-total" data-cat="Fiscalité et pouvoir d&#x27;achat"><div class="main"><p class="badge-cat">Fiscalité et pouvoir d&#x27;achat · Fabien Roussel</p><h2><a class="fcard-link" href="#/roussel-confiscation-profits-total">Confisquer les profits de guerre de Total : la cible est hors de portée</a></h2><p class="teaser">Des milliards de profits… mais combien taxables en France ?</p><p class="meta"><span>Étape 1</span><span>Version 1</span><span>6 octobre 2026</span><span data-statut>À relire</span></p><div class="chrono" data-chrono="roussel-confiscation-profits-total"></div></div><div class="fscore"><span class="n">48<small>/100</small></span><span class="tierl">Partiellement fondé</span><span class="go" aria-hidden="true">→</span></div></article><article class="fcard tier-partiel" data-fiche="villepin-patrimoine-successions" data-cat="Fiscalité et pouvoir d&#x27;achat"><div class="main"><p class="badge-cat">Fiscalité et pouvoir d&#x27;achat · Dominique de Villepin</p><h2><a class="fcard-link" href="#/villepin-patrimoine-successions">Taxer la fortune, exonérer les donations : la porte de sortie</a></h2><p class="teaser">Et si tout le monde donnait avant de mourir ?</p><p class="meta"><span>Étape 1</span><span>Version 1</span><span>6 octobre 2026</span><span data-statut>À relire</span></p><div class="chrono" data-chrono="villepin-patrimoine-successions"></div></div><div class="fscore"><span class="n">45<small>/100</small></span><span class="tierl">Partiellement fondé</span><span class="go" aria-hidden="true">→</span></div></article><article class="fcard tier-partiel" data-fiche="zemmour-rsa-trois-ans" data-cat="Emploi et chômage"><div class="main"><p class="badge-cat">Emploi et chômage · Éric Zemmour</p><h2><a class="fcard-link" href="#/zemmour-rsa-trois-ans">RSA limité à trois ans : l&#x27;économie oui, l&#x27;emploi beaucoup moins</a></h2><p class="teaser">Aux États-Unis, la date butoir a surtout coupé les revenus.</p><p class="meta"><span>Étape 1</span><span>Version 1</span><span>6 octobre 2026</span><span data-statut>À relire</span></p><div class="chrono" data-chrono="zemmour-rsa-trois-ans"></div></div><div class="fscore"><span class="n">39<small>/100</small></span><span class="tierl">Partiellement fondé</span><span class="go" aria-hidden="true">→</span></div></article></div>
+<div class="list list-brouillons"><article class="fcard tier-fragile" data-fiche="retailleau-interdiction-lfi" data-cat="Démocratie et institutions"><div class="main"><p class="badge-cat">Démocratie et institutions · Bruno Retailleau</p><h2><a class="fcard-link" href="#/retailleau-interdiction-lfi">Interdire LFI : l&#x27;outil existe, la preuve manque</a></h2><p class="teaser">Un parti dissous peut-il vraiment disparaître ?</p><p class="meta"><span>Étape 1</span><span>Version 1</span><span>6 octobre 2026</span><span data-statut>À relire</span></p></div><div class="fscore"><span class="n">26<small>/100</small></span><span class="tierl">Fragile</span><span class="go" aria-hidden="true">→</span></div><div class="chrono" data-chrono="retailleau-interdiction-lfi"></div></article><article class="fcard tier-partiel" data-fiche="roussel-confiscation-profits-total" data-cat="Fiscalité et pouvoir d&#x27;achat"><div class="main"><p class="badge-cat">Fiscalité et pouvoir d&#x27;achat · Fabien Roussel</p><h2><a class="fcard-link" href="#/roussel-confiscation-profits-total">Confisquer les profits de guerre de Total : la cible est hors de portée</a></h2><p class="teaser">Des milliards de profits… mais combien taxables en France ?</p><p class="meta"><span>Étape 1</span><span>Version 1</span><span>6 octobre 2026</span><span data-statut>À relire</span></p></div><div class="fscore"><span class="n">48<small>/100</small></span><span class="tierl">Partiellement fondé</span><span class="go" aria-hidden="true">→</span></div><div class="chrono" data-chrono="roussel-confiscation-profits-total"></div></article><article class="fcard tier-partiel" data-fiche="villepin-patrimoine-successions" data-cat="Fiscalité et pouvoir d&#x27;achat"><div class="main"><p class="badge-cat">Fiscalité et pouvoir d&#x27;achat · Dominique de Villepin</p><h2><a class="fcard-link" href="#/villepin-patrimoine-successions">Taxer la fortune, exonérer les donations : la porte de sortie</a></h2><p class="teaser">Et si tout le monde donnait avant de mourir ?</p><p class="meta"><span>Étape 1</span><span>Version 1</span><span>6 octobre 2026</span><span data-statut>À relire</span></p></div><div class="fscore"><span class="n">45<small>/100</small></span><span class="tierl">Partiellement fondé</span><span class="go" aria-hidden="true">→</span></div><div class="chrono" data-chrono="villepin-patrimoine-successions"></div></article><article class="fcard tier-partiel" data-fiche="zemmour-rsa-trois-ans" data-cat="Emploi et chômage"><div class="main"><p class="badge-cat">Emploi et chômage · Éric Zemmour</p><h2><a class="fcard-link" href="#/zemmour-rsa-trois-ans">RSA limité à trois ans : l&#x27;économie oui, l&#x27;emploi beaucoup moins</a></h2><p class="teaser">Aux États-Unis, la date butoir a surtout coupé les revenus.</p><p class="meta"><span>Étape 1</span><span>Version 1</span><span>6 octobre 2026</span><span data-statut>À relire</span></p></div><div class="fscore"><span class="n">39<small>/100</small></span><span class="tierl">Partiellement fondé</span><span class="go" aria-hidden="true">→</span></div><div class="chrono" data-chrono="zemmour-rsa-trois-ans"></div></article></div>
 
 <section class="archives" id="archives" aria-labelledby="archives-titre">
   <p class="label">// Archives · 4</p>
@@ -1195,14 +1203,23 @@ Est-ce qu&#x27;on parle du nombre d&#x27;actif pour un retraité ? Si c&#x27;est
     if (!el || !f || stateOf(slug) !== "running") return;
     var start = new Date(f.reviewStartedAt || f.reviewDeadline).getTime();
     var end = new Date(f.reviewDeadline).getTime();
-    var pct = end > start ? Math.min(100, Math.max(0, ((nowMs() - start) / (end - start)) * 100)) : 100;
+    var reste = end - nowMs();
+    // La barre montre le temps restant : pleine au lancement, vide à l'échéance.
+    var pct = end > start ? Math.min(100, Math.max(0, (reste / (end - start)) * 100)) : 0;
+    var run = el.querySelector(".chrono-run");
     var left = el.querySelector("[data-left]");
     var bar = el.querySelector("[data-bar]");
-    if (left) left.textContent = fmtRemaining(end - nowMs());
+    var last = el.querySelector("[data-last]");
+    if (run) {
+      run.classList.toggle("is-mid", pct >= 20 && pct <= 50);
+      run.classList.toggle("is-low", pct < 20);
+    }
+    if (left) left.textContent = fmtRemaining(reste);
     if (bar) {
       bar.style.width = pct.toFixed(2) + "%";
       bar.parentElement.setAttribute("aria-valuenow", String(Math.round(pct)));
     }
+    if (last) last.hidden = reste >= 3600000;
   }
 
   // Bandeau en tête de fiche + fils de commentaires ouverts, quand la fiche se ferme ou se rouvre.
@@ -1248,10 +1265,14 @@ Est-ce qu&#x27;on parle du nombre d&#x27;actif pour un retraité ? Si c&#x27;est
     if (el) {
       var html = "";
       if (state === "running") {
-        html = '<div class="chrono-run"><p class="chrono-line">Temps restant <b class="chrono-left" data-left></b> · échéance ' + esc(fmtAt(f.reviewDeadline)) + "</p>" +
-          '<div class="chrono-bar" role="progressbar" aria-label="Temps de relecture écoulé" aria-valuemin="0" aria-valuemax="100"><i data-bar></i></div></div>';
+        html = '<div class="chrono-run"><div class="chrono-head"><p class="chrono-line">Temps restant <b class="chrono-left" data-left></b></p>' +
+          '<p class="chrono-line">échéance ' + esc(fmtAt(f.reviewDeadline)) + "</p></div>" +
+          '<div class="chrono-bar" role="progressbar" aria-label="Temps de relecture restant" aria-valuemin="0" aria-valuemax="100"><i data-bar></i></div>' +
+          '<p class="chrono-last" data-last hidden>Dernière heure pour commenter</p></div>';
       } else if (state === "closed") {
-        html = '<p class="chrono-done"><span class="done-badge">Relecture terminée · Prête à publier</span><span>clôturée le ' + esc(fmtAt(f.reviewDeadline)) + "</span></p>";
+        html = '<div class="chrono-run is-closed"><div class="chrono-head"><p class="chrono-line"><b class="chrono-left">Relecture close</b></p>' +
+          '<p class="chrono-line">clôturée le ' + esc(fmtAt(f.reviewDeadline)) + "</p></div>" +
+          '<div class="chrono-bar" role="progressbar" aria-label="Temps de relecture restant" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i></i></div></div>';
       }
       if (admin) html += adminControls(slug, state);
       el.innerHTML = html;

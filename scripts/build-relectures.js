@@ -406,15 +406,17 @@ function renderCarte(slug, fiche) {
   const bas = a
     ? `<p class="meta"><span>Étape 1</span><span>Version ${r.version}</span><span>${dateFr(r.date)}</span></p>` +
       `<p class="arch-line"><span class="arch-badge">Archivée · version suivante déposée</span><span>le ${dateFr(a.date)} · ${n} réponse${n > 1 ? "s" : ""} aux commentaires</span></p></div>`
-    : `<p class="meta"><span>Étape 1</span><span>Version ${r.version}</span><span>${dateFr(r.date)}</span><span data-statut>À relire</span></p>` +
-      `<div class="chrono" data-chrono="${slug}"></div></div>`;
+    : `<p class="meta"><span>Étape 1</span><span>Version ${r.version}</span><span>${dateFr(r.date)}</span><span data-statut>À relire</span></p></div>`;
   return (
     `<article class="fcard tier-${tier.cls}${a ? " archived" : ""}" data-fiche="${slug}" data-cat="${esc(r.theme)}"><div class="main">` +
     `<p class="badge-cat">${esc(r.theme)} · ${esc(r.candidat)}</p>` +
     `<h2><a class="fcard-link" href="#/${slug}">${esc(r.titre)}</a></h2>` +
     `<p class="teaser">${esc(fiche.phrase_teasing)}</p>` +
     bas +
-    `<div class="fscore"><span class="n">${score}<small>/100</small></span><span class="tierl">${tier.label}</span><span class="go" aria-hidden="true">→</span></div></article>`
+    `<div class="fscore"><span class="n">${score}<small>/100</small></span><span class="tierl">${tier.label}</span><span class="go" aria-hidden="true">→</span></div>` +
+    // Hors de .main : la barre de temps restant prend toute la largeur de la carte.
+    (a ? "" : `<div class="chrono" data-chrono="${slug}"></div>`) +
+    `</article>`
   );
 }
 
