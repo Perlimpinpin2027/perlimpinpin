@@ -1,8 +1,8 @@
 import { textesParDefaut } from "@/lib/textes-site";
 
-// Les 3 atouts sous le bandeau d'accueil (maquette oct. 2026) : icône dans
-// une tuile claire, titre, sous-titre en police mono. Textes modifiables
-// depuis /test/textes/accueil (groupe « Les 3 atouts »).
+// Les 3 atouts sous le bandeau d'accueil — version minimaliste (oct. 2026) :
+// petite icône sans tuile, titre, sous-titre sur une ligne (desktop).
+// Textes modifiables depuis /test/textes/accueil (groupe « Les 3 atouts »).
 const ICONES = [
   // Étincelle (IA)
   <path
@@ -31,32 +31,30 @@ export default function HeroAtouts({ textes }) {
   const t = { ...textesParDefaut("accueil"), ...textes };
 
   return (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-0">
+    <div className="grid grid-cols-1 gap-5 md:grid-cols-3 md:gap-0">
       {ICONES.map((icone, index) => (
         <div
           key={index}
-          className={`flex items-center gap-5 ${
-            index > 0 ? "md:border-l md:border-zinc-200 md:pl-10" : ""
-          } ${index < ICONES.length - 1 ? "md:pr-10" : ""}`}
+          className={`flex items-start gap-3 ${
+            index > 0 ? "md:border-l md:border-zinc-200 md:pl-6 lg:pl-8" : ""
+          } ${index < ICONES.length - 1 ? "md:pr-6 lg:pr-8" : ""}`}
         >
-          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-indigo-50/80 text-zinc-900">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={1.6}
-              className="h-7 w-7"
-              aria-hidden="true"
-            >
-              {icone}
-            </svg>
-          </div>
-          <div>
-            <p className="text-lg font-bold tracking-tight text-blue-950">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={1.5}
+            className="mt-0.5 h-5 w-5 shrink-0 text-zinc-500"
+            aria-hidden="true"
+          >
+            {icone}
+          </svg>
+          <div className="min-w-0">
+            <p className="text-base font-semibold leading-snug text-zinc-900">
               {t[`hero.atout${index + 1}.titre`]}
             </p>
-            <p className="mt-1 font-mono text-sm text-slate-400">
+            <p className="mt-0.5 text-sm leading-snug text-zinc-500 lg:whitespace-nowrap">
               {t[`hero.atout${index + 1}.texte`]}
             </p>
           </div>
