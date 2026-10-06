@@ -1,0 +1,142 @@
+{
+  "mesure_reformulee": {
+    "synthese": "Bruno Retailleau propose d'étudier l'interdiction de La France insoumise, qu'il accuse d'appeler à la sédition.",
+    "texte": "Le 1er octobre 2026, sur BFMTV-RMC, en pleine semaine de blocages de lycées marquée par des violences, Bruno Retailleau, candidat LR à la présidentielle et ancien ministre de l'Intérieur, a déclaré : « Je pense aujourd'hui qu'il y a une question qui se pose, c'est la question de l'interdiction de LFI. C'est très difficile en droit, mais je la lance dans le débat public. » Il décrit LFI comme « un parti qui est fasciné par la violence, qui appelle à la sédition et même qui essaie d'organiser l'insurrection ».\n\nReformulée simplement : **dissoudre le parti La France insoumise**, au motif qu'il provoquerait à la violence. **Le candidat ne précise ni la voie juridique, ni le calendrier, ni le sort des élus** : il présente lui-même l'idée comme une question ouverte. L'analyse retient l'interprétation la plus plausible, une dissolution par décret en Conseil des ministres sur le fondement de l'article L. 212-1 du code de la sécurité intérieure, le seul outil existant en droit français pour dissoudre un parti."
+  },
+  "mesure_vers_objectif": {
+    "objectif_court": "Faire cesser les appels à la violence politique",
+    "categorie_objectif": "Démocratie et institutions",
+    "objectif_vise": "Protéger l'ordre public et les institutions en mettant fin à l'activité d'un parti accusé d'encourager la violence et l'insurrection.",
+    "mecanisme_propose": "Dissolution administrative du parti La France insoumise, ce qui supprime la personne morale, ses ressources (dont l'aide publique) et fait de sa reconstitution un délit.",
+    "lien_causal": "indirect"
+  },
+  "nature_et_existant": "Mesure juridique et institutionnelle, qui relève du pouvoir exécutif. L'outil existe déjà : l'article L. 212-1 du code de la sécurité intérieure permet au gouvernement de dissoudre par décret une association ou un groupement qui provoque à des manifestations armées ou à des agissements violents contre les personnes ou les biens (motif élargi par la loi du 24 août 2021). L'article L. 212-1-1 permet d'imputer au groupement les agissements de ses membres agissant en cette qualité. Le Conseil d'État a confirmé le 30 décembre 2024 (Association Civitas, n° 489498) que les partis politiques constitués en association ne sont pas exclus par principe de ce régime. Ce ne serait donc pas une innovation juridique mais une extension inédite de son usage : jamais, sous la Ve République, un parti disposant d'un groupe parlementaire d'environ 70 députés n'a été dissous. Les précédents de dissolution de mouvements politiques (Ligue communiste et Ordre nouveau en 1973, Civitas en 2023) visaient des organisations sans représentation parlementaire comparable.",
+  "contexte_programme": {
+    "synthese": "Une idée lancée dans le débat, pas une mesure du programme, mais cohérente avec la ligne constante du candidat.",
+    "texte": "**Il ne s'agit pas d'une mesure chiffrée du programme mais d'une proposition lancée à l'oral**, en réaction aux blocages de lycées de fin septembre et début octobre 2026. Elle s'inscrit dans une ligne ancienne de Bruno Retailleau : dès juillet 2024, il estimait que « LFI a depuis longtemps quitté le champ républicain », et le répétait en janvier 2026 (« LFI n'est plus dans l'arc républicain »). Ministre de l'Intérieur de 2024 à 2025, il a fait usage de l'outil de dissolution contre plusieurs groupements, dont **la Jeune Garde antifasciste, cofondée par un député LFI, dissoute en juin 2025, dissolution confirmée par le Conseil d'État en avril 2026**. La proposition prolonge donc une pratique qu'il connaît, mais en change radicalement d'échelle : d'un groupuscule à un parti représenté au Parlement."
+  },
+  "contexte_national": {
+    "synthese": "L'outil juridique existe, mais le juge exige une provocation à la violence prouvée, imputable au parti, et une mesure proportionnée.",
+    "texte": "**Le droit permet de dissoudre un parti, mais à des conditions que le juge contrôle de près.** Par trois décisions du 9 novembre 2023 (dont Les Soulèvements de la Terre), le Conseil d'État a précisé qu'une dissolution suppose que le groupement incite, explicitement ou implicitement, à des agissements violents, ou légitime publiquement des actes d'une gravité particulière, ou s'abstient de modérer des appels explicites à la violence ; que ces agissements soient de nature à troubler gravement l'ordre public ; et que la dissolution soit « adaptée, nécessaire et proportionnée ». Il rappelle qu'elle « porte une atteinte grave à la liberté d'association ». Il a annulé la dissolution des Soulèvements de la Terre sur ce fondement.\n\nPour un parti, une protection supplémentaire s'ajoute : **l'article 4 de la Constitution garantit que les partis « se forment et exercent leur activité librement »**, sous réserve de respecter la souveraineté nationale et la démocratie, et le Conseil constitutionnel fait du pluralisme des courants d'idées un objectif de valeur constitutionnelle depuis 1986. Le juriste Nicolas Hervieu (Sciences Po), interrogé par Public Sénat, juge une dissolution de LFI « improbable » sur le plan contentieux : il faudrait établir « le lien de causalité entre l'expression des élus et les actes de violence ».\n\nLes faits invoqués existent mais restent à qualifier : selon le bilan cité par la presse, 625 interpellations, 83 policiers et gendarmes blessés en une journée, 119 élèves et personnels blessés depuis le début des blocages, dont les revendications portaient sur les remplacements d'enseignants et les moyens de l'école. Un élu LFI, le maire de Saint-Denis, a qualifié certaines violences de « légitimes » dans leur contexte. **Aucune source consultée n'établit à ce stade que le parti a organisé ou appelé à ces violences.** Enfin, LFI a reçu 6,68 millions d'euros d'aide publique en 2025, ce qui situe son poids électoral."
+  },
+  "contexte_international": {
+    "synthese": "Les démocraties européennes dissolvent très rarement des partis, et seulement face à une menace réelle et prouvée pour la démocratie.",
+    "texte": "**La Cour européenne des droits de l'homme n'admet la dissolution d'un parti que dans des cas exceptionnels.** Dans l'arrêt Refah Partisi contre Turquie (Grande Chambre, 13 février 2003), elle exige que le parti use de moyens illégaux ou non démocratiques, ou porte un projet incompatible avec la démocratie, et rappelle qu'« il n'est pas de démocratie sans pluralisme ». Les propos de membres ne sont imputables au parti que s'il ne s'en est pas démarqué. La France, liée par l'article 11 de la Convention (liberté d'association), serait soumise à ce contrôle, même après une éventuelle révision constitutionnelle.\n\nL'Allemagne offre un repère utile : **en 2017, la Cour constitutionnelle fédérale a refusé d'interdire le NPD tout en le jugeant hostile à l'ordre démocratique**, faute de capacité réelle à atteindre ses objectifs, et en rappelant que le droit pénal et la police suffisaient contre les violences de ses membres. L'Espagne a dissous Herri Batasuna en 2003 (validé par la Cour européenne en 2009), mais en raison de liens organiques établis avec l'organisation terroriste ETA, un seuil sans commune mesure avec les faits reprochés ici. La Turquie a dissous à répétition des partis islamistes et kurdes : leurs électeurs se sont reportés sur des partis successeurs, dont l'un a fini par gouverner. Transposabilité : ces précédents montrent que l'outil existe en Europe, mais pour des menaces d'une nature et d'une gravité bien supérieures."
+  },
+  "impact_environnement": null,
+  "analyse_par_criteres": "Opérationnalité & Moyens (10/30, plafond appliqué) : le pilier juridique ne tient pas, ce qui plafonne l'ensemble. L'outil de dissolution existe et s'applique aux partis (Conseil d'État, Civitas, 2024), mais le juge exige une provocation à la violence prouvée et imputable au parti, plus une mesure proportionnée (Conseil d'État, 9 novembre 2023) ; s'y ajoutent la liberté des partis garantie par l'article 4 de la Constitution et le contrôle de la Cour européenne (Refah, 2003). Aucune source consultée n'établit que LFI a organisé les violences des lycées ; le candidat lui-même parle d'une voie « très difficile en droit ». D'où 2/10 en juridique. Le volet budgétaire est solide (9/10) : coût quasi nul, et l'État cesserait de verser environ 6,7 millions d'euros d'aide publique annuelle. Les moyens humains (7/10) existent : un décret en Conseil des ministres et un dossier du ministère de l'Intérieur, comme pour les dissolutions déjà prononcées. Le plafond ramène le total à 10/30.\n\nEfficacité (4/30, FRAGILE) : le mécanisme manque sa cible. Dissoudre la personne morale ne retire leur mandat ni aux députés, ni aux élus locaux, ne dissout pas le groupe parlementaire, qui relève du règlement de l'Assemblée, et ne fait pas disparaître les électeurs. Les précédents turcs montrent que les partis dissous se reconstituent sous un autre nom ; le délit de reconstitution est difficile à appliquer à un mouvement de masse qui change de programme et de nom. Surtout, le problème visé, des violences autour de blocages lycéens nés de revendications scolaires, relève du maintien de l'ordre et du droit pénal, qui permettent déjà de poursuivre individuellement les auteurs et les éventuels provocateurs. Au regard de l'objectif de référence du domaine (conciliation entre ordre public et pluralisme), la mesure sacrifie le second sans garantie sur le premier. D'où 4/30 : un effet n'est pas exclu (perte de ressources et de structure), mais une réaction prévisible, la reconstitution, en neutralise l'essentiel.\n\nEffets rebonds & Externalités (3/20, FRAGILE) : l'effet secondaire principal est plus grave que le problème traité. Priver de leur parti des millions d'électeurs porte atteinte au pluralisme, objectif de valeur constitutionnelle, et crée un précédent que tout gouvernement futur pourrait retourner contre un parti d'opposition, de quelque bord qu'il soit. Raisonnement de l'analyste : la dissolution nourrirait probablement un discours de persécution et une radicalisation, à l'opposé de l'apaisement recherché ; elle exposerait la France à une condamnation européenne et à une dégradation de son image démocratique. D'où 3/20 et non 0 : la mesure resterait soumise au contrôle du juge, qui peut la suspendre en urgence.\n\nDegré de préparation (1/10, FRAGILE) : la proposition est une question lancée à l'oral, sans base juridique précisée, sans dossier de faits, sans sort prévu pour les élus. Le candidat reconnaît lui-même la difficulté juridique sans dire comment la surmonter. D'où 1/10.\n\nAlignement & Logique globale (8/10, SOLIDE) : la proposition est cohérente avec le parcours du candidat. Il juge LFI hors du « champ républicain » depuis au moins juillet 2024, et, ministre de l'Intérieur, il a fait dissoudre la Jeune Garde, dissolution validée par le Conseil d'État en avril 2026. Elle reste dans le périmètre du pouvoir exécutif qu'il brigue. D'où 8/10 : cohérence réelle, mais pas 9 ou 10, car la proposition change d'échelle par rapport à sa pratique de ministre (un parti parlementaire et non un groupuscule) sans expliquer ce saut.",
+  "analyse_longevites": {
+    "synthese": "Une dissolution produirait un effet immédiat sur la structure, effacé à moyen terme par la reconstitution du mouvement.",
+    "texte": "À court terme (0 à 2 ans), une dissolution serait contestée immédiatement devant le Conseil d'État, avec un **risque élevé de suspension en référé** comme pour Les Soulèvements de la Terre en 2023. Si elle tenait, elle priverait le mouvement de sa personne morale et de son aide publique. À moyen terme (2 à 7 ans), **les élus, les électeurs et les militants resteraient**, et un parti successeur pourrait se présenter aux élections suivantes, comme l'ont montré les précédents turcs. À long terme (plus de 7 ans), le précédent créé resterait disponible pour tout gouvernement, ce qui modifierait durablement l'équilibre entre ordre public et pluralisme."
+  },
+  "impact_temporel_et_sectoriel": null,
+  "ce_qui_est_etabli": {
+    "synthese": "Un parti peut être dissous en France, mais seulement pour une provocation à la violence prouvée et proportionnée.",
+    "texte": "Les partis constitués en association peuvent être dissous sur le fondement de l'article L. 212-1 du code de la sécurité intérieure (Conseil d'État, 30 décembre 2024, Civitas). **Le juge exige une incitation à la violence, un trouble grave à l'ordre public et une mesure proportionnée** (Conseil d'État, 9 novembre 2023). L'article 4 de la Constitution garantit la liberté d'activité des partis. La Cour européenne n'admet la dissolution d'un parti qu'en cas de moyens non démocratiques ou de projet contraire à la démocratie (Refah, 2003). Le candidat reconnaît lui-même que la voie est « très difficile en droit »."
+  },
+  "ce_qui_est_probable": {
+    "synthese": "Une dissolution serait très probablement suspendue ou annulée, et le mouvement se reconstituerait sous un autre nom.",
+    "texte": "Au vu de la jurisprudence récente, **une dissolution fondée sur les seuls faits connus serait probablement suspendue ou annulée** par le juge, faute de preuve d'une provocation organisée par le parti lui-même. Si elle tenait, l'expérience des pays qui ont dissous des partis de masse indique que **les électeurs et les élus se reporteraient sur une structure nouvelle**."
+  },
+  "ce_qui_est_discutable": {
+    "synthese": "La responsabilité de LFI dans les violences des lycées est affirmée par ses adversaires, contestée par la gauche, non établie.",
+    "texte": "Le candidat affirme que LFI « appelle à la sédition » et « essaie d'organiser l'insurrection ». Certains propos d'élus LFI, comme ceux qualifiant certaines violences de « légitimes », peuvent être jugés complaisants. Mais **la frontière entre soutien politique à une mobilisation et provocation à la violence est précisément ce que le juge devrait trancher**, et la gauche soutient que les blocages reposaient sur des revendications scolaires réelles. Les termes « sédition » et « insurrection » relèvent ici du registre politique et non d'une qualification pénale établie."
+  },
+  "ce_qui_est_inconnu": {
+    "synthese": "On ignore quelle base juridique, quels faits précis et quel sort des élus le candidat envisage.",
+    "texte": "Le candidat n'a précisé **ni le fondement juridique, ni les faits précis qu'il imputerait au parti, ni le traitement des élus**. On ignore aussi s'il envisage une révision constitutionnelle ou une loi nouvelle, et comment il répondrait au contrôle de la Cour européenne. Sources insuffisantes pour trancher sur l'existence d'éléments non publics (renseignement) qui établiraient un rôle organisateur du parti."
+  },
+  "angles_morts": {
+    "synthese": "Le sort des élus, le risque de précédent retourné contre d'autres partis et les alternatives pénales sont absents.",
+    "texte": "**Les élus restent en place** : la dissolution d'un parti ne touche ni les mandats ni le groupe parlementaire, ce que la proposition ne mentionne pas. **Le précédent serait réutilisable** par tout gouvernement contre un parti d'opposition, quel que soit son bord. Test de symétrie : la même analyse s'appliquerait, avec les mêmes notes juridiques, à un candidat de gauche qui proposerait de dissoudre un parti de droite radicale pour des propos jugés haineux. Des alternatives existent pour le même objectif d'ordre public : poursuites pénales individuelles pour provocation, dissolution de groupuscules violents (déjà pratiquée et validée par le juge, comme pour la Jeune Garde), maintien de l'ordre renforcé. Enfin, l'annonce intervient en pleine campagne présidentielle, ce qui expose la mesure au soupçon d'un usage politique contre un concurrent."
+  },
+  "notation_detaillee": {
+    "operationnalite_juridique": 2,
+    "qualification_juridique": "FRAGILE",
+    "operationnalite_budgetaire": 9,
+    "qualification_budgetaire": "SOLIDE",
+    "operationnalite_moyens_humains": 7,
+    "qualification_moyens_humains": "INCERTAIN",
+    "operationnalite_moyens_total": 10,
+    "plafond_applique": true,
+    "plafond_declencheur": "juridique",
+    "efficacite": 4,
+    "qualification_efficacite": "FRAGILE",
+    "effets_rebonds_externalites": 3,
+    "qualification_effets_rebonds": "FRAGILE",
+    "degre_preparation": 1,
+    "qualification_preparation": "FRAGILE",
+    "alignement_logique": 8,
+    "qualification_alignement": "SOLIDE",
+    "score_total": 26,
+    "appreciation": "fragile"
+  },
+  "verdict_final": "Ce qui tient : l'outil existe. Un parti peut être dissous en France, et la proposition est cohérente avec la ligne et la pratique de Bruno Retailleau, qui a déjà fait dissoudre des groupuscules violents avec l'aval du juge.\n\nCe qui ne tient pas : appliquer cet outil à un parti représenté par environ 70 députés suppose de prouver que le parti lui-même provoque à la violence, ce qu'aucune source consultée n'établit, et de passer le contrôle du Conseil d'État, de la Constitution et de la Cour européenne. Même réussie, la dissolution laisserait en place élus, électeurs et militants, et créerait un précédent lourd pour le pluralisme. Ce qui reste incertain : l'existence de faits non publics qui changeraient l'appréciation. L'analyse retient l'hypothèse d'une dissolution par décret, le candidat n'ayant précisé aucune voie juridique.",
+  "sources_utilisees": [
+    "Europe 1, « Tensions devant les lycées : Bruno Retailleau demande d'étudier l'interdiction de LFI », 1er octobre 2026 : https://www.europe1.fr/politique/tensions-devant-les-lycees-bruno-retailleau-demande-detudier-linterdiction-de-lfi-1116410",
+    "LCP, « Bruno Retailleau envisage l'interdiction de LFI qu'il accuse d'organiser l'insurrection », 1er octobre 2026 : https://lcp.fr/actualites/bruno-retailleau-envisage-l-interdiction-de-lfi-qu-il-accuse-d-organiser-l-insurrection",
+    "Public Sénat, « Colère lycéenne : Bruno Retailleau suggère de dissoudre LFI. Est-ce possible ? », 1er octobre 2026 : https://www.publicsenat.fr/actualites/politique/colere-lyceenne-bruno-retailleau-suggere-de-dissoudre-lfi-est-ce-possible",
+    "Public Sénat, « Blocages des lycées : Sébastien Lecornu convoque une cellule de crise », 1er octobre 2026 : https://publicsenat.fr/actualites/education/blocus-lyceen-sebastien-lecornu-convoque-une-cellule-de-crise-a-13-heures",
+    "Conseil d'État, « Soulèvements de la Terre, GALE, Alvarium, CRI : le Conseil d'État précise les critères justifiant la dissolution », 9 novembre 2023 : https://www.conseil-etat.fr/actualites/soulevements-de-la-terre-gale-alvarium-cri-le-conseil-d-etat-precise-les-criteres-justifiant-la-dissolution-d-une-association-ou-d-un-groupement",
+    "Conseil d'État, Section, 9 novembre 2023, n° 476384 (Légifrance) : https://www.legifrance.gouv.fr/ceta/id/CETATEXT000048384891",
+    "Landot avocats, sur Conseil d'État, 30 décembre 2024, Association Civitas, n° 489498 : https://blog.landot-avocats.net/2024/12/31/les-partis-politiques-ne-sont-pas-exclus-du-regime-juridique-propre-aux-dissolutions-dassociations-et-de-groupements-de-fait/",
+    "Landot avocats, aide publique aux partis 2025 (décret du 4 septembre 2025) : https://blog.landot-avocats.net/2025/09/08/financement-des-partis-et-groupements-politiques-voici-les-montants-2025-64-me-et-la-ventilation-correspondante/",
+    "Rue89 Lyon, « Le Conseil d'État confirme la dissolution du collectif antifasciste La Jeune Garde », 30 avril 2026 : https://www.rue89lyon.fr/2026/04/30/conseil-etat-confirme-dissolution-collectif-antifasciste-jeune-garde/",
+    "CNews, « Bruno Retailleau : LFI a depuis longtemps quitté le champ républicain », 11 juillet 2024 : https://www.cnews.fr/france/2024-07-11/bruno-retailleau-lfi-depuis-longtemps-quitte-le-champ-republicain-1525831",
+    "CNews, « LFI n'est plus dans l'arc républicain, martèle Bruno Retailleau », 14 janvier 2026 : https://www.cnews.fr/france/2026-01-14/pour-moi-cest-tres-clair-lfi-nest-plus-dans-larc-republicain-martele-bruno",
+    "CEDH, Grande Chambre, 13 février 2003, Refah Partisi et autres c. Turquie (Revue générale du droit) : https://www.revuegeneraledudroit.eu/blog/decisions/cedh-gc-13-fevrier-2003-refah-partisi-parti-de-la-prosperite-et-autres-contre-turquie-req-n41340-98-et-autres/",
+    "Bundeszentrale für politische Bildung, « Bundesverfassungsgericht lehnt NPD-Verbot ab », 17 janvier 2017 : https://www.bpb.de/kurz-knapp/hintergrund-aktuell/222103/bundesverfassungsgericht-lehnt-npd-verbot-ab/",
+    "Wikipedia, Herri Batasuna (dissolution de 2003, CEDH 2009) : https://en.wikipedia.org/wiki/Herri_Batasuna",
+    "Wikipedia, La France Insoumise group (effectif du groupe parlementaire) : https://en.wikipedia.org/wiki/La_France_Insoumise_group",
+    "Constitution du 4 octobre 1958, article 4 ; Conseil constitutionnel, décision n° 86-217 DC du 18 septembre 1986 (pluralisme)"
+  ],
+  "niveau_de_confiance": "Élevé sur le cadre juridique (textes et jurisprudences primaires consultées) et sur la faiblesse de la préparation. Moyen sur l'efficacité, qui repose sur un raisonnement de l'analyste appuyé sur des précédents étrangers. Limité sur les faits imputables au parti, qui pourraient évoluer avec des éléments non publics.",
+  "limites": {
+    "synthese": "La note repose sur l'hypothèse d'une dissolution par décret, le candidat n'ayant précisé aucune voie juridique.",
+    "texte": "**Le candidat n'ayant pas précisé la voie retenue, l'analyse suppose une dissolution administrative par décret**, seul outil existant. Une révision constitutionnelle ne lèverait pas le contrôle de la Cour européenne. Les faits liés aux blocages de lycées sont récents et peuvent évoluer. Les lignes directrices de la Commission de Venise sur les partis politiques n'ont pas pu être consultées sur source primaire. L'ancrage de la catégorie « Démocratie et institutions » est vérifié pour son volet constitutionnel français, mais son volet international reste à confirmer."
+  },
+  "resume_court": "Bruno Retailleau propose d'étudier l'interdiction de La France insoumise, qu'il accuse d'appeler à la sédition après des blocages de lycées violents. L'idée : dissoudre le parti pour couper un relais de la violence politique. L'outil existe en droit, mais il faudrait prouver que le parti lui-même provoque à la violence, ce qu'aucune source n'établit à ce stade.\n\nMême réussie, la dissolution laisserait en place environ 70 députés, leurs électeurs et leurs militants, et créerait un précédent lourd pour le pluralisme. Le candidat n'ayant précisé aucune voie juridique, l'analyse retient une dissolution par décret. Note : 26/100.",
+  "phrase_teasing": "Un parti dissous peut-il vraiment disparaître ?",
+  "relecture": {
+    "titre": "Interdire LFI : l'outil existe, la preuve manque",
+    "candidat": "Bruno Retailleau",
+    "parti": "Les Républicains",
+    "theme": "Démocratie et institutions",
+    "date": "2026-10-06",
+    "version": 1,
+    "mesure_initiale": "Bruno Retailleau propose d'étudier l'interdiction de La France insoumise, qu'il accuse d'être « fascinée par la violence », d'appeler « à la sédition » et d'essayer « d'organiser l'insurrection », après les blocages de lycées de fin septembre 2026.",
+    "extrait": {
+      "citation": "« Je pense aujourd'hui qu'il y a une question qui se pose, c'est la question de l'interdiction de LFI. C'est très difficile en droit, mais je la lance dans le débat public. »",
+      "source": "Bruno Retailleau, BFMTV-RMC, 1er octobre 2026, rapporté par Europe 1, LCP et Public Sénat · Non vérifié sur l'enregistrement"
+    },
+    "verdict_tient": "l'outil juridique existe (un parti peut être dissous par décret, le Conseil d'État l'a confirmé en 2024), et la proposition est cohérente avec la ligne du candidat et avec les dissolutions qu'il a prononcées comme ministre de l'Intérieur.",
+    "verdict_flou": "aucune source consultée n'établit que le parti lui-même a provoqué les violences, condition exigée par le juge. Même réussie, la dissolution laisserait en place environ 70 députés, leurs électeurs et leurs militants, permettrait une reconstitution sous un autre nom et créerait un précédent lourd pour le pluralisme.",
+    "niveau_confiance": "Élevé sur le droit, moyen sur l'efficacité",
+    "questions": [
+      {
+        "titre": "Citation et voie juridique envisagée",
+        "texte": "La proposition est connue par des comptes rendus de presse d'une interview orale. Le candidat ne précise ni la base juridique, ni le calendrier, ni le sort des élus. La fiche retient une dissolution par décret (article L. 212-1 du code de la sécurité intérieure). Quelqu'un dispose-t-il de l'enregistrement, ou d'une précision ultérieure du candidat (loi nouvelle, révision constitutionnelle) ?"
+      },
+      {
+        "titre": "Faisabilité juridique notée 2/10",
+        "texte": "La note FRAGILE déclenche le plafond de l'Opérationnalité à 10/30. Elle repose sur les critères du Conseil d'État (novembre 2023), l'article 4 de la Constitution et l'arrêt Refah de la Cour européenne (2003), au regard des faits connus. Le comité estime-t-il qu'il faut plutôt parler d'incertitude (3 ou 4/10), l'outil existant et le juge n'ayant jamais tranché le cas d'un parti parlementaire ?"
+      },
+      {
+        "titre": "Faits imputables au parti",
+        "texte": "La fiche conclut qu'aucune source n'établit que LFI a organisé ou appelé aux violences des lycées, tout en citant le propos d'un maire LFI jugeant certaines violences « légitimes ». Le comité connaît-il des déclarations officielles du parti ou de ses dirigeants qui pourraient être qualifiées de provocation à la violence au sens du juge ?"
+      },
+      {
+        "titre": "Efficacité notée 4/30",
+        "texte": "La note repose sur un raisonnement : les élus et le groupe parlementaire restent, et les précédents turcs montrent que les partis dissous se reconstituent. Ces précédents vous paraissent-ils transposables à la France, ou la sanction pénale de la reconstitution changerait-elle la donne ?"
+      },
+      {
+        "titre": "Alignement noté 8/10",
+        "texte": "La fiche juge la proposition cohérente avec la ligne du candidat (LFI « hors du champ républicain » depuis 2024, dissolution de la Jeune Garde en 2025). Le comité voit-il une position ou un vote antérieur du candidat qui irait dans l'autre sens, par exemple sur la liberté d'association ou le pluralisme ?"
+      },
+      {
+        "titre": "Titre et teasing provisoires",
+        "texte": "Titre court proposé pour l'accueil : « Interdire La France insoumise ». Teasing : « Un parti dissous peut-il vraiment disparaître ? ». Faut-il les formuler autrement ?"
+      }
+    ]
+  }
+}
