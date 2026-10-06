@@ -100,9 +100,9 @@ export default function StickyScoreCard({
       {versionMethodologie && generationDateLabel ? (
         <div className="mt-4 font-mono text-xs text-zinc-400">
           <p>
-            Analyse réalisée avec Perlimpinpin {versionMethodologie} · Tagadaaa
+            Analyse réalisée le {generationDateLabel} avec Perlimpinpin{" "}
+            {versionMethodologie} · Tagadaaa
           </p>
-          <p className="mt-0.5">{generationDateLabel}</p>
         </div>
       ) : null}
 
