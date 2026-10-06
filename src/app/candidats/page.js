@@ -1,9 +1,8 @@
-import Link from "next/link";
 import Header from "@/components/Header";
 import MonoTag from "@/components/MonoTag";
-import { getAllCandidats } from "@/lib/queries";
-import { formatScore, getScoreBadge } from "@/lib/score";
-import { vignettePhoto } from "@/lib/photo-vignette";
+import CandidatsGrille from "@/components/CandidatsGrille";
+import { getScoresCandidats } from "@/lib/queries";
+import { getAllParcours } from "@/lib/parcours";
 
 // ISR : servie depuis le cache du CDN, recalculée au plus toutes les 5 minutes.
 export const revalidate = 300;
@@ -15,7 +14,14 @@ export const metadata = {
 };
 
 export default async function CandidatsPage() {
-  const candidats = await getAllCandidats();
+  // Un candidat par entrée de data/candidats-parcours.json, rattaché à la base
+  // par son nom complet. Recherche et tri : dans le navigateur
+  // (CandidatsGrille), sur ces données, sans nouvelle requête.
+  const scores = await getScoresCandidats();
+  const cartes = getAllParcours().map((parcours) => ({
+    parcours,
+    score: scores.get(`${parcours.prenom} ${parcours.nom}`) ?? null,
+  }));
 
   return (
     <div className="flex min-h-screen flex-col bg-page-gradient font-sans">
@@ -42,65 +48,7 @@ export default async function CandidatsPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-3">
-            {candidats.map((candidat) => {
-              const badge =
-                candidat.scoreMoyen == null
-                  ? null
-                  : getScoreBadge(candidat.scoreMoyen);
-
-              return (
-                <Link
-                  key={candidat.id}
-                  href={`/declarations?candidat=${encodeURIComponent(candidat.nom)}`}
-                  prefetch={false}
-                  className="flex flex-col gap-4 border-b border-zinc-200 pb-6 transition-opacity hover:opacity-70"
-                >
-                  <div className="flex items-center gap-3">
-                    <img
-                      src={vignettePhoto(candidat.photoUrl) || "/avatar-placeholder.svg"}
-                      alt={candidat.nom}
-                      className="h-16 w-16 shrink-0 rounded-xl object-cover object-top"
-                    />
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-semibold text-zinc-900">
-                        {candidat.nom}
-                      </p>
-                      <p className="text-xs text-zinc-400">{candidat.parti}</p>
-                      <p className="mt-1 text-xs text-zinc-400">
-                        {candidat.declarationsPubliees} déclaration
-                        {candidat.declarationsPubliees > 1 ? "s" : ""} analysée
-                        {candidat.declarationsPubliees > 1 ? "s" : ""}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-end justify-between">
-                    {badge ? (
-                      <div>
-                        <p className={`text-3xl font-extrabold tracking-tight ${badge.scoreClass}`}>
-                          {formatScore(candidat.scoreMoyen)}
-                          <span className="text-sm font-semibold text-zinc-400">
-                            /100
-                          </span>
-                        </p>
-                        <p className={`text-sm font-semibold ${badge.scoreClass}`}>
-                          {badge.label}
-                        </p>
-                      </div>
-                    ) : (
-                      <span className="text-xs font-medium text-zinc-400">
-                        Pas encore noté
-                      </span>
-                    )}
-                    <span aria-hidden="true" className="shrink-0 text-zinc-400">
-                      →
-                    </span>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
+          <CandidatsGrille cartes={cartes} />
 
           <p className="border-t border-zinc-200 pt-6 text-xs leading-relaxed text-zinc-400">
             Ce score est une moyenne arithmétique des mesures actuellement
