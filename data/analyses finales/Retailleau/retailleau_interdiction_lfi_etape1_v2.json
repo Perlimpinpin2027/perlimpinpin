@@ -1,7 +1,7 @@
 {
   "mesure_reformulee": {
     "synthese": "Bruno Retailleau propose d'étudier l'interdiction de La France insoumise, qu'il accuse d'appeler à la sédition.",
-    "texte": "Le 1er octobre 2026, sur BFMTV-RMC, en pleine semaine de blocages de lycées marquée par des violences, Bruno Retailleau, candidat LR à la présidentielle et ancien ministre de l'Intérieur, a déclaré : « Je pense aujourd'hui qu'il y a une question qui se pose, c'est la question de l'interdiction de LFI. C'est très difficile en droit, mais je la lance dans le débat public. » Il décrit LFI comme « un parti qui est fasciné par la violence, qui appelle à la sédition et même qui essaie d'organiser l'insurrection ».\n\nReformulée simplement : **dissoudre le parti La France insoumise**, au motif qu'il provoquerait à la violence. **Le candidat ne précise ni la voie juridique, ni le calendrier, ni le sort des élus** : il présente lui-même l'idée comme une question ouverte. L'analyse retient l'interprétation la plus plausible, une dissolution par décret en Conseil des ministres sur le fondement de l'article L. 212-1 du code de la sécurité intérieure, le seul outil existant en droit français pour dissoudre un parti."
+    "texte": "Le 1er octobre 2026, sur BFMTV-RMC, en pleine semaine de blocages de lycées marquée par des violences, Bruno Retailleau, candidat officiel des Républicains à la présidentielle depuis le vote des adhérents du 19 avril 2026 et ancien ministre de l'Intérieur, a déclaré : « Je pense aujourd'hui qu'il y a une question qui se pose, c'est la question de l'interdiction de LFI. C'est très difficile en droit, mais je la lance dans le débat public. » Il décrit LFI comme « un parti qui est fasciné par la violence, qui appelle à la sédition et même qui essaie d'organiser l'insurrection ».\n\nReformulée simplement : **dissoudre le parti La France insoumise**, au motif qu'il provoquerait à la violence. **Le candidat ne précise ni la voie juridique, ni le calendrier, ni le sort des élus** : il présente lui-même l'idée comme une question ouverte. L'analyse retient l'interprétation la plus plausible, une dissolution par décret en Conseil des ministres sur le fondement de l'article L. 212-1 du code de la sécurité intérieure, le seul outil existant en droit français pour dissoudre un parti."
   },
   "mesure_vers_objectif": {
     "objectif_court": "Faire cesser les appels à la violence politique",
@@ -88,78 +88,14 @@
     "Bundeszentrale für politische Bildung, « Bundesverfassungsgericht lehnt NPD-Verbot ab », 17 janvier 2017 : https://www.bpb.de/kurz-knapp/hintergrund-aktuell/222103/bundesverfassungsgericht-lehnt-npd-verbot-ab/",
     "Wikipedia, Herri Batasuna (dissolution de 2003, CEDH 2009) : https://en.wikipedia.org/wiki/Herri_Batasuna",
     "Wikipedia, La France Insoumise group (effectif du groupe parlementaire) : https://en.wikipedia.org/wiki/La_France_Insoumise_group",
-    "Constitution du 4 octobre 1958, article 4 ; Conseil constitutionnel, décision n° 86-217 DC du 18 septembre 1986 (pluralisme)"
+    "Constitution du 4 octobre 1958, article 4 ; Conseil constitutionnel, décision n° 86-217 DC du 18 septembre 1986 (pluralisme)",
+    "LCP, « Présidentielle : Bruno Retailleau choisi comme candidat officiel des Républicains », 19 avril 2026 : https://lcp.fr/actualites/presidentielle-bruno-retailleau-choisi-comme-candidat-officiel-des-republicains-435440"
   ],
   "niveau_de_confiance": "Élevé sur le cadre juridique (textes et jurisprudences primaires consultées) et sur la faiblesse de la préparation. Moyen sur l'efficacité, qui repose sur un raisonnement de l'analyste appuyé sur des précédents étrangers. Limité sur les faits imputables au parti, qui pourraient évoluer avec des éléments non publics.",
   "limites": {
-    "synthese": "La note repose sur l'hypothèse d'une dissolution par décret, le candidat n'ayant précisé aucune voie juridique.",
-    "texte": "**Le candidat n'ayant pas précisé la voie retenue, l'analyse suppose une dissolution administrative par décret**, seul outil existant. Une révision constitutionnelle ne lèverait pas le contrôle de la Cour européenne. Les faits liés aux blocages de lycées sont récents et peuvent évoluer. Les lignes directrices de la Commission de Venise sur les partis politiques n'ont pas pu être consultées sur source primaire. L'ancrage de la catégorie « Démocratie et institutions » est vérifié pour son volet constitutionnel français, mais son volet international reste à confirmer."
+    "synthese": "Idée lancée à l'oral par le candidat, pas encore inscrite au programme ; la voie juridique retenue est une hypothèse.",
+    "texte": "**Statut de la proposition : il s'agit d'une idée qu'un candidat déclaré dit « lancer dans le débat public », pas d'un engagement écrit de son programme.** La fiche l'analyse parce qu'elle est formulée par le candidat lui-même, dans une interview, comme une piste qu'il soutient ; si elle était abandonnée ou au contraire inscrite formellement au programme avec des modalités, la fiche serait à revoir. Ce statut est pris en compte dans la note de préparation (1/10). **Le candidat n'ayant pas précisé la voie retenue, l'analyse suppose une dissolution administrative par décret**, seul outil existant. Une révision constitutionnelle ne lèverait pas le contrôle de la Cour européenne. Les faits liés aux blocages de lycées sont récents et peuvent évoluer. Les lignes directrices de la Commission de Venise sur les partis politiques n'ont pas pu être consultées sur source primaire. L'ancrage de la catégorie « Démocratie et institutions » est vérifié pour son volet constitutionnel français, mais son volet international reste à confirmer."
   },
   "resume_court": "Bruno Retailleau propose d'étudier l'interdiction de La France insoumise, qu'il accuse d'appeler à la sédition après des blocages de lycées violents. L'idée : dissoudre le parti pour couper un relais de la violence politique. L'outil existe en droit, mais il faudrait prouver que le parti lui-même provoque à la violence, ce qu'aucune source n'établit à ce stade.\n\nMême réussie, la dissolution laisserait en place environ 70 députés, leurs électeurs et leurs militants, et créerait un précédent lourd pour le pluralisme. Le candidat n'ayant précisé aucune voie juridique, l'analyse retient une dissolution par décret. Note : 26/100.",
-  "phrase_teasing": "Un parti dissous peut-il vraiment disparaître ?",
-  "relecture": {
-    "titre": "Interdire LFI : l'outil existe, la preuve manque",
-    "candidat": "Bruno Retailleau",
-    "parti": "Les Républicains",
-    "theme": "Démocratie et institutions",
-    "date": "2026-10-06",
-    "version": 1,
-    "mesure_initiale": "Bruno Retailleau propose d'étudier l'interdiction de La France insoumise, qu'il accuse d'être « fascinée par la violence », d'appeler « à la sédition » et d'essayer « d'organiser l'insurrection », après les blocages de lycées de fin septembre 2026.",
-    "extrait": {
-      "citation": "« Je pense aujourd'hui qu'il y a une question qui se pose, c'est la question de l'interdiction de LFI. C'est très difficile en droit, mais je la lance dans le débat public. »",
-      "source": "Bruno Retailleau, BFMTV-RMC, 1er octobre 2026, rapporté par Europe 1, LCP et Public Sénat · Non vérifié sur l'enregistrement"
-    },
-    "verdict_tient": "l'outil juridique existe (un parti peut être dissous par décret, le Conseil d'État l'a confirmé en 2024), et la proposition est cohérente avec la ligne du candidat et avec les dissolutions qu'il a prononcées comme ministre de l'Intérieur.",
-    "verdict_flou": "aucune source consultée n'établit que le parti lui-même a provoqué les violences, condition exigée par le juge. Même réussie, la dissolution laisserait en place environ 70 députés, leurs électeurs et leurs militants, permettrait une reconstitution sous un autre nom et créerait un précédent lourd pour le pluralisme.",
-    "niveau_confiance": "Élevé sur le droit, moyen sur l'efficacité",
-    "questions": [
-      {
-        "titre": "Citation et voie juridique envisagée",
-        "texte": "La proposition est connue par des comptes rendus de presse d'une interview orale. Le candidat ne précise ni la base juridique, ni le calendrier, ni le sort des élus. La fiche retient une dissolution par décret (article L. 212-1 du code de la sécurité intérieure). Quelqu'un dispose-t-il de l'enregistrement, ou d'une précision ultérieure du candidat (loi nouvelle, révision constitutionnelle) ?"
-      },
-      {
-        "titre": "Faisabilité juridique notée 2/10",
-        "texte": "La note FRAGILE déclenche le plafond de l'Opérationnalité à 10/30. Elle repose sur les critères du Conseil d'État (novembre 2023), l'article 4 de la Constitution et l'arrêt Refah de la Cour européenne (2003), au regard des faits connus. Le comité estime-t-il qu'il faut plutôt parler d'incertitude (3 ou 4/10), l'outil existant et le juge n'ayant jamais tranché le cas d'un parti parlementaire ?"
-      },
-      {
-        "titre": "Faits imputables au parti",
-        "texte": "La fiche conclut qu'aucune source n'établit que LFI a organisé ou appelé aux violences des lycées, tout en citant le propos d'un maire LFI jugeant certaines violences « légitimes ». Le comité connaît-il des déclarations officielles du parti ou de ses dirigeants qui pourraient être qualifiées de provocation à la violence au sens du juge ?"
-      },
-      {
-        "titre": "Efficacité notée 4/30",
-        "texte": "La note repose sur un raisonnement : les élus et le groupe parlementaire restent, et les précédents turcs montrent que les partis dissous se reconstituent. Ces précédents vous paraissent-ils transposables à la France, ou la sanction pénale de la reconstitution changerait-elle la donne ?"
-      },
-      {
-        "titre": "Alignement noté 8/10",
-        "texte": "La fiche juge la proposition cohérente avec la ligne du candidat (LFI « hors du champ républicain » depuis 2024, dissolution de la Jeune Garde en 2025). Le comité voit-il une position ou un vote antérieur du candidat qui irait dans l'autre sens, par exemple sur la liberté d'association ou le pluralisme ?"
-      },
-      {
-        "titre": "Titre et teasing provisoires",
-        "texte": "Titre court proposé pour l'accueil : « Interdire La France insoumise ». Teasing : « Un parti dissous peut-il vraiment disparaître ? ». Faut-il les formuler autrement ?"
-      }
-    ],
-    "archive": {
-      "date": "2026-10-07",
-      "version_suivante": "data/analyses finales/Retailleau/retailleau_interdiction_lfi_etape1_v2.json",
-      "synthese": "La v2 précise le statut de la proposition : une idée qu'un candidat officiellement investi (vote des adhérents LR du 19 avril 2026) lance dans le débat public, pas un engagement écrit de son programme. Ce point est désormais dit dans la reformulation et dans les limites.\n\nAucune note ne change : le score reste de 26 sur 100. Le titre définitif sera fixé à l'étape suivante.",
-      "reponses": [
-        {
-          "commentaire_id": "cmuwqy9ex000004l5l3xfsvzw",
-          "auteur": "Alexis C.",
-          "section": "Le résumé de Perlimpinpin IA",
-          "commentaire": "Est-ce réellement une proposition en tant que candidat à la Présidentielle ?",
-          "reponse": "Bonne question, et la v1 ne la traitait pas assez clairement. Oui, au sens où Bruno Retailleau parle en candidat : il a été désigné candidat officiel des Républicains par le vote des adhérents du 19 avril 2026, et c'est dans ce rôle qu'il s'exprime sur BFMTV-RMC. Mais non, au sens d'un engagement écrit : il dit lui-même « lancer [la question] dans le débat public », sans l'inscrire à son programme.\n\nLa v2 le dit maintenant explicitement, dans la reformulation de la mesure et dans les limites : on analyse une piste soutenue par le candidat, et la fiche serait à revoir s'il l'abandonnait ou la formalisait. Ce statut est déjà pris en compte dans la note de préparation (1/10), qui ne change pas.",
-          "retenu": true
-        },
-        {
-          "commentaire_id": "cmuwqzfmr000104l533szq7c8",
-          "auteur": "Alexis C.",
-          "section": "Interdire LFI : l'outil existe, la preuve manque",
-          "commentaire": "Le titre n'est pas très impactant, je ne suis pas sûr que le terme \"preuve\" soit adéquat.",
-          "reponse": "D'accord sur le mot « preuve » : il peut faire penser à un procès, alors que la fiche parle du seuil exigé par le juge administratif, c'est-à-dire des faits établis montrant que le parti lui-même provoque à la violence. Le titre affiché ici était un titre de travail pour la relecture.\n\nLe titre public est fixé à l'étape suivante, sans verdict ni nom du candidat : la piste actuelle est « Interdire La France insoumise ». Je transmets ta remarque pour qu'il reste neutre et clair. La v2 ne contient pas de titre, elle n'est donc pas modifiée sur ce point.",
-          "retenu": false
-        }
-      ]
-    }
-  }
+  "phrase_teasing": "Un parti dissous peut-il vraiment disparaître ?"
 }
