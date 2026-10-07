@@ -37,6 +37,13 @@ const page = {
       defaut:
         "Les frais de mandat financent les dépenses liées au mandat (permanence, déplacements, communication) et ne constituent pas un revenu. Montants identiques pour tous les élus d’une même assemblée.",
     },
+    {
+      cle: "notes.condamnations",
+      groupe: "Notes sous la grille",
+      libelle: "Note sur les condamnations (la date de dernière vérification, tirée de data/condamnations.json, est ajoutée automatiquement)",
+      defaut:
+        "Condamnations pénales prononcées par un tribunal. « Définitive » : plus aucun recours possible. Les enquêtes et mises en examen ne figurent pas.",
+    },
   ],
 };
 

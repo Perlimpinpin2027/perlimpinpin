@@ -3,7 +3,7 @@ import MonoTag from "@/components/MonoTag";
 import CandidatsGrille from "@/components/CandidatsGrille";
 import EncartDon from "@/components/EncartDon";
 import { getScoresCandidats } from "@/lib/queries";
-import { getAllParcours } from "@/lib/parcours";
+import { DATE_VERIFICATION_CONDAMNATIONS, getAllParcours } from "@/lib/parcours";
 import { lireTextes } from "@/lib/textes-site-serveur";
 
 // ISR : servie depuis le cache du CDN, recalculée au plus toutes les 5 minutes.
@@ -24,6 +24,13 @@ export default async function CandidatsPage() {
     parcours,
     score: scores.get(`${parcours.prenom} ${parcours.nom}`) ?? null,
   }));
+  // « 2026-10-07 » → « 7 octobre 2026 » (UTC : pas de décalage d'un jour).
+  const dateVerification = new Date(DATE_VERIFICATION_CONDAMNATIONS).toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  });
 
   return (
     <div className="flex min-h-screen flex-col bg-page-gradient font-sans">
@@ -68,6 +75,10 @@ export default async function CandidatsPage() {
 
           <p className="-mt-6 text-xs leading-relaxed text-zinc-400">
             {t["notes.frais"]}
+          </p>
+
+          <p className="-mt-6 text-xs leading-relaxed text-zinc-400">
+            {t["notes.condamnations"]} Dernière vérification : {dateVerification}.
           </p>
         </div>
       </main>

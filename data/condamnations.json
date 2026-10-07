@@ -1,0 +1,94 @@
+{
+  "_meta": {
+    "description": "Condamnations pénales prononcées par un tribunal, pour la rubrique « Condamnations pénales » des cartes de /candidats. Les enquêtes et mises en examen ne figurent pas. Listes vides = « Aucune condamnation pénale publique recensée ».",
+    "date_verification": "2026-10-07"
+  },
+  "candidats": {
+    "marine-le-pen": {
+      "definitives": [],
+      "non_definitives": [
+        "7 juil. 2026 (cour d'appel de Paris) — détournement de fonds publics : 3 ans de prison dont 2 avec sursis (1 an ferme sous bracelet électronique), 100 000 € d'amende, 45 mois d'inéligibilité dont 30 avec sursis. Pourvoi en cassation formé."
+      ],
+      "note": "Peut se présenter en 2027 (part ferme de l'inéligibilité déjà exécutée). La Cour de cassation statuera au plus tard début avril 2027.",
+      "sources": [
+        "https://lcp.fr/actualites/marine-le-pen-condamnee-dans-l-affaire-des-assistants-parlementaires-reste-eligible-pour"
+      ]
+    },
+    "jean-luc-melenchon": {
+      "definitives": [
+        "9 déc. 2019 (tribunal correctionnel de Bobigny) — rébellion et provocation : 3 mois de prison avec sursis, 8 000 € d'amende"
+      ],
+      "non_definitives": [],
+      "note": null,
+      "sources": [
+        "https://www.publicsenat.fr/actualites/politique/melenchon-condamne-a-trois-mois-avec-sursis-pour-la-perquisition-houleuse-a-lfi"
+      ]
+    },
+    "edouard-philippe": {
+      "definitives": [],
+      "non_definitives": [],
+      "note": null,
+      "sources": []
+    },
+    "raphael-glucksmann": {
+      "definitives": [],
+      "non_definitives": [],
+      "note": null,
+      "sources": []
+    },
+    "gabriel-attal": {
+      "definitives": [],
+      "non_definitives": [],
+      "note": null,
+      "sources": []
+    },
+    "marine-tondelier": {
+      "definitives": [],
+      "non_definitives": [],
+      "note": null,
+      "sources": []
+    },
+    "bruno-retailleau": {
+      "definitives": [],
+      "non_definitives": [],
+      "note": null,
+      "sources": []
+    },
+    "eric-zemmour": {
+      "definitives": [
+        "2011 — provocation à la discrimination raciale : amende avec sursis",
+        "17 sept. 2019 — provocation à la haine religieuse : 3 000 € d'amende",
+        "16 sept. 2025 — provocation à la haine raciale et injures racistes : 15 000 € d'amende",
+        "2 déc. 2025 — complicité d'injure publique et de provocation à la haine : 100 jours-amende de 100 € ; diffamation : 1 000 € d'amende"
+      ],
+      "non_definitives": [
+        "2 avril 2025 (cour d'appel de Paris) — contestation de crime contre l'humanité : 10 000 € d'amende. Pourvoi en cassation formé."
+      ],
+      "note": null,
+      "sources": [
+        "https://www.ozap.com/actu/eric-zemmour-definitivement-condamne-a-3-000-euros-d-amende-pour-provocation-a-la-haine-religieuse/583655",
+        "https://www.lalibre.be/international/europe/2025/09/17/zemmour-definitivement-condamne-pour-racisme-les-lois-nadmettent-pas-que-la-haine-puisse-servir-de-fondement-a-notre-societe-2UQ2WKE7W5HYXJ3SKA2BHBG4YQ/",
+        "https://www.leclubdesjuristes.com/en-bref/la-cour-de-cassation-confirme-deux-condamnations-deric-zemmour-pour-complicite-dinjure-publique-provocation-a-la-haine-et-pour-diffamation-13229/",
+        "https://www.lalibre.be/international/europe/2025/04/02/petain-sauveur-de-juifs-francais-zemmour-condamne-a-10000-euros-damende-L5KWSO364JELFK3HZLYYFRLNS4/"
+      ]
+    },
+    "dominique-de-villepin": {
+      "definitives": [],
+      "non_definitives": [],
+      "note": null,
+      "sources": []
+    },
+    "david-lisnard": {
+      "definitives": [],
+      "non_definitives": [],
+      "note": null,
+      "sources": []
+    },
+    "fabien-roussel": {
+      "definitives": [],
+      "non_definitives": [],
+      "note": null,
+      "sources": []
+    }
+  }
+}

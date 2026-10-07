@@ -1,4 +1,10 @@
 import DONNEES from "../../data/candidats-parcours.json" with { type: "json" };
+import CONDAMNATIONS from "../../data/condamnations.json" with { type: "json" };
+
+const SANS_CONDAMNATION = { definitives: [], non_definitives: [], note: null, sources: [] };
+
+// Date de dernière vérification des condamnations (AAAA-MM-JJ).
+export const DATE_VERIFICATION_CONDAMNATIONS = CONDAMNATIONS._meta.date_verification;
 
 // Parcours des candidats (data/candidats-parcours.json, validé
 // éditorialement). Les champs `_meta` et `points_a_verifier` ne doivent
@@ -19,6 +25,8 @@ function versPublic(candidat) {
     frais_mandat: candidat.frais_mandat ?? null,
     revenus_declares_hatvp: candidat.revenus_declares_hatvp ?? null,
     hatvp_url: candidat.hatvp_url ?? null,
+    // data/condamnations.json, rattaché par le slug.
+    condamnations: CONDAMNATIONS.candidats[candidat.slug] ?? SANS_CONDAMNATION,
   };
 }
 

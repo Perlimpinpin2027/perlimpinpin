@@ -71,6 +71,105 @@ function RubriqueLigne({ titre, icone, mention = null, children }) {
   );
 }
 
+// Libellé + nombre, accordé : « Définitives : 4 » / « Définitive : 1 ».
+function compte(libelle, n) {
+  return `${libelle}${n > 1 ? "s" : ""} : ${n}`;
+}
+
+// Nom du site d'une source (infobulle des liens « Sources »).
+function nomDuSite(url) {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return url;
+  }
+}
+
+function ListeCondamnations({ titre, elements }) {
+  if (!elements.length) return null;
+  return (
+    <div className="mt-2">
+      <p className="text-sm text-zinc-700">
+        {titre} ({elements.length}) :
+      </p>
+      <ul className="mt-1 flex list-disc flex-col gap-0.5 pl-4 text-sm text-zinc-700 marker:text-zinc-300">
+        {elements.map((element) => (
+          <li key={element}>{element}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+// Rubrique « Condamnations pénales » (data/condamnations.json) : les nombres
+// en synthèse, le détail repliable. Sans icône mais alignée sur le texte des
+// autres rubriques (pl-8 = largeur de l'icône + l'espace qui la suit).
+function Condamnations({ condamnations }) {
+  const { definitives, non_definitives: nonDefinitives, note, sources } = condamnations;
+  const aucune = !definitives.length && !nonDefinitives.length;
+
+  return (
+    <li className="pl-8">
+      <p className="text-xs font-bold uppercase tracking-widest text-zinc-500">Condamnations pénales</p>
+      {aucune ? (
+        <p className="mt-1 text-sm text-zinc-700">Aucune condamnation pénale publique recensée</p>
+      ) : (
+        <>
+          <p className="mt-1 text-sm text-zinc-700">
+            {[
+              definitives.length ? compte("Définitive", definitives.length) : null,
+              nonDefinitives.length ? compte("Non définitive", nonDefinitives.length) : null,
+            ]
+              .filter(Boolean)
+              .join(" · ")}
+          </p>
+          {note ? <p className="mt-1 text-xs italic leading-snug text-zinc-400">{note}</p> : null}
+          <details className="mt-1">
+            <summary className="cursor-pointer list-none text-xs text-zinc-400 hover:text-zinc-600 [&::-webkit-details-marker]:hidden">
+              Voir le détail
+            </summary>
+            <ListeCondamnations titre="Définitives" elements={definitives} />
+            <ListeCondamnations titre="Non définitives" elements={nonDefinitives} />
+          </details>
+        </>
+      )}
+      {sources.length ? (
+        <p className="mt-1 text-xs text-zinc-400">
+          {sources.length === 1 ? (
+            <a
+              href={sources[0]}
+              target="_blank"
+              rel="noopener noreferrer"
+              title={nomDuSite(sources[0])}
+              className="underline-offset-2 hover:text-zinc-600 hover:underline"
+            >
+              Source ↗
+            </a>
+          ) : (
+            <>
+              Sources :{" "}
+              {sources.map((url, index) => (
+                <span key={url}>
+                  {index ? " · " : null}
+                  <a
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={nomDuSite(url)}
+                    className="underline-offset-2 hover:text-zinc-600 hover:underline"
+                  >
+                    {index + 1}
+                  </a>
+                </span>
+              ))}
+            </>
+          )}
+        </p>
+      ) : null}
+    </li>
+  );
+}
+
 function initiales(prenom, nom) {
   const premiere = (texte) => (texte.match(/\p{Lu}/u) ?? [texte[0] ?? ""])[0];
   return `${premiere(prenom)}${premiere(nom)}`.toUpperCase();
@@ -169,6 +268,8 @@ export default function CandidatCard({ parcours, score }) {
             )}
           </RubriqueLigne>
         ) : null}
+
+        <Condamnations condamnations={parcours.condamnations} />
 
         {parcours.revenus_declares_hatvp ? (
           <RubriqueLigne titre="Revenus déclarés (HATVP)" icone="revenus">
