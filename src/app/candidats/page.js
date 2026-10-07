@@ -4,6 +4,7 @@ import CandidatsGrille from "@/components/CandidatsGrille";
 import EncartDon from "@/components/EncartDon";
 import { getScoresCandidats } from "@/lib/queries";
 import { getAllParcours } from "@/lib/parcours";
+import { lireTextes } from "@/lib/textes-site-serveur";
 
 // ISR : servie depuis le cache du CDN, recalculée au plus toutes les 5 minutes.
 export const revalidate = 300;
@@ -18,7 +19,7 @@ export default async function CandidatsPage() {
   // Un candidat par entrée de data/candidats-parcours.json, rattaché à la base
   // par son nom complet. Recherche et tri : dans le navigateur
   // (CandidatsGrille), sur ces données, sans nouvelle requête.
-  const scores = await getScoresCandidats();
+  const [scores, t] = await Promise.all([getScoresCandidats(), lireTextes("candidats")]);
   const cartes = getAllParcours().map((parcours) => ({
     parcours,
     score: scores.get(`${parcours.prenom} ${parcours.nom}`) ?? null,
@@ -35,7 +36,7 @@ export default async function CandidatsPage() {
               largeur. */}
           <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
             <div>
-              <MonoTag>Présidentielle 2027</MonoTag>
+              <MonoTag>{t["entete.surtitre"]}</MonoTag>
               {/* text-3xl/sm:text-4xl (30-36px) mesuré trop petit sur la
                   maquette 456 : le "L" de "Les candidats" y fait ~41px de
                   capitale pour un rendu ~1604px de large, soit un corps
@@ -45,11 +46,10 @@ export default async function CandidatsPage() {
                   la maquette le montre à la même taille que le corps de texte
                   courant du site, pas en petit texte secondaire. */}
               <h1 className="mt-2 text-[clamp(1.875rem,1.2rem+2.6vw,3.75rem)] font-extrabold tracking-tight text-zinc-900">
-                Les candidats
+                {t["entete.titre"]}
               </h1>
               <p className="mt-2 max-w-xl text-base text-zinc-500">
-                Découvrez les déclarations analysées et leur niveau moyen de
-                solidité selon la méthode Perlimpinpin.
+                {t["entete.introduction"]}
               </p>
             </div>
 
@@ -59,25 +59,15 @@ export default async function CandidatsPage() {
           <CandidatsGrille cartes={cartes} />
 
           <p className="border-t border-zinc-200 pt-6 text-xs leading-relaxed text-zinc-400">
-            Ce score est une moyenne arithmétique des mesures actuellement
-            analysées par l&rsquo;outil. Il ne constitue ni un jugement sur la
-            personne, ni un indice général de crédibilité politique, et
-            évolue au fur et à mesure des analyses.
+            {t["notes.score"]}
           </p>
 
           <p className="-mt-6 text-xs leading-relaxed text-zinc-400">
-            Indemnités d&rsquo;élu : montants bruts mensuels au 1er janvier 2026,
-            d&rsquo;après les barèmes officiels ; pour les mandats locaux, il
-            s&rsquo;agit des plafonds fixés par la loi. Revenus déclarés à la
-            HATVP : montants nets, tels que déclarés par l&rsquo;élu, non
-            comparables aux indemnités brutes.
+            {t["notes.indemnites"]}
           </p>
 
           <p className="-mt-6 text-xs leading-relaxed text-zinc-400">
-            Les frais de mandat financent les dépenses liées au mandat
-            (permanence, déplacements, communication) et ne constituent pas un
-            revenu. Montants identiques pour tous les élus d&rsquo;une même
-            assemblée.
+            {t["notes.frais"]}
           </p>
         </div>
       </main>
