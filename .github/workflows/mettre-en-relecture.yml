@@ -1,0 +1,124 @@
+# Met une ou plusieurs fiches en relecture sur perlimpinpin.ai/relectures.
+# Équivalent en ligne de « Claude outputs/mettre-en-relecture.ps1 » (qui reste utilisable).
+#
+# 1. Déposer la fiche JSON dans data/a-relire/ (glisser-déposer sur GitHub, branche main).
+# 2. Actions → Mettre en relecture → Run workflow : d'abord en simulation, puis pour de vrai.
+#
+# Secrets (Settings → Secrets and variables → Actions) : RELECTURE_ADMIN_CODE,
+# GIT_AUTHOR_NAME, GIT_AUTHOR_EMAIL (identité d'un membre de l'équipe Vercel,
+# sinon Vercel refuse de déployer le commit).
+
+name: Mettre en relecture
+
+on:
+  workflow_dispatch:
+    inputs:
+      fiches:
+        description: "Noms des fiches déposées dans data/a-relire/, séparés par des espaces, sans .json"
+        required: true
+        type: string
+      fin:
+        description: "Heure de fin du chrono, HH:MM, heure de Paris (vide : pas de chrono)"
+        required: false
+        type: string
+        default: ""
+      simulation:
+        description: "Simulation : rien n'est envoyé en ligne"
+        required: false
+        type: boolean
+        default: true
+
+concurrency:
+  group: mettre-en-relecture
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  relecture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      FICHES: ${{ inputs.fiches }}
+      FIN: ${{ inputs.fin }}
+      RELECTURE_ADMIN_CODE: ${{ secrets.RELECTURE_ADMIN_CODE }}
+    steps:
+      - name: Récupération de main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # --ignore-scripts : pas de « prisma generate » (aucune base utilisée ici).
+      - name: Installation des modules
+        run: npm ci --ignore-scripts
+
+      - name: Vérification des fiches et de l'heure de fin
+        id: verif
+        run: node scripts/robot-relecture.js verifier
+
+      - name: Ajout des fiches
+        env:
+          SLUGS: ${{ steps.verif.outputs.slugs }}
+        run: |
+          for slug in $SLUGS; do
+            echo "==> Ajout de la fiche $slug"
+            node scripts/relecture.js ajouter "data/a-relire/$slug.json"
+            git rm -q "data/a-relire/$slug.json"
+          done
+
+      - name: Contrôle des fichiers modifiés
+        run: |
+          git add -A
+          node scripts/robot-relecture.js controler
+
+      - name: "Simulation : ce qui serait envoyé"
+        if: ${{ inputs.simulation }}
+        env:
+          SLUGS: ${{ steps.verif.outputs.slugs }}
+        run: |
+          echo "Fichiers qui seraient envoyés :"
+          git diff --cached --name-status
+          if [ -n "$FIN" ]; then
+            node scripts/robot-relecture.js lancer --dry-run
+          else
+            node scripts/robot-relecture.js resume --dry-run
+          fi
+          echo
+          echo "Simulation terminée : rien n'a été envoyé. Relance avec « simulation » décoché pour mettre en ligne."
+
+      - name: Envoi sur main
+        if: ${{ !inputs.simulation }}
+        env:
+          SLUGS: ${{ steps.verif.outputs.slugs }}
+          AUTEUR_NOM: ${{ secrets.GIT_AUTHOR_NAME }}
+          AUTEUR_EMAIL: ${{ secrets.GIT_AUTHOR_EMAIL }}
+        run: |
+          if [ -z "$AUTEUR_NOM" ] || [ -z "$AUTEUR_EMAIL" ]; then
+            echo "✗ Secrets GIT_AUTHOR_NAME et GIT_AUTHOR_EMAIL manquants : Vercel refuserait de déployer le commit. Rien n'a été envoyé."
+            exit 1
+          fi
+          git config user.name "$AUTEUR_NOM"
+          git config user.email "$AUTEUR_EMAIL"
+          git commit -q -m "Relecture : $(echo $SLUGS | sed 's/ /, /g')"
+          git push origin HEAD:main
+          echo "C'est envoyé : en ligne d'ici 3 minutes sur https://perlimpinpin.ai/relectures"
+
+      - name: Chrono et mail aux adhérents
+        if: ${{ !inputs.simulation && inputs.fin != '' }}
+        env:
+          SLUGS: ${{ steps.verif.outputs.slugs }}
+        run: node scripts/robot-relecture.js lancer
+
+      - name: Résumé
+        if: ${{ !inputs.simulation && inputs.fin == '' }}
+        env:
+          SLUGS: ${{ steps.verif.outputs.slugs }}
+        run: node scripts/robot-relecture.js resume
