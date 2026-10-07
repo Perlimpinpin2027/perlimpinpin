@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
-import MonoTag from "@/components/MonoTag";
 import SectionHeading from "@/components/SectionHeading";
 import { getHorsSerie, getHorsSerieSlugs } from "@/lib/hors-series";
 import { getScoresPublies } from "@/lib/queries";
@@ -34,7 +33,7 @@ export async function generateMetadata({ params }) {
 
 const SECTION = "w-full px-6 pb-14 sm:px-8 sm:pb-16";
 const CONTENEUR = "mx-auto w-full max-w-[1280px]";
-const TITRE_SECTION = "font-serif text-3xl font-bold text-zinc-950 sm:text-[2.125rem]";
+const TITRE_SECTION = "font-sans text-3xl font-extrabold tracking-tight text-zinc-950 sm:text-[2.125rem]";
 const OMBRE_CARTE = "shadow-[0_24px_60px_-30px_rgba(30,41,82,0.35)]";
 
 // Nuances roses des blocs de la barre de décomposition dont la fiche n'est
@@ -44,9 +43,19 @@ const ROSES_DECOMPOSITION = ["bg-pink-700", "bg-pink-600", "bg-pink-400", "bg-pi
 const HACHURES =
   "bg-[repeating-linear-gradient(45deg,var(--color-zinc-200)_0_8px,var(--color-zinc-100)_8px_16px)]";
 
+// Étiquette « // … » de cette page, en Geist comme le reste de la page (et
+// non en police mono comme MonoTag, utilisé ailleurs sur le site).
+function Etiquette({ children, couleur = "text-zinc-400", className = "" }) {
+  return (
+    <span className={`text-xs font-semibold uppercase tracking-[0.12em] ${couleur} ${className}`}>
+      {`// ${children}`}
+    </span>
+  );
+}
+
 // Titre avec le mot `motItalique` en gris clair et en italique, comme
 // « vraiment » dans HeroText. Seule la première occurrence est concernée
-// (« poste par poste »). mr-[0.15em] : correction d'italique.
+// (ex. « budgétaire »). mr-[0.15em] : correction d'italique.
 function TitreAvecItalique({ titre, motItalique }) {
   const position = motItalique ? titre.indexOf(motItalique) : -1;
   if (position === -1) return titre;
@@ -91,9 +100,9 @@ function CarteFiche({ fiche, candidat, score }) {
         <p className="text-sm font-semibold text-zinc-900">{candidat.nom}</p>
         <p className="text-xs text-zinc-400">{candidat.parti}</p>
       </div>
-      <MonoTag className="shrink-0">
+      <Etiquette className="shrink-0">
         {`FICHE_${String(fiche.numero).padStart(2, "0")}`}
-      </MonoTag>
+      </Etiquette>
     </div>
   );
 
@@ -239,12 +248,10 @@ export default async function HorsSeriePage({ params }) {
         <section className="w-full px-6 pb-14 pt-12 sm:px-8 sm:pb-16 sm:pt-20">
           <div className={`${CONTENEUR} flex flex-col gap-6`}>
             <div className="flex flex-wrap items-center gap-3">
-              <span className="rounded-full bg-pink-700 px-3 py-1.5 font-mono text-xs font-semibold uppercase tracking-widest text-white">
+              <span className="rounded-full bg-pink-700 px-3 py-1.5 font-sans text-xs font-semibold uppercase tracking-widest text-white">
                 Hors-série n°{hs.numero}
               </span>
-              <span className="font-mono text-sm uppercase tracking-[0.12em] text-slate-500">
-                {`// ${hs.etiquette}`}
-              </span>
+              <Etiquette>{hs.etiquette}</Etiquette>
             </div>
 
             <h1 className="max-w-5xl font-sans text-4xl font-extrabold leading-[1.04] tracking-[-0.035em] text-zinc-950 sm:text-5xl lg:text-6xl">
@@ -276,7 +283,7 @@ export default async function HorsSeriePage({ params }) {
         {/* Chiffres clés */}
         <section className={SECTION}>
           <div className={`${CONTENEUR} flex flex-col gap-5`}>
-            <MonoTag>{chiffresCles.titre}</MonoTag>
+            <Etiquette>{chiffresCles.titre}</Etiquette>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {chiffresCles.items.map((item) => (
                 <div
@@ -306,7 +313,7 @@ export default async function HorsSeriePage({ params }) {
                   key={doc.titre}
                   className="flex flex-col gap-3.5 rounded-2xl border border-zinc-200 bg-white p-6 sm:p-7"
                 >
-                  <MonoTag>{doc.etiquette}</MonoTag>
+                  <Etiquette>{doc.etiquette}</Etiquette>
                   <h3 className="text-[22px] font-bold tracking-tight text-zinc-900">
                     {doc.titre}
                   </h3>
@@ -330,10 +337,8 @@ export default async function HorsSeriePage({ params }) {
         {/* Encadré : économiser, ça veut dire quoi ? */}
         <section className={SECTION}>
           <div className={`${CONTENEUR} flex flex-col gap-6 rounded-2xl bg-blue-950 p-6 text-indigo-100 sm:p-10`}>
-            <span className="font-mono text-xs font-semibold uppercase tracking-widest text-indigo-300">
-              {`// ${encadre.etiquette}`}
-            </span>
-            <h2 className="font-serif text-3xl font-bold text-white sm:text-[2rem]">
+            <Etiquette couleur="text-indigo-300">{encadre.etiquette}</Etiquette>
+            <h2 className="font-sans text-3xl font-extrabold tracking-tight text-white sm:text-[2rem]">
               {encadre.titre}
             </h2>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -365,7 +370,7 @@ export default async function HorsSeriePage({ params }) {
         {/* Décomposition des économies */}
         <section className={SECTION}>
           <div className={`${CONTENEUR} flex flex-col gap-5`}>
-            <MonoTag>Décomposition</MonoTag>
+            <Etiquette>Décomposition</Etiquette>
             <h2 className={TITRE_SECTION}>{decomposition.titre}</h2>
             <p className="max-w-4xl text-base leading-relaxed text-slate-500">
               {decomposition.intro}
@@ -413,7 +418,7 @@ export default async function HorsSeriePage({ params }) {
                       <th
                         key={colonne}
                         scope="col"
-                        className="border-b border-zinc-200 px-5 py-3.5 font-mono text-[11px] font-semibold uppercase tracking-widest text-zinc-500"
+                        className="border-b border-zinc-200 px-5 py-3.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-zinc-500"
                       >
                         {colonne}
                       </th>
@@ -448,7 +453,7 @@ export default async function HorsSeriePage({ params }) {
         {/* Les fiches */}
         <section id="analyses" className={`${SECTION} scroll-mt-20`}>
           <div className={`${CONTENEUR} flex flex-col gap-6`}>
-            <MonoTag>Les analyses</MonoTag>
+            <Etiquette>Les analyses</Etiquette>
             <h2 className={TITRE_SECTION}>
               {fiches.length} fiches, {fiches.length} postes du plan
             </h2>
@@ -471,9 +476,7 @@ export default async function HorsSeriePage({ params }) {
             className={`${CONTENEUR} grid grid-cols-1 gap-10 rounded-2xl border border-zinc-200 bg-white p-6 sm:p-10 md:grid-cols-2 ${OMBRE_CARTE}`}
           >
             <div className="flex flex-col gap-2.5">
-              <span className="font-mono text-xs uppercase tracking-widest text-slate-500">
-                Score Perlimpinpin · Plan complet
-              </span>
+              <Etiquette>Score Perlimpinpin · Plan complet</Etiquette>
               <div className="flex items-baseline gap-1.5">
                 <span
                   className={`text-7xl font-extrabold leading-none tracking-tighter sm:text-[5rem] ${badgeGlobal ? badgeGlobal.scoreClass : "text-zinc-300"}`}
@@ -502,7 +505,7 @@ export default async function HorsSeriePage({ params }) {
               )}
             </div>
             <div className="flex flex-col gap-3 text-base leading-relaxed text-zinc-700">
-              <h3 className="font-serif text-2xl font-bold text-zinc-950">{noteGlobale.titre}</h3>
+              <h3 className="font-sans text-2xl font-extrabold tracking-tight text-zinc-950">{noteGlobale.titre}</h3>
               {noteGlobale.paragraphes.map((paragraphe) => (
                 <p key={paragraphe}>{paragraphe}</p>
               ))}
@@ -526,7 +529,9 @@ export default async function HorsSeriePage({ params }) {
                 </div>
               ))}
             </div>
-            <p className="text-[13px] text-zinc-400">{hs.sources}</p>
+            <p className="text-[13px] text-zinc-400">
+              Sources : {hs.sources.map((source) => source.label).join(" ; ")}.
+            </p>
           </div>
         </section>
       </main>

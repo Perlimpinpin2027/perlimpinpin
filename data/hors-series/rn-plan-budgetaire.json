@@ -3,22 +3,38 @@
   "numero": 1,
   "etiquette": "Finances publiques · Octobre 2026",
   "titre": "Le plan budgétaire de Marine Le Pen, poste par poste",
-  "motItalique": "poste",
+  "motItalique": "budgétaire",
   "description": "Le 6 octobre 2026, le Rassemblement national a présenté un contre-budget pour 2027 et une trajectoire jusqu'en 2032, avec 140 milliards d'euros d'économies nettes. Nous analysons chaque grand poste dans une fiche notée sur 100, puis l'ensemble du plan.",
   "candidat": { "nom": "Marine Le Pen", "parti": "Rassemblement national" },
+  "photo": {
+    "src": "/photos/marine-le-pen.jpg",
+    "alt": "Portrait illustré de Marine Le Pen",
+    "credit": "Illustration Perlimpinpin"
+  },
   "accent": "#be185d",
+  "introduction": {
+    "titre": "L'essentiel",
+    "paragraphes": [
+      "Mardi 6 octobre, au siège du Rassemblement national, Marine Le Pen et Jordan Bardella ont présenté leur projet pour les finances publiques. Marine Le Pen a exposé la trajectoire du quinquennat, Jordan Bardella le contre-budget pour 2027. L'enjeu affiché est clair : convaincre qu'une victoire du RN en 2027 ne mettrait pas en danger les comptes du pays.",
+      "Le plan repose sur une promesse forte : 140 milliards d'euros d'économies nettes d'ici 2032, assez pour ramener le déficit sous 3 % du PIB dès 2030 et faire baisser la dette. Dans le même temps, le RN annonce des baisses d'impôts pour les ménages et les entreprises.",
+      "Perlimpinpin ne juge pas l'orientation politique de ce plan. Nous posons une question plus simple : chaque grande promesse chiffrée tient-elle, une fois confrontée aux budgets réels, au droit et aux précédents ? Ce hors-série y répond poste par poste."
+    ]
+  },
   "chiffresCles": {
     "titre": "Ce qui a été annoncé",
     "note": "Chiffres tels qu'annoncés par le RN. Leur vérification se trouve dans les fiches.",
     "items": [
-      { "valeur": "140 Md€", "legende": "d'économies nettes d'ici 2032, par rapport à 2026" },
-      { "valeur": "< 3 %", "legende": "de déficit public dès 2030" },
-      { "valeur": "112 %", "legende": "de dette en 2032, contre 121 % prévus en 2027" },
-      { "valeur": "12 mois", "legende": "pour organiser un référendum sur une règle d'or budgétaire" }
+      { "valeur": "140 Md€", "legende": "d'économies nettes d'ici 2032, par rapport à 2026", "source": { "label": "AFP", "url": "https://www.boursorama.com/actualite-economique/actualites/presidentielle-marine-le-pen-promet-140-milliards-d-euros-nets-d-economies-d-ici-2032-70784e1d524f6a627b04d825118d0b51" } },
+      { "valeur": "< 3 %", "legende": "de déficit public dès 2030", "source": { "label": "AFP", "url": "https://www.boursorama.com/actualite-economique/actualites/presidentielle-marine-le-pen-promet-140-milliards-d-euros-nets-d-economies-d-ici-2032-70784e1d524f6a627b04d825118d0b51" } },
+      { "valeur": "112 %", "legende": "de dette en 2032, contre 121 % prévus en 2027", "source": { "label": "Public Sénat", "url": "https://www.publicsenat.fr/actualites/politique/140-milliards-deuros-deconomies-dici-2032-leffort-radical-propose-par-marine-le-pen-pour-redresser-les-f" } },
+      { "valeur": "12 mois", "legende": "pour organiser un référendum sur une règle d'or budgétaire", "source": { "label": "Public Sénat", "url": "https://www.publicsenat.fr/actualites/politique/140-milliards-deuros-deconomies-dici-2032-leffort-radical-propose-par-marine-le-pen-pour-redresser-les-f" } }
     ]
   },
   "documents": {
     "titre": "Deux documents, deux horizons",
+    "paragraphes": [
+      "Le RN a présenté deux textes qui n'ont pas le même statut. Le contre-budget est un exercice parlementaire : il dit ce que le groupe changerait au budget 2027, dont l'examen commence à l'Assemblée le 7 octobre. La trajectoire est un engagement de campagne : elle décrit l'effort sur cinq ans si Marine Le Pen est élue."
+    ],
     "items": [
       {
         "etiquette": "Année 1 · Jordan Bardella",
@@ -28,7 +44,8 @@
           "34 Md€ de recettes retrouvées",
           "27 Md€ de baisse nette des impôts",
           "Un solde public amélioré de 72 Md€, avec un excédent hors intérêts de la dette dès la première année"
-        ]
+        ],
+        "source": { "label": "Conférence de presse du RN (vidéo)", "url": "https://www.youtube.com/watch?v=bpPMl051UjQ" }
       },
       {
         "etiquette": "Quinquennat · Marine Le Pen",
@@ -38,12 +55,16 @@
           "Un déficit sous 3 % du PIB en 2030",
           "Une dette ramenée de 121 % à 112 % du PIB",
           "Une règle d'or inscrite dans la Constitution par référendum"
-        ]
+        ],
+        "source": { "label": "Public Sénat", "url": "https://www.publicsenat.fr/actualites/politique/140-milliards-deuros-deconomies-dici-2032-leffort-radical-propose-par-marine-le-pen-pour-redresser-les-f" }
       }
     ],
     "aNoter": "Les deux documents ne donnent pas toujours le même montant pour un même poste. L'immigration pèse 12 Md€ dans le contre-budget 2027, mais 15 Md€ en 2027 et 29 Md€ en année pleine dans la trajectoire. Chaque fiche indique quel chiffre elle examine."
   },
   "encadre": {
+    "paragraphesAvant": [
+      "Avant d'entrer dans le détail, un point de vocabulaire s'impose. Il change la lecture de tous les chiffres qui suivent."
+    ],
     "etiquette": "À lire avant les chiffres",
     "titre": "Économiser 140 milliards, ça veut dire quoi ?",
     "cas": [
@@ -55,6 +76,9 @@
   "decomposition": {
     "titre": "De quoi sont faites les économies de 2027",
     "intro": "Environ 80 Md€ d'économies brutes, dont 16 Md€ sont réutilisés pour des dépenses nouvelles (aidants, places de prison, soins dentaires...). Chaque bloc prendra la couleur du verdict de sa fiche une fois publiée.",
+    "paragraphes": [
+      "Quatre postes portent l'essentiel de l'effort de 2027. Le reste, environ 15 milliards, n'a pas été détaillé lors de la conférence de presse : nous l'avons isolé plutôt que de le répartir au hasard. Le tableau ci-dessous met en face de chaque promesse un repère indépendant quand il existe."
+    ],
     "postes": [
       { "libelle": "Réorganisation de l'État", "montant": 24, "fiche": 4 },
       { "libelle": "Sécurité sociale", "montant": 20, "fiche": 5 },
@@ -66,11 +90,28 @@
   "tableau": {
     "colonnes": ["Poste", "Contre-budget 2027", "Trajectoire 2032", "Repère indépendant", "Fiche"],
     "lignes": [
-      { "poste": "Immigration", "contreBudget": "12 Md€", "trajectoire": "29 Md€ en année pleine", "repere": "Mission Immigration 2026 : 2,16 Md€. Aide médicale de l'État : 1,21 Md€", "fiche": 1 },
-      { "poste": "Contribution à l'UE", "contreBudget": "9 Md€", "trajectoire": "9 Md€", "repere": null, "fiche": 2 },
-      { "poste": "État et collectivités", "contreBudget": "24 Md€", "trajectoire": "20,7 Md€ en 2027, dont 8,2 Md€ pour les collectivités et 3,4 Md€ pour les agences", "repere": "Agences : environ 0,5 Md€ selon une commission d'enquête du Sénat", "fiche": 4 },
-      { "poste": "Sécurité sociale et retraites", "contreBudget": "20 Md€", "trajectoire": "15 à 20 Md€ sur les retraites", "repere": null, "fiche": 5 },
-      { "poste": "Règle d'or par référendum", "contreBudget": "Sans montant", "trajectoire": "Référendum dans les 12 mois", "repere": null, "fiche": 3 }
+      { "poste": "Immigration", "contreBudget": "12 Md€", "trajectoire": "29 Md€ en année pleine", "repere": "Mission Immigration 2026 : 2,16 Md€. Aide médicale de l'État : 1,21 Md€", "repereSource": { "label": "Sénat, PLF 2026", "url": "https://www.senat.fr/rap/a25-145-2/a25-145-2-syn.pdf" }, "fiche": 1 },
+      { "poste": "Contribution à l'UE", "contreBudget": "9 Md€", "trajectoire": "9 Md€", "repere": null, "repereSource": null, "fiche": 2 },
+      { "poste": "État et collectivités", "contreBudget": "24 Md€", "trajectoire": "20,7 Md€ en 2027, dont 8,2 Md€ pour les collectivités et 3,4 Md€ pour les agences", "repere": "Agences : environ 0,5 Md€ selon une commission d'enquête du Sénat", "repereSource": { "label": "Public Sénat", "url": "https://www.publicsenat.fr/actualites/politique/140-milliards-deuros-deconomies-dici-2032-leffort-radical-propose-par-marine-le-pen-pour-redresser-les-f" }, "fiche": 4 },
+      { "poste": "Sécurité sociale et retraites", "contreBudget": "20 Md€", "trajectoire": "15 à 20 Md€ sur les retraites", "repere": null, "repereSource": null, "fiche": 5 },
+      { "poste": "Règle d'or par référendum", "contreBudget": "Sans montant", "trajectoire": "Référendum dans les 12 mois", "repere": null, "repereSource": null, "fiche": 3 }
+    ]
+  },
+  "selection": {
+    "titre": "Pourquoi ces 5 propositions",
+    "paragraphes": [
+      "Un plan budgétaire compte des dizaines de lignes. Les analyser toutes avec le niveau d'exigence de nos autres fiches prendrait des mois. Nous en avons retenu cinq, selon trois critères."
+    ],
+    "criteres": [
+      { "titre": "Le poids", "texte": "Les quatre postes chiffrés (État et collectivités, Sécurité sociale, immigration, Union européenne) représentent 65 des 80 milliards d'économies brutes de 2027, soit environ 80 %." },
+      { "titre": "La vérifiabilité", "texte": "Chacun repose sur un levier précis, une ligne budgétaire, un traité ou une règle de droit, que l'on peut confronter à des sources publiques." },
+      { "titre": "Le rôle dans l'édifice", "texte": "La règle d'or n'a pas de montant, mais c'est elle qui doit garantir que la trajectoire sera tenue au-delà de 2027." }
+    ],
+    "horsChamp": "Ce hors-série ne couvre pas, à ce stade, les 27 milliards de baisses d'impôts, les 34 milliards de recettes nouvelles et les 16 milliards de dépenses nouvelles. Ils pèsent sur le déficit autant que les économies, et pourront faire l'objet de fiches séparées."
+  },
+  "analyses": {
+    "paragraphes": [
+      "Chaque fiche suit notre méthode habituelle : une note sur 100 répartie en cinq critères, puis une relecture par les adhérents du Club avant publication. Les fiches sont publiées une par une, et cette page se met à jour à chaque étape."
     ]
   },
   "fiches": [
@@ -104,5 +145,11 @@
       ]
     }
   ],
-  "sources": "Sources : conférence de presse de Jordan Bardella et Marine Le Pen (6 octobre 2026), AFP, Public Sénat, PLF 2026."
+  "sources": [
+    { "label": "Conférence de presse du Rassemblement national, 6 octobre 2026 (vidéo)", "url": "https://www.youtube.com/watch?v=bpPMl051UjQ" },
+    { "label": "AFP, « Marine Le Pen promet 140 milliards d'euros nets d'économies d'ici 2032 », 6 octobre 2026", "url": "https://www.boursorama.com/actualite-economique/actualites/presidentielle-marine-le-pen-promet-140-milliards-d-euros-nets-d-economies-d-ici-2032-70784e1d524f6a627b04d825118d0b51" },
+    { "label": "Public Sénat, « 140 milliards d'euros d'économies d'ici 2032 : l'effort radical proposé par Marine Le Pen », 6 octobre 2026", "url": "https://www.publicsenat.fr/actualites/politique/140-milliards-deuros-deconomies-dici-2032-leffort-radical-propose-par-marine-le-pen-pour-redresser-les-f" },
+    { "label": "Sénat, avis budgétaire PLF 2026, mission Immigration, asile et intégration", "url": "https://www.senat.fr/rap/a25-145-2/a25-145-2-syn.pdf" },
+    { "label": "Public Sénat, « Budget 2026 : le Sénat durcit les conditions de l'Aide médicale d'État »", "url": "https://www.publicsenat.fr/actualites/sante/budget-2026-le-senat-durcit-les-conditions-de-laide-medicale-detat-et-vote-une-baisse-de-ses-credits-de-200-millions" }
+  ]
 }
