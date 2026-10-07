@@ -3,7 +3,6 @@ import Header from "@/components/Header";
 import DeclarationCarte from "@/components/DeclarationCarte";
 import { getCandidatAvecDeclarations } from "@/lib/queries";
 import { getScoreBadge } from "@/lib/score";
-import { getAllParcours } from "@/lib/parcours";
 
 function LienHatvp({ url }) {
   if (!url) return "Pas de fiche HATVP en ligne";
@@ -20,6 +19,8 @@ function LienHatvp({ url }) {
 }
 
 // Encadré « Indemnités et revenus déclarés » (data/candidats-parcours.json).
+// Plus affiché sur la page détail (consigne éditoriale) : ces infos ne
+// figurent que sur les cartes de /candidats. Conservé pour un usage futur.
 // Indemnités brutes et revenus nets déclarés restent dans deux colonnes
 // distinctes : ils ne sont pas comparables.
 function IndemnitesRevenus({ parcours }) {
@@ -153,10 +154,6 @@ export default async function CandidatDetailPage({ params }) {
   }
 
   const { declarations } = candidat;
-  // Parcours rattaché par le nom complet, comme sur /candidats.
-  const parcours = getAllParcours().find(
-    (p) => `${p.prenom} ${p.nom}` === candidat.nom,
-  );
   const badge =
     candidat.scoreMoyen == null ? null : getScoreBadge(candidat.scoreMoyen);
 
@@ -212,8 +209,6 @@ export default async function CandidatDetailPage({ params }) {
               </div>
             </div>
           </div>
-
-          {parcours ? <IndemnitesRevenus parcours={parcours} /> : null}
 
           <section className="flex flex-col gap-4">
             <h2 className="text-lg font-bold text-zinc-900">
