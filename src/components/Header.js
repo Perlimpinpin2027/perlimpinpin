@@ -12,10 +12,10 @@ const navLinks = [
   { label: "Déclarations", href: "/declarations" },
   { label: "Candidats", href: "/candidats" },
   { label: "Thèmes", href: "/themes" },
-  // Hors-séries (plans d'ensemble analysés poste par poste) : /dossiers liste
-  // les dossiers, chacun publié sur /hors-serie/[slug] (onglet actif aussi
+  // Dossiers (plans d'ensemble analysés poste par poste) : /dossiers liste
+  // les dossiers, chacun publié sur /dossiers/[slug] (onglet actif aussi
   // sur ces pages, voir estActif).
-  { label: "Dossiers", href: "/dossiers", aussiActifSur: "/hors-serie" },
+  { label: "Dossiers", href: "/dossiers", aussiActifSur: "/dossiers/" },
   { label: "Méthode", href: "/methode" },
   { label: "À propos", href: "/a-propos" },
 ];

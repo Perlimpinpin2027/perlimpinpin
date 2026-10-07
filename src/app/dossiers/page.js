@@ -4,13 +4,13 @@ import AvancementDossier from "@/components/AvancementDossier";
 import TitreAvecItalique from "@/components/TitreAvecItalique";
 import { avancementHorsSerie, getHorsSeries, texteAvancement } from "@/lib/hors-series";
 
-// Liste des dossiers (hors-séries) : un plan d'ensemble d'un candidat,
+// Liste des dossiers : un plan d'ensemble d'un candidat,
 // analysé poste par poste dans plusieurs fiches notées. Page statique : le
 // contenu vient des JSON de data/hors-series/ (src/lib/hors-series.js).
 export const metadata = {
   title: "Dossiers | Perlimpinpin",
   description:
-    "Les hors-séries de Perlimpinpin : les plans d'ensemble des candidats, analysés poste par poste.",
+    "Les dossiers de Perlimpinpin : les plans d'ensemble des candidats, analysés poste par poste.",
 };
 
 export default function DossiersPage() {
@@ -27,7 +27,7 @@ export default function DossiersPage() {
               {"// Dossiers"}
             </span>
             <h1 className="text-4xl font-extrabold leading-[1.04] tracking-[-0.035em] text-zinc-950 sm:text-5xl">
-              Les <span className="mr-[0.15em] italic text-zinc-400">hors-séries</span> Perlimpinpin
+              Les <span className="mr-[0.15em] italic text-zinc-400">dossiers</span> Perlimpinpin
             </h1>
             <p className="text-lg leading-relaxed text-slate-500 sm:text-xl">
               Quand un candidat présente un plan d&apos;ensemble, nous l&apos;analysons poste par poste : une
@@ -41,7 +41,7 @@ export default function DossiersPage() {
               return (
                 <Link
                   key={dossier.slug}
-                  href={`/hors-serie/${dossier.slug}`}
+                  href={`/dossiers/${dossier.slug}`}
                   className="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-[0_24px_60px_-30px_rgba(30,41,82,0.35)] ring-2 ring-pink-200 transition-shadow hover:ring-pink-300 sm:flex-row"
                 >
                   <div className="relative aspect-[4/5] w-full shrink-0 bg-pink-50 sm:aspect-auto sm:w-2/5">
@@ -53,7 +53,7 @@ export default function DossiersPage() {
                       />
                     ) : null}
                     <span className="absolute left-4 top-4 rounded-full bg-pink-700 px-3 py-1.5 text-xs font-semibold uppercase tracking-widest text-white shadow-sm">
-                      Hors-série n°{dossier.numero}
+                      Dossier n°{dossier.numero}
                     </span>
                   </div>
 

@@ -1,6 +1,6 @@
 import RN_PLAN_BUDGETAIRE from "../../data/hors-series/rn-plan-budgetaire.json" with { type: "json" };
 
-// Registre des hors-séries (pages /hors-serie/[slug], listées sur /dossiers
+// Registre des dossiers (pages /dossiers/[slug], listées sur /dossiers
 // et mises en avant dans le carrousel de l'accueil). Chaque JSON de
 // data/hors-series/ est importé statiquement, et non lu avec fs à la
 // requête : le bundler l'embarque ainsi dans la fonction déployée sur
@@ -55,6 +55,7 @@ export function getHorsSeriesAccueil() {
     return {
       slug: hs.slug,
       numero: hs.numero,
+      etiquette: hs.etiquette,
       titre: hs.titre,
       motItalique: hs.motItalique,
       accroche: hs.accueil.accroche,

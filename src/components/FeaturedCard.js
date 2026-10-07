@@ -18,7 +18,7 @@ const ARROW_REVEAL_DELAY_MS = 100;
 // (← →) et au swipe sur mobile.
 // Reçoit l'état du carrousel (index/total/callbacks) depuis FeaturedCarousel.
 // `dossier` (getHorsSeriesAccueil, src/lib/hors-series.js) : la carte
-// présente alors un hors-série, avec une mise en page propre (rose, barre
+// présente alors un dossier, avec une mise en page propre (rose, barre
 // d'avancement, bouton « Lire le dossier ») mais la même navigation.
 export default function FeaturedCard({
   dossier,
@@ -226,13 +226,13 @@ export default function FeaturedCard({
   );
 }
 
-// Contenu de la carte quand elle présente un hors-série : même gabarit que
+// Contenu de la carte quand elle présente un dossier : même gabarit que
 // la carte d'une déclaration (photo à gauche, texte à droite, bouton en
 // pied), mais traitement rose propre aux dossiers. Le bloc « Score » est
 // remplacé par l'avancement du dossier, la note globale n'existant qu'une
 // fois toutes les fiches publiées.
 function ContenuDossier({ dossier }) {
-  const href = `/hors-serie/${dossier.slug}`;
+  const href = `/dossiers/${dossier.slug}`;
   return (
     <>
       <div className="relative aspect-[4/5] w-full shrink-0 bg-pink-50 sm:aspect-auto sm:h-auto sm:w-2/5">
@@ -242,7 +242,7 @@ function ContenuDossier({ dossier }) {
           className="absolute inset-0 h-full w-full object-cover object-top"
         />
         <span className="absolute left-4 top-4 rounded-full bg-pink-700 px-3 py-1.5 text-xs font-semibold uppercase tracking-widest text-white shadow-sm">
-          Hors-série n°{dossier.numero}
+          Dossier n°{dossier.numero}
         </span>
       </div>
 
@@ -250,7 +250,7 @@ function ContenuDossier({ dossier }) {
           déclarations : place réservée à la flèche « suivante ». */}
       <div className="flex flex-1 flex-col p-6 sm:p-8 [@media(hover:hover)]:pr-14!">
         <p className="text-xs font-semibold uppercase tracking-[0.12em] text-pink-700">
-          {"// Dossier spécial"}
+          {`// ${dossier.etiquette}`}
         </p>
         <p className="mt-3 shrink-0 text-2xl font-extrabold leading-tight tracking-tight text-zinc-950 sm:text-[1.9rem]">
           <TitreAvecItalique titre={dossier.titre} motItalique={dossier.motItalique} />

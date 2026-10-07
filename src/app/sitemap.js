@@ -15,7 +15,7 @@ const STATIC_ROUTES = [
   "/dossiers",
   "/methode",
   "/a-propos",
-  "/hors-serie/rn-plan-budgetaire",
+  "/dossiers/rn-plan-budgetaire",
 ];
 
 export default async function sitemap() {
