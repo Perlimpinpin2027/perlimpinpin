@@ -1,0 +1,40 @@
+{
+  "contreAvisMistral": {
+    "remarques": [
+      {
+        "categorie": "coherence_note",
+        "contenu": "La note 'operationnalite_budgetaire' (3/10, INCERTAIN) est justifiée par l'absence de chiffrage du candidat, mais l'analyse tente une estimation d'ordre de grandeur (perte de 4,2 Md€ pour les donations, gain potentiel de 2-3 Md€ pour l'impôt sur la fortune). La qualification INCERTAIN est cohérente, mais la règle 6 bis est respectée (estimation sourcée).",
+        "severite": "mineure",
+        "confiance": "haute"
+      },
+      {
+        "categorie": "coherence_note",
+        "contenu": "La note 'efficacite' (11/30, FRAGILE) repose sur un raisonnement structuré (précédent britannique, réaction prévisible des ménages aisés) et non sur une absence de preuve empirique directe. La qualification FRAGILE est cohérente avec le texte.",
+        "severite": "mineure",
+        "confiance": "haute"
+      },
+      {
+        "categorie": "juridique_operationnel",
+        "contenu": "La RÈGLE DE PLAFOND est correctement appliquée : 'operationnalite_budgetaire' est qualifiée INCERTAIN (3/10), donc 'operationnalite_moyens_total' (19/30) n'est pas plafonnée à 10. 'plafond_applique' est false et 'plafond_declencheur' est null, conformément aux règles.",
+        "severite": "mineure",
+        "confiance": "haute"
+      },
+      {
+        "categorie": "angle_mort",
+        "contenu": "L'analyse omet de discuter l'impact potentiel d'une exonération totale des donations sur les inégalités intergénérationnelles (ex. : concentration accrue du patrimoine chez les héritiers précoces). Cela pourrait influencer la note d'Effets rebonds & Externalités (8/20), mais ne change pas le verdict.",
+        "severite": "majeure",
+        "confiance": "moyenne"
+      }
+    ],
+    "avis_general": "solide"
+  },
+  "usage": {
+    "prompt_tokens": 6757,
+    "total_tokens": 7262,
+    "completion_tokens": 505,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "service_tier": "standard"
+  }
+}

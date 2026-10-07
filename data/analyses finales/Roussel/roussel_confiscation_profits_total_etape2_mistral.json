@@ -1,0 +1,34 @@
+{
+  "contreAvisMistral": {
+    "remarques": [
+      {
+        "categorie": "coherence_note",
+        "contenu": "La note d'`operationnalite_budgetaire` (6/10, INCERTAIN) est justifiée par une estimation du rendement, mais l'absence de chiffrage précis du candidat n'est pas explicitement compensée par une tentative d'ordre de grandeur détaillée (ex. : extrapolation des 68,5-100M€ de 2022 avec un taux doublé/triplé). La qualification INCERTAIN est cohérente, mais la règle 6 bis pourrait être mieux appliquée.",
+        "severite": "mineure",
+        "confiance": "moyenne"
+      },
+      {
+        "categorie": "juridique_operationnel",
+        "contenu": "La RÈGLE DE PLAFOND est correctement appliquée (`plafond_applique`: false, car aucune sous-composante n'est FRAGILE). Cependant, `operationnalite_juridique` (3/10) pourrait être légèrement sous-évaluée : le risque de censure pour caractère confiscatoire est réel, mais la jurisprudence du Conseil constitutionnel (décision 2012-662 DC) concerne des revenus individuels, pas des bénéfices d'entreprises. Une note de 4/10 serait plus équilibrée.",
+        "severite": "majeure",
+        "confiance": "moyenne"
+      },
+      {
+        "categorie": "angle_mort",
+        "contenu": "L'articulation entre la confiscation et la nationalisation-sanction n'est pas approfondie comme angle mort majeur. Si l'État devient actionnaire, une confiscation préalable réduirait la valeur de l'entreprise rachetée, ce qui pourrait justifier une réévaluation de l'`efficacite` (9/30) ou des `effets_rebonds_externalites` (11/20).",
+        "severite": "majeure",
+        "confiance": "moyenne"
+      }
+    ],
+    "avis_general": "a_nuancer"
+  },
+  "usage": {
+    "prompt_tokens": 9053,
+    "total_tokens": 9524,
+    "completion_tokens": 471,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "service_tier": "standard"
+  }
+}

@@ -1,0 +1,167 @@
+{
+  "auditArbitrage": [
+    {
+      "remarque": "Cohérence note : la faisabilité budgétaire (6/10, INCERTAIN) pourrait passer à SOLIDE si la cohérence du chiffrage de 4,8 milliards d'euros avec les données CNAF (11,9 milliards versés en 2024 pour 1,83 million de foyers) était explicitement validée (majeure, confiance moyenne).",
+      "statut": "rejetee",
+      "raison": "Cette validation figure déjà dans l'analyse : environ 6 foyers sur 10 sont au RSA depuis trois ans ou plus, soit environ 7 milliards d'euros d'allocations, et les 4,8 milliards correspondent à environ 740 000 foyers. La qualification INCERTAIN ne tient pas à la cohérence du chiffre brut, jugée plausible, mais au gain net inconnu : une partie des personnes coupées basculerait vers l'allocation aux adultes handicapés, presque deux fois plus chère, ou l'hébergement d'urgence. Cette incertitude reste documentée ; aucune note ne change."
+    },
+    {
+      "remarque": "Cohérence note : l'Efficacité (9/30, FRAGILE) est cohérente, mais l'écart entre l'effet attendu et les preuves empiriques américaines pourrait être justifié plus explicitement (mineure, confiance haute).",
+      "statut": "rejetee",
+      "raison": "L'écart est déjà chiffré et justifié (environ 7 % de la hausse de l'emploi expliquée dans les années 1990 sans gain de revenu, aucun effet net dans les années 2010, +3,2 points pour l'accompagnement intensif en France), et la raison pour laquelle la note n'est pas au plancher est donnée. Aucune modification."
+    },
+    {
+      "remarque": "Juridique : la note de 5/10 pourrait être qualifiée SOLIDE, le Conseil constitutionnel ayant historiquement validé des conditionnalités strictes, par exemple avec la loi pour le plein emploi de 2023 (majeure, confiance moyenne).",
+      "statut": "rejetee",
+      "raison": "Une conditionnalité (suspension en cas de non-respect d'obligations d'accompagnement) n'est pas une limite de durée qui coupe l'allocation quel que soit le comportement de la personne. L'alinéa 11 du Préambule de 1946 vise expressément les personnes privées d'emploi par « la situation économique » : une coupure sans relais pour qui cherche sans trouver reste exposée, sauf exemptions larges que le candidat n'a pas définies. La remarque n'apporte aucune décision portant sur une limite de durée ; l'incertitude reste documentée et la note est inchangée."
+    }
+  ],
+  "fiche_complete": {
+    "mesure_reformulee": {
+      "synthese": "Couper le RSA au bout de trois ans pour les allocataires jugés capables de travailler.",
+      "texte": "Éric Zemmour propose de **plafonner la durée du RSA à trois ans**. Il l'a annoncé en déclarant sa candidature, le 17 septembre 2026 dans « Face à BFM », au milieu d'une série de mesures sur les allocations et le retour à l'emploi. Le 28 septembre sur CNews, Sarah Knafo, eurodéputée de son parti, a précisé que la limite viserait **les personnes « en capacité de travailler »** et l'a chiffrée à 4,8 milliards d'euros d'économies par an.\n\nCe que la proposition ne dit pas, et qui change beaucoup son effet : qui décide qu'une personne peut travailler, si les trois ans sont comptés d'affilée ou sur toute une vie, ce qui arrive après la coupure, et si les parents isolés sont protégés. Pour noter, l'analyse retient l'hypothèse suivante (hypothèse de l'analyste, pas engagement du candidat) : une limite de trois ans de présence continue, avec une exemption pour les personnes reconnues inaptes au travail, sans autre garantie précisée."
+    },
+    "mesure_vers_objectif": {
+      "objectif_court": "Ramener au travail les allocataires de longue durée",
+      "categorie_objectif": "Emploi et chômage",
+      "objectif_vise": "Faire du RSA un filet de sécurité temporaire, pousser les allocataires de longue durée à reprendre un emploi et réduire la dépense publique.",
+      "mecanisme_propose": "Une limite de durée : après trois ans, l'allocation s'arrête pour les personnes jugées capables de travailler, ce qui doit les inciter à chercher un emploi plus tôt et plus activement.",
+      "lien_causal": "indirect"
+    },
+    "nature_et_existant": "Mesure sociale et budgétaire, de niveau législatif. Le RSA est défini par le code de l'action sociale et des familles (article L262-1 et suivants) : il a pour objet d'assurer des moyens convenables d'existence, de lutter contre la pauvreté et d'encourager le retour à l'activité. Il est versé par les caisses d'allocations familiales mais **financé par les départements**, sauf dans les territoires où l'État a repris ce financement (Seine-Saint-Denis, Pyrénées-Orientales, Ariège, plusieurs territoires d'outre-mer). Aujourd'hui, le RSA n'a **aucune limite de durée** : il est dû tant que les ressources restent sous le plafond. Il est en revanche déjà conditionné : depuis la loi pour le plein emploi du 18 décembre 2023, les allocataires sont inscrits automatiquement à France Travail et doivent suivre un accompagnement d'au moins 15 heures d'activité par semaine, sous peine de suspension. La mesure est donc une vraie innovation en France (une limite de durée), qui s'ajoute à un dispositif de conditionnalité déjà existant, et non un retour à une règle passée.",
+    "contexte_programme": {
+      "synthese": "La mesure s'inscrit dans un plan de 130 à 140 milliards d'économies et une ligne constante sur le travail.",
+      "texte": "La proposition figure parmi les annonces de candidature du 17 septembre 2026 : **140 milliards d'euros de baisse de la dépense publique**, suppression de 800 000 postes de fonctionnaires en cinq ans, « réforme profonde des allocations chômage », retraites tournées vers la capitalisation, et maintien temporaire de 50 000 travailleurs étrangers « le temps de remettre au travail des millions de chômeurs insuffisamment formés ». Sarah Knafo l'a ensuite présentée comme une pièce d'un plan de 130 milliards. Le même jour, Éric Zemmour a aussi proposé de renvoyer les étrangers chômeurs de longue durée ou vivant « uniquement des aides sociales ». L'ensemble suit une logique cohérente : moins d'aides, plus d'incitation au travail. Mais le programme lui-même reconnaît que le problème des chômeurs est d'être **« insuffisamment formés »**, ce qu'une limite de durée ne règle pas. En 2022, le candidat proposait déjà des contrôles systématiques des allocataires et le retrait des aides non contributives aux étrangers extra-européens, mais pas de limite de durée du RSA : la mesure prolonge sa ligne sans la contredire."
+    },
+    "contexte_national": {
+      "synthese": "1,83 million de foyers au RSA, près de la moitié depuis cinq ans, souvent freinés par la santé.",
+      "texte": "Fin 2024, **1,83 million de foyers** percevaient le RSA, un nombre stable sur un an (CNAF). Selon la même source, **49 % des foyers y étaient depuis cinq ans ou plus** et 18,6 % depuis moins d'un an, et la part des allocataires de longue durée augmente depuis 2021. Le montant forfaitaire est de 652 euros par mois pour une personne seule depuis avril 2026. Les caisses d'allocations familiales ont versé 11,9 milliards d'euros de RSA en 2024 (CNAF), soit environ 6 500 euros par foyer et par an.\n\nLes allocataires de longue durée ne sont pas un bloc homogène. La DREES a suivi des allocataires sur dix ans : **un sur cinq est resté au RSA toutes les années**, deux sur cinq en sont sortis et y sont revenus, deux sur cinq en sont sortis définitivement. Un tiers des foyers sont des parents seuls avec enfants. Surtout, **deux tiers des allocataires au chômage se disent freinés** dans leur recherche d'emploi, d'abord par le transport (23 %) et la santé (20 %), puis par la garde d'enfants pour ceux qui ne cherchent plus (DREES, 2023).\n\nLa politique actuelle mise sur l'accompagnement. L'évaluation de l'accompagnement renforcé de 15 heures, publiée par la Dares et l'Institut des politiques publiques en juin 2026, mesure **un gain modeste : +3,2 points de retour à l'emploi salarié** en un an pour les participants, et ne peut exclure un effet nul sur le nombre total d'emplois. Enfin, environ un tiers des personnes éligibles ne demandent pas le RSA (non-recours estimé à 34 %)."
+    },
+    "contexte_international": {
+      "synthese": "Les États-Unis limitent l'aide à cinq ans depuis 1996 : peu d'emplois en plus, des revenus en baisse.",
+      "texte": "Le précédent le plus étudié est américain. Depuis 1996, l'aide aux familles pauvres (TANF) est **limitée à 60 mois sur une vie**, avec des limites plus courtes dans certains États. Les travaux les plus cités convergent. Jeffrey Grogger (NBER, 2001) attribue aux limites de durée environ un huitième de la baisse du nombre d'allocataires et **7 % de la hausse de l'emploi** des mères seules depuis 1993, mais **aucun effet significatif sur leurs revenus**. Le gros de la hausse de l'emploi venait d'autres causes, notamment le crédit d'impôt pour les travailleurs pauvres et une économie en plein emploi. L'étude de terrain de MDRC (Bloom, Farrell et Fink, 2002) note **peu de signes d'un retour massif au travail** après la coupure, et des revenus en baisse dans la plupart des États. Pour les années 2010, Gabrielle Pepin (Upjohn Institute, 2020) trouve que des limites plus strictes réduisent fortement le recours à l'aide (-22 %), sans effet net sur l'emploi, avec une baisse des ressources et un léger report vers l'allocation pour handicap.\n\nLa transposition à la France est limitée dans un sens défavorable à la mesure : aux États-Unis, les familles coupées gardent l'aide alimentaire et l'assurance santé publique, et le dispositif vise surtout des mères avec enfants. Le RSA, lui, est le dernier filet : après lui, il ne reste que l'aide au logement et l'aide d'urgence.\n\nEn Europe, l'exemple le plus proche est italien. En 2024, l'Italie a remplacé le revenu de citoyenneté par une aide réservée aux foyers avec enfants, personnes âgées ou handicapées (18 mois renouvelables), et un soutien de 350 euros limité à 12 mois pour les adultes jugés employables, conditionné à une formation. La Banque d'Italie prévoyait **une baisse des foyers couverts de 2,1 à 1,2 million et une hausse de la pauvreté absolue** ; une évaluation des effets réels sur l'emploi n'a pas été trouvée. L'Allemagne et les pays nordiques n'ont pas de limite de durée pour leur revenu minimum."
+    },
+    "impact_environnement": null,
+    "analyse_par_criteres": [
+      {
+        "critere": "operationnalite_moyens",
+        "titre": "Opérationnalité & Moyens",
+        "note": 16,
+        "note_max": 30,
+        "plafond_applique": false,
+        "plafond_declencheur": null,
+        "texte": "Rien n'est bloquant, mais les trois piliers restent incertains. **Couper toute ressource à des personnes qui cherchent sans trouver pourrait heurter le droit constitutionnel à des « moyens convenables d'existence »**, sauf exemptions larges. L'économie brute annoncée est cohérente avec les données de la CNAF, mais le gain net est inconnu, car une partie des personnes coupées basculerait vers l'allocation aux adultes handicapés, presque deux fois plus chère, ou vers l'hébergement d'urgence. Enfin, **trier plus d'un million de dossiers entre aptes et inaptes** est un défi réel pour des services déjà saturés."
+      },
+      {
+        "critere": "efficacite",
+        "titre": "Efficacité",
+        "note": 9,
+        "note_max": 30,
+        "texte": "La mesure suppose que les allocataires de longue durée manquent d'incitation, alors que **deux tiers des allocataires au chômage déclarent des freins concrets** : santé, transport, garde d'enfants. Le meilleur précédent, les limites de durée américaines, n'explique qu'environ 7 % de la hausse de l'emploi des mères seules dans les années 1990, **sans gain de revenu**, et aucun effet net sur l'emploi dans les années 2010. En France, même un accompagnement intensif ne gagne que 3 points de retour à l'emploi : réduire le nombre d'allocataires n'est pas les remettre au travail."
+      },
+      {
+        "critere": "effets_rebonds_externalites",
+        "titre": "Effets rebonds & Externalités",
+        "note": 5,
+        "note_max": 20,
+        "texte": "**L'effet le mieux documenté des limites de durée est une baisse des ressources des foyers concernés**, pas une hausse de leurs revenus d'activité. Selon notre raisonnement, appliquée à plusieurs centaines de milliers de foyers, dont un tiers de parents seuls avec enfants, la mesure créerait une grande pauvreté au moins aussi grave que la dépendance qu'elle veut traiter. S'y ajoutent des reports de coût vers l'État et les communes, et un risque d'allers-retours au RSA pour remettre le compteur à zéro."
+      },
+      {
+        "critere": "degre_preparation",
+        "titre": "Degré de préparation",
+        "note": 2,
+        "note_max": 10,
+        "texte": "**Une phrase et un chiffre** : ni définition de la « capacité de travailler », ni mode de calcul des trois ans, ni dispositif après la coupure. Les 4,8 milliards d'euros avancés par Sarah Knafo sont plausibles en brut, mais sans méthode publiée ni prise en compte des reports."
+      },
+      {
+        "critere": "alignement_logique",
+        "titre": "Alignement & Logique globale",
+        "note": 7,
+        "note_max": 10,
+        "texte": "**La mesure prolonge une ligne constante du candidat**, qui proposait déjà en 2022 des contrôles systématiques des allocataires, et sert son plan d'économies. La tension est interne au programme : il dit lui-même que les chômeurs sont « insuffisamment formés », sans prévoir de formation liée à la limite, et sa politique nataliste cadre mal avec une coupure de revenu pour des parents seuls, s'ils ne sont pas exemptés."
+      }
+    ],
+    "analyse_longevites": {
+      "synthese": "Effet budgétaire rapide, effet sur l'emploi faible, risque de pauvreté durable qui s'installe dans le temps.",
+      "texte": "La mesure produit des effets différents selon l'horizon. À court terme (0-2 ans), presque rien ne se passe si le compteur démarre à l'entrée en vigueur, sauf un possible effet d'anticipation : aux États-Unis, une partie des allocataires a quitté l'aide plus tôt pour « garder » ses mois de droits. À moyen terme (2-7 ans), les premières coupures interviennent, avec **l'économie budgétaire et les reports de coût en même temps**. À long terme (plus de 7 ans), la limite peut s'user : contournements par des allers-retours, exemptions élargies sous la pression des départements et des juges, ou au contraire **installation d'une population sans aucun revenu** si les exemptions restent étroites. La mesure ne contient rien qui renforce les capacités des personnes (formation, santé, mobilité), qui sont pourtant ce qui fait durer les retours à l'emploi."
+    },
+    "impact_temporel_et_sectoriel": {
+      "synthese": "Économie de quelques milliards pour les départements, consommation des plus pauvres en baisse, effet macro limité.",
+      "texte": "Sur l'inflation, l'effet est nul. Sur la consommation, la mesure retire **jusqu'à 4,8 milliards d'euros par an** aux ménages les plus pauvres, qui dépensent presque tout ce qu'ils reçoivent : l'effet sur la consommation totale reste faible (environ 0,3 % de la consommation des ménages), mais il est concentré sur l'alimentation et le logement, et sur certains territoires (outre-mer, départements du Nord et du pourtour méditerranéen, où le RSA est plus fréquent). Aucun effet sur la stabilité bancaire. Côté finances publiques, **l'économie irait d'abord aux départements**, qui financent le RSA et traversent une crise financière, tandis qu'une partie des reports (allocation handicap, hébergement d'urgence) retomberait sur l'État."
+    },
+    "ce_qui_est_etabli": {
+      "synthese": "Le RSA n'a pas de limite de durée, et près de la moitié des foyers y sont depuis cinq ans.",
+      "texte": "Le RSA est aujourd'hui **sans limite de durée** et déjà conditionné à un accompagnement de 15 heures par semaine. **49 % des 1,83 million de foyers** allocataires y sont depuis au moins cinq ans (CNAF, fin 2024). Deux tiers des allocataires au chômage déclarent des freins à la recherche d'emploi (DREES). Aux États-Unis, les limites de durée ont fait baisser le nombre d'allocataires, avec **un effet faible sur l'emploi et aucun gain de revenu** (Grogger 2001 ; Bloom et al. 2002 ; Pepin 2020)."
+    },
+    "ce_qui_est_probable": {
+      "synthese": "Économie réelle de plusieurs milliards, mais retour à l'emploi faible et hausse de la grande pauvreté.",
+      "texte": "Selon notre estimation, l'économie brute serait bien de **plusieurs milliards d'euros par an**, dans l'ordre de grandeur annoncé. Il est probable, au vu des précédents, que **la majorité des personnes coupées ne retrouvent pas d'emploi** rapidement et voient leurs ressources baisser, et qu'une partie se tourne vers l'allocation pour handicap, les associations et l'hébergement d'urgence."
+    },
+    "ce_qui_est_discutable": {
+      "synthese": "La conformité à la Constitution dépend des exemptions et de ce qui est proposé après la coupure.",
+      "texte": "La constitutionnalité est discutable : le Conseil constitutionnel laisse une large marge au législateur, mais l'alinéa 11 du Préambule de 1946 vise aussi les personnes privées d'emploi par **« la situation économique »**. Une coupure sans relais pour des personnes qui cherchent un emploi sans en trouver pourrait être censurée ; avec des exemptions larges, elle passerait plus facilement. Le chiffre de 4,8 milliards est discutable en net, faute de prise en compte des reports."
+    },
+    "ce_qui_est_inconnu": {
+      "synthese": "On ignore qui serait jugé apte, comment les trois ans seraient comptés, et ce qui suivrait.",
+      "texte": "Sources insuffisantes pour trancher ici sur quatre points : **la définition de la « capacité de travailler »** et l'organisme qui la jugerait ; le mode de calcul (trois ans d'affilée ou sur une vie) ; le sort des parents isolés ; l'existence d'un relais après la coupure (contrat aidé, activité obligatoire, aide d'urgence). Aucune évaluation des effets réels de la réforme italienne de 2024 sur l'emploi n'a été trouvée."
+    },
+    "angles_morts": {
+      "synthese": "Allers-retours, bascule vers l'allocation handicap et enfants des parents seuls changent tout le bilan.",
+      "texte": "Quatre points peuvent changer l'évaluation. 1) **Le compteur** : deux allocataires sur cinq font des allers-retours au RSA ; si la durée est comptée d'affilée, une courte sortie suffit à la remettre à zéro, et la mesure perd une grande partie de son effet ; si elle est comptée sur une vie, elle touche aussi des personnes qui travaillent par intermittence. 2) **La bascule vers l'allocation aux adultes handicapés** (environ 1 000 euros par mois contre 652 pour le RSA) : aux États-Unis, un report vers l'aide pour handicap a été observé ; en France, chaque bascule coûterait plus qu'elle ne rapporte. 3) **Les enfants** : un tiers des foyers sont des parents seuls ; sans exemption, la mesure toucherait directement des enfants. 4) **Les alternatives** pour le même objectif sont mieux documentées : accompagnement renforcé, levée des freins de santé, de transport et de garde, ou cumul plus avantageux entre RSA et petit emploi. Pour éviter une double pénalisation, la baisse de revenu des foyers est comptée en Effets rebonds, et la faiblesse du retour à l'emploi en Efficacité."
+    },
+    "notation_detaillee": {
+      "operationnalite_juridique": 5,
+      "qualification_juridique": "INCERTAIN",
+      "operationnalite_budgetaire": 6,
+      "qualification_budgetaire": "INCERTAIN",
+      "operationnalite_moyens_humains": 5,
+      "qualification_moyens_humains": "INCERTAIN",
+      "operationnalite_moyens_total": 16,
+      "plafond_applique": false,
+      "plafond_declencheur": null,
+      "efficacite": 9,
+      "qualification_efficacite": "FRAGILE",
+      "effets_rebonds_externalites": 5,
+      "qualification_effets_rebonds": "FRAGILE",
+      "degre_preparation": 2,
+      "qualification_preparation": "FRAGILE",
+      "alignement_logique": 7,
+      "qualification_alignement": "INCERTAIN",
+      "score_total": 39,
+      "appreciation": "partiellement fondé"
+    },
+    "verdict_final": "La mesure ferait bien économiser plusieurs milliards d'euros par an, surtout aux départements, et elle prolonge la ligne constante du candidat sur le travail et la dépense publique. Elle n'est pas juridiquement impossible, à condition de prévoir des exemptions.\n\nMais une date butoir ne lève pas les freins qui retiennent les allocataires de longue durée, santé, transport, garde d'enfants ou qualification, et les limites de durée américaines ont surtout fait baisser les revenus, pas monter l'emploi. Le risque principal est une grande pauvreté durable, en partie reportée sur l'État et les associations. La note retient une limite de trois ans d'affilée avec exemption des personnes inaptes, le candidat n'ayant pas précisé ses règles.",
+    "sources_utilisees": [
+      "La Dépêche de Nouméa, « Zemmour : je serai candidat », 18 septembre 2026 (déclaration du 17 septembre dans « Face à BFM ») : https://ladepeche.nc/2026/09/18/zemmour-je-serai-candidat",
+      "L'Avenir (dépêche AFP), « Zemmour confirme qu'il sera candidat… », 18 septembre 2026 : https://www.lavenir.net/actu/monde/2026/09/18/zemmour-confirme-quil-sera-candidat-a-lelection-presidentielle-en-france-et-durcit-encore-son-discours-sur-limmigration-5OFMOVM6CVCDFHY4B3GI5QID3Q/",
+      "Imagelien, « RSA limité à 3 ans : Knafo chiffre 4,8 milliards d'économies » (déclaration CNews du 28 septembre 2026) : https://fr.imagelien.com/rsa-limite-a-3-ans-knafo-chiffre-48-milliards-deconomies",
+      "L'Essentiel de l'Éco, « Sarah Knafo : ses idées et ses modèles politiques » : https://lessentieldeleco.fr/8437-sarah-knafo-ses-idees-et-ses-modeles-politiques/",
+      "CNAF, RSA Conjoncture, 4e trimestre 2024 (effectifs, ancienneté, composition familiale) : https://www.caf.fr/sites/default/files/medias/cnaf/Nous_connaitre/Recherche_et_statistiques/Rsa%20Conjoncture/RSA%20Conjoncture_2024T4_def.pdf",
+      "La finance pour tous, « État des lieux du RSA » (dépense 2021, montant 2026, non-recours) : https://www.lafinancepourtous.com/decryptages/finance-perso/revenus/minima-sociaux/etat-des-lieux-du-revenu-de-solidarite-active-rsa/",
+      "Banque des territoires, synthèse de DREES, Études et résultats n° 1287 (décembre 2023), trajectoires des bénéficiaires du RSA : https://www.banquedesterritoires.fr/trajectoires-des-beneficiaires-du-rsa-un-sur-cinq-peut-rester-au-moins-dix-ans-dans-la-prestation",
+      "UNCCAS, synthèse de DREES (janvier 2023), freins à la recherche d'emploi des bénéficiaires du RSA : https://www.unccas.org/une-majorite-de-beneficiaires-du-rsa-freines-dans-leur-recherche-demploi",
+      "Dares et IPP, rapport n° 68, Évaluation quantitative de l'accompagnement rénové des bénéficiaires du RSA, juin 2026 (synthèse) : https://www.ipp.eu/wp-content/uploads/2026/07/Synthese_Rapport_IPP_evaluation_accompagnement_renove_bRSA-1.pdf",
+      "Guide TNS, bilan critique de la loi pour le plein emploi : https://www.guide-tns.fr/trois-ans-apres-son-entree-en-vigueur-la-loi-pour-le-plein-emploi-est-vivement-critiquee-par-les-associations-qui-reclament-une-pause",
+      "Sénat, rapport sur le PLF 2025, Solidarité, insertion et égalité des chances (financement et recentralisation du RSA) : https://www.senat.fr/rap/l24-144-330/l24-144-3306.html",
+      "Conseil constitutionnel, Nouveaux Cahiers, « Les principes de la jurisprudence du Conseil constitutionnel en matière sociale » (alinéa 11 du Préambule de 1946, décision 99-416 DC) : https://www.conseil-constitutionnel.fr/nouveaux-cahiers-du-conseil-constitutionnel/les-principes-de-la-jurisprudence-du-conseil-constitutionnel-en-matiere-sociale",
+      "Grogger J., « The Effects of Time Limits and Other Policy Changes on Welfare Use, Work, and Income Among Female-Headed Families », NBER Working Paper 8153, 2001 : https://ideas.repec.org/p/nbr/nberwo/8153.html",
+      "Bloom D., Farrell M., Fink B., Welfare Time Limits: State Policies, Implementation, and Effects on Families, MDRC, 2002 : https://www.mdrc.org/sites/default/files/full_607.pdf",
+      "Pepin G., The Effects of Welfare Time Limits on Access to Financial Resources: Evidence from the 2010s, Upjohn Institute Working Paper, 2020 (publié au Southern Economic Journal, 2022) : https://research.upjohn.org/cgi/viewcontent.cgi?article=1348&context=up_workingpapers",
+      "LeggiOggi, Assegno di inclusione et Supporto per la formazione e il lavoro (Italie, 2024) : https://www.leggioggi.it/assegno-di-inclusione/",
+      "Lavoce.info, « Reddito di cittadinanza : le conseguenze dell'abolizione » (estimation de la Banque d'Italie) : https://lavoce.info/archives/103718/reddito-di-cittadinanza-le-conseguenze-dellabolizione/",
+      "Toutsurmesfinances, programme économique d'Éric Zemmour en 2022 : https://www.toutsurmesfinances.com/argent/a/eric-zemmour-programme",
+      "CNAF, « En 2024, les dépenses de RSA progressent de 1,4 % », 16 décembre 2025 : https://caf.fr/professionnels/etudes-et-international/6-en-2024-les-depenses-de-rsa-progressent-de-14"
+    ],
+    "niveau_de_confiance": "Moyen. Élevé sur les données du RSA (CNAF, DREES) et sur les résultats des limites de durée américaines, convergents entre plusieurs études. Moyen sur nos estimations du nombre de foyers concernés et du gain net, qui dépendent de règles non précisées. Faible sur la formulation exacte de la mesure, connue par des comptes rendus de presse et non par une citation vérifiée du candidat.",
+    "limites": {
+      "synthese": "Mesure connue par la presse, règles non précisées, et données détaillées de la DREES non consultées directement.",
+      "texte": "La proposition n'est connue que par des comptes rendus : **aucune citation exacte du candidat** sur le RSA n'a été trouvée, et la précision « en capacité de travailler » vient de Sarah Knafo, pas d'Éric Zemmour lui-même. La note repose donc sur une interprétation (trois ans d'affilée, exemption des personnes inaptes). Les fiches détaillées de la DREES n'ont pu être lues que via des synthèses. La dépense retenue (11,9 milliards d'euros en 2024) ne couvre que les versements des caisses d'allocations familiales, sans ceux de la MSA, ce qui ne change pas l'ordre de grandeur. Le document de référence des objectifs ne porte pas spécifiquement sur les minima sociaux : l'objectif légal du RSA (article L262-1 du code de l'action sociale et des familles) a été utilisé en complément."
+    },
+    "verdict_conclusion": "Une économie budgétaire plausible, mais un retour à l'emploi peu probable et un risque de grande pauvreté non traité."
+  },
+  "titre_fiche": "Le RSA limité à trois ans",
+  "resume_court": "Éric Zemmour veut limiter le RSA à trois ans pour les personnes capables de travailler. Il vise les allocataires de longue durée, près de la moitié des 1,83 million de foyers, et compte sur cette date butoir pour les pousser vers l'emploi, avec 4,8 milliards d'euros d'économies annoncées par an.\n\nL'économie est plausible, mais le retour à l'emploi l'est beaucoup moins : ces allocataires sont surtout freinés par la santé, le transport ou la garde d'enfants, et les limites de durée américaines ont fait baisser les revenus plus que monter l'emploi. La principale incertitude est ce qui arrive après la coupure. L'analyse retient une limite de trois ans d'affilée avec exemption des personnes inaptes, faute de précision du candidat.",
+  "teaser_accueil": "Une date butoir pour pousser les allocataires de longue durée vers l'emploi. Aux États-Unis, où elle existe depuis 1996, elle a surtout fait baisser… les revenus.",
+  "verdict_final": "La mesure ferait bien économiser plusieurs milliards d'euros par an, surtout aux départements, et elle prolonge la ligne constante du candidat sur le travail et la dépense publique. Elle n'est pas juridiquement impossible, à condition de prévoir des exemptions.\n\nMais une date butoir ne lève pas les freins qui retiennent les allocataires de longue durée, santé, transport, garde d'enfants ou qualification, et les limites de durée américaines ont surtout fait baisser les revenus, pas monter l'emploi. Le risque principal est une grande pauvreté durable, en partie reportée sur l'État et les associations. La note retient une limite de trois ans d'affilée avec exemption des personnes inaptes, le candidat n'ayant pas précisé ses règles.",
+  "verdict_conclusion": "Une économie budgétaire plausible, mais un retour à l'emploi peu probable et un risque de grande pauvreté non traité."
+}
