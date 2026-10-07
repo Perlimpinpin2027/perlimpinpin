@@ -76,6 +76,16 @@
           }
         ]
       },
+      "frais_mandat": {
+        "affichage": "7 238 € / mois",
+        "mention": null,
+        "sources": [
+          {
+            "label": "Assemblée nationale – situation matérielle du député",
+            "url": "https://www.assemblee-nationale.fr/dyn/synthese/deputes-groupes-parlementaires/la-situation-materielle-du-depute"
+          }
+        ]
+      },
       "hatvp_url": "https://www.hatvp.fr/pages_nominatives/le-pen-marine",
       "revenus_declares_hatvp": {
         "disponible": true,
@@ -138,6 +148,11 @@
         "affichage": "Aucune : pas de mandat électif",
         "detail": [],
         "note": "Pas d'indemnité publique. Les revenus privés (activité professionnelle, droits d'auteur…) ne sont pas publiés.",
+        "sources": []
+      },
+      "frais_mandat": {
+        "affichage": "Sans mandat",
+        "mention": null,
         "sources": []
       },
       "hatvp_url": null,
@@ -208,6 +223,11 @@
           }
         ]
       },
+      "frais_mandat": {
+        "affichage": "Pas d'enveloppe de frais de mandat (frais de représentation éventuels votés par le conseil municipal)",
+        "mention": "Ancien Premier ministre : véhicule avec chauffeur et secrétariat possibles jusqu'en 2030",
+        "sources": []
+      },
       "hatvp_url": "https://www.hatvp.fr/pages_nominatives/philippe-edouard",
       "revenus_declares_hatvp": {
         "disponible": false,
@@ -266,6 +286,16 @@
           {
             "label": "Parlement européen – règles applicables aux députés",
             "url": "https://www.europarl.europa.eu/meps/en/about/meps"
+          }
+        ]
+      },
+      "frais_mandat": {
+        "affichage": "4 950 € / mois",
+        "mention": null,
+        "sources": [
+          {
+            "label": "Yahoo News – how much are MEPs paid",
+            "url": "https://ca.news.yahoo.com/much-meps-paid-145352606.html"
           }
         ]
       },
@@ -330,6 +360,16 @@
           "Député : 7 637,39 € brut/mois (≈ 5 953 € net)"
         ],
         "note": null,
+        "sources": [
+          {
+            "label": "Assemblée nationale – situation matérielle du député",
+            "url": "https://www.assemblee-nationale.fr/dyn/synthese/deputes-groupes-parlementaires/la-situation-materielle-du-depute"
+          }
+        ]
+      },
+      "frais_mandat": {
+        "affichage": "7 238 € / mois",
+        "mention": "Ancien Premier ministre : véhicule avec chauffeur et secrétariat possibles jusqu'en 2034",
         "sources": [
           {
             "label": "Assemblée nationale – situation matérielle du député",
@@ -412,6 +452,11 @@
           }
         ]
       },
+      "frais_mandat": {
+        "affichage": "Pas d'enveloppe de frais de mandat",
+        "mention": null,
+        "sources": []
+      },
       "hatvp_url": null,
       "revenus_declares_hatvp": {
         "disponible": false,
@@ -485,6 +530,16 @@
           }
         ]
       },
+      "frais_mandat": {
+        "affichage": "6 600 € / mois",
+        "mention": null,
+        "sources": [
+          {
+            "label": "Europe 1 – les sénateurs ont eux aussi augmenté leurs frais de mandat",
+            "url": "https://www.europe1.fr/politique/les-senateurs-ont-eux-aussi-augmente-leurs-frais-de-mandat-de-700-euros-par-mois-4227789"
+          }
+        ]
+      },
       "hatvp_url": "https://www.hatvp.fr/pages_nominatives/retailleau-bruno",
       "revenus_declares_hatvp": {
         "disponible": false,
@@ -530,6 +585,11 @@
         "affichage": "Aucune : pas de mandat électif",
         "detail": [],
         "note": "Pas d'indemnité publique. Les revenus privés (activité professionnelle, droits d'auteur…) ne sont pas publiés.",
+        "sources": []
+      },
+      "frais_mandat": {
+        "affichage": "Sans mandat",
+        "mention": null,
         "sources": []
       },
       "hatvp_url": null,
@@ -586,6 +646,11 @@
         "affichage": "Aucune : pas de mandat électif",
         "detail": [],
         "note": "Pas d'indemnité publique. Les revenus privés (activité professionnelle, droits d'auteur…) ne sont pas publiés.",
+        "sources": []
+      },
+      "frais_mandat": {
+        "affichage": "Sans mandat",
+        "mention": null,
         "sources": []
       },
       "hatvp_url": null,
@@ -660,6 +725,11 @@
             "url": "https://www.assemblee-nationale.fr/dyn/synthese/deputes-groupes-parlementaires/la-situation-materielle-du-depute"
           }
         ]
+      },
+      "frais_mandat": {
+        "affichage": "Pas d'enveloppe de frais de mandat (frais de représentation éventuels votés par le conseil municipal)",
+        "mention": null,
+        "sources": []
       },
       "hatvp_url": "https://www.hatvp.fr/pages_nominatives/lisnard-david",
       "revenus_declares_hatvp": {
@@ -738,6 +808,11 @@
             "url": "https://www.weka.fr/actualite/elus/article/statut-de-l-elu-revalorisation-des-indemnites-de-fonction-des-maires-et-adjoints-au-maire-209629/"
           }
         ]
+      },
+      "frais_mandat": {
+        "affichage": "Pas d'enveloppe de frais de mandat (frais de représentation éventuels votés par le conseil municipal)",
+        "mention": null,
+        "sources": []
       },
       "hatvp_url": null,
       "revenus_declares_hatvp": {

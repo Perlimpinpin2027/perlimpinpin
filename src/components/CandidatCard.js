@@ -19,6 +19,9 @@ const ICONES = {
   indemnites: (
     <path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Zm9 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM6 9v.01M18 15v.01" />
   ),
+  frais: (
+    <path d="M3 9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Zm5-2V5a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M3 12h18M12 11v2" />
+  ),
   revenus: (
     <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Zm0 0v5h5M9 13h6M9 17h4" />
   ),
@@ -51,8 +54,9 @@ function Icone({ nom }) {
 }
 
 // Rubrique d'une seule ligne (indemnités, revenus déclarés), même mise en
-// page que les rubriques à puces.
-function RubriqueLigne({ titre, icone, children }) {
+// page que les rubriques à puces. `mention` : précision facultative en petit
+// sous la valeur.
+function RubriqueLigne({ titre, icone, mention = null, children }) {
   return (
     <li className="flex gap-3">
       <span className="mt-0.5 shrink-0 text-zinc-400">
@@ -61,6 +65,7 @@ function RubriqueLigne({ titre, icone, children }) {
       <div className="min-w-0">
         <p className="text-xs font-bold uppercase tracking-widest text-zinc-500">{titre}</p>
         <p className="mt-1 text-sm text-zinc-700">{children}</p>
+        {mention ? <p className="mt-1 text-xs leading-snug text-zinc-400">{mention}</p> : null}
       </div>
     </li>
   );
@@ -109,11 +114,6 @@ export default function CandidatCard({ parcours, score }) {
                 {score.scoreMoyen}
                 <span className="text-sm font-semibold text-zinc-400">/100</span>
               </p>
-              <span
-                className={`mt-2 inline-block rounded-lg px-2 py-0.5 text-xs font-semibold leading-snug ${badge.badgeClass}`}
-              >
-                {badge.label}
-              </span>
               <p className="mt-1 text-xs leading-snug text-zinc-400">
                 sur {score.nombreFiches} proposition{score.nombreFiches > 1 ? "s" : ""} analysée
                 {score.nombreFiches > 1 ? "s" : ""}
@@ -149,6 +149,24 @@ export default function CandidatCard({ parcours, score }) {
         {parcours.indemnites_elu ? (
           <RubriqueLigne titre="Indemnités d'élu" icone="indemnites">
             {parcours.indemnites_elu.affichage}
+          </RubriqueLigne>
+        ) : null}
+
+        {parcours.frais_mandat ? (
+          <RubriqueLigne titre="Frais de mandat" icone="frais" mention={parcours.frais_mandat.mention}>
+            {parcours.frais_mandat.sources[0] ? (
+              <a
+                href={parcours.frais_mandat.sources[0].url}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={parcours.frais_mandat.sources[0].label}
+                className="underline-offset-2 hover:underline"
+              >
+                {parcours.frais_mandat.affichage}
+              </a>
+            ) : (
+              parcours.frais_mandat.affichage
+            )}
           </RubriqueLigne>
         ) : null}
 

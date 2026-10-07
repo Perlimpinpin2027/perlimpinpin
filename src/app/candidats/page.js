@@ -35,7 +35,7 @@ export default async function CandidatsPage() {
               largeur. */}
           <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
             <div>
-              <MonoTag>Candidats</MonoTag>
+              <MonoTag>Présidentielle 2027</MonoTag>
               {/* text-3xl/sm:text-4xl (30-36px) mesuré trop petit sur la
                   maquette 456 : le "L" de "Les candidats" y fait ~41px de
                   capitale pour un rendu ~1604px de large, soit un corps
@@ -71,6 +71,13 @@ export default async function CandidatsPage() {
             s&rsquo;agit des plafonds fixés par la loi. Revenus déclarés à la
             HATVP : montants nets, tels que déclarés par l&rsquo;élu, non
             comparables aux indemnités brutes.
+          </p>
+
+          <p className="-mt-6 text-xs leading-relaxed text-zinc-400">
+            Les frais de mandat financent les dépenses liées au mandat
+            (permanence, déplacements, communication) et ne constituent pas un
+            revenu. Montants identiques pour tous les élus d&rsquo;une même
+            assemblée.
           </p>
         </div>
       </main>
