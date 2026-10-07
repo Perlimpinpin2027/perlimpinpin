@@ -1,0 +1,146 @@
+{
+  "mesure_reformulee": {
+    "synthese": "Le RN veut économiser 12 milliards dès 2027 sur les dépenses liées aux étrangers, puis 29 milliards en année pleine.",
+    "texte": "Dans son contre-budget pour 2027, présenté le 6 octobre 2026 par Jordan Bardella, le Rassemblement national annonce **12 milliards d'euros d'économies sur « les dépenses liées à l'immigration »**. Il vise six postes : l'hébergement d'urgence, l'aide médicale de l'État (AME, qui couvre les soins des étrangers en situation irrégulière), les titres de séjour pour soins, les prestations sociales versées aux étrangers, la politique de l'asile et la prise en charge des étrangers en situation irrégulière.\n\nLa trajectoire présentée le même jour par Marine Le Pen donne d'autres chiffres pour le même poste : **15 milliards en 2027 et 29 milliards « en année pleine »**, soit 20 % de son plan de 140 milliards. Le montant par poste n'a pas été rendu public. Cette fiche examine les 12 milliards du contre-budget 2027 et signale l'écart avec la trajectoire."
+  },
+  "mesure_vers_objectif": {
+    "objectif_court": "Réduire le déficit public",
+    "categorie_objectif": "Dette et finances publiques",
+    "objectif_vise": "Dégager 12 milliards d'euros d'économies budgétaires dès 2027 en réduisant les dépenses publiques consacrées aux étrangers, pour contribuer au redressement des comptes.",
+    "mecanisme_propose": "Restreindre l'accès des étrangers à plusieurs dépenses publiques : AME ramenée aux soins urgents, prestations sociales non contributives réservées aux Français et aux étrangers présents depuis plusieurs années, baisse de l'hébergement d'urgence, de l'asile et des titres de séjour pour soins, et réduction des flux migratoires.",
+    "lien_causal": "direct"
+  },
+  "nature_et_existant": "Mesure budgétaire et sociale, qui touche aussi au droit des étrangers et au droit européen. Elle relève de la loi (Code de l'action sociale, Code de la sécurité sociale, Code de l'entrée et du séjour des étrangers) et, pour sa partie principale, d'une révision de la Constitution que Marine Le Pen propose de faire par référendum. Une partie existe déjà : la loi immigration de décembre 2023 contenait une condition de cinq ans de résidence (ou 30 mois d'activité) pour certaines prestations, censurée en janvier 2024 pour une raison de procédure. Le Sénat a aussi voté en 2023 la transformation de l'AME en aide médicale d'urgence, sans qu'elle soit retenue dans le texte final. La mesure combine donc plusieurs leviers distincts, jugés ici ensemble parce que le candidat les présente sous un seul montant.",
+  "contexte_programme": {
+    "synthese": "La mesure est l'un des quatre grands postes du contre-budget, et le RN la défend avec constance depuis 2022.",
+    "texte": "Ce poste est le troisième du contre-budget 2027, après la réorganisation de l'État (24 milliards) et la Sécurité sociale (20 milliards), et devant la contribution à l'Union européenne (9 milliards). Il finance une partie des **27 milliards de baisses d'impôts** annoncées (impôts de production, TVA sur l'énergie, part fiscale dès le deuxième enfant).\n\nLa ligne est ancienne et constante. Le projet de loi référendaire « Citoyenneté, identité, immigration » de 2021 prévoyait déjà la priorité nationale et des prestations sociales réservées aux familles françaises. En septembre 2025, le RN chiffrait à au moins 18 milliards l'économie tirée de la restriction des aides non contributives aux Français et aux étrangers ayant cotisé cinq ans, et à 4 milliards le passage de l'AME à une aide d'urgence. Son contre-budget 2026 (octobre 2025) retenait des montants plus bas : **11,9 milliards au total, dont 6,1 milliards sur les prestations sociales et 1,3 milliard sur l'AME**.\n\nLes députés RN ont voté la loi immigration du 19 décembre 2023, que Marine Le Pen avait qualifiée de « victoire idéologique »."
+  },
+  "contexte_national": {
+    "synthese": "Les budgets clairement identifiés sur l'immigration pèsent environ 3,4 milliards, loin des 12 milliards annoncés.",
+    "texte": "**Les lignes budgétaires de l'État clairement rattachées aux étrangers pèsent environ 3,4 milliards d'euros.** La mission « Immigration, asile et intégration » du budget 2026 représente 2,16 milliards d'euros de crédits de paiement, dont 313 millions pour l'allocation pour demandeur d'asile (Sénat, avis budgétaire PLF 2026). L'AME représente environ 1,21 milliard d'euros dans le projet de budget 2026 (Public Sénat). En 2023, elle couvrait environ 466 000 personnes (rapport Évin-Stefanini).\n\nLe reste des 12 milliards doit donc venir de dépenses qui ne sont pas classées « immigration » dans le budget : hébergement d'urgence de droit commun, prestations familiales, aides au logement, minimum vieillesse, RSA. La part de ces dépenses versée à des étrangers n'est pas publiée de façon consolidée : **sources insuffisantes pour trancher ici** sur leur montant exact.\n\nLe droit pose un obstacle majeur sur ce dernier point. **Le Conseil constitutionnel a jugé contraire à la Constitution, sur le fond, une condition de cinq ans de résidence ou de 30 mois d'activité pour les aides au logement, les prestations familiales et l'allocation personnalisée d'autonomie** (décision n° 2024-6 RIP du 11 avril 2024). Il s'est appuyé sur les alinéas 10 et 11 du Préambule de 1946, qui garantissent à chacun des moyens convenables d'existence. Une condition de durée est possible, mais pas au point de priver de ces garanties des étrangers installés régulièrement et durablement.\n\nSur l'AME, le rapport Évin-Stefanini (décembre 2023) la juge « utile » et « globalement maîtrisée ». Il propose des ajustements, pas sa suppression. Près d'une personne éligible sur deux n'y a pas recours."
+  },
+  "contexte_international": {
+    "synthese": "Le droit européen impose l'égalité de traitement à plusieurs catégories d'étrangers, ce qu'une révision constitutionnelle ne change pas.",
+    "texte": "**Plusieurs textes européens imposent de traiter certains étrangers comme les nationaux pour les prestations sociales.** La directive 2011/95/UE (article 29) garantit aux réfugiés la même assistance sociale qu'aux nationaux : la Cour de justice de l'Union l'a confirmé dans l'arrêt Ayubi (C-713/17, 21 novembre 2018). La directive 2011/98/UE dite « permis unique » (article 12) garantit l'égalité de traitement aux travailleurs étrangers pour les branches de la sécurité sociale, dont les prestations familiales (arrêt ASGI, C-462/20, 28 octobre 2021). La directive 2003/109/CE l'étend aux résidents de longue durée, statut qui s'obtient après cinq ans de séjour régulier.\n\nUne révision de la Constitution française, même par référendum, ne lève pas ces obligations : il faudrait renégocier ces directives au niveau européen.\n\nSur le plan économique, l'OCDE (Perspectives des migrations internationales 2021), qui reprend les travaux de Chojnicki, Ragot et Sokhna (2018), estime que **la contribution nette des immigrés aux finances publiques françaises est faible, entre -0,5 % et +0,5 % du PIB** sur la période 1979-2011. Les immigrés reçoivent des prestations mais paient aussi des impôts et des cotisations. Le « coût de l'immigration » dont part le RN est donc un coût brut, pas net."
+  },
+  "impact_environnement": null,
+  "analyse_par_criteres": "Opérationnalité & Moyens (8/30, plafond appliqué). Mauvais signe : le poste le plus lourd se heurte à deux obstacles juridiques, et le montant ne tient pas face aux budgets réels. Juridique (2/10, FRAGILE) : d'après le contre-budget 2026, la restriction des prestations sociales représentait plus de la moitié des économies sur l'immigration. Or le Conseil constitutionnel a censuré sur le fond une condition de cinq ans en avril 2024, et plusieurs directives européennes imposent l'égalité de traitement aux réfugiés, aux travailleurs et aux résidents de longue durée. Le référendum promis par Marine Le Pen pourrait lever l'obstacle constitutionnel, mais sa voie (article 11) est contestée par les constitutionnalistes et il ne change pas le droit européen. D'où 2/10 : seules l'AME et une partie des dépenses d'asile relèvent d'une loi ordinaire. Budgétaire (1/10, FRAGILE) : le sens de l'effet est clair (moins de bénéficiaires, moins de dépense brute), mais le montant est contredit par les données publiques. Le RN chiffrait l'économie sur l'AME à 1,3 milliard en 2025, puis à 4 milliards, alors que l'AME coûte au total 1,21 milliard. La restriction des prestations était chiffrée à 6,1 milliards par le RN, contre 2,1 milliards pour une mesure comparable portée par la droite. Notre estimation, qui additionne le montant réaliste de chaque poste, aboutit à 2 à 4 milliards en 2027, si l'obstacle juridique était levé. D'où 1/10. Moyens humains (5/10, INCERTAIN) : les caisses vérifient déjà les titres de séjour, et réformer l'AME est simple à gérer. En revanche, réduire les flux et l'hébergement suppose des éloignements effectifs, qui dépendent des laissez-passer délivrés par les pays d'origine. Le plafond est déclenché par la faisabilité budgétaire.\n\nEfficacité (10/30, FRAGILE). Le lien entre couper une dépense et réduire le déficit est direct, mais notre raisonnement montre que le mécanisme ne peut produire qu'une petite partie du montant visé. Les lignes clairement identifiées pèsent 3,4 milliards, et une part ne peut pas être supprimée (droit d'asile, investissements dans les centres de rétention). Sans la restriction des prestations, juridiquement bloquée, les économies réalistes tournent autour de 1 à 2 milliards. Avec elle, si l'obstacle était levé, elles atteindraient 2 à 4 milliards. Dans les deux cas, on reste loin des 12 milliards, et encore plus des 29 milliards de la trajectoire. Une partie des économies sur l'AME risque aussi de revenir sous forme de soins urgents plus lourds à l'hôpital. D'où 10/30, en haut de la fourchette FRAGILE : il y a bien des économies, mais à une échelle trois à quatre fois plus faible.\n\nEffets rebonds & Externalités (9/20, INCERTAIN). Des effets réels, d'ampleur mal connue. Restreindre l'AME aux urgences peut retarder des soins, ce qui reporte des coûts sur l'hôpital et pose un risque de santé publique pour les maladies transmissibles. Le rapport Évin-Stefanini souligne l'utilité sanitaire du dispositif. Moins d'hébergement d'urgence reporte une partie de la charge sur les communes, les départements et les associations. Enfin, exclure des familles étrangères installées et qui travaillent des prestations familiales fragilise leur intégration, sans effet démontré sur les arrivées : le rapport Évin-Stefanini ne trouve pas d'« appel d'air » lié à l'AME. Aucun de ces effets n'est chiffré au point d'égaler les économies visées. D'où 9/20.\n\nDegré de préparation (2/10, FRAGILE). Mauvais signe : aucun document détaillé n'est public, et les chiffres changent d'une présentation à l'autre. Le poste vaut 12 milliards pour Jordan Bardella, et 15 puis 29 milliards pour Marine Le Pen, le même jour. L'économie sur l'AME, chiffrée à 4 milliards en 2025, dépasse le coût total du dispositif. D'où 2/10 : un chiffre central est contredit par une source officielle.\n\nAlignement & Logique globale (7/10, INCERTAIN). Plutôt bon signe sur la constance : le RN défend cette ligne depuis le projet de référendum de 2021, et ses députés ont voté la loi de 2023 qui contenait une condition de cinq ans. La tension vient d'ailleurs : en octobre 2025, Marine Le Pen assurait que son contre-budget se faisait « à périmètre constitutionnel constant ». Or ces économies reposent en grande partie sur une mesure déjà censurée, et le référendum ne serait organisé que dans les douze mois suivant l'élection, alors que les économies sont comptées dès 2027. D'où 7/10.",
+  "analyse_longevites": {
+    "synthese": "Les économies réelles seraient limitées en 2027 et dépendraient ensuite d'une révision de la Constitution incertaine.",
+    "texte": "**À court terme (0-2 ans)**, seules les mesures de loi ordinaire sont possibles : réforme de l'AME, accélération de l'asile, baisse de certaines dépenses d'hébergement. Leur rendement réaliste est de l'ordre de 1 à 2 milliards, selon notre estimation. Le référendum constitutionnel ne pourrait intervenir qu'à la fin de cette période.\n\n**À moyen terme (2-7 ans)**, tout dépend de deux conditions : une révision constitutionnelle adoptée et jugée régulière, et une renégociation des directives européennes. Sans la seconde, réfugiés, travailleurs titulaires du permis unique et résidents de longue durée restent protégés. La baisse des flux peut réduire progressivement certaines dépenses, mais elle réduit aussi les recettes des immigrés qui travaillent.\n\n**À long terme (plus de 7 ans)**, l'effet net sur les finances publiques dépend surtout du profil des personnes qui arrivent et de leur taux d'emploi, plus que des prestations : c'est ce que montrent les travaux repris par l'OCDE."
+  },
+  "impact_temporel_et_sectoriel": {
+    "synthese": "Effet macroéconomique faible ; les principaux effets toucheraient l'hôpital, les collectivités et le pouvoir d'achat des familles étrangères concernées.",
+    "texte": "**Inflation et pouvoir d'achat** : pas d'effet sur les prix. La baisse de revenu se concentre sur les ménages étrangers privés de prestations, souvent modestes.\n\n**Consommation des ménages** : effet faible à l'échelle du pays (quelques milliards au plus), mais réel pour les ménages concernés, dont une partie des dépenses de base serait réduite.\n\n**Stabilité bancaire** : aucun effet identifiable.\n\n**Secteurs touchés** : l'hôpital public (soins urgents plus tardifs et plus lourds), les collectivités et les associations (hébergement), et les secteurs qui emploient beaucoup de travailleurs étrangers, si la baisse des flux réduit la main-d'œuvre disponible."
+  },
+  "ce_qui_est_etabli": {
+    "synthese": "Les lignes budgétaires identifiées pèsent environ 3,4 milliards, et la mesure phare a déjà été censurée sur le fond.",
+    "texte": "**La mission Immigration, asile et intégration représente 2,16 milliards d'euros** et l'AME environ 1,21 milliard dans le budget 2026. **Le Conseil constitutionnel a censuré sur le fond, le 11 avril 2024, une condition de cinq ans de résidence pour les prestations familiales et les aides au logement.** Le droit européen garantit l'égalité de traitement aux réfugiés (arrêt Ayubi, 2018) et aux travailleurs titulaires du permis unique pour les prestations familiales (arrêt ASGI, 2021). Le RN a donné le même jour 12, 15 et 29 milliards pour ce poste."
+  },
+  "ce_qui_est_probable": {
+    "synthese": "Les économies réellement atteignables en 2027 seraient de l'ordre de 1 à 4 milliards, pas de 12.",
+    "texte": "Selon notre estimation, **les économies réalistes tournent autour de 1 à 2 milliards sans la restriction des prestations, et de 2 à 4 milliards avec elle** si l'obstacle juridique était levé. Une partie des économies sur l'AME reviendrait probablement en soins urgents à l'hôpital. La mesure ferait l'objet de recours devant le Conseil constitutionnel et la Cour de justice de l'Union."
+  },
+  "ce_qui_est_discutable": {
+    "synthese": "Le recours au référendum de l'article 11 pour réviser la Constitution reste contesté par les juristes.",
+    "texte": "Marine Le Pen veut réviser la Constitution par référendum. **La voie de l'article 11 est contestée** : plusieurs constitutionnalistes, comme Dominique Rousseau, estiment que l'immigration et la priorité nationale sortent de son champ. La voie de l'article 89 suppose l'accord des deux assemblées, dont le Sénat. L'existence ou non d'un « appel d'air » lié aux prestations sociales est aussi débattue, mais le rapport Évin-Stefanini n'en trouve pas pour l'AME."
+  },
+  "ce_qui_est_inconnu": {
+    "synthese": "Le détail des 12 milliards et la part exacte des prestations versée aux étrangers ne sont pas publics.",
+    "texte": "**Le RN n'a pas publié la ventilation de ses 12 milliards pour 2027**, ni celle des 29 milliards de la trajectoire. Le montant total des prestations sociales et de l'hébergement d'urgence versés à des étrangers n'est pas publié de façon consolidée : sources insuffisantes pour trancher ici. On ne sait pas non plus à quel rythme les flux migratoires baisseraient."
+  },
+  "angles_morts": {
+    "synthese": "Le plan compte un coût brut sans les recettes perdues, et ignore le droit européen.",
+    "texte": "**Le plan raisonne sur un coût brut** : moins d'immigrés, c'est aussi moins d'impôts et de cotisations, alors que l'OCDE estime la contribution nette proche de zéro. **Il ne dit rien des directives européennes** qui protègent réfugiés, travailleurs et résidents de longue durée. Il ne chiffre pas le report de charges vers l'hôpital et les collectivités. Enfin, réduire l'hébergement d'urgence sans augmenter les éloignements effectifs risque de laisser des personnes à la rue, sans baisse de leur nombre sur le territoire. Le même fait (la censure de 2024) pèse sur la faisabilité juridique et explique en partie la faible efficacité : il n'est compté comme obstacle juridique qu'une fois, l'efficacité étant jugée sur le montant réaliste des économies."
+  },
+  "notation_detaillee": {
+    "operationnalite_juridique": 2,
+    "qualification_juridique": "FRAGILE",
+    "operationnalite_budgetaire": 1,
+    "qualification_budgetaire": "FRAGILE",
+    "operationnalite_moyens_humains": 5,
+    "qualification_moyens_humains": "INCERTAIN",
+    "operationnalite_moyens_total": 8,
+    "plafond_applique": true,
+    "plafond_declencheur": "budgetaire",
+    "efficacite": 10,
+    "qualification_efficacite": "FRAGILE",
+    "effets_rebonds_externalites": 9,
+    "qualification_effets_rebonds": "INCERTAIN",
+    "degre_preparation": 2,
+    "qualification_preparation": "FRAGILE",
+    "alignement_logique": 7,
+    "qualification_alignement": "INCERTAIN",
+    "score_total": 36,
+    "appreciation": "partiellement fondé"
+  },
+  "verdict_final": "Ce qui tient : réduire certaines dépenses liées aux étrangers est possible, et une partie relève d'une simple loi, comme la réforme de l'AME. Le RN défend cette ligne avec constance depuis plusieurs années.\n\nCe qui ne tient pas : le montant. Les lignes budgétaires clairement identifiées ne pèsent qu'environ 3,4 milliards. Le poste le plus lourd, la restriction des prestations sociales, a déjà été censuré sur le fond par le Conseil constitutionnel et se heurte au droit européen. Notre estimation, qui additionne le montant réaliste de chaque poste, aboutit à 1 à 4 milliards, pas 12, et encore moins 29.\n\nCe qui reste incertain : le contenu exact du plan, qui n'est pas publié, et l'issue d'un référendum constitutionnel dont la voie est contestée. La note porte sur les 12 milliards du contre-budget 2027, tels que présentés oralement le 6 octobre 2026.",
+  "sources_utilisees": [
+    "Conférence de presse du Rassemblement national, 6 octobre 2026, intervention de Jordan Bardella (transcription de la vidéo YouTube)",
+    "Public Sénat, « 140 milliards d'euros d'économies d'ici 2032 : l'effort radical proposé par Marine Le Pen », 6 octobre 2026",
+    "AFP via Boursorama, « Présidentielle : Marine Le Pen promet 140 milliards d'euros nets d'économies d'ici 2032 », 6 octobre 2026",
+    "Public Sénat, « Contre-budget du RN : des propositions qui manquent de crédibilité économique », octobre 2025",
+    "Public Sénat, « Coût de l'immigration, taxation financière, contribution à l'UE : les revendications économiques du RN », 17 septembre 2025",
+    "Sénat, avis budgétaire PLF 2026, mission Immigration, asile et intégration (a25-145-2)",
+    "Public Sénat, « Budget 2026 : le Sénat durcit les conditions de l'Aide médicale d'État », 2025",
+    "LCP, « Aide médicale d'État : le rapport Stefanini / Évin fait réagir à l'Assemblée », décembre 2023",
+    "Conseil constitutionnel, décision n° 2024-6 RIP du 11 avril 2024",
+    "Conseil constitutionnel, décision n° 2023-863 DC du 25 janvier 2024 (article 19)",
+    "CJUE, 21 novembre 2018, Ayubi, C-713/17",
+    "CJUE, 28 octobre 2021, ASGI e.a., C-462/20 (commentaire CEDIE, UCLouvain)",
+    "Directive 2003/109/CE relative au statut des résidents de longue durée (EUR-Lex)",
+    "OCDE, Perspectives des migrations internationales 2021, chapitre sur l'impact budgétaire (Chojnicki, Ragot et Sokhna, 2018)",
+    "Public Sénat, « Immigration : le référendum voulu par Marine Le Pen est-il constitutionnel ? », 29 septembre 2021",
+    "LCP, « Législatives 2024 : le programme du RN en matière d'immigration à l'épreuve de la Constitution », 2024",
+    "Le Petit Journal, « Ce qu'il faut retenir de la loi immigration adoptée en France », décembre 2023"
+  ],
+  "niveau_de_confiance": "Moyen. Les obstacles juridiques et les montants budgétaires de référence sont solidement établis. La ventilation exacte des 12 milliards n'est pas publiée : l'analyse s'appuie sur la présentation orale et sur le détail du contre-budget 2026, supposé proche.",
+  "limites": {
+    "synthese": "Le document officiel du RN n'est pas publié : la ventilation retenue s'appuie sur le contre-budget précédent.",
+    "texte": "**Le détail du contre-budget 2027 n'est pas encore public.** Cette fiche suppose que sa ventilation reste proche de celle du contre-budget 2026 (prestations sociales, AME, autres postes), hypothèse de l'analyste à vérifier dès la publication. La catégorie retenue est « Dette et finances publiques », parce que la mesure est présentée comme une économie budgétaire ; elle touche aussi le domaine Immigration, dont l'objectif de référence est, selon le document de référence, plus débattu. La transcription de la conférence de presse est automatique et n'a pas été vérifiée sur l'enregistrement mot pour mot."
+  },
+  "resume_court": "Le RN promet 12 milliards d'économies dès 2027 sur les dépenses liées aux étrangers : AME, prestations sociales, hébergement d'urgence, asile. L'idée est de réduire le déficit en restreignant l'accès des étrangers à ces aides.\n\nLe problème, c'est l'échelle. Les budgets clairement identifiés ne pèsent qu'environ 3,4 milliards, et le poste le plus lourd, les prestations sociales, a déjà été censuré par le Conseil constitutionnel en 2024 et se heurte au droit européen. Selon notre estimation, les économies réalistes tournent autour de 1 à 4 milliards. Note : 36/100, partiellement fondé. Elle porte sur les 12 milliards annoncés par Jordan Bardella, le détail écrit n'étant pas publié.",
+  "phrase_teasing": "Sa mesure phare a déjà été censurée en 2024.",
+  "relecture": {
+    "titre": "12 milliards sur l'immigration : le compte n'y est pas",
+    "candidat": "Marine Le Pen",
+    "parti": "Rassemblement national",
+    "theme": "Dette et finances publiques",
+    "date": "2026-10-07",
+    "version": 1,
+    "mesure_initiale": "Réaliser 12 milliards d'euros d'économies dès 2027 sur les dépenses liées à l'immigration (hébergement d'urgence, AME, titres de séjour pour soins, prestations sociales, asile, prise en charge des étrangers en situation irrégulière), puis 29 milliards en année pleine selon la trajectoire 2027-2032.",
+    "extrait": {
+      "citation": "« Un autre grand poste d'économie concerne, je l'ai évoqué, les dépenses liées à l'immigration pour un montant de 12 milliards d'euros. »",
+      "source": "Jordan Bardella, conférence de presse du Rassemblement national, 6 octobre 2026 (vidéo YouTube, transcription automatique) · Non vérifié sur l'enregistrement mot pour mot"
+    },
+    "verdict_tient": "une partie des économies est possible par une loi ordinaire, notamment sur l'AME, et la ligne du RN est constante depuis plusieurs années.",
+    "verdict_flou": "le montant est trois à quatre fois trop élevé, et le poste principal se heurte à la Constitution et au droit européen.",
+    "niveau_confiance": "Moyen",
+    "questions": [
+      {
+        "titre": "Quel chiffre juger ?",
+        "texte": "Le RN a donné le même jour 12 milliards (Jordan Bardella, contre-budget 2027), 15 milliards en 2027 et 29 milliards en année pleine (Marine Le Pen). La fiche juge les 12 milliards et signale l'écart. Faut-il plutôt juger les 29 milliards, ou les deux ?"
+      },
+      {
+        "titre": "Faisabilité juridique à 2/10",
+        "texte": "La note s'appuie sur la censure de fond de 2024 et sur les directives européennes (réfugiés, permis unique, résidents de longue durée). Le référendum promis pourrait lever l'obstacle constitutionnel, mais pas l'obstacle européen. Ce 2/10 vous paraît-il juste, ou faut-il remonter à 3-4 parce qu'une révision de la Constitution est prévue ?"
+      },
+      {
+        "titre": "Le chiffrage à 1/10",
+        "texte": "L'économie sur l'AME chiffrée par le RN en 2025 dépasse le coût total de l'AME (1,21 milliard). C'est ce qui justifie le 1/10 et le plafond. Connaissez-vous une source qui donnerait la part des prestations familiales et des aides au logement versée à des étrangers, pour affiner notre estimation de 1 à 4 milliards ?"
+      },
+      {
+        "titre": "Catégorie de la fiche",
+        "texte": "La fiche est classée « Dette et finances publiques », car la mesure est présentée comme une économie budgétaire. Préférez-vous la catégorie « Immigration » ?"
+      },
+      {
+        "titre": "Effets rebonds à 9/20",
+        "texte": "Report de coûts vers l'hôpital et les collectivités, risques de santé publique, intégration des familles : aucun de ces effets n'est chiffré. Faut-il être plus ou moins sévère ?"
+      },
+      {
+        "titre": "Titre et teaser",
+        "texte": "Titre court proposé : « Économiser 12 Md€ sur l'immigration » (35 caractères). Teaser : « Sa mesure phare a déjà été censurée en 2024. » (44 caractères). Vous conviennent-ils ?"
+      }
+    ]
+  }
+}
