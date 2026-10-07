@@ -15,6 +15,9 @@ function versPublic(candidat) {
     etudes: candidat.etudes ?? [],
     note_contexte: candidat.note_contexte ?? null,
     sources: candidat.sources ?? [],
+    indemnites_elu: candidat.indemnites_elu ?? null,
+    revenus_declares_hatvp: candidat.revenus_declares_hatvp ?? null,
+    hatvp_url: candidat.hatvp_url ?? null,
   };
 }
 

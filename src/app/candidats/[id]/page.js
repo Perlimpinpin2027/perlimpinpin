@@ -3,6 +3,127 @@ import Header from "@/components/Header";
 import DeclarationCarte from "@/components/DeclarationCarte";
 import { getCandidatAvecDeclarations } from "@/lib/queries";
 import { getScoreBadge } from "@/lib/score";
+import { getAllParcours } from "@/lib/parcours";
+
+function LienHatvp({ url }) {
+  if (!url) return "Pas de fiche HATVP en ligne";
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="underline underline-offset-2 hover:text-zinc-700"
+    >
+      Fiche HATVP ↗
+    </a>
+  );
+}
+
+// Encadré « Indemnités et revenus déclarés » (data/candidats-parcours.json).
+// Indemnités brutes et revenus nets déclarés restent dans deux colonnes
+// distinctes : ils ne sont pas comparables.
+function IndemnitesRevenus({ parcours }) {
+  const { indemnites_elu: indemnites, revenus_declares_hatvp: revenus } = parcours;
+
+  return (
+    <section className="flex flex-col gap-5 rounded-2xl border border-zinc-200 bg-white p-6">
+      <h2 className="text-lg font-bold text-zinc-900">Indemnités et revenus déclarés</h2>
+
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+        {indemnites ? (
+          <div className="flex flex-col gap-3">
+            <p className="text-xs font-bold uppercase tracking-widest text-zinc-500">
+              Indemnités d&rsquo;élu
+            </p>
+            <p className="text-base font-bold text-zinc-900">{indemnites.affichage}</p>
+            {indemnites.detail?.length ? (
+              <ul className="flex list-disc flex-col gap-1 pl-5 text-sm text-zinc-700 marker:text-zinc-300">
+                {indemnites.detail.map((ligne) => (
+                  <li key={ligne}>{ligne}</li>
+                ))}
+              </ul>
+            ) : null}
+            {indemnites.note ? (
+              <p className="text-xs leading-relaxed text-zinc-600">{indemnites.note}</p>
+            ) : null}
+            {indemnites.sources?.length ? (
+              <ul className="flex flex-col gap-1 text-xs text-zinc-500">
+                {indemnites.sources.map((source) => (
+                  <li key={source.url}>
+                    Source :{" "}
+                    <a
+                      href={source.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline underline-offset-2 hover:text-zinc-700"
+                    >
+                      {source.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+            <p className="text-xs leading-relaxed text-zinc-400">
+              Montants bruts mensuels au 1er janvier 2026, d&rsquo;après les barèmes
+              officiels. Pour les mandats locaux, il s&rsquo;agit des plafonds fixés par la loi.
+            </p>
+          </div>
+        ) : null}
+
+        {revenus ? (
+          <div className="flex flex-col gap-3">
+            <p className="text-xs font-bold uppercase tracking-widest text-zinc-500">
+              Revenus déclarés à la HATVP
+            </p>
+            <p
+              className={`text-base font-bold ${
+                revenus.disponible ? "text-zinc-900" : "text-zinc-400"
+              }`}
+            >
+              {revenus.affichage}
+            </p>
+            {revenus.disponible ? (
+              <>
+                {revenus.detail?.length ? (
+                  <ul className="flex list-disc flex-col gap-1 pl-5 text-sm text-zinc-700 marker:text-zinc-300">
+                    {revenus.detail.map((ligne) => (
+                      <li key={ligne}>{ligne}</li>
+                    ))}
+                  </ul>
+                ) : null}
+                {revenus.regle ? (
+                  <p className="text-xs leading-relaxed text-zinc-600">{revenus.regle}</p>
+                ) : null}
+                {revenus.declaration?.url ? (
+                  <a
+                    href={revenus.declaration.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-fit text-sm font-semibold text-zinc-900 underline underline-offset-2 hover:opacity-70"
+                  >
+                    Voir la déclaration du {revenus.declaration.date_depot} ↗
+                  </a>
+                ) : null}
+              </>
+            ) : (
+              <p className="text-sm text-zinc-600">
+                Aucune déclaration d&rsquo;intérêts publiée par la HATVP pour ce candidat.
+              </p>
+            )}
+            <p className="text-xs leading-relaxed text-zinc-400">
+              Montants nets, tels que déclarés par l&rsquo;élu. Ils ne sont pas comparables
+              aux indemnités brutes ci-contre.
+            </p>
+          </div>
+        ) : null}
+      </div>
+
+      <p className="border-t border-zinc-100 pt-4 text-xs text-zinc-500">
+        <LienHatvp url={parcours.hatvp_url} />
+      </p>
+    </section>
+  );
+}
 
 // ISR : chaque page est calculée à sa première visite, puis servie depuis le
 // cache du CDN et recalculée au plus toutes les 5 minutes. generateStaticParams
@@ -32,6 +153,10 @@ export default async function CandidatDetailPage({ params }) {
   }
 
   const { declarations } = candidat;
+  // Parcours rattaché par le nom complet, comme sur /candidats.
+  const parcours = getAllParcours().find(
+    (p) => `${p.prenom} ${p.nom}` === candidat.nom,
+  );
   const badge =
     candidat.scoreMoyen == null ? null : getScoreBadge(candidat.scoreMoyen);
 
@@ -87,6 +212,8 @@ export default async function CandidatDetailPage({ params }) {
               </div>
             </div>
           </div>
+
+          {parcours ? <IndemnitesRevenus parcours={parcours} /> : null}
 
           <section className="flex flex-col gap-4">
             <h2 className="text-lg font-bold text-zinc-900">

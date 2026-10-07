@@ -9,12 +9,16 @@
         "mandat_actuel",
         "experience_politique",
         "hors_mandat_electif",
-        "etudes"
+        "etudes",
+        "indemnites_elu",
+        "revenus_declares_hatvp"
       ],
       "note_contexte": "affichée sur la carte quand présente (même règle pour tout candidat)",
       "points_a_verifier": "jamais affichés"
     },
-    "ajout_2026_10_06": "Ajout de David Lisnard et Fabien Roussel (aucune fiche publiée à ce jour → carte 'Analyse en cours')."
+    "ajout_2026_10_06": "Ajout de David Lisnard et Fabien Roussel (aucune fiche publiée à ce jour → carte 'Analyse en cours').",
+    "indemnites": "Montants bruts mensuels au 1er janvier 2026 (barèmes officiels). Pour les mandats locaux, ce sont des plafonds légaux, pas les montants réellement votés. 'hatvp_url' = null quand aucune fiche HATVP n'est en ligne : afficher alors 'Pas de déclaration HATVP en ligne'.",
+    "revenus_hatvp": "Totaux recalculés à partir des fichiers XML officiels de la HATVP (relevé du 2026-10-06). Montants NETS déclarés par l'élu, contrairement aux indemnités d'élu (BRUT). 'NA' = aucune déclaration d'intérêts publiée."
   },
   "candidats": [
     {
@@ -51,11 +55,45 @@
           "url": "https://www.leclubdesjuristes.com/justice/affaire-des-assistants-parlementaires-du-fn-coup-darret-a-la-candidature-de-marine-le-pen-16827/"
         }
       ],
-      "points_a_verifier": [],
+      "points_a_verifier": [
+        "HATVP : la déclaration d'intérêts mentionne d'autres revenus que l'indemnité de députée ; non affichés ici (hors indemnités d'élu)."
+      ],
       "hors_mandat_electif": [
         "Avocate au barreau de Paris (1992–1998)",
         "Directrice du service juridique du FN (à partir de 1998)"
-      ]
+      ],
+      "indemnites_elu": {
+        "total_brut_mensuel": 7637.39,
+        "affichage": "7 637 € brut/mois",
+        "detail": [
+          "Députée : 7 637,39 € brut/mois (≈ 5 953 € net)"
+        ],
+        "note": null,
+        "sources": [
+          {
+            "label": "Assemblée nationale – situation matérielle du député",
+            "url": "https://www.assemblee-nationale.fr/dyn/synthese/deputes-groupes-parlementaires/la-situation-materielle-du-depute"
+          }
+        ]
+      },
+      "hatvp_url": "https://www.hatvp.fr/pages_nominatives/le-pen-marine",
+      "revenus_declares_hatvp": {
+        "disponible": true,
+        "annee": 2023,
+        "total_net": 159512,
+        "affichage": "159 512 € net en 2023",
+        "detail": [
+          "Indemnité de députée : 73 698 €",
+          "Rassemblement national (bureau exécutif et présidence du groupe à l'AN) : 60 000 €",
+          "Conseillère départementale : 20 037 €",
+          "Élevage de chats (bénéfice net) : 5 777 €"
+        ],
+        "regle": "Somme des rémunérations, indemnités et gratifications nettes déclarées pour 2023, dernière année civile complète avant le mandat en cours (débuté le 30/06/2024).",
+        "declaration": {
+          "date_depot": "30/01/2026",
+          "url": "https://www.hatvp.fr/livraison/dossiers/le-pen-marine-diam35065-depute-62.pdf"
+        }
+      }
     },
     {
       "slug": "jean-luc-melenchon",
@@ -88,12 +126,30 @@
       ],
       "points_a_verifier": [
         "CAPES : mentionné par deux résumés mais non confirmé par une source primaire – ne pas afficher sans vérification.",
-        "Licence de lettres modernes en plus de la licence de philosophie : à confirmer."
+        "Licence de lettres modernes en plus de la licence de philosophie : à confirmer.",
+        "HATVP : aucune fiche en ligne trouvée (plus de mandat depuis 2022)."
       ],
       "hors_mandat_electif": [
         "Professeur de français en lycée technique (Jura, années 1970)",
         "Journaliste à la presse locale du Jura (années 1970)"
-      ]
+      ],
+      "indemnites_elu": {
+        "total_brut_mensuel": null,
+        "affichage": "Aucune : pas de mandat électif",
+        "detail": [],
+        "note": "Pas d'indemnité publique. Les revenus privés (activité professionnelle, droits d'auteur…) ne sont pas publiés.",
+        "sources": []
+      },
+      "hatvp_url": null,
+      "revenus_declares_hatvp": {
+        "disponible": false,
+        "annee": null,
+        "total_net": null,
+        "affichage": "NA",
+        "detail": [],
+        "regle": null,
+        "declaration": null
+      }
     },
     {
       "slug": "edouard-philippe",
@@ -123,12 +179,45 @@
           "url": "https://www.cnews.fr/france/2026-03-22/municipales-2026-edouard-philippe-reelu-la-mairie-du-havre-et-rempile-pour-un"
         }
       ],
-      "points_a_verifier": [],
+      "points_a_verifier": [
+        "Indemnités : montants réellement votés par la ville et la communauté urbaine non vérifiés ; le total affiché repose sur le plafond légal, atteint dès que les deux fonctions sont indemnisées à leur taux maximal.",
+        "Revenus HATVP : déclarations déposées mais pas encore publiées par la HATVP → NA."
+      ],
       "hors_mandat_electif": [
         "Directeur des affaires publiques d'Areva (2007–2010)",
         "Avocat (cabinet Debevoise & Plimpton, 2004–2007)",
         "Membre du Conseil d'État (1997–2004)"
-      ]
+      ],
+      "indemnites_elu": {
+        "total_brut_mensuel": 8897.93,
+        "affichage": "8 898 € brut/mois (plafond légal)",
+        "detail": [
+          "Maire du Havre : jusqu'à 5 960,26 € brut/mois (ville de plus de 100 000 hab.)",
+          "Président de la communauté urbaine Le Havre Seine Métropole : jusqu'à 5 960,26 € brut/mois",
+          "Total ramené au plafond légal : 8 897,93 € brut/mois"
+        ],
+        "note": "Plafond légal : un élu cumulant plusieurs mandats ne peut pas toucher plus de 1,5 fois l'indemnité parlementaire de base, soit 8 897,93 € brut/mois ; le surplus est écrêté.",
+        "sources": [
+          {
+            "label": "DGCL – plafonds des indemnités des élus locaux 2026 (IB 1027 = 4 110,52 €)",
+            "url": "https://www.collectivites-locales.gouv.fr/files/files/1.%20Connaitre%20les%20acteurs%20et%20les%20institutions/2.%20Fonction%20publique%20territoriale/La%20lettre%20FPT/ANNEXE%201%20-%20montants%20plafonds%20indemnit%C3%A9s%20%C3%A9lus%20locaux%202026%20-%20VF.pdf"
+          },
+          {
+            "label": "Assemblée nationale – situation matérielle du député",
+            "url": "https://www.assemblee-nationale.fr/dyn/synthese/deputes-groupes-parlementaires/la-situation-materielle-du-depute"
+          }
+        ]
+      },
+      "hatvp_url": "https://www.hatvp.fr/pages_nominatives/philippe-edouard",
+      "revenus_declares_hatvp": {
+        "disponible": false,
+        "annee": null,
+        "total_net": null,
+        "affichage": "NA",
+        "detail": [],
+        "regle": null,
+        "declaration": null
+      }
     },
     {
       "slug": "raphael-glucksmann",
@@ -165,7 +254,38 @@
         "Réalisateur de documentaires (dont « Tuez-les tous ! », 2004)",
         "Directeur de la rédaction du Nouveau Magazine littéraire (2017–2018)",
         "Essayiste"
-      ]
+      ],
+      "indemnites_elu": {
+        "total_brut_mensuel": 11255.26,
+        "affichage": "11 255 € brut/mois",
+        "detail": [
+          "Député européen : 11 255,26 € brut/mois (≈ 8 773 € net après impôt européen)"
+        ],
+        "note": "Salaire identique pour tous les députés européens, fixé à 38,5 % du traitement d'un juge de la Cour de justice de l'UE.",
+        "sources": [
+          {
+            "label": "Parlement européen – règles applicables aux députés",
+            "url": "https://www.europarl.europa.eu/meps/en/about/meps"
+          }
+        ]
+      },
+      "hatvp_url": "https://www.hatvp.fr/pages_nominatives/glucksmann-raphael-16012",
+      "revenus_declares_hatvp": {
+        "disponible": true,
+        "annee": 2023,
+        "total_net": 179409,
+        "affichage": "179 409 € net en 2023",
+        "detail": [
+          "Député européen : 120 234 €",
+          "Droits d'auteur (Allary éditions) : 59 175 €",
+          "Coprésident de Place publique : 0 €"
+        ],
+        "regle": "Somme des rémunérations, indemnités et gratifications nettes déclarées pour 2023, dernière année civile complète avant le mandat en cours (débuté le 09/06/2024).",
+        "declaration": {
+          "date_depot": "16/09/2024",
+          "url": "https://www.hatvp.fr/livraison/dossiers/glucksmann-raphael-di33197-europe.pdf"
+        }
+      }
     },
     {
       "slug": "gabriel-attal",
@@ -202,7 +322,38 @@
       ],
       "hors_mandat_electif": [
         "Conseiller au cabinet de la ministre de la Santé Marisol Touraine (2012–2017)"
-      ]
+      ],
+      "indemnites_elu": {
+        "total_brut_mensuel": 7637.39,
+        "affichage": "7 637 € brut/mois",
+        "detail": [
+          "Député : 7 637,39 € brut/mois (≈ 5 953 € net)"
+        ],
+        "note": null,
+        "sources": [
+          {
+            "label": "Assemblée nationale – situation matérielle du député",
+            "url": "https://www.assemblee-nationale.fr/dyn/synthese/deputes-groupes-parlementaires/la-situation-materielle-du-depute"
+          }
+        ]
+      },
+      "hatvp_url": "https://www.hatvp.fr/pages_nominatives/attal-gabriel",
+      "revenus_declares_hatvp": {
+        "disponible": true,
+        "annee": 2023,
+        "total_net": 113245,
+        "affichage": "113 245 € net en 2023",
+        "detail": [
+          "Ministre délégué aux Comptes publics : 63 397 €",
+          "Ministre de l'Éducation nationale : 49 248 €",
+          "Conseiller municipal de Vanves : 600 €"
+        ],
+        "regle": "Somme des rémunérations, indemnités et gratifications nettes déclarées pour 2023, dernière année civile complète avant le mandat en cours (débuté le 07/07/2024).",
+        "declaration": {
+          "date_depot": "24/01/2025",
+          "url": "https://www.hatvp.fr/livraison/dossiers/attal-gabriel-diam30321-depute-92.pdf"
+        }
+      }
     },
     {
       "slug": "marine-tondelier",
@@ -236,12 +387,41 @@
       "points_a_verifier": [
         "Fin du mandat municipal en mars 2026 : elle n'était plus tête de liste ; vérifier qu'elle n'a pas été réélue sur la liste d'Inès Taourit (3 sièges).",
         "Établissement du master santé à confirmer.",
-        "Master en management des établissements de santé : retiré de l'affichage (établissement non confirmé)."
+        "Master en management des établissements de santé : retiré de l'affichage (établissement non confirmé).",
+        "HATVP : aucune fiche en ligne (les conseillers régionaux sans fonction exécutive ne déclarent pas). Montant régional : vérifier que la minoration de 5 % votée en 2021 est toujours appliquée."
       ],
       "hors_mandat_electif": [
         "Déléguée générale de la fédération Atmo France, réseau de surveillance de la qualité de l'air (2017–2022)",
         "Collaboratrice parlementaire (2011–2017)"
-      ]
+      ],
+      "indemnites_elu": {
+        "total_brut_mensuel": 2733.5,
+        "affichage": "2 734 € brut/mois",
+        "detail": [
+          "Conseillère régionale des Hauts-de-France : 2 733,50 € brut/mois (70 % de l'indice terminal, minoré de 5 % par la Région)"
+        ],
+        "note": "Montant modulé selon l'assiduité aux séances.",
+        "sources": [
+          {
+            "label": "Région Hauts-de-France – délibération 2021.01705 (70 % de l'IB terminal, minoré de 5 %)",
+            "url": "https://delibinternet.hautsdefrance.fr/Docs/CommissionPermanente/2021/07/20/DELIBERATION/2021.01705_deliberation.PDF"
+          },
+          {
+            "label": "DGCL – plafonds des indemnités des élus locaux 2026 (IB 1027 = 4 110,52 €)",
+            "url": "https://www.collectivites-locales.gouv.fr/files/files/1.%20Connaitre%20les%20acteurs%20et%20les%20institutions/2.%20Fonction%20publique%20territoriale/La%20lettre%20FPT/ANNEXE%201%20-%20montants%20plafonds%20indemnit%C3%A9s%20%C3%A9lus%20locaux%202026%20-%20VF.pdf"
+          }
+        ]
+      },
+      "hatvp_url": null,
+      "revenus_declares_hatvp": {
+        "disponible": false,
+        "annee": null,
+        "total_net": null,
+        "affichage": "NA",
+        "detail": [],
+        "regle": null,
+        "declaration": null
+      }
     },
     {
       "slug": "bruno-retailleau",
@@ -284,12 +464,37 @@
       "points_a_verifier": [
         "Diplôme de Sciences Po obtenu ou simple passage : à confirmer.",
         "Intitulé exact du rôle au Puy du Fou (président de la société ? dates 1989–2001 ?).",
-        "Sciences Po Paris (1985) : retiré de l'affichage en attendant confirmation du diplôme."
+        "Sciences Po Paris (1985) : retiré de l'affichage en attendant confirmation du diplôme.",
+        "Revenus HATVP : déclaration en cours, pas encore publiée → NA."
       ],
       "hors_mandat_electif": [
         "Directeur général de l'école Sciencescom à Nantes (1987–1994)",
         "Cofondateur et dirigeant du Puy du Fou, metteur en scène de la Cinéscénie"
-      ]
+      ],
+      "indemnites_elu": {
+        "total_brut_mensuel": 7637.39,
+        "affichage": "7 637 € brut/mois",
+        "detail": [
+          "Sénateur : 7 637,39 € brut/mois (≈ 5 676 € net)"
+        ],
+        "note": null,
+        "sources": [
+          {
+            "label": "Indemnité du sénateur (montant identique au député, 2026)",
+            "url": "https://kohenavocats.com/salaire-senateur-2026-brut-net-frais-de-mandat-absences-retraite/"
+          }
+        ]
+      },
+      "hatvp_url": "https://www.hatvp.fr/pages_nominatives/retailleau-bruno",
+      "revenus_declares_hatvp": {
+        "disponible": false,
+        "annee": null,
+        "total_net": null,
+        "affichage": "NA",
+        "detail": [],
+        "regle": null,
+        "declaration": null
+      }
     },
     {
       "slug": "eric-zemmour",
@@ -319,7 +524,24 @@
         "Journaliste politique au Figaro (1996–2009) puis chroniqueur (jusqu'en 2021)",
         "Chroniqueur radio et télévision (RTL, France 2, Paris Première, CNews)",
         "Essayiste"
-      ]
+      ],
+      "indemnites_elu": {
+        "total_brut_mensuel": null,
+        "affichage": "Aucune : pas de mandat électif",
+        "detail": [],
+        "note": "Pas d'indemnité publique. Les revenus privés (activité professionnelle, droits d'auteur…) ne sont pas publiés.",
+        "sources": []
+      },
+      "hatvp_url": null,
+      "revenus_declares_hatvp": {
+        "disponible": false,
+        "annee": null,
+        "total_net": null,
+        "affichage": "NA",
+        "detail": [],
+        "regle": null,
+        "declaration": null
+      }
     },
     {
       "slug": "dominique-de-villepin",
@@ -358,7 +580,24 @@
       "hors_mandat_electif": [
         "Avocat et consultant en stratégie internationale (depuis 2008)",
         "Diplomate (1980–1995 : Washington, New Delhi)"
-      ]
+      ],
+      "indemnites_elu": {
+        "total_brut_mensuel": null,
+        "affichage": "Aucune : pas de mandat électif",
+        "detail": [],
+        "note": "Pas d'indemnité publique. Les revenus privés (activité professionnelle, droits d'auteur…) ne sont pas publiés.",
+        "sources": []
+      },
+      "hatvp_url": null,
+      "revenus_declares_hatvp": {
+        "disponible": false,
+        "annee": null,
+        "total_net": null,
+        "affichage": "NA",
+        "detail": [],
+        "regle": null,
+        "declaration": null
+      }
     },
     {
       "slug": "david-lisnard",
@@ -398,8 +637,47 @@
       "points_a_verifier": [
         "Présidence de l'AMF : une nouvelle élection a lieu après les municipales 2026 (Lisnard candidat face à Philippe Laurent). Mettre à jour la ligne après le résultat.",
         "Présidence de l'agglomération Cannes Pays de Lérins (depuis 2017) et vice-présidence du département des Alpes-Maritimes : statut après 2026 non confirmé, retirées de l'affichage.",
-        "Dates de l'activité de commerce de vêtements non confirmées : affichée sans dates."
-      ]
+        "Dates de l'activité de commerce de vêtements non confirmées : affichée sans dates.",
+        "Indemnités : également vice-président du département des Alpes-Maritimes selon la HATVP ; le total reste plafonné à 8 897,93 €. Montants réellement votés non vérifiés.",
+        "Revenus HATVP : ses déclarations ne donnent pas de montants après juillet 2021 ; l'année affichée (2020) est donc ancienne."
+      ],
+      "indemnites_elu": {
+        "total_brut_mensuel": 8897.93,
+        "affichage": "8 898 € brut/mois (plafond légal)",
+        "detail": [
+          "Maire de Cannes : jusqu'à 4 521,57 € brut/mois (ville de 50 000 à 99 999 hab.)",
+          "Président de la communauté d'agglomération Cannes Pays de Lérins : jusqu'à 5 960,26 € brut/mois",
+          "Total ramené au plafond légal : 8 897,93 € brut/mois"
+        ],
+        "note": "Plafond légal : un élu cumulant plusieurs mandats ne peut pas toucher plus de 1,5 fois l'indemnité parlementaire de base, soit 8 897,93 € brut/mois ; le surplus est écrêté. La présidence de l'Association des maires de France n'est pas un mandat électif.",
+        "sources": [
+          {
+            "label": "DGCL – plafonds des indemnités des élus locaux 2026 (IB 1027 = 4 110,52 €)",
+            "url": "https://www.collectivites-locales.gouv.fr/files/files/1.%20Connaitre%20les%20acteurs%20et%20les%20institutions/2.%20Fonction%20publique%20territoriale/La%20lettre%20FPT/ANNEXE%201%20-%20montants%20plafonds%20indemnit%C3%A9s%20%C3%A9lus%20locaux%202026%20-%20VF.pdf"
+          },
+          {
+            "label": "Assemblée nationale – situation matérielle du député",
+            "url": "https://www.assemblee-nationale.fr/dyn/synthese/deputes-groupes-parlementaires/la-situation-materielle-du-depute"
+          }
+        ]
+      },
+      "hatvp_url": "https://www.hatvp.fr/pages_nominatives/lisnard-david",
+      "revenus_declares_hatvp": {
+        "disponible": true,
+        "annee": 2020,
+        "total_net": 90868,
+        "affichage": "90 868 € net en 2020",
+        "detail": [
+          "Maire de Cannes : 55 127 €",
+          "Vice-président du conseil départemental des Alpes-Maritimes : 35 741 €",
+          "Autres fonctions (intercommunalité, syndicats, organismes) : 0 €"
+        ],
+        "regle": "Somme des rémunérations, indemnités et gratifications nettes déclarées pour 2020, dernière année civile complète avant le mandat en cours (débuté le 01/07/2021).",
+        "declaration": {
+          "date_depot": "13/06/2024",
+          "url": "https://www.hatvp.fr/livraison/dossiers/lisnard-david-dim29314-departement-06.pdf"
+        }
+      }
     },
     {
       "slug": "fabien-roussel",
@@ -440,8 +718,37 @@
         }
       ],
       "points_a_verifier": [
-        "Dates exactes des activités de journaliste : non confirmées, affichées sans dates."
-      ]
+        "Dates exactes des activités de journaliste : non confirmées, affichées sans dates.",
+        "Indemnités : vérifier une éventuelle fonction indemnisée à l'agglomération de la Porte du Hainaut et une majoration (commune thermale) ; pas de fiche HATVP trouvée (maire d'une commune < 20 000 hab., mandat de député terminé)."
+      ],
+      "indemnites_elu": {
+        "total_brut_mensuel": 2778.71,
+        "affichage": "jusqu'à 2 779 € brut/mois",
+        "detail": [
+          "Maire de Saint-Amand-les-Eaux : jusqu'à 2 778,71 € brut/mois (commune de 10 000 à 19 999 hab., taux revalorisé en 2025)"
+        ],
+        "note": "Plafond légal de base ; le conseil municipal peut fixer un montant inférieur ou appliquer des majorations prévues par la loi.",
+        "sources": [
+          {
+            "label": "DGCL – plafonds des indemnités des élus locaux 2026 (IB 1027 = 4 110,52 €)",
+            "url": "https://www.collectivites-locales.gouv.fr/files/files/1.%20Connaitre%20les%20acteurs%20et%20les%20institutions/2.%20Fonction%20publique%20territoriale/La%20lettre%20FPT/ANNEXE%201%20-%20montants%20plafonds%20indemnit%C3%A9s%20%C3%A9lus%20locaux%202026%20-%20VF.pdf"
+          },
+          {
+            "label": "Weka – revalorisation 2025 limitée aux communes < 20 000 hab.",
+            "url": "https://www.weka.fr/actualite/elus/article/statut-de-l-elu-revalorisation-des-indemnites-de-fonction-des-maires-et-adjoints-au-maire-209629/"
+          }
+        ]
+      },
+      "hatvp_url": null,
+      "revenus_declares_hatvp": {
+        "disponible": false,
+        "annee": null,
+        "total_net": null,
+        "affichage": "NA",
+        "detail": [],
+        "regle": null,
+        "declaration": null
+      }
     }
   ]
 }
