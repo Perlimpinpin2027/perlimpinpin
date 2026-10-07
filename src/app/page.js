@@ -22,16 +22,23 @@ import {
 export const revalidate = 300;
 
 export default async function Home() {
-  const [featuredRotation, topDeclarations, rankedCandidates, t, indexRecherche] =
+  const [featuredRotation, topDeclarations, classement, t, indexRecherche] =
     await Promise.all([
       getFeaturedRotation(),
       getTopDeclarations(4),
-      getCandidateRanking(5),
+      // Classement complet (même requête, sans limite) : le bloc en affiche
+      // 5 et déroule les suivants au clic, sans nouvel appel réseau.
+      getCandidateRanking(),
       // Textes modifiables depuis /test/textes/accueil
       lireTextes("accueil"),
       // Données de la barre de recherche (recherche faite dans le navigateur)
       getIndexRecherche(),
     ]);
+
+  // Seuls les candidats classés (au moins une déclaration analysée).
+  const rankedCandidates = classement.filter(
+    (candidat) => candidat.declarations > 0,
+  );
 
   // Titre du bandeau « Rejoignez-nous » : une ligne = un retour à la ligne
   // (sur grand écran seulement, comme avant).
