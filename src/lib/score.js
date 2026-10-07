@@ -140,6 +140,19 @@ export function getScoreBadge(score) {
   };
 }
 
+// Couleur de verdict (champ `color` renvoyé par getScoreBadge) -> classe de
+// fond pleine, pour les surfaces colorées par verdict (ex. la barre de
+// décomposition des pages /hors-serie). Table à part : COLOR_CLASSES et
+// getScoreBadge restent inchangés.
+export const VERDICT_BG_CLASSES = {
+  "red-dark": "bg-red-800",
+  red: "bg-red-500",
+  orange: "bg-orange-500",
+  amber: "bg-amber-500",
+  green: "bg-green-500",
+  "green-dark": "bg-emerald-700",
+};
+
 // Tous les paliers avec leurs classes, pour les tableaux qui affichent le
 // barème complet (ex: /methode, colonne "Comment fonctionne le score ?").
 // Renvoyés du plus haut score au plus bas ; utiliser .slice().reverse()

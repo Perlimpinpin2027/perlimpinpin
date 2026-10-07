@@ -690,6 +690,24 @@ export async function getVoteMesureLeaderboard() {
   };
 }
 
+// Score publié de plusieurs propositions (cartes des fiches des pages
+// /hors-serie). Lecture seule. Renvoie un objet { [propositionId]: score }
+// tiré de la dernière analyse PUBLIÉE de chaque proposition ; une
+// proposition sans analyse publiée est absente du résultat.
+export async function getScoresPublies(propositionIds) {
+  if (propositionIds.length === 0) return {};
+  const analyses = await prisma.analyse.findMany({
+    where: { statut: "publie", propositionId: { in: propositionIds } },
+    orderBy: { createdAt: "desc" },
+    select: { propositionId: true, scoreFaisabilite: true },
+  });
+  const scores = {};
+  for (const analyse of analyses) {
+    scores[analyse.propositionId] ??= analyse.scoreFaisabilite;
+  }
+  return scores;
+}
+
 // Détail d'une déclaration : la Proposition, son Candidat, et sa dernière
 // Analyse PUBLIÉE (avec le contenuComplet JSON pour les 17 sections). Un
 // brouillon n'est jamais renvoyé au site public : pas d'analyse publiée =>
