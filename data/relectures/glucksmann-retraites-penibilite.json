@@ -1,0 +1,207 @@
+{
+  "mesure_reformulee": {
+    "synthese": "Moduler l'âge de départ selon la pénibilité et la santé, sans âge ni critère précis.",
+    "texte": "Raphaël Glucksmann propose de **faire de la pénibilité le premier critère de l'âge de départ** : partir plus tôt pour les carrières hachées et les métiers difficiles, plus tard pour ceux dont l'espérance de vie en bonne santé est plus longue. Deux mécanismes sont combinés : un avancement de l'âge pour certains, un recul pour d'autres. **Le candidat ne donne ni âges, ni critères de classement, ni chiffrage**. Hypothèse de l'analyste retenue pour noter : la modulation se fait autour du droit en vigueur, par groupes de métiers ou d'expositions (et non par examen médical individuel de chaque assuré), sans retour général à 60 ans, que le candidat refuse explicitement. Seconde hypothèse de l'analyste : **les critères seraient définis par négociation collective entre partenaires sociaux**, voie la plus plausible pour ce type de réforme, mais que le candidat n'a pas explicitement annoncée dans la citation analysée."
+  },
+  "mesure_vers_objectif": {
+    "objectif_court": "Une durée de retraite en bonne santé plus équitable",
+    "categorie_objectif": "Retraites",
+    "objectif_vise": "Réduire l'injustice selon laquelle les travailleurs aux métiers pénibles, qui vivent moins longtemps en bonne santé, profitent d'une retraite plus courte que les autres.",
+    "mecanisme_propose": "Différencier l'âge de départ : plus précoce pour les carrières difficiles ou hachées, plus tardif pour les assurés à espérance de vie en bonne santé plus longue.",
+    "lien_causal": "direct"
+  },
+  "nature_et_existant": "Mesure législative et sociale, qui relève de la loi (Parlement) et des lois de financement de la Sécurité sociale. Elle n'est pas une innovation complète : le volet « partir plus tôt » existe déjà en partie. Le dispositif carrières longues permet un départ anticipé à ceux qui ont commencé tôt (environ 30 % des nouveaux retraités concernés par la réforme fin 2023, selon la CNAV citée par Les Echos). Le compte professionnel de prévention (C2P), qui donne des points aux salariés exposés à certains risques (travail de nuit, équipes alternantes, bruit...), peut avancer le départ jusqu'à deux ans, mais il est très peu utilisé pour cela : en 2021, seuls 1 900 des 21 380 retraités disposant de points l'ont converti en trimestres (COR, février 2025). Les catégories dites « actives » de la fonction publique (policiers, aides-soignants...) partent déjà plus tôt au titre de la pénibilité. La retraite pour inaptitude et pour incapacité permanente complète ce dispositif. Le volet vraiment nouveau est le second : **reculer l'âge de départ des personnes en bonne santé**, ce qu'aucun dispositif français ne fait aujourd'hui de façon ciblée.",
+  "contexte_programme": {
+    "synthese": "La mesure prolonge une ligne constante : rejet du 64 ans uniforme, refus des 60 ans, priorité à la pénibilité.",
+    "texte": "La proposition figure dans le programme présenté par Raphaël Glucksmann lors de l'annonce de sa candidature (TF1) et dans son livre « Nous avons encore envie » (mai 2026), rapportés par Public Sénat le 24 août 2026. Elle s'inscrit dans **une trajectoire cohérente** : opposition à la réforme de 2023, soutien à sa suspension en novembre 2025 (« c'était impossible il y a quelques jours encore, aujourd'hui ça devient possible », après une rencontre avec Sébastien Lecornu), puis, en juin 2026 sur franceinfo, refus de faire de l'âge légal « le totem absolu » pour se concentrer « sur la durée de cotisation et la pénibilité » (rapporté par LCP, 19 juin 2026). Il refuse le retour à 60 ans défendu par LFI. Point de tension : **la grande mesure fiscale du programme (taxer les très gros héritages pour environ 15 milliards d'euros) est fléchée vers les salaires, pas vers les retraites**. Les départs anticipés ne disposent donc pas d'un financement identifié dans le programme."
+  },
+  "contexte_national": {
+    "synthese": "Le problème est réel et documenté : environ 5 ans d'écart d'espérance de vie entre cadres et ouvriers.",
+    "texte": "Le constat de départ est solide. **Le COR relève un écart d'environ 5 ans d'espérance de vie entre cadres et ouvriers** (document du 6 février 2025). Parmi les seniors exposés 15 ans à au moins un facteur de pénibilité, les limitations fonctionnelles sont plus fréquentes (24 % contre 17 %) et le maintien en emploi après 50 ans plus faible (68 % contre 75 %). Mais le même document nuance : **environ 60 % du lien entre métiers exigeants et mauvaise santé s'expliquerait par la sélection** (les personnes déjà fragiles se retrouvent plus souvent dans ces emplois), et non par l'effet du métier lui-même. Le COR juge aussi impossible de calculer, pour un individu, l'âge qui lui donnerait une durée de retraite égale à celle des autres. L'espérance de vie sans incapacité à 65 ans est de 11,8 ans pour les femmes et 10,5 ans pour les hommes en 2024 (DREES, janvier 2026). Cet indicateur repose sur des déclarations (enquête européenne SILC), ce qui le rend utile pour comparer des groupes, pas pour juger une personne. Côté finances, la Cour des comptes (février 2025) prévoit un déficit des retraites de 6,6 milliards d'euros en 2025, 15 milliards en 2035 et 30 milliards en 2045. Côté moyens, **la médecine du travail est en pénurie** : 4 700 médecins en 2018 contre 5 500 en 2010, trois quarts ont plus de 55 ans, et 61 % des salariés du privé n'ont eu aucun rendez-vous avec un service de santé au travail dans l'année (réponse ministérielle à l'Assemblée nationale, janvier 2024). Enfin, quatre facteurs de pénibilité (port de charges lourdes, postures pénibles, vibrations, agents chimiques) ont été retirés du compte pénibilité en 2017, jugés trop complexes à mesurer."
+  },
+  "contexte_international": {
+    "synthese": "Le Danemark a réussi un départ anticipé par durée de carrière ; la Belgique a échoué sur la pénibilité.",
+    "texte": "Deux précédents éclairent la mesure, en sens opposé. **Le Danemark (« Arne-pension », 2020-2021) a mis en place un départ anticipé jusqu'à 3 ans avant l'âge légal pour ceux qui ont 42 à 44 ans de carrière**, avec près de 30 000 demandes en quatre mois (IPE). Il a choisi la durée de carrière, simple à vérifier, plutôt que la pénibilité, et l'a financé par une nouvelle taxe sur le secteur financier. **La Belgique a échoué en 2018 à définir les métiers pénibles** : syndicats et employeurs ne se sont pas entendus sur les critères, les employeurs craignant que « la majorité des ouvriers » soit concernée (BX1, 7 novembre 2018). La recherche confirme l'enjeu : Ayuso, Bravo et Holzmann (IZA, 2016) montrent que les écarts de longévité entre groupes sociaux créent des « taxes implicites » de 10 à 21 % pour les groupes qui vivent moins longtemps, mais aussi que **les écarts restent importants à l'intérieur même des groupes professionnels**, ce qui rend tout ciblage par métier imparfait. Transposabilité : le précédent danois porte sur la durée de carrière, pas sur la pénibilité ni sur le recul de l'âge des personnes en bonne santé ; il ne valide donc qu'une partie du mécanisme."
+  },
+  "impact_environnement": null,
+  "analyse_par_criteres": "Opérationnalité & Moyens (16/30). Juridique, bon signe (8/10, SOLIDE) : une loi ordinaire suffit, la France module déjà l'âge selon le métier (catégories actives, carrières longues, C2P), et **l'article L111-2-1 du code de la Sécurité sociale fait déjà de l'espérance de vie en bonne santé un critère d'équité du système**. Limite : un recul de l'âge fondé sur un examen de santé individuel poserait des questions d'égalité et de données de santé ; la note suppose un classement par groupes. Budgétaire, incertain (4/10, INCERTAIN) : les deux volets se compensent en partie. Selon notre estimation, en appliquant les ratios de la Cour des comptes (+8,4 milliards d'euros en 2045 pour un an de plus pour tous, environ 4,3 milliards pour un an de moins), avancer de 2 ans le départ d'un cinquième d'une génération coûterait de l'ordre de 2 à 3 milliards, et reculer d'un an celui d'un tiers rapporterait de l'ordre de 2,5 milliards. Le solde net dépend donc entièrement du calibrage, que le candidat ne donne pas, et **la mesure ne traite pas le déficit prévu de 15 milliards en 2035**. D'où 4/10 : pas de dérive massive, mais aucun sens net établi. Moyens humains, incertain (4/10, INCERTAIN) : mesurer la pénibilité est le point dur, l'État y a déjà renoncé pour quatre facteurs en 2017 et la médecine du travail manque de bras. Une voie par listes de métiers existe, d'où une note qui n'est pas plancher. Efficacité (21/30, INCERTAIN). Bon signe sur le principe : le levier vise directement la cause de l'injustice (des durées de retraite en bonne santé inégales), et la recherche académique justifie ce type de correction. **Si les critères sont négociés par branche, le point le plus faible (définir les métiers pénibles) dispose d'une voie crédible**, mieux acceptée qu'une liste imposée par l'État : c'est une hypothèse de l'analyste, pas un engagement du candidat. Limites : la Belgique a échoué en 2018 précisément par la négociation, les outils actuels de la pénibilité sont peu utilisés (moins de 9 % des titulaires de points C2P les convertissent en départ anticipé), et le volet « partir plus tard en bonne santé » reste sans mode de mesure. D'où 21, en haut de l'incertain, sans atteindre le seuil solide (24) tant que les critères ne sont pas définis. Effets rebonds & Externalités (14/20, INCERTAIN). Trois effets significatifs, dont deux peuvent être atténués : **des accords de branche peuvent prévoir des obligations de prévention et des mesures d'emploi des seniors**, ce qui répond au risque que la pénibilité se « paie » seulement en trimestres et au risque de chômage ou de RSA pour ceux dont le départ recule. Le troisième ne disparaît pas : la pression de chaque profession pour être reconnue pénible se joue justement dans la négociation (le blocage belge). Le silence sur l'effet net sur la dette s'y ajoute. D'où 14 et non 16 : atténuation possible, pas garantie. Degré de préparation (2/10, FRAGILE). **Aucun âge, aucun critère, aucun chiffrage** : le candidat a dit lui-même ne pas présenter de réforme détaillée. Seules deux directions sont nommées, d'où 2 et non 0. Alignement & Logique globale (8/10, SOLIDE). La mesure prolonge une ligne constante depuis 2023 (contre le 64 ans uniforme, pour la suspension, priorité à la pénibilité), et le recul de l'âge pour certains est assumé dans ses propres mots. Limite : aucun financement du programme n'est fléché vers les départs anticipés.",
+  "analyse_longevites": {
+    "synthese": "Une réforme lente : définir les critères prendrait des années, et ses effets ne joueraient que sur les générations suivantes.",
+    "texte": "**Le principe peut durer, car il est déjà inscrit dans la loi** (équité selon l'espérance de vie en bonne santé, article L111-2-1). Sa durée de vie réelle dépendra de la solidité des critères choisis. Le risque principal est celui du compte pénibilité : un dispositif voté puis vidé de sa substance faute de critères mesurables (quatre facteurs retirés en 2017). Une liste de métiers pourrait aussi vieillir vite si les conditions de travail évoluent, ce qui imposerait des révisions régulières, sources de conflits."
+  },
+  "impact_temporel_et_sectoriel": {
+    "synthese": "Effets lents, concentrés sur le BTP, l'industrie, le soin, le travail de nuit et l'emploi des seniors.",
+    "texte": "Court terme (0-2 ans) : phase de négociation des critères, sans effet budgétaire notable. Moyen terme (2-7 ans) : premiers départs anticipés dans les secteurs exposés (BTP, industrie, soin, logistique, travail de nuit), qui pourraient y aggraver des difficultés de recrutement. **Le recul de l'âge pour les assurés en bonne santé n'améliore les comptes que si ces personnes restent en emploi** : en France, l'emploi des 60-64 ans reste faible, ce qui expose à un report vers l'assurance chômage. Long terme (plus de 7 ans) : le solde dépend du calibrage. Effet macroéconomique attendu limité : pas d'effet identifiable sur l'inflation ou le secteur bancaire, un effet modeste sur la consommation des ménages concernés."
+  },
+  "ce_qui_est_etabli": {
+    "synthese": "L'injustice visée est réelle : écart d'espérance de vie cadres-ouvriers d'environ 5 ans, inscrit comme critère d'équité dans la loi.",
+    "texte": "**L'écart d'espérance de vie entre cadres et ouvriers atteint environ 5 ans** (COR, 2025). La loi assigne déjà au système un objectif d'équité « quels que soient (...) leur espérance de vie en bonne santé » (article L111-2-1 du code de la Sécurité sociale, loi du 20 janvier 2014). Les dispositifs existants de prise en compte de la pénibilité sont peu utilisés pour partir plus tôt (C2P : 1 900 conversions sur 21 380 retraités disposant de points en 2021). Le candidat n'a donné ni âges, ni critères, ni chiffrage."
+  },
+  "ce_qui_est_probable": {
+    "synthese": "Le solde budgétaire serait proche de zéro, de quelques milliards dans un sens ou dans l'autre selon le calibrage.",
+    "texte": "Selon notre estimation, à partir des ratios de la Cour des comptes, chacun des deux volets pèse de l'ordre de 2 à 3 milliards d'euros par an à horizon 2045, en sens opposé. **Le solde net serait donc faible, et la mesure ne réglerait pas le déficit prévu** (15 milliards d'euros en 2035). Il est probable aussi que la définition des métiers pénibles donne lieu à une forte pression des branches professionnelles, comme en Belgique."
+  },
+  "ce_qui_est_discutable": {
+    "synthese": "Le métier reflète mal la santé : une bonne part de l'écart vient de la sélection, pas du travail.",
+    "texte": "Selon le COR, **environ 60 % du lien entre métiers exigeants et mauvaise santé relèverait de la sélection** des personnes déjà fragiles vers ces emplois. Avancer le départ par métier corrige donc en partie un écart que le métier ne cause pas, ce qui reste défendable au nom de l'équité mais vise moins précisément la pénibilité elle-même. Est aussi discutable l'usage de l'espérance de vie en bonne santé, indicateur déclaratif, pour décider qui part plus tard."
+  },
+  "ce_qui_est_inconnu": {
+    "synthese": "On ignore les âges, les critères, les populations concernées et le point de départ (64 ans ou réforme suspendue).",
+    "texte": "Inconnus décisifs : **l'âge de référence autour duquel la modulation se ferait** (64 ans actuels, 62 ans si la réforme reste suspendue, ou suppression de l'âge légal), l'ampleur des écarts d'âge, les critères (métier, expositions mesurées, durée de carrière, état de santé individuel), le financement, et le sort des fonctionnaires des catégories actives. Sources insuffisantes pour trancher ici sur ces points, faute d'engagement du candidat."
+  },
+  "angles_morts": {
+    "synthese": "Trois angles morts : emploi des seniors reculés, prévention de la pénibilité, et mesure de la « bonne santé ».",
+    "texte": "**Reculer l'âge sans emploi garanti déplace la dépense** : si les personnes concernées ne trouvent pas d'emploi après 62 ans, le coût passe des retraites à l'assurance chômage ou au RSA. **Compenser la pénibilité par un départ anticipé peut affaiblir la prévention** : si l'usure se « paie » en trimestres, l'incitation des employeurs à réduire les expositions diminue, alors que c'était l'objectif premier du compte pénibilité. La mesure ne dit pas comment évaluer la « bonne santé » sans examen médical individuel, que la médecine du travail ne pourrait pas assurer. Une négociation collective pourrait traiter les deux premiers points par des contreparties, à condition que l'accord les prévoie explicitement. Alternative déjà mieux documentée pour une partie de l'objectif : un départ anticipé fondé sur la durée de carrière (modèle danois, ou dispositif carrières longues), plus simple à vérifier. Pour éviter une double pénalisation, la pénurie de médecins du travail est comptée en moyens humains, et le silence sur le financement en faisabilité budgétaire."
+  },
+  "notation_detaillee": {
+    "operationnalite_juridique": 8,
+    "qualification_juridique": "SOLIDE",
+    "operationnalite_budgetaire": 4,
+    "qualification_budgetaire": "INCERTAIN",
+    "operationnalite_moyens_humains": 4,
+    "qualification_moyens_humains": "INCERTAIN",
+    "operationnalite_moyens_total": 16,
+    "plafond_applique": false,
+    "plafond_declencheur": null,
+    "efficacite": 21,
+    "qualification_efficacite": "INCERTAIN",
+    "effets_rebonds_externalites": 14,
+    "qualification_effets_rebonds": "INCERTAIN",
+    "degre_preparation": 2,
+    "qualification_preparation": "FRAGILE",
+    "alignement_logique": 8,
+    "qualification_alignement": "SOLIDE",
+    "score_total": 61,
+    "appreciation": "plausible sous condition"
+  },
+  "verdict_final": "Ce qui tient : l'idée vise une injustice réelle, documentée et déjà reconnue par la loi, et elle est cohérente avec le parcours du candidat. Juridiquement, rien ne s'y oppose.\n\nCe qui ne tient pas encore : sans âges ni critères, ce n'est qu'une direction. Le point le plus difficile, mesurer la pénibilité et la « bonne santé », est exactement celui où la France et la Belgique ont déjà échoué, et le candidat ne dit pas comment il ferait mieux. Le solde budgétaire serait proche de zéro et ne réglerait pas le déficit.\n\nLa note suppose un classement par groupes de métiers autour du droit actuel, défini par négociation collective, et non un examen de santé individuel : deux modalités que le candidat n'a pas précisées.",
+  "sources_utilisees": [
+    {
+      "titre": "Fiscalité, école, immigration : ce que propose Raphaël Glucksmann",
+      "editeur": "Public Sénat",
+      "date": "2026-08-24",
+      "url": "https://www.publicsenat.fr/actualites/politique/fiscalite-ecole-immigration-ce-que-propose-raphael-glucksmann"
+    },
+    {
+      "titre": "Présidentielle 2027 : qui propose quoi sur les retraites ?",
+      "editeur": "LCP",
+      "date": "2026-06-19",
+      "url": "https://lcp.fr/actualites/presidentielle-2027-qui-propose-quoi-sur-les-retraites-437864"
+    },
+    {
+      "titre": "La suspension de la réforme des retraites « devient possible », dit Glucksmann",
+      "editeur": "Brut",
+      "date": "2025-11-17",
+      "url": "https://www.brut.media/fr/articles/la-suspension-de-la-reforme-des-retraites-devient-possible-dit-glucksmann-apres-avoir-rencontre-sebastien-lecornu"
+    },
+    {
+      "titre": "Pénibilité et espérance de vie (document de séance)",
+      "editeur": "Conseil d'orientation des retraites",
+      "date": "2025-02-06",
+      "url": "https://cor-retraites.fr/sites/default/files/2025-02/Doc_05_p%C3%A9nibilit%C3%A9_esp_vie.pdf"
+    },
+    {
+      "titre": "Le compte professionnel de prévention (document de séance)",
+      "editeur": "Conseil d'orientation des retraites",
+      "date": "2025-02-06",
+      "url": "https://cor-retraites.fr/sites/default/files/2025-02/Doc_10_C2P.pdf"
+    },
+    {
+      "titre": "Situation financière et perspectives du système de retraites (rapport résumé)",
+      "editeur": "Cour des comptes, via Public Sénat",
+      "date": "2025-02-20",
+      "url": "https://www.publicsenat.fr/actualites/societe/retraites-un-deficit-qui-pourrait-atteindre-environ-30-milliards-deuros-dici-2045-selon-le-rapport-de-la-cour-des-comptes"
+    },
+    {
+      "titre": "L'espérance de vie sans incapacité à 65 ans est de 11,8 ans pour les femmes et de 10,5 ans pour les hommes en 2024",
+      "editeur": "DREES",
+      "date": "2026-01-22",
+      "url": "https://drees.solidarites-sante.gouv.fr/publications-communique-de-presse/etudes-et-resultats/260122-ER-esperance-de-vie-sans-incapacite"
+    },
+    {
+      "titre": "Loi n° 2014-40 du 20 janvier 2014 garantissant l'avenir et la justice du système de retraites (article 1er, L111-2-1 CSS)",
+      "editeur": "Légifrance",
+      "date": "2014-01-20",
+      "url": "https://www.legifrance.gouv.fr/jorf/id/JORFSCTA000028493484"
+    },
+    {
+      "titre": "On the Heterogeneity in Longevity among Socioeconomic Groups (Ayuso, Bravo, Holzmann)",
+      "editeur": "IZA Discussion Paper 10060",
+      "date": "2016-07",
+      "url": "https://docs.iza.org/dp10060.pdf"
+    },
+    {
+      "titre": "Danish govt says 30,000 applications vindicate introducing early pension",
+      "editeur": "IPE",
+      "date": "2020-11",
+      "url": "https://www.ipe.com/news/danish-govt-says-30000-applications-vindicate-introducing-early-pension/10056646.article"
+    },
+    {
+      "titre": "Pensions : échec de la concertation sur les métiers pénibles",
+      "editeur": "BX1",
+      "date": "2018-11-07",
+      "url": "https://bx1.be/categories/news/pensions-echec-de-concertation-metiers-penibles/"
+    },
+    {
+      "titre": "Carrière longue : ces retraités qui partent en anticipé en masse depuis la réforme",
+      "editeur": "Moneyvox (d'après CNAV / Les Echos)",
+      "date": "2024",
+      "url": "https://www.moneyvox.fr/retraite/actualites/96762/carriere-longue-ces-retraites-qui-partent-en-anticipe-en-masse-depuis-la-reforme"
+    },
+    {
+      "titre": "Question écrite n° 12775 sur la médecine du travail, et réponse ministérielle",
+      "editeur": "Assemblée nationale",
+      "date": "2024-01-09",
+      "url": "https://www.assemblee-nationale.fr/dyn/16/questions/QANR5L16QE12775.pdf"
+    }
+  ],
+  "niveau_de_confiance": "Moyen : le constat et le cadre juridique sont solidement sourcés, mais la note dépend d'une interprétation des modalités que le candidat n'a pas précisées.",
+  "limites": {
+    "synthese": "Fiche fondée sur une citation rapportée par la presse et une hypothèse de classement par métiers.",
+    "texte": "La citation provient de Public Sénat (24 août 2026), qui la rattache au livre et à l'annonce de candidature ; elle n'a pas été vérifiée sur le texte original. **Le chiffrage budgétaire est une estimation de l'analyste** fondée sur des ratios de la Cour des comptes supposés linéaires, et sur des parts de population illustratives (un cinquième avancé de 2 ans, un tiers reculé d'un an). La voie de la négociation collective est une hypothèse de l'analyste, non annoncée dans la citation analysée. Une précision du candidat (âges, critères, point de référence, méthode de négociation) pourrait faire évoluer plusieurs notes, en particulier la faisabilité budgétaire et l'efficacité."
+  },
+  "resume_court": "Raphaël Glucksmann propose de faire partir plus tôt les travailleurs aux métiers difficiles et plus tard ceux en bonne santé. Il répond à une injustice réelle : un ouvrier vit en moyenne environ 5 ans de moins qu'un cadre, et la loi demande déjà que la retraite soit équitable au regard de l'espérance de vie en bonne santé.\n\nLe principe est solide et juridiquement simple. Mais tout repose sur une question qu'il laisse ouverte : comment mesurer la pénibilité et la « bonne santé » ? La France et la Belgique ont déjà buté dessus, et sans âges ni critères, la mesure reste une direction plutôt qu'une réforme. Une négociation entre partenaires sociaux pourrait débloquer la définition des critères, sans garantie. Note : 61/100, plausible sous condition, en supposant un classement par groupes de métiers, négocié, autour du droit actuel.",
+  "phrase_teasing": "Partir plus tard quand on va bien : qui en jugera ?",
+  "relecture": {
+    "titre": "Retraite selon la pénibilité : le bon diagnostic, sans le mode d'emploi",
+    "candidat": "Raphaël Glucksmann",
+    "parti": "Place publique",
+    "theme": "Retraites",
+    "date": "2026-10-06",
+    "version": 1,
+    "mesure_initiale": "Réformer les retraites en faisant de la pénibilité le premier critère, avec des départs plus précoces pour les carrières difficiles et plus tardifs pour les personnes en bonne santé.",
+    "extrait": {
+      "citation": "« L'équité exige que ceux qui ont les carrières les plus hachées et les métiers les plus difficiles puissent partir à la retraite plus tôt. (…) Ceux qui ont une espérance de vie en bonne santé plus longue doivent en revanche partir plus tard »",
+      "source": "Raphaël Glucksmann, livre « Nous avons encore envie » (mai 2026) et annonce de candidature sur TF1, rapporté par Public Sénat le 24 août 2026 · Non vérifié sur le texte original"
+    },
+    "verdict_tient": "l'injustice visée est réelle et déjà reconnue par la loi, la mesure est juridiquement simple et cohérente avec le parcours du candidat.",
+    "verdict_flou": "aucun âge, aucun critère ni chiffrage : la mesure de la pénibilité et de la « bonne santé », là où la France et la Belgique ont déjà échoué, reste entièrement à construire.",
+    "niveau_confiance": "Moyen",
+    "questions": [
+      {
+        "titre": "Citation et interprétation retenue",
+        "texte": "La citation vient de Public Sénat, pas du livre lui-même. La note suppose une modulation par groupes de métiers autour du droit actuel, et non un examen de santé individuel. Quelqu'un a-t-il le passage exact du livre, ou une précision ultérieure du candidat sur l'âge de référence (64 ans, 62 ans ou suppression de l'âge légal) ?"
+      },
+      {
+        "titre": "Faisabilité budgétaire : 4/10 INCERTAIN",
+        "texte": "Notre estimation donne deux effets de 2 à 3 milliards d'euros en sens opposé, donc un solde proche de zéro qui dépend du calibrage. Faut-il rester en INCERTAIN (pas de dérive massive) ou passer en FRAGILE parce qu'aucun sens net ne peut être établi, ce qui plafonnerait l'Opérationnalité à 10/30 ?"
+      },
+      {
+        "titre": "Négociation collective et efficacité (21/30)",
+        "texte": "La note suppose que les critères seraient négociés entre partenaires sociaux, ce qui a fait remonter l'efficacité de 18 à 21. Le candidat ne s'y engage pas dans la citation analysée. Connaissez-vous une déclaration où il s'engage sur cette méthode ? Et le précédent belge (échec de la négociation en 2018) justifie-t-il de rester sous le seuil SOLIDE (24) ?"
+      },
+      {
+        "titre": "Degré de préparation : 2/10 FRAGILE",
+        "texte": "Le candidat a dit ne pas présenter de réforme détaillée. Connaissez-vous un document de campagne plus précis (âges, liste de métiers, critères) qui permettrait de remonter cette note ?"
+      },
+      {
+        "titre": "Effets rebonds : 14/20",
+        "texte": "Trois effets retenus : pression des branches pour être reconnues pénibles, report vers le chômage des seniors dont l'âge recule, affaiblissement de la prévention. Des accords de branche peuvent atténuer les deux derniers. Cette atténuation possible justifie-t-elle 14, ou faut-il monter à SOLIDE (16) ou redescendre ?"
+      },
+      {
+        "titre": "Titre et teasing provisoires",
+        "texte": "Titre court proposé : « La retraite selon la pénibilité » (31 caractères). Teasing : « Partir plus tard quand on va bien : qui en jugera ? » (51 caractères). Vous conviennent-ils ?"
+      }
+    ]
+  }
+}
