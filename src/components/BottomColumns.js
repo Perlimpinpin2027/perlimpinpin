@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { formatScore, getScoreBadge, getScoreBands } from "@/lib/score";
 import { vignettePhoto } from "@/lib/photo-vignette";
+import ListeDeroulante from "./ListeDeroulante";
 import { textesParDefaut } from "@/lib/textes-site";
 
 function ColumnHeader({ title, subtitle, icon }) {
@@ -146,6 +147,56 @@ function TrendIndicator({ trend, delta }) {
   );
 }
 
+// Nombre de candidats affichés avant « Dérouler ».
+const CANDIDATS_VISIBLES = 5;
+
+// Une ligne du classement : rang, photo, nom, nombre de déclarations, score.
+function LigneCandidat({ candidate, rang }) {
+  return (
+    <li className="flex items-center gap-3">
+      <span className="w-4 shrink-0 text-sm font-semibold text-zinc-400">
+        {rang}
+      </span>
+      <Link
+        href={`/declarations?candidat=${encodeURIComponent(candidate.name)}`}
+        prefetch={false}
+        className="flex min-w-0 flex-1 items-center gap-3 transition-opacity hover:opacity-70"
+      >
+        <img
+          src={vignettePhoto(candidate.photoUrl) || "/avatar-placeholder.svg"}
+          alt={candidate.name}
+          className="h-9 w-9 shrink-0 rounded-lg object-cover object-top"
+        />
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-semibold text-zinc-900">
+            {candidate.name}
+          </p>
+          <p className="mt-0.5 text-xs text-zinc-400">
+            {candidate.declarations} déclarations analysées
+          </p>
+        </div>
+      </Link>
+      <div className="flex shrink-0 items-center gap-3">
+        <TrendIndicator trend={candidate.trend} delta={candidate.delta} />
+        {candidate.avgScore == null ? (
+          <span className="text-xs font-medium text-zinc-400">
+            Pas encore noté
+          </span>
+        ) : (
+          <span
+            className={`text-sm font-bold ${getScoreBadge(candidate.avgScore).scoreClass}`}
+          >
+            {formatScore(candidate.avgScore)}
+            <span className="text-xs font-medium text-zinc-400">
+              /100
+            </span>
+          </span>
+        )}
+      </div>
+    </li>
+  );
+}
+
 function ReliabilityIndexColumn({ candidates, t }) {
   return (
     <div className="rounded-2xl border border-zinc-200 bg-white p-6">
@@ -157,51 +208,19 @@ function ReliabilityIndexColumn({ candidates, t }) {
       {candidates.length === 0 ? (
         <p className="text-sm text-zinc-500">{t["colonnes.candidats.vide"]}</p>
       ) : (
-        <ol className="flex flex-col gap-5">
-          {candidates.map((candidate, index) => (
-            <li key={candidate.name} className="flex items-center gap-3">
-              <span className="w-4 shrink-0 text-sm font-semibold text-zinc-400">
-                {index + 1}
-              </span>
-              <Link
-                href={`/declarations?candidat=${encodeURIComponent(candidate.name)}`}
-                prefetch={false}
-                className="flex min-w-0 flex-1 items-center gap-3 transition-opacity hover:opacity-70"
-              >
-                <img
-                  src={vignettePhoto(candidate.photoUrl) || "/avatar-placeholder.svg"}
-                  alt={candidate.name}
-                  className="h-9 w-9 shrink-0 rounded-lg object-cover object-top"
-                />
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-semibold text-zinc-900">
-                    {candidate.name}
-                  </p>
-                  <p className="mt-0.5 text-xs text-zinc-400">
-                    {candidate.declarations} déclarations analysées
-                  </p>
-                </div>
-              </Link>
-              <div className="flex shrink-0 items-center gap-3">
-                <TrendIndicator trend={candidate.trend} delta={candidate.delta} />
-                {candidate.avgScore == null ? (
-                  <span className="text-xs font-medium text-zinc-400">
-                    Pas encore noté
-                  </span>
-                ) : (
-                  <span
-                    className={`text-sm font-bold ${getScoreBadge(candidate.avgScore).scoreClass}`}
-                  >
-                    {formatScore(candidate.avgScore)}
-                    <span className="text-xs font-medium text-zinc-400">
-                      /100
-                    </span>
-                  </span>
-                )}
-              </div>
-            </li>
+        <ListeDeroulante
+          suite={candidates.slice(CANDIDATS_VISIBLES).map((candidate, index) => (
+            <LigneCandidat
+              key={candidate.name}
+              candidate={candidate}
+              rang={CANDIDATS_VISIBLES + index + 1}
+            />
           ))}
-        </ol>
+        >
+          {candidates.slice(0, CANDIDATS_VISIBLES).map((candidate, index) => (
+            <LigneCandidat key={candidate.name} candidate={candidate} rang={index + 1} />
+          ))}
+        </ListeDeroulante>
       )}
 
       <div>
