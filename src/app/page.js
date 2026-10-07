@@ -15,6 +15,7 @@ import {
   getCandidateRanking,
   getIndexRecherche,
 } from "@/lib/queries";
+import { getHorsSeriesAccueil } from "@/lib/hors-series";
 
 // La page dépend de données Neon qui changent (analyses publiées, scores) :
 // ISR, recalculée au plus toutes les 5 minutes et servie depuis le cache du
@@ -34,6 +35,14 @@ export default async function Home() {
       // Données de la barre de recherche (recherche faite dans le navigateur)
       getIndexRecherche(),
     ]);
+
+  // Carrousel : les hors-séries mis en avant (bloc `accueil` de leur JSON)
+  // passent en tête, avec leur propre présentation (voir FeaturedCard),
+  // puis les déclarations analysées.
+  const carrousel = [
+    ...getHorsSeriesAccueil().map((dossier) => ({ dossier })),
+    ...featuredRotation,
+  ];
 
   // Seuls les candidats classés (au moins une déclaration analysée).
   const rankedCandidates = classement.filter(
@@ -62,7 +71,7 @@ export default async function Home() {
       <section className="w-full px-6 pb-10 pt-12 sm:px-8 sm:pb-14 sm:pt-20">
         <div className="mx-auto grid w-full max-w-[1280px] grid-cols-1 items-center gap-10 lg:grid-cols-[1.08fr_1fr] lg:gap-14">
           <HeroText textes={t} documents={indexRecherche} />
-          <FeaturedCarousel items={featuredRotation} />
+          <FeaturedCarousel items={carrousel} />
         </div>
       </section>
 

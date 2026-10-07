@@ -12,6 +12,7 @@ const STATIC_ROUTES = [
   "",
   "/candidats",
   "/themes",
+  "/dossiers",
   "/methode",
   "/a-propos",
   "/hors-serie/rn-plan-budgetaire",

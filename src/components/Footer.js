@@ -7,6 +7,7 @@ const platformLinks = [
   { label: "Déclarations", href: "/declarations" },
   { label: "Candidats", href: "/candidats" },
   { label: "Thèmes", href: "/themes" },
+  { label: "Dossiers", href: "/dossiers" },
   { label: "Méthode", href: "/methode" },
   { label: "À propos", href: "/a-propos" },
 ];

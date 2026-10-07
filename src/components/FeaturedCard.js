@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { getScoreBadge } from "@/lib/score";
+import AvancementDossier from "@/components/AvancementDossier";
+import TitreAvecItalique from "@/components/TitreAvecItalique";
 
 const SWIPE_THRESHOLD_PX = 40;
 // Délai avant d'afficher une flèche : évite les clignotements quand la
@@ -15,7 +17,11 @@ const ARROW_REVEAL_DELAY_MS = 100;
 // flèches discrètes révélées au survol des tiers gauche/droit, au clavier
 // (← →) et au swipe sur mobile.
 // Reçoit l'état du carrousel (index/total/callbacks) depuis FeaturedCarousel.
+// `dossier` (getHorsSeriesAccueil, src/lib/hors-series.js) : la carte
+// présente alors un hors-série, avec une mise en page propre (rose, barre
+// d'avancement, bouton « Lire le dossier ») mais la même navigation.
 export default function FeaturedCard({
+  dossier,
   propositionId,
   quoteText,
   personName,
@@ -89,7 +95,7 @@ export default function FeaturedCard({
     else if (deltaX < -SWIPE_THRESHOLD_PX) onNext?.();
   }
 
-  if (!quoteText) {
+  if (!quoteText && !dossier) {
     return (
       <div className="flex h-full flex-col items-center justify-center rounded-2xl border border-zinc-200 bg-white p-6 text-center">
         <span className="text-xs font-bold uppercase tracking-widest text-red-600">
@@ -102,7 +108,7 @@ export default function FeaturedCard({
     );
   }
 
-  const badge = getScoreBadge(score);
+  const badge = dossier ? null : getScoreBadge(score);
   // Anime l'entrée de la nouvelle carte à chaque changement d'index : le
   // remount déclenché par key={index} côté FeaturedCarousel relance
   // l'animation CSS à chaque fois, sans état de transition manuel à gérer.
@@ -125,10 +131,14 @@ export default function FeaturedCard({
     >
       <div
         key={currentIndex}
-        className={`flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-[0_24px_60px_-30px_rgba(30,41,82,0.35)] ring-1 ring-zinc-100 sm:min-h-[540px] sm:flex-row ${slideAnimationClass}`}
+        className={`flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-[0_24px_60px_-30px_rgba(30,41,82,0.35)] sm:min-h-[540px] sm:flex-row ${dossier ? "ring-2 ring-pink-200" : "ring-1 ring-zinc-100"} ${slideAnimationClass}`}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
+        {dossier ? (
+          <ContenuDossier dossier={dossier} />
+        ) : (
+        <>
         {/* Photo : sur desktop, étirée sur toute la hauteur de la carte
             (sm:h-auto + étirement flex par défaut), elle-même de 540 px au
             minimum — sm:min-h-[540px] ci-dessus — pour rester constante d'un
@@ -187,6 +197,8 @@ export default function FeaturedCard({
             <span aria-hidden="true">→</span>
           </Link>
         </div>
+        </>
+        )}
       </div>
 
       {/* Zones de survol (tiers gauche / droit) : purement positionnelles,
@@ -211,6 +223,62 @@ export default function FeaturedCard({
         </>
       ) : null}
     </div>
+  );
+}
+
+// Contenu de la carte quand elle présente un hors-série : même gabarit que
+// la carte d'une déclaration (photo à gauche, texte à droite, bouton en
+// pied), mais traitement rose propre aux dossiers. Le bloc « Score » est
+// remplacé par l'avancement du dossier, la note globale n'existant qu'une
+// fois toutes les fiches publiées.
+function ContenuDossier({ dossier }) {
+  const href = `/hors-serie/${dossier.slug}`;
+  return (
+    <>
+      <div className="relative aspect-[4/5] w-full shrink-0 bg-pink-50 sm:aspect-auto sm:h-auto sm:w-2/5">
+        <img
+          src={dossier.photo?.src || "/avatar-placeholder.svg"}
+          alt={dossier.photo?.alt ?? dossier.candidat?.nom ?? ""}
+          className="absolute inset-0 h-full w-full object-cover object-top"
+        />
+        <span className="absolute left-4 top-4 rounded-full bg-pink-700 px-3 py-1.5 text-xs font-semibold uppercase tracking-widest text-white shadow-sm">
+          Hors-série n°{dossier.numero}
+        </span>
+      </div>
+
+      {/* Marge droite élargie (souris uniquement), comme pour les
+          déclarations : place réservée à la flèche « suivante ». */}
+      <div className="flex flex-1 flex-col p-6 sm:p-8 [@media(hover:hover)]:pr-14!">
+        <p className="text-xs font-semibold uppercase tracking-[0.12em] text-pink-700">
+          {"// Dossier spécial"}
+        </p>
+        <p className="mt-3 shrink-0 text-2xl font-extrabold leading-tight tracking-tight text-zinc-950 sm:text-[1.9rem]">
+          <TitreAvecItalique titre={dossier.titre} motItalique={dossier.motItalique} />
+        </p>
+        {dossier.accroche ? (
+          <p className="mb-4 mt-3 text-base leading-snug text-slate-500">{dossier.accroche}</p>
+        ) : null}
+
+        <div className="mt-auto border-t border-zinc-200 pt-5 max-sm:mt-2">
+          <span className="text-xs font-semibold uppercase tracking-widest text-slate-500">
+            Avancement du dossier
+          </span>
+          <AvancementDossier
+            avancement={dossier.avancement}
+            texte={dossier.texteAvancement}
+            className="mt-3"
+          />
+        </div>
+
+        <Link
+          href={href}
+          className="mt-5 flex w-full items-center justify-between gap-2 rounded-xl bg-pink-700 px-6 py-3.5 text-base font-medium text-white transition-colors hover:bg-pink-800"
+        >
+          Lire le dossier
+          <span aria-hidden="true">→</span>
+        </Link>
+      </div>
+    </>
   );
 }
 

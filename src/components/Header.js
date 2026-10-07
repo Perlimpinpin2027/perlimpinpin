@@ -12,9 +12,18 @@ const navLinks = [
   { label: "Déclarations", href: "/declarations" },
   { label: "Candidats", href: "/candidats" },
   { label: "Thèmes", href: "/themes" },
+  // Hors-séries (plans d'ensemble analysés poste par poste) : /dossiers liste
+  // les dossiers, chacun publié sur /hors-serie/[slug] (onglet actif aussi
+  // sur ces pages, voir estActif).
+  { label: "Dossiers", href: "/dossiers", aussiActifSur: "/hors-serie" },
   { label: "Méthode", href: "/methode" },
   { label: "À propos", href: "/a-propos" },
 ];
+
+function estActif(link, pathname) {
+  if (pathname === link.href) return true;
+  return Boolean(link.aussiActifSur && pathname?.startsWith(link.aussiActifSur));
+}
 
 // Icônes en SVG inline (trait 1.8, comme avant). Définies une seule fois ici
 // pour ne pas les recopier entre la barre desktop et le menu mobile.
@@ -155,7 +164,7 @@ export default function Header() {
         <nav className="hidden lg:block">
           <ul className="flex items-center gap-5 text-sm font-medium text-zinc-700 xl:gap-8">
             {navLinks.map((link) => {
-              const isActive = pathname === link.href;
+              const isActive = estActif(link, pathname);
               return (
                 <li key={link.href}>
                   <Link
