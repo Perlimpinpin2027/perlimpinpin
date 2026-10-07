@@ -8,7 +8,14 @@ const BASE_URL = "https://perlimpinpin.ai";
 // ajoutées dynamiquement ci-dessous). /declarations, /prix-perlimpinpin,
 // /objectifs et /sources ne sont pas dans la liste explicite de la demande
 // d'origine ; on s'en tient à ce qui a été demandé.
-const STATIC_ROUTES = ["", "/candidats", "/themes", "/methode", "/a-propos"];
+const STATIC_ROUTES = [
+  "",
+  "/candidats",
+  "/themes",
+  "/methode",
+  "/a-propos",
+  "/hors-serie/rn-plan-budgetaire",
+];
 
 export default async function sitemap() {
   const staticEntries = STATIC_ROUTES.map((route) => ({
