@@ -56,6 +56,14 @@ export default async function CandidatsPage() {
             personne, ni un indice général de crédibilité politique, et
             évolue au fur et à mesure des analyses.
           </p>
+
+          <p className="-mt-6 text-xs leading-relaxed text-zinc-400">
+            Indemnités d&rsquo;élu : montants bruts mensuels au 1er janvier 2026,
+            d&rsquo;après les barèmes officiels ; pour les mandats locaux, il
+            s&rsquo;agit des plafonds fixés par la loi. Revenus déclarés à la
+            HATVP : montants nets, tels que déclarés par l&rsquo;élu, non
+            comparables aux indemnités brutes.
+          </p>
         </div>
       </main>
     </div>

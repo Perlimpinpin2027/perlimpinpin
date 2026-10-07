@@ -16,7 +16,15 @@ const ICONES = {
   etudes: (
     <path d="M2 9l10-5 10 5-10 5L2 9Zm4 2v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5M22 9v6" />
   ),
+  indemnites: (
+    <path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Zm9 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM6 9v.01M18 15v.01" />
+  ),
+  revenus: (
+    <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Zm0 0v5h5M9 13h6M9 17h4" />
+  ),
 };
+
+const INFOBULLE_NA = "Aucune déclaration d'intérêts publiée par la HATVP";
 
 const RUBRIQUES = [
   { cle: "mandat_actuel", titre: "Mandat actuel", icone: "mandat" },
@@ -39,6 +47,22 @@ function Icone({ nom }) {
     >
       {ICONES[nom]}
     </svg>
+  );
+}
+
+// Rubrique d'une seule ligne (indemnités, revenus déclarés), même mise en
+// page que les rubriques à puces.
+function RubriqueLigne({ titre, icone, children }) {
+  return (
+    <li className="flex gap-3">
+      <span className="mt-0.5 shrink-0 text-zinc-400">
+        <Icone nom={icone} />
+      </span>
+      <div className="min-w-0">
+        <p className="text-xs font-bold uppercase tracking-widest text-zinc-500">{titre}</p>
+        <p className="mt-1 text-sm text-zinc-700">{children}</p>
+      </div>
+    </li>
   );
 }
 
@@ -121,7 +145,40 @@ export default function CandidatCard({ parcours, score }) {
             </li>
           );
         })}
+
+        {parcours.indemnites_elu ? (
+          <RubriqueLigne titre="Indemnités d'élu" icone="indemnites">
+            {parcours.indemnites_elu.affichage}
+          </RubriqueLigne>
+        ) : null}
+
+        {parcours.revenus_declares_hatvp ? (
+          <RubriqueLigne titre="Revenus déclarés (HATVP)" icone="revenus">
+            {parcours.revenus_declares_hatvp.affichage === "NA" ? (
+              <span title={INFOBULLE_NA} className="cursor-help text-zinc-400">
+                NA
+              </span>
+            ) : (
+              parcours.revenus_declares_hatvp.affichage
+            )}
+          </RubriqueLigne>
+        ) : null}
       </ul>
+
+      <p className="mt-3 pl-8 text-xs text-zinc-400">
+        {parcours.hatvp_url ? (
+          <a
+            href={parcours.hatvp_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline-offset-2 hover:text-zinc-600 hover:underline"
+          >
+            Fiche HATVP ↗
+          </a>
+        ) : (
+          "Pas de fiche HATVP en ligne"
+        )}
+      </p>
 
       {parcours.note_contexte ? (
         <p className="mt-5 rounded-xl bg-zinc-50 px-4 py-3 text-xs leading-relaxed text-zinc-600">
