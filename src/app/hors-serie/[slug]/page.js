@@ -7,9 +7,10 @@ import { getScoresPublies } from "@/lib/queries";
 import { getScoreBadge, getScoreBands, VERDICT_BG_CLASSES } from "@/lib/score";
 
 // Pages hors-série : un dossier thématique (ex. le plan budgétaire d'un
-// candidat) découpé en plusieurs fiches notées. Tout le contenu vient du
-// JSON du hors-série (data/hors-series/, voir src/lib/hors-series.js) ;
-// seule la couleur rose (pink-*) est propre aux hors-séries.
+// candidat) découpé en plusieurs fiches notées, lu comme un article. Tout le
+// contenu vient du JSON du hors-série (data/hors-series/, voir
+// src/lib/hors-series.js) ; seule la couleur rose (pink-*) est propre aux
+// hors-séries. Une seule police sur la page : Geist (font-sans).
 // Les slugs sont connus au build : tout autre slug renvoie une 404.
 export const dynamicParams = false;
 
@@ -66,6 +67,41 @@ function TitreAvecItalique({ titre, motItalique }) {
       <span className="mr-[0.15em] italic text-zinc-400">{motItalique}</span>
       {titre.slice(fin)}
     </>
+  );
+}
+
+// Lien vers une source externe (`{ label, url }` du JSON), ouvert dans un
+// nouvel onglet. Rien n'est affiché si la source est absente.
+function LienSource({ source, prefixe = "Source : ", className = "" }) {
+  if (!source?.url) return null;
+  return (
+    <a
+      href={source.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`text-xs text-zinc-400 underline decoration-zinc-300 underline-offset-2 transition-colors hover:text-zinc-700 ${className}`}
+    >
+      {prefixe}
+      {source.label} <span aria-hidden="true">↗</span>
+    </a>
+  );
+}
+
+// Texte courant « article », hors carte, en colonne de lecture.
+// `chapo` : le premier paragraphe est mis en avant avec une fine barre rose.
+function Prose({ paragraphes, chapo = false, className = "" }) {
+  if (!paragraphes?.length) return null;
+  return (
+    <div className={`flex max-w-3xl flex-col gap-5 text-lg leading-relaxed text-zinc-700 ${className}`}>
+      {paragraphes.map((paragraphe, i) => (
+        <p
+          key={paragraphe}
+          className={chapo && i === 0 ? "border-l-2 border-pink-700 pl-4 font-medium text-zinc-900" : undefined}
+        >
+          {paragraphe}
+        </p>
+      ))}
+    </div>
   );
 }
 
@@ -177,7 +213,7 @@ function CarteFiche({ fiche, candidat, score }) {
 
 // Cellule « Fiche » du tableau des postes.
 function CelluleFiche({ fiche, score }) {
-  if (!fiche) return <span className="text-zinc-400">—</span>;
+  if (!fiche) return <span className="text-zinc-400">-</span>;
   if (fiche.statut === "publiee" && score != null) {
     const badge = getScoreBadge(score);
     return (
@@ -205,7 +241,19 @@ export default async function HorsSeriePage({ params }) {
   const hs = getHorsSerie(slug);
   if (!hs) notFound();
 
-  const { chiffresCles, documents, encadre, decomposition, tableau, fiches, noteGlobale } = hs;
+  const {
+    photo,
+    introduction,
+    chiffresCles,
+    documents,
+    encadre,
+    decomposition,
+    tableau,
+    selection,
+    analyses,
+    fiches,
+    noteGlobale,
+  } = hs;
 
   // Scores publiés lus en base, pour les fiches marquées « publiee ».
   const scores = await getScoresPublies(
@@ -244,41 +292,71 @@ export default async function HorsSeriePage({ params }) {
       <Header />
 
       <main className="flex w-full flex-col">
-        {/* En-tête */}
+        {/* En-tête : texte à gauche, portrait à droite (sous le texte sur
+            téléphone), même grille que le bandeau de l'accueil. */}
         <section className="w-full px-6 pb-14 pt-12 sm:px-8 sm:pb-16 sm:pt-20">
-          <div className={`${CONTENEUR} flex flex-col gap-6`}>
-            <div className="flex flex-wrap items-center gap-3">
-              <span className="rounded-full bg-pink-700 px-3 py-1.5 font-sans text-xs font-semibold uppercase tracking-widest text-white">
-                Hors-série n°{hs.numero}
-              </span>
-              <Etiquette>{hs.etiquette}</Etiquette>
+          <div className={`${CONTENEUR} grid grid-cols-1 items-center gap-10 lg:grid-cols-[1.08fr_1fr] lg:gap-14`}>
+            <div className="flex flex-col gap-6">
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="rounded-full bg-pink-700 px-3 py-1.5 text-xs font-semibold uppercase tracking-widest text-white">
+                  Hors-série n°{hs.numero}
+                </span>
+                <Etiquette>{hs.etiquette}</Etiquette>
+              </div>
+
+              <h1 className="font-sans text-4xl font-extrabold leading-[1.04] tracking-[-0.035em] text-zinc-950 sm:text-5xl xl:text-6xl">
+                <TitreAvecItalique titre={hs.titre} motItalique={hs.motItalique} />
+              </h1>
+
+              <p className="max-w-2xl text-lg leading-relaxed text-slate-500 sm:text-xl">
+                {hs.description}
+              </p>
+
+              <div className="mt-2 flex flex-wrap gap-3">
+                <a
+                  href="#analyses"
+                  className="inline-flex min-h-12 items-center gap-3 rounded-xl bg-blue-950 px-6 py-3.5 text-base font-medium text-white transition-colors hover:bg-blue-900"
+                >
+                  Voir les {fiches.length} analyses
+                  <span aria-hidden="true">→</span>
+                </a>
+                <a
+                  href="#methode"
+                  className="inline-flex min-h-12 items-center rounded-xl border border-zinc-200 bg-white px-6 py-3.5 text-base font-medium text-zinc-900 transition-colors hover:border-zinc-300 hover:bg-zinc-50"
+                >
+                  Notre méthode
+                </a>
+              </div>
             </div>
 
-            <h1 className="max-w-5xl font-sans text-4xl font-extrabold leading-[1.04] tracking-[-0.035em] text-zinc-950 sm:text-5xl lg:text-6xl">
-              <TitreAvecItalique titre={hs.titre} motItalique={hs.motItalique} />
-            </h1>
-
-            <p className="max-w-3xl text-lg leading-relaxed text-slate-500 sm:text-xl">
-              {hs.description}
-            </p>
-
-            <div className="mt-2 flex flex-wrap gap-3">
-              <a
-                href="#analyses"
-                className="inline-flex min-h-12 items-center gap-3 rounded-xl bg-blue-950 px-6 py-3.5 text-base font-medium text-white transition-colors hover:bg-blue-900"
-              >
-                Voir les {hs.fiches.length} analyses
-                <span aria-hidden="true">→</span>
-              </a>
-              <a
-                href="#methode"
-                className="inline-flex min-h-12 items-center rounded-xl border border-zinc-200 bg-white px-6 py-3.5 text-base font-medium text-zinc-900 transition-colors hover:border-zinc-300 hover:bg-zinc-50"
-              >
-                Notre méthode
-              </a>
-            </div>
+            {photo?.src ? (
+              <figure className="mx-auto flex w-full max-w-md flex-col gap-2 lg:max-w-[460px]">
+                <div className={`relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-pink-50 ring-1 ring-zinc-100 ${OMBRE_CARTE}`}>
+                  <img
+                    src={photo.src}
+                    alt={photo.alt ?? hs.candidat.nom}
+                    className="absolute inset-0 h-full w-full object-cover object-top"
+                  />
+                </div>
+                {photo.credit ? (
+                  <figcaption className="text-xs text-zinc-400">{photo.credit}</figcaption>
+                ) : null}
+              </figure>
+            ) : null}
           </div>
         </section>
+
+        {/* L'essentiel : texte d'introduction, ton article */}
+        {introduction ? (
+          <section className={SECTION}>
+            <div className={`${CONTENEUR} flex flex-col gap-5`}>
+              <h2 className="max-w-3xl text-[1.75rem] font-extrabold tracking-tight text-zinc-950">
+                {introduction.titre}
+              </h2>
+              <Prose paragraphes={introduction.paragraphes} chapo />
+            </div>
+          </section>
+        ) : null}
 
         {/* Chiffres clés */}
         <section className={SECTION}>
@@ -296,6 +374,7 @@ export default async function HorsSeriePage({ params }) {
                   <p className="text-[15px] leading-normal text-slate-500">
                     {item.legende}
                   </p>
+                  <LienSource source={item.source} className="mt-auto pt-1" />
                 </div>
               ))}
             </div>
@@ -307,6 +386,7 @@ export default async function HorsSeriePage({ params }) {
         <section className={SECTION}>
           <div className={`${CONTENEUR} flex flex-col gap-6`}>
             <h2 className={TITRE_SECTION}>{documents.titre}</h2>
+            <Prose paragraphes={documents.paragraphes} />
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               {documents.items.map((doc) => (
                 <div
@@ -322,6 +402,7 @@ export default async function HorsSeriePage({ params }) {
                       <li key={point}>{point}</li>
                     ))}
                   </ul>
+                  <LienSource source={doc.source} className="mt-auto pt-1" />
                 </div>
               ))}
             </div>
@@ -336,34 +417,37 @@ export default async function HorsSeriePage({ params }) {
 
         {/* Encadré : économiser, ça veut dire quoi ? */}
         <section className={SECTION}>
-          <div className={`${CONTENEUR} flex flex-col gap-6 rounded-2xl bg-blue-950 p-6 text-indigo-100 sm:p-10`}>
-            <Etiquette couleur="text-indigo-300">{encadre.etiquette}</Etiquette>
-            <h2 className="font-sans text-3xl font-extrabold tracking-tight text-white sm:text-[2rem]">
-              {encadre.titre}
-            </h2>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              {encadre.cas.map((cas) => (
-                <div
-                  key={cas.titre}
-                  className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-white/5 p-6"
-                >
-                  {/* Mini-graphique : hauteur de chaque barre en % de la
-                      zone, d'après `barres` du JSON. */}
-                  <div aria-hidden="true" className="flex h-24 items-end gap-2.5">
-                    {cas.barres.map((hauteur, i) => (
-                      <div
-                        key={i}
-                        className="w-10 rounded-t-md bg-indigo-300"
-                        style={{ height: `${hauteur}%` }}
-                      />
-                    ))}
+          <div className={`${CONTENEUR} flex flex-col gap-6`}>
+            <Prose paragraphes={encadre.paragraphesAvant} />
+            <div className="flex flex-col gap-6 rounded-2xl bg-blue-950 p-6 text-indigo-100 sm:p-10">
+              <Etiquette couleur="text-indigo-300">{encadre.etiquette}</Etiquette>
+              <h2 className="font-sans text-3xl font-extrabold tracking-tight text-white sm:text-[2rem]">
+                {encadre.titre}
+              </h2>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                {encadre.cas.map((cas) => (
+                  <div
+                    key={cas.titre}
+                    className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-white/5 p-6"
+                  >
+                    {/* Mini-graphique : hauteur de chaque barre en % de la
+                        zone, d'après `barres` du JSON. */}
+                    <div aria-hidden="true" className="flex h-24 items-end gap-2.5">
+                      {cas.barres.map((hauteur, i) => (
+                        <div
+                          key={i}
+                          className="w-10 rounded-t-md bg-indigo-300"
+                          style={{ height: `${hauteur}%` }}
+                        />
+                      ))}
+                    </div>
+                    <h3 className="text-lg font-bold text-white">{cas.titre}</h3>
+                    <p className="text-[15px] leading-normal">{cas.texte}</p>
                   </div>
-                  <h3 className="text-lg font-bold text-white">{cas.titre}</h3>
-                  <p className="text-[15px] leading-normal">{cas.texte}</p>
-                </div>
-              ))}
+                ))}
+              </div>
+              <p className="max-w-4xl text-base leading-relaxed">{encadre.conclusion}</p>
             </div>
-            <p className="max-w-4xl text-base leading-relaxed">{encadre.conclusion}</p>
           </div>
         </section>
 
@@ -409,6 +493,8 @@ export default async function HorsSeriePage({ params }) {
               ))}
             </ul>
 
+            <Prose paragraphes={decomposition.paragraphes} className="mt-3" />
+
             {/* Tableau des postes : défilement horizontal sur téléphone. */}
             <div className="mt-2 overflow-x-auto rounded-2xl border border-zinc-200 bg-white">
               <table className="w-full min-w-[780px] border-collapse text-left text-[15px] leading-snug text-zinc-700">
@@ -437,6 +523,12 @@ export default async function HorsSeriePage({ params }) {
                         <td className="px-5 py-3.5">{ligne.trajectoire}</td>
                         <td className={`px-5 py-3.5 ${ligne.repere == null ? "text-zinc-400" : ""}`}>
                           {ligne.repere ?? "À documenter"}
+                          {ligne.repereSource ? (
+                            <>
+                              {" "}
+                              <LienSource source={ligne.repereSource} prefixe="" />
+                            </>
+                          ) : null}
                         </td>
                         <td className="px-5 py-3.5">
                           <CelluleFiche fiche={fiche} score={scoreDe(fiche)} />
@@ -450,6 +542,32 @@ export default async function HorsSeriePage({ params }) {
           </div>
         </section>
 
+        {/* Pourquoi ces propositions : critères de sélection, ton article */}
+        {selection ? (
+          <section className={SECTION}>
+            <div className={`${CONTENEUR} flex flex-col gap-6`}>
+              <h2 className={TITRE_SECTION}>{selection.titre}</h2>
+              <Prose paragraphes={selection.paragraphes} />
+              <ol className="grid grid-cols-1 gap-8 md:grid-cols-3">
+                {selection.criteres.map((critere, i) => (
+                  <li key={critere.titre} className="flex flex-col gap-2">
+                    <span aria-hidden="true" className="text-4xl font-extrabold leading-none text-pink-700">
+                      {i + 1}
+                    </span>
+                    <h3 className="text-lg font-bold text-zinc-900">{critere.titre}</h3>
+                    <p className="text-base leading-relaxed text-zinc-700">{critere.texte}</p>
+                  </li>
+                ))}
+              </ol>
+              {selection.horsChamp ? (
+                <div className="max-w-4xl rounded-2xl bg-pink-50 px-5 py-4 text-[15px] leading-relaxed text-zinc-700">
+                  {selection.horsChamp}
+                </div>
+              ) : null}
+            </div>
+          </section>
+        ) : null}
+
         {/* Les fiches */}
         <section id="analyses" className={`${SECTION} scroll-mt-20`}>
           <div className={`${CONTENEUR} flex flex-col gap-6`}>
@@ -457,6 +575,7 @@ export default async function HorsSeriePage({ params }) {
             <h2 className={TITRE_SECTION}>
               {fiches.length} fiches, {fiches.length} postes du plan
             </h2>
+            <Prose paragraphes={analyses?.paragraphes} />
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
               {fiches.map((fiche) => (
                 <CarteFiche
@@ -513,7 +632,7 @@ export default async function HorsSeriePage({ params }) {
           </div>
         </section>
 
-        {/* Méthode */}
+        {/* Méthode et sources */}
         <section id="methode" className={`${SECTION} scroll-mt-20`}>
           <div className={`${CONTENEUR} flex flex-col gap-4`}>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -529,9 +648,25 @@ export default async function HorsSeriePage({ params }) {
                 </div>
               ))}
             </div>
-            <p className="text-[13px] text-zinc-400">
-              Sources : {hs.sources.map((source) => source.label).join(" ; ")}.
-            </p>
+            {hs.sources?.length ? (
+              <div className="mt-2 flex flex-col gap-2">
+                <Etiquette>Sources</Etiquette>
+                <ul className="flex flex-col gap-1.5 text-[13px] leading-snug">
+                  {hs.sources.map((source) => (
+                    <li key={source.url}>
+                      <a
+                        href={source.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-zinc-600 underline decoration-zinc-300 underline-offset-2 transition-colors hover:text-zinc-950"
+                      >
+                        {source.label} <span aria-hidden="true">↗</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
           </div>
         </section>
       </main>
