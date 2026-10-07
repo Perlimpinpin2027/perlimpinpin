@@ -147,6 +147,45 @@
         "titre": "Titre court et phrase de teasing",
         "texte": "Titre provisoire : « Confisquer les profits de guerre » (32 caractères). Teasing : « Des milliards de profits… mais combien taxables en France ? ». Ces formulations sont-elles fidèles et assez claires ?"
       }
-    ]
+    ],
+    "archive": {
+      "date": "2026-10-07",
+      "version_suivante": "data/analyses finales/Roussel/roussel_confiscation_profits_total_etape1_v2.json",
+      "synthese": "La v2 intègre quatre apports de la relecture : l'expression « profits de guerre » n'est plus reprise à son compte par la fiche (elle reste citée comme celle du candidat) ; le plafonnement volontaire des prix de TotalEnergies figure désormais parmi les faits établis ; la demande d'une taxe européenne sur les surprofits, portée en 2026 par six États membres sans la France, est ajoutée au contexte international et présentée comme alternative ; le risque que le groupe éloigne de France une partie de ses centres de décision est ajouté aux angles morts.\n\nAucune note ne change : le score reste de 48 sur 100. Le titre définitif sera fixé à l'étape suivante.",
+      "reponses": [
+        {
+          "commentaire_id": "cmuwr8rif000204l5096z7iqx",
+          "auteur": "Alexis C.",
+          "section": "Confisquer les profits de guerre de Total : la cible est hors de portée",
+          "commentaire": "Les \"profits de guerre\" ? Le terme n'est pas le bon non plus, laisse supposer que Total est partie prenante à un conflit, alors que les profits engendrés n'en sont que la conséquence.",
+          "reponse": "Juste : « profits de guerre » peut laisser croire que Total participe au conflit, alors que ses profits viennent de la hausse des prix que le conflit provoque. L'expression vient du candidat lui-même (« les profits faits sur la guerre doivent être rendus illicites ») et peut rester entre guillemets quand on le cite.\n\nEn relisant, j'ai trouvé deux passages où la fiche la reprenait à son compte (les angles morts et le résumé) : la v2 parle désormais de profits exceptionnels tirés de la flambée des prix. Le titre public est fixé à l'étape suivante : je transmets ta remarque pour qu'il n'utilise pas l'expression.",
+          "retenu": true
+        },
+        {
+          "commentaire_id": "cmuwrhiuc000304l5dsvtqi2m",
+          "auteur": "Alexis C.",
+          "section": "Ce qui est établi",
+          "commentaire": "Il serait aussi pertinent d'ajouter le plafond des prix décidés par TotalEnergies en France, dispositif unique au monde et qui participe à la limite de l'impact de la hausse des prix sur le pouvoir d'achat.",
+          "reponse": "Bonne idée, c'est ajouté. La v1 parlait de ce plafonnement seulement comme d'un risque (le groupe menace de le retirer en cas de nouvelle taxe). La v2 le présente aussi comme un fait établi : 1,99 euro le litre d'essence et 2,25 euros le gazole dans environ 3 300 stations, ce qui limite l'effet de la flambée pour ses clients.\n\nJe n'ai pas repris « unique au monde », faute de source qui le vérifie. La note d'effets rebonds (11/20) ne change pas : elle tenait déjà compte de ce plafond.",
+          "retenu": true
+        },
+        {
+          "commentaire_id": "cmuwrim2x000404l5kmtcmojq",
+          "auteur": "Alexis C.",
+          "section": "Ce qui est probable",
+          "commentaire": "Certains pays de l'UE veulent aussi instaurer un mécanisme au niveau européen, ce qui ciblerait TotalEnergies.",
+          "reponse": "Exact, et c'est un point important pour la fiche. Le 4 avril 2026, l'Allemagne, l'Italie, l'Espagne, le Portugal et l'Autriche ont demandé à la Commission un instrument européen sur le modèle de 2022, mieux ciblé sur les profits réalisés à l'étranger ; la Pologne s'y est jointe en août. La France n'a pas signé, et la Commission n'a pas donné suite pour l'instant.\n\nLa v2 l'ajoute au contexte international et à ce qui reste inconnu (l'issue de cette demande), et le présente dans l'analyse d'efficacité comme une alternative : c'est la seule voie identifiée pour atteindre les profits que Total réalise dans d'autres pays européens. Comme son issue est incertaine et qu'elle ne dépend pas de la France seule, la note d'efficacité ne change pas.",
+          "retenu": true
+        },
+        {
+          "commentaire_id": "cmuwrkdxx000504l5uojaqo0y",
+          "auteur": "Alexis C.",
+          "section": "Angles morts et effets de bord",
+          "commentaire": "Un départ de TotalEnergies de France pourrait-il être un effet rebond ? La société a lancée une cotation secondaire à NYC en plus de Paris, l'actionnariat est également américain pour une proportion importante du capital.",
+          "reponse": "Oui, c'est un effet rebond plausible, ajouté aux angles morts. Les faits : TotalEnergies est coté à New York en actions ordinaires depuis le 8 décembre 2025, environ 48 % de son capital était détenu par des investisseurs nord-américains en 2024, et son PDG a déjà évoqué un transfert de la cotation principale, en assurant que le siège resterait à Paris.\n\nLa v2 précise que l'effet sur l'impôt serait faible, puisque Total ne paie déjà presque pas d'impôt sur les sociétés en France, mais qu'un éloignement des centres de décision pourrait toucher les emplois de siège, les investissements et le raffinage. Faute d'élément qui en mesure l'ampleur, la note d'effets rebonds reste à 11/20.",
+          "retenu": true
+        }
+      ]
+    }
   }
 }
