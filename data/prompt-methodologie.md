@@ -8,6 +8,8 @@ L'analyse, les notes, la qualification juridique, l'arbitrage et le calcul final
 
 (Mise à jour du 5 octobre 2026 : nouvelles règles pour `titre_fiche` (35 caractères maximum, titre raccourci de la proposition) et pour `teaser_accueil` / `phrase_teasing` (une phrase de teasing de 60 caractères maximum), afin qu'ils s'affichent en entier sur la page d'accueil. Le 6 octobre 2026, la limite de `teaser_accueil` / `phrase_teasing` passe à 200 caractères : une ou deux phrases.)
 
+(Mise à jour du 8 octobre 2026 : règle 6 bis et critère 1b. Deux effets budgétaires de sens opposé, chacun borné par l'analyste et d'échelle proche, donnent un effet net à peu près neutre : c'est un résultat établi, noté INCERTAIN documenté, et non FRAGILE.)
+
 ================================================================================
 ÉTAPE 1 : Claude (Analyse initiale)
 ================================================================================
@@ -267,11 +269,17 @@ prévoient les RÈGLES DE RECHERCHE). Une fois les deux ordres de grandeur
 posés, même approximatifs, comparer leurs échelles : si l'un domine
 manifestement l'autre, le sens net de la mesure peut être qualifié
 d'INCERTAIN documenté plutôt que de FRAGILE, avec les deux bornes citées et
-leurs limites explicitées. Réserver FRAGILE aux cas où, après une telle
-tentative sérieuse et documentée, aucun ordre de grandeur n'a pu être établi
-pour au moins un des sous-effets, où les deux échelles obtenues sont trop
-proches pour trancher un sens net, ou où le résultat est contredit par une
-source publique.
+leurs limites explicitées. Si les deux échelles obtenues sont proches, au
+point qu'aucun sens net ne domine, ce constat est lui-même un résultat
+établi : la mesure est à peu près neutre pour les comptes, à un écart limité
+près selon son calibrage. Il relève alors d'INCERTAIN documenté (en général
+dans le bas de la fourchette, de 3 à 5), avec les deux bornes citées, et le
+texte doit dire clairement si la mesure ne règle pas le problème financier
+du système visé. Réserver FRAGILE aux cas où, après une telle tentative
+sérieuse et documentée, aucun ordre de grandeur n'a pu être établi pour au
+moins un des sous-effets, où l'un des sous-effets ne peut pas être borné au
+point qu'une dérive importante du solde ne peut pas être exclue, ou où le
+résultat est contredit par une source publique.
 
 7. **Notation**
 Appliquer le barème défini plus bas (100 points, 5 critères).
@@ -423,7 +431,9 @@ sous-critère, même quand le candidat lui-même n'a fourni aucun chiffre.
   extrapolation, sans confirmation ni contradiction franche par une source
   officielle.
 - FRAGILE (0-2) : le sens de l'effet est lui-même indéterminable en l'état
-  (mécanismes de sens opposé combinés sans pondération connue), ou aucun
+  (mécanismes de sens opposé dont au moins un n'a pas pu être borné, voir
+  6 bis ; deux effets bornés et d'échelle proche relèvent d'INCERTAIN
+  documenté, pas de FRAGILE), ou aucun
   ordre de grandeur n'a pu être établi malgré une tentative sérieuse de
   calcul par l'analyste, ou le résultat est contredit par une source
   publique. **L'absence de chiffrage par le candidat n'est jamais, à elle
