@@ -25,7 +25,8 @@ export const revalidate = 300;
 export default async function Home() {
   const [featuredRotation, topDeclarations, classement, t, indexRecherche] =
     await Promise.all([
-      getFeaturedRotation(),
+      // Analyses publiées et dossiers, dans un seul ordre chronologique.
+      getFeaturedRotation(getHorsSeriesAccueil()),
       getTopDeclarations(4),
       // Classement complet (même requête, sans limite) : le bloc en affiche
       // 5 et déroule les suivants au clic, sans nouvel appel réseau.
@@ -35,14 +36,6 @@ export default async function Home() {
       // Données de la barre de recherche (recherche faite dans le navigateur)
       getIndexRecherche(),
     ]);
-
-  // Carrousel : les hors-séries mis en avant (bloc `accueil` de leur JSON)
-  // passent en tête, avec leur propre présentation (voir FeaturedCard),
-  // puis les déclarations analysées.
-  const carrousel = [
-    ...getHorsSeriesAccueil().map((dossier) => ({ dossier })),
-    ...featuredRotation,
-  ];
 
   // Seuls les candidats classés (au moins une déclaration analysée).
   const rankedCandidates = classement.filter(
@@ -71,7 +64,7 @@ export default async function Home() {
       <section className="w-full px-6 pb-10 pt-12 sm:px-8 sm:pb-14 sm:pt-20">
         <div className="mx-auto grid w-full max-w-[1280px] grid-cols-1 items-center gap-10 lg:grid-cols-[1.08fr_1fr] lg:gap-14">
           <HeroText textes={t} documents={indexRecherche} />
-          <FeaturedCarousel items={carrousel} />
+          <FeaturedCarousel items={featuredRotation} />
         </div>
       </section>
 

@@ -2,6 +2,7 @@
   "slug": "rn-plan-budgetaire",
   "numero": 1,
   "etiquette": "Finances publiques · Octobre 2026",
+  "datePublication": "2026-10-07",
   "titre": "Le plan budgétaire de Marine Le Pen, poste par poste",
   "motItalique": "budgétaire",
   "description": "Le 6 octobre 2026, le Rassemblement national a présenté un contre-budget pour 2027 et une trajectoire jusqu'en 2032, avec 140 milliards d'euros d'économies nettes. Nous analysons chaque grand poste dans une fiche notée sur 100, puis l'ensemble du plan.",
@@ -18,9 +19,10 @@
   },
   "accueil": {
     "afficher": true,
+    "titre": "Le plan budgétaire de Marine Le Pen",
     "accroche": "140 milliards d'économies promises d'ici 2032. Nous vérifions, poste par poste, ce qui tient face aux budgets réels, au droit et aux précédents."
   },
-  "accent": "#be185d",
+  "accent": "#f8b444",
   "introduction": {
     "titre": "L'essentiel",
     "paragraphes": [

@@ -45,10 +45,11 @@ export function texteAvancement({ publiees, enRelecture, aVenir }) {
   return morceaux.join(" · ");
 }
 
-// Hors-séries mis en avant dans le carrousel de l'accueil (bloc `accueil`
-// du JSON, avec `afficher: true`), réduits aux seules données utiles à la
+// Dossiers à afficher dans le carrousel de l'accueil (bloc `accueil` du
+// JSON, avec `afficher: true`), réduits aux seules données utiles à la
 // carte, qui est un composant client (le JSON complet n'est ainsi pas
-// envoyé au navigateur).
+// envoyé au navigateur). Ils y sont rangés à leur date de mise en ligne
+// (`datePublication`) parmi les analyses, voir getFeaturedRotation.
 export function getHorsSeriesAccueil() {
   return HORS_SERIES.filter((hs) => hs.accueil?.afficher).map((hs) => {
     const avancement = avancementHorsSerie(hs);
@@ -56,9 +57,12 @@ export function getHorsSeriesAccueil() {
       slug: hs.slug,
       numero: hs.numero,
       etiquette: hs.etiquette,
-      titre: hs.titre,
+      // Titre court pour la carte (limitée à 3 lignes comme les autres),
+      // sinon le titre complet.
+      titre: hs.accueil.titre ?? hs.titre,
       motItalique: hs.motItalique,
       accroche: hs.accueil.accroche,
+      datePublication: hs.datePublication,
       photo: hs.photo,
       candidat: hs.candidat,
       avancement,

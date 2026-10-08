@@ -137,7 +137,11 @@ function reorderRecentNoAdjacentSameCandidat(items) {
 // publié, jamais du visiteur ni du moment de la visite) : voir le cache
 // ISR posé sur la page d'accueil, qui exige un rendu reproductible pour
 // pouvoir être partagé entre visiteurs.
-export async function getFeaturedRotation() {
+// `dossiers` (getHorsSeriesAccueil, src/lib/hors-series.js) : les dossiers
+// sont des cartes comme les autres, rangées à leur date de mise en ligne
+// (`datePublication`) et rattachées à leur candidat pour la règle « pas
+// deux cartes du même candidat à la suite ».
+export async function getFeaturedRotation(dossiers = []) {
   const analyses = await prisma.analyse.findMany({
     where: { statut: "publie" },
     orderBy: { createdAt: "desc" },
@@ -157,6 +161,17 @@ export async function getFeaturedRotation() {
     verdictDescription: analyse.resumeAccueil ?? analyse.verdict,
     dateSort: analyse.createdAt,
   }));
+
+  for (const dossier of dossiers) {
+    items.push({
+      dossier,
+      personName: dossier.candidat?.nom ?? `dossier-${dossier.slug}`,
+      dateSort: new Date(dossier.datePublication ?? 0),
+    });
+  }
+  // Le regroupement par candidat suppose chaque groupe trié du plus récent
+  // au plus ancien : les dossiers ajoutés en fin de liste y sont replacés.
+  items.sort((a, b) => b.dateSort - a.dateSort);
 
   return reorderRecentNoAdjacentSameCandidat(items);
 }

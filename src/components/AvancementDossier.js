@@ -1,11 +1,13 @@
-// Barre d'avancement d'un hors-série : un segment par fiche, rose foncé si
-// publiée, rose clair si en relecture, gris si à venir. `avancement` vient
+import { NUANCES_JAUNE } from "@/lib/couleurs-dossier";
+
+// Barre d'avancement d'un dossier : un segment par fiche, jaune des dossiers
+// si publiée, jaune clair si en relecture, gris si à venir. `avancement` vient
 // de avancementHorsSerie (src/lib/hors-series.js) ; `texte` est la phrase
 // lisible (texteAvancement), qui porte l'information pour les lecteurs
 // d'écran (la barre est purement visuelle).
 const COULEUR_STATUT = {
-  publiee: "bg-pink-700",
-  relecture: "bg-pink-300",
+  publiee: NUANCES_JAUNE[0],
+  relecture: NUANCES_JAUNE[2],
   a_venir: "bg-zinc-200",
 };
 

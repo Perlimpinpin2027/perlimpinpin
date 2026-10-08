@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { getScoreBadge } from "@/lib/score";
 import AvancementDossier from "@/components/AvancementDossier";
 import TitreAvecItalique from "@/components/TitreAvecItalique";
+import { DOSSIER, JAUNE_DOSSIER } from "@/lib/couleurs-dossier";
 
 const SWIPE_THRESHOLD_PX = 40;
 // Délai avant d'afficher une flèche : évite les clignotements quand la
@@ -18,8 +19,9 @@ const ARROW_REVEAL_DELAY_MS = 100;
 // (← →) et au swipe sur mobile.
 // Reçoit l'état du carrousel (index/total/callbacks) depuis FeaturedCarousel.
 // `dossier` (getHorsSeriesAccueil, src/lib/hors-series.js) : la carte
-// présente alors un dossier, avec une mise en page propre (rose, barre
-// d'avancement, bouton « Lire le dossier ») mais la même navigation.
+// présente alors un dossier, avec sa couleur propre (jaune), une barre
+// d'avancement et un bouton « Lire le dossier », mais les mêmes dimensions
+// et la même navigation que les autres cartes.
 export default function FeaturedCard({
   dossier,
   propositionId,
@@ -131,7 +133,7 @@ export default function FeaturedCard({
     >
       <div
         key={currentIndex}
-        className={`flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-[0_24px_60px_-30px_rgba(30,41,82,0.35)] sm:min-h-[540px] sm:flex-row ${dossier ? "ring-2 ring-pink-200" : "ring-1 ring-zinc-100"} ${slideAnimationClass}`}
+        className={`flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-[0_24px_60px_-30px_rgba(30,41,82,0.35)] sm:min-h-[540px] sm:flex-row ring-1 ring-zinc-100 ${slideAnimationClass}`}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
@@ -226,52 +228,51 @@ export default function FeaturedCard({
   );
 }
 
-// Contenu de la carte quand elle présente un dossier : même gabarit que
-// la carte d'une déclaration (photo à gauche, texte à droite, bouton en
-// pied), mais traitement rose propre aux dossiers. Le bloc « Score » est
-// remplacé par l'avancement du dossier, la note globale n'existant qu'une
-// fois toutes les fiches publiées.
+// Contenu de la carte quand elle présente un dossier : même gabarit et
+// mêmes dimensions que la carte d'une déclaration (image sur les 2/5 à
+// gauche, titre limité à 3 lignes, bloc en pied, bouton), dans le jaune
+// propre aux dossiers (JAUNE_DOSSIER, le jaune de l'illustration). Le bloc
+// « Score » est remplacé par l'avancement du dossier, la note globale
+// n'existant qu'une fois toutes les fiches publiées.
 function ContenuDossier({ dossier }) {
   const href = `/dossiers/${dossier.slug}`;
+  const alt = dossier.photo?.alt ?? dossier.candidat?.nom ?? "";
   return (
     <>
-      {/* Image du dossier, jamais recadrée. Sur téléphone (image au-dessus
-          du texte, pleine largeur) : l'illustration 4:5 (`photo.src`). Dès
-          sm (image à gauche, sur la moitié de la carte) : la version
-          verticale 1:2 (`photo.srcVertical`), faite au format de cette
-          colonne et terminée par un bandeau de couleur ; le fond de la
-          colonne (`photo.fondVertical`, même couleur) prolonge ce bandeau si
-          la carte est un peu plus haute. */}
+      {/* Image du dossier, jamais recadrée sur les côtés. Sur téléphone
+          (image au-dessus du texte) : l'illustration 4:5 (`photo.src`),
+          comme les portraits des autres cartes. Dès sm (colonne de gauche,
+          2/5 de la carte comme les autres) : la version verticale 1:2
+          (`photo.srcVertical`), calée en haut et en position absolue pour
+          ne jamais imposer sa hauteur à la carte ; le fond jaune de la
+          colonne prolonge son bandeau jaune jusqu'en bas. */}
       <div
-        className="w-full shrink-0 bg-pink-50 sm:w-1/2"
-        style={dossier.photo?.fondVertical ? { backgroundColor: dossier.photo.fondVertical } : undefined}
+        className="relative w-full shrink-0 overflow-hidden sm:w-2/5"
+        style={{ backgroundColor: dossier.photo?.fondVertical ?? JAUNE_DOSSIER }}
       >
         <img
           src={dossier.photo?.src || "/avatar-placeholder.svg"}
-          alt={dossier.photo?.alt ?? dossier.candidat?.nom ?? ""}
-          className={`block h-auto w-full ${dossier.photo?.srcVertical ? "sm:hidden" : ""}`}
+          alt={alt}
+          className={`block aspect-[4/5] w-full object-cover object-top ${dossier.photo?.srcVertical ? "sm:hidden" : "sm:absolute sm:inset-0 sm:h-full"}`}
         />
         {dossier.photo?.srcVertical ? (
           <img
             src={dossier.photo.srcVertical}
-            alt={dossier.photo?.alt ?? dossier.candidat?.nom ?? ""}
-            className="hidden h-auto w-full sm:block"
+            alt={alt}
+            className="absolute left-0 top-0 hidden h-auto w-full sm:block"
           />
         ) : null}
       </div>
 
-      {/* Marge droite élargie (souris uniquement), comme pour les
-          déclarations : place réservée à la flèche « suivante ». */}
+      {/* Même structure que le texte d'une carte déclaration ; marge
+          droite élargie (souris uniquement) pour la flèche « suivante ». */}
       <div className="flex flex-1 flex-col p-6 sm:p-8 [@media(hover:hover)]:pr-14!">
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-          <span className="rounded-full bg-pink-700 px-3 py-1.5 text-xs font-semibold uppercase tracking-widest text-white">
-            Dossier n°{dossier.numero}
-          </span>
-          <span className="text-xs font-semibold uppercase tracking-[0.12em] text-pink-700">
-            {`// ${dossier.etiquette}`}
-          </span>
-        </div>
-        <p className="mt-3 shrink-0 text-2xl font-extrabold leading-tight tracking-tight text-zinc-950 sm:text-[1.9rem]">
+        <span
+          className={`w-fit rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-widest text-zinc-950 ${DOSSIER.fond}`}
+        >
+          Dossier n°{dossier.numero}
+        </span>
+        <p className="mt-3 line-clamp-3 shrink-0 pb-0.5 font-sans text-2xl font-bold leading-tight tracking-tight text-zinc-950 sm:text-[1.7rem]">
           <TitreAvecItalique titre={dossier.titre} motItalique={dossier.motItalique} />
         </p>
         {dossier.accroche ? (
@@ -279,7 +280,7 @@ function ContenuDossier({ dossier }) {
         ) : null}
 
         <div className="mt-auto border-t border-zinc-200 pt-5 max-sm:mt-2">
-          <span className="text-xs font-semibold uppercase tracking-widest text-slate-500">
+          <span className="font-mono text-xs uppercase tracking-widest text-slate-500">
             Avancement du dossier
           </span>
           <AvancementDossier
@@ -291,7 +292,7 @@ function ContenuDossier({ dossier }) {
 
         <Link
           href={href}
-          className="mt-5 flex w-full items-center justify-between gap-2 rounded-xl bg-pink-700 px-6 py-3.5 text-base font-medium text-white transition-colors hover:bg-pink-800"
+          className={`mt-5 flex w-full items-center justify-between gap-2 rounded-xl px-6 py-3.5 text-base font-semibold text-zinc-950 transition-colors ${DOSSIER.fond} ${DOSSIER.fondSurvol}`}
         >
           Lire le dossier
           <span aria-hidden="true">→</span>

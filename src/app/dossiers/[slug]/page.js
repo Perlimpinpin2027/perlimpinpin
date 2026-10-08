@@ -5,12 +5,13 @@ import SectionHeading from "@/components/SectionHeading";
 import { getHorsSerie, getHorsSerieSlugs } from "@/lib/hors-series";
 import { getScoresPublies } from "@/lib/queries";
 import { getScoreBadge, getScoreBands, VERDICT_BG_CLASSES } from "@/lib/score";
+import { DOSSIER, NUANCES_JAUNE } from "@/lib/couleurs-dossier";
 
 // Pages dossier (/dossiers/[slug]) : un plan d'ensemble d'un candidat (ex.
 // son plan budgétaire) découpé en plusieurs fiches notées, lu comme un
 // article. Tout le contenu vient du JSON du dossier (data/hors-series/, voir
 // src/lib/hors-series.js : noms de fichiers internes inchangés) ; seule la
-// couleur rose (pink-*) est propre aux dossiers. Une seule police sur la page : Geist (font-sans).
+// couleur jaune (src/lib/couleurs-dossier.js) est propre aux dossiers. Une seule police sur la page : Geist (font-sans).
 // Les slugs sont connus au build : tout autre slug renvoie une 404.
 export const dynamicParams = false;
 
@@ -37,9 +38,10 @@ const CONTENEUR = "mx-auto w-full max-w-[1280px]";
 const TITRE_SECTION = "font-sans text-3xl font-extrabold tracking-tight text-zinc-950 sm:text-[2.125rem]";
 const OMBRE_CARTE = "shadow-[0_24px_60px_-30px_rgba(30,41,82,0.35)]";
 
-// Nuances roses des blocs de la barre de décomposition dont la fiche n'est
-// pas encore publiée, dans l'ordre des postes (du plus foncé au plus clair).
-const ROSES_DECOMPOSITION = ["bg-pink-700", "bg-pink-600", "bg-pink-400", "bg-pink-200"];
+// Blocs de la barre de décomposition dont la fiche n'est pas encore publiée :
+// nuances du jaune des dossiers, dans l'ordre des postes (de la plus
+// soutenue à la plus claire). Une fiche publiée prend la couleur de son
+// verdict.
 // Poste sans fiche (« Autres ») : hachures grises.
 const HACHURES =
   "bg-[repeating-linear-gradient(45deg,var(--color-zinc-200)_0_8px,var(--color-zinc-100)_8px_16px)]";
@@ -88,7 +90,7 @@ function LienSource({ source, prefixe = "Source : ", className = "" }) {
 }
 
 // Texte courant « article », hors carte, en colonne de lecture.
-// `chapo` : le premier paragraphe est mis en avant avec une fine barre rose.
+// `chapo` : le premier paragraphe est mis en avant avec une fine barre jaune.
 function Prose({ paragraphes, chapo = false, className = "" }) {
   if (!paragraphes?.length) return null;
   return (
@@ -96,7 +98,7 @@ function Prose({ paragraphes, chapo = false, className = "" }) {
       {paragraphes.map((paragraphe, i) => (
         <p
           key={paragraphe}
-          className={chapo && i === 0 ? "border-l-2 border-pink-700 pl-4 font-medium text-zinc-900" : undefined}
+          className={chapo && i === 0 ? `border-l-4 ${DOSSIER.bordure} pl-4 font-medium text-zinc-900` : undefined}
         >
           {paragraphe}
         </p>
@@ -187,7 +189,7 @@ function CarteFiche({ fiche, candidat, score }) {
           <a href="/relectures" className="text-blue-950 hover:underline">
             Commenter (adhérents) <span aria-hidden="true">→</span>
           </a>
-          <Link href="/nous-rejoindre" className="text-pink-700 hover:underline">
+          <Link href="/nous-rejoindre" className={`text-zinc-950 underline decoration-2 underline-offset-4 ${DOSSIER.soulignement}`}>
             Rejoindre le Club
           </Link>
         </div>
@@ -268,9 +270,9 @@ export default async function HorsSeriePage({ params }) {
       : undefined;
 
   // Couleur de chaque bloc de la barre de décomposition : verdict de la
-  // fiche une fois publiée, sinon rose (dans l'ordre des postes), et
+  // fiche une fois publiée, sinon jaune (dans l'ordre des postes), et
   // hachures grises pour le poste sans fiche.
-  let rangRose = 0;
+  let rangJaune = 0;
   const postes = decomposition.postes.map((poste) => {
     if (poste.fiche == null) {
       return { ...poste, fond: HACHURES, puce: "bg-zinc-200", estime: true };
@@ -279,7 +281,7 @@ export default async function HorsSeriePage({ params }) {
     const fond =
       score != null
         ? VERDICT_BG_CLASSES[getScoreBadge(score).color]
-        : ROSES_DECOMPOSITION[Math.min(rangRose++, ROSES_DECOMPOSITION.length - 1)];
+        : NUANCES_JAUNE[Math.min(rangJaune++, NUANCES_JAUNE.length - 1)];
     return { ...poste, fond, puce: fond, estime: false };
   });
 
@@ -298,7 +300,7 @@ export default async function HorsSeriePage({ params }) {
           <div className={`${CONTENEUR} grid grid-cols-1 items-center gap-10 lg:grid-cols-[1.08fr_1fr] lg:gap-14`}>
             <div className="flex flex-col gap-6">
               <div className="flex flex-wrap items-center gap-3">
-                <span className="rounded-full bg-pink-700 px-3 py-1.5 text-xs font-semibold uppercase tracking-widest text-white">
+                <span className={`rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-widest text-zinc-950 ${DOSSIER.fond}`}>
                   Dossier n°{hs.numero}
                 </span>
                 <Etiquette>{hs.etiquette}</Etiquette>
@@ -331,7 +333,7 @@ export default async function HorsSeriePage({ params }) {
 
             {photo?.src ? (
               <figure className="mx-auto flex w-full max-w-md flex-col gap-2 lg:max-w-[460px]">
-                <div className={`relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-pink-50 ring-1 ring-zinc-100 ${OMBRE_CARTE}`}>
+                <div className={`relative aspect-[4/5] w-full overflow-hidden rounded-2xl ring-1 ring-zinc-100 ${DOSSIER.fondClair} ${OMBRE_CARTE}`}>
                   <img
                     src={photo.src}
                     alt={photo.alt ?? hs.candidat.nom}
@@ -407,7 +409,7 @@ export default async function HorsSeriePage({ params }) {
               ))}
             </div>
             {documents.aNoter && (
-              <div className="max-w-4xl rounded-2xl bg-pink-50 px-5 py-4 text-[15px] leading-relaxed text-zinc-700">
+              <div className={`max-w-4xl rounded-2xl px-5 py-4 text-[15px] leading-relaxed text-zinc-700 ${DOSSIER.fondClair}`}>
                 <strong className="text-zinc-900">À noter :</strong>{" "}
                 {documents.aNoter}
               </div>
@@ -551,7 +553,7 @@ export default async function HorsSeriePage({ params }) {
               <ol className="grid grid-cols-1 gap-8 md:grid-cols-3">
                 {selection.criteres.map((critere, i) => (
                   <li key={critere.titre} className="flex flex-col gap-2">
-                    <span aria-hidden="true" className="text-4xl font-extrabold leading-none text-pink-700">
+                    <span aria-hidden="true" className={`text-4xl font-extrabold leading-none ${DOSSIER.texte}`}>
                       {i + 1}
                     </span>
                     <h3 className="text-lg font-bold text-zinc-900">{critere.titre}</h3>
@@ -560,7 +562,7 @@ export default async function HorsSeriePage({ params }) {
                 ))}
               </ol>
               {selection.horsChamp ? (
-                <div className="max-w-4xl rounded-2xl bg-pink-50 px-5 py-4 text-[15px] leading-relaxed text-zinc-700">
+                <div className={`max-w-4xl rounded-2xl px-5 py-4 text-[15px] leading-relaxed text-zinc-700 ${DOSSIER.fondClair}`}>
                   {selection.horsChamp}
                 </div>
               ) : null}
