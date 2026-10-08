@@ -17,7 +17,7 @@
   },
   "contexte_national": {
     "synthese": "Le paritarisme sait équilibrer la retraite complémentaire, mais a échoué en 2025 sur l'âge du régime de base.",
-    "texte": "Trois expériences françaises éclairent la mesure, et elles ne vont pas dans le même sens.\n\n**La retraite complémentaire Agirc-Arrco montre que syndicats et patronat peuvent prendre seuls des décisions impopulaires.** En 2015, face à l'épuisement annoncé de leurs réserves, ils ont signé un accord de sous-indexation des pensions (un point sous l'inflation pendant trois ans) et créé un malus temporaire de 10 % pour inciter à partir plus tard. Le régime suit une règle d'or (au moins six mois de prestations en réserve sur quinze ans glissants) et disposait de 79 milliards d'euros de réserves fin 2023 (COR, 2024).\n\n**L'assurance-chômage, le modèle cité par le candidat, montre l'inverse : un paritarisme sous tutelle.** Depuis 2018, l'État impose un cadrage financier préalable. En 2019, faute d'accord, il a fixé les règles par décret. Il a aussi prélevé environ 12 milliards d'euros sur l'Unédic entre 2023 et 2026 pour financer d'autres politiques, alors que la dette du régime reste proche de 59 milliards d'euros. Le « modèle assurance-chômage » est donc aujourd'hui un modèle où l'État garde la main sur l'essentiel.\n\n**Le conclave de 2025 est le précédent le plus proche, et c'est un échec.** Force ouvrière s'est retirée dès l'ouverture, la CGT et l'U2P ont suivi en mars ; les organisations restantes n'ont pas trouvé d'accord sur l'âge de départ. Le conflit sur l'âge oppose des positions de principe, pas seulement des chiffres.\n\nSur le plan budgétaire, le COR prévoit un déficit du système de 0,2 % du PIB en 2030 (environ 6,8 milliards d'euros) et de 2,4 % en 2070 dans son scénario central (rapport de juin 2026). La suspension de la réforme de 2023 coûte environ 1,8 milliard d'euros par an jusqu'en 2032."
+    "texte": "Trois expériences françaises éclairent la mesure, et elles ne vont pas dans le même sens.\n\n**La retraite complémentaire Agirc-Arrco montre que syndicats et patronat peuvent prendre seuls des décisions impopulaires.** En 2015, face à l'épuisement annoncé de leurs réserves, ils ont signé un accord de sous-indexation des pensions (un point sous l'inflation pendant trois ans) et créé un malus temporaire de 10 % pour inciter à partir plus tard. Le régime suit une règle d'or (au moins six mois de prestations en réserve sur quinze ans glissants) et disposait de 79 milliards d'euros de réserves fin 2023 (COR, 2024).\n\n**L'assurance-chômage, le modèle cité par le candidat, montre l'inverse : un paritarisme sous tutelle.** Depuis 2018, l'État impose un cadrage financier préalable. En 2019, faute d'accord, il a fixé les règles par décret. Il a aussi prélevé environ 12 milliards d'euros sur l'Unédic entre 2023 et 2026 pour financer d'autres politiques, alors que la dette du régime reste proche de 59 milliards d'euros. Le « modèle assurance-chômage » est donc aujourd'hui un modèle où l'État garde la main sur l'essentiel.\n\n**Le conclave de 2025 est le précédent le plus proche, et c'est un échec.** Force ouvrière s'est retirée dès l'ouverture, la CGT et l'U2P ont suivi en mars ; les organisations restantes n'ont pas trouvé d'accord sur l'âge de départ. Le conflit sur l'âge oppose des positions de principe, pas seulement des chiffres.\n\nSur le plan budgétaire, le COR prévoit un déficit du système de 0,2 % du PIB en 2030 (environ 6,8 milliards d'euros) et de 2,4 % en 2070 dans son scénario central (rapport de juin 2026). Selon le gouvernement, la suspension de la réforme de 2023 coûte environ 400 millions d'euros en 2026 et 1,8 milliard d'euros en 2027."
   },
   "contexte_international": {
     "synthese": "Des réformes négociées existent ailleurs, mais rarement avec un transfert complet de la décision aux partenaires sociaux.",
@@ -92,61 +92,14 @@
     "Gouvernement, gouvernance du système universel de retraite (projet 2019-2020) : https://www.info.gouv.fr/actualite/un-nouveau-modele-de-gouvernance-et-de-pilotage-pour-retablir-la-confiance-des-francais-dans-notre",
     "Acteurs publics, « Les limites de la méthode Villepin », 22/03/2006 : https://acteurspublics.fr/articles/les-limites-de-la-methode-villepin/",
     "Baccaro L., « Negotiating the Italian Pension Reform with the Unions: Lessons for Corporatist Theory », Industrial and Labor Relations Review, 55(3), 2002 : https://web.mit.edu/baccaro/www/papers/ILRR-02.pdf",
-    "Sénat, rapport d'information n° 668 sur le Fonds de solidarité vieillesse, 08/06/2016 : https://www.senat.fr/rap/r15-668/r15-668_mono.html"
+    "Sénat, rapport d'information n° 668 sur le Fonds de solidarité vieillesse, 08/06/2016 : https://www.senat.fr/rap/r15-668/r15-668_mono.html",
+    "La finance pour tous, « Retraites : suspension de la réforme des retraites de 2023 », 16/10/2025 : https://www.lafinancepourtous.com/2025/10/16/retraites-suspension-de-la-reforme-des-retraites-de-2023/"
   ],
   "niveau_de_confiance": "Moyen : les précédents (Agirc-Arrco, assurance-chômage, conclave 2025) sont bien documentés, mais la note dépend d'une interprétation de la mesure que le candidat n'a pas précisée (cadre légal et dernier mot de l'État), et la citation exacte de l'émission du 17 septembre 2026 n'a pas pu être vérifiée.",
   "limites": {
     "synthese": "Note fondée sur une interprétation non précisée par le candidat et une citation non vérifiée sur l'enregistrement.",
-    "texte": "La page de l'émission LCI du 17 septembre 2026 n'a pas pu être consultée : **la formulation analysée est celle de la mesure telle que rapportée, non vérifiée mot pour mot**. Les détails du mécanisme (points, espérance de vie, étapes de la réforme) viennent d'une déclaration du 27 septembre 2026 rapportée par l'AFP. **L'analyse retient l'hypothèse d'un cadre fixé par la loi avec un dernier mot de l'État**, par analogie avec l'assurance-chômage ; un transfert sans filet de l'État changerait l'analyse juridique et budgétaire. Le document de référence des objectifs par domaine n'a pas été consulté directement ; l'objectif de référence retenu est celui de l'article L111-2-1 du Code de la sécurité sociale (retraite par répartition, niveau de vie des retraités, équité, pérennité financière). La mesure touche aussi au fonctionnement des institutions (catégorie Démocratie et institutions), mais la catégorie Retraites a été retenue car son objet est la réforme des retraites."
+    "texte": "La page de l'émission LCI du 17 septembre 2026 n'a pas pu être consultée : **la formulation analysée est celle de la mesure telle que rapportée, non vérifiée mot pour mot**. Les détails du mécanisme (points, espérance de vie, étapes de la réforme) viennent d'une déclaration du 27 septembre 2026 rapportée par l'AFP. **L'analyse retient l'hypothèse d'un cadre fixé par la loi avec un dernier mot de l'État**, par analogie avec l'assurance-chômage ; un transfert sans filet de l'État changerait l'analyse juridique et budgétaire. Le document de référence des objectifs par domaine n'a pas été consulté directement ; l'objectif de référence retenu est celui de l'article L111-2-1 du Code de la sécurité sociale (retraite par répartition, niveau de vie des retraités, équité, pérennité financière). La mesure touche aussi au fonctionnement des institutions (catégorie Démocratie et institutions), mais la catégorie Retraites a été retenue car son objet est la réforme des retraites. Version 2 (relecture interne du 8 octobre 2026, aucun commentaire du Club) : correction du coût de la suspension de la réforme de 2023 (400 millions d'euros en 2026 et 1,8 milliard en 2027 selon le gouvernement, et non 1,8 milliard par an jusqu'en 2032) ; aucune note ne change."
   },
   "resume_court": "Dominique de Villepin veut confier aux syndicats et au patronat la décision sur les modalités de la réforme des retraites, comme ils négocient déjà les règles de l'assurance-chômage. Le but : sortir du conflit des 64 ans par une réforme négociée plutôt qu'imposée. L'idée est faisable et a un vrai précédent, puisque les partenaires sociaux gèrent déjà seuls la retraite complémentaire du privé.\n\nMais tout dépend de ce qui se passe si la négociation échoue, ce que le candidat ne dit pas : le conclave de 2025 a échoué sur l'âge, et l'assurance-chômage citée en modèle est aujourd'hui largement pilotée par l'État. Note de 57/100, plausible sous condition, en supposant que la loi fixe le cadre et que l'État garde le dernier mot.",
-  "phrase_teasing": "Le conclave de 2025 a tenté l'expérience… sans accord.",
-  "relecture": {
-    "titre": "Retraites aux partenaires sociaux : faisable, mais qui tranche en cas d'échec ?",
-    "candidat": "Dominique de Villepin",
-    "parti": "La France humaniste",
-    "theme": "Retraites",
-    "date": "2026-10-06",
-    "version": 1,
-    "mesure_initiale": "Confier aux partenaires sociaux la décision sur les modalités de la réforme des retraites, sur le modèle de leur rôle dans l'assurance-chômage.",
-    "extrait": {
-      "citation": "« Inscrire dans la loi et même la Constitution la nécessité de passer par la négociation » (27 septembre 2026). Mesure analysée : confier aux partenaires sociaux la décision sur les modalités de la réforme des retraites, sur le modèle de l'assurance-chômage (LCI, 17 septembre 2026).",
-      "source": "Dominique de Villepin, LCI, 17/09/2026 (tf1info.fr) et déclaration du 27/09/2026 rapportée par l'AFP · Non vérifié sur l'enregistrement"
-    },
-    "verdict_tient": "la mesure est faisable et a un vrai précédent : les partenaires sociaux pilotent déjà seuls l'Agirc-Arrco et y ont pris des décisions difficiles en 2015.",
-    "verdict_flou": "rien n'est prévu en cas d'échec de la négociation, alors que le conclave de 2025 a échoué sur l'âge et que l'assurance-chômage, citée en modèle, est aujourd'hui pilotée par l'État.",
-    "niveau_confiance": "Moyen",
-    "questions": [
-      {
-        "titre": "Citation exacte et interprétation",
-        "texte": "La page de l'émission LCI du 17 septembre n'a pas pu être consultée. Quelqu'un a-t-il la citation exacte ? L'analyse suppose que la loi fixe le cadre et que l'État garde le dernier mot, comme pour l'assurance-chômage. Si Villepin envisage un transfert complet sans filet de l'État, la note juridique (8/10) baisserait et l'analyse budgétaire changerait."
-      },
-      {
-        "titre": "Efficacité à 13/30",
-        "texte": "La note s'appuie surtout sur l'échec du conclave de 2025 et sur l'incitation des organisations à ne pas signer si l'État tranche à leur place. Est-ce trop sévère au regard du succès de l'Agirc-Arrco, ou au contraire trop clément vu les divisions syndicales actuelles ?"
-      },
-      {
-        "titre": "Le modèle assurance-chômage",
-        "texte": "La fiche présente l'assurance-chômage comme un paritarisme sous tutelle (cadrage depuis 2018, décret en 2019, environ 12 milliards d'euros prélevés par l'État entre 2023 et 2026). Cette lecture vous paraît-elle juste, et faut-il en tenir compte contre la mesure ou contre l'État ?"
-      },
-      {
-        "titre": "Effets rebonds : retraités et fonction publique",
-        "texte": "La note de 11/20 retient que les retraités et les jeunes ne sont pas représentés et que la fonction publique n'entre pas dans le schéma. Ces effets sont-ils assez graves pour descendre plus bas, ou sont-ils compensés par le contrôle du Parlement ?"
-      },
-      {
-        "titre": "Catégorie et cohérence",
-        "texte": "La mesure est classée en Retraites plutôt qu'en Démocratie et institutions. Et l'alignement (7/10) retient la loi de 2007 comme continuité, malgré le CPE et la tension avec l'objectif de déficit sous 3 % en 2031. Êtes-vous d'accord ?"
-      },
-      {
-        "titre": "Titre et teaser provisoires",
-        "texte": "Titre court proposé : « Retraites gérées comme le chômage » (33 caractères). Teaser : « Le conclave de 2025 a tenté l'expérience… sans accord. » (54 caractères). Des propositions plus parlantes ?"
-      }
-    ],
-    "archive": {
-      "date": "2026-10-08",
-      "version_suivante": "data/analyses finales/DeVillepin/villepin_retraites_partenaires_sociaux_etape1_v2.json",
-      "synthese": "Relecture interne, sans commentaire du Club. Correction du coût de la suspension de la réforme de 2023 (400 millions d'euros en 2026 et 1,8 milliard en 2027, selon le gouvernement). Aucune note ne change : 57/100.",
-      "reponses": []
-    }
-  }
+  "phrase_teasing": "Le conclave de 2025 a tenté l'expérience… sans accord."
 }
