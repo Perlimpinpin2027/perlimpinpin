@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Depliable from "@/components/Depliable";
 import { getScoreBadge } from "@/lib/score";
 import { vignettePhoto } from "@/lib/photo-vignette";
 
@@ -19,15 +20,7 @@ const ICONES = {
   indemnites: (
     <path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Zm9 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM6 9v.01M18 15v.01" />
   ),
-  frais: (
-    <path d="M3 9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Zm5-2V5a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M3 12h18M12 11v2" />
-  ),
-  revenus: (
-    <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Zm0 0v5h5M9 13h6M9 17h4" />
-  ),
 };
-
-const INFOBULLE_NA = "Aucune déclaration d'intérêts publiée par la HATVP";
 
 const RUBRIQUES = [
   { cle: "mandat_actuel", titre: "Mandat actuel", icone: "mandat" },
@@ -53,29 +46,6 @@ function Icone({ nom }) {
   );
 }
 
-// Rubrique d'une seule ligne (indemnités, revenus déclarés), même mise en
-// page que les rubriques à puces. `mention` : précision facultative en petit
-// sous la valeur.
-function RubriqueLigne({ titre, icone, mention = null, children }) {
-  return (
-    <li className="flex gap-3">
-      <span className="mt-0.5 shrink-0 text-zinc-400">
-        <Icone nom={icone} />
-      </span>
-      <div className="min-w-0">
-        <p className="text-xs font-bold uppercase tracking-widest text-zinc-500">{titre}</p>
-        <p className="mt-1 text-sm text-zinc-700">{children}</p>
-        {mention ? <p className="mt-1 text-xs leading-snug text-zinc-400">{mention}</p> : null}
-      </div>
-    </li>
-  );
-}
-
-// Libellé + nombre, accordé : « Définitives : 4 » / « Définitive : 1 ».
-function compte(libelle, n) {
-  return `${libelle}${n > 1 ? "s" : ""} : ${n}`;
-}
-
 // Nom du site d'une source (infobulle des liens « Sources »).
 function nomDuSite(url) {
   try {
@@ -85,14 +55,112 @@ function nomDuSite(url) {
   }
 }
 
+const CLASSE_LIEN = "underline-offset-2 hover:text-zinc-600 hover:underline";
+
+// --- Rémunérations et moyens (data/remunerations-moyens.json) ---------------
+// Les lignes « À COMPLÉTER » sont déjà retirées par src/lib/parcours.js.
+
+function SousPartie({ titre, children }) {
+  return (
+    <div className="mt-3">
+      <p className="text-xs font-semibold text-zinc-500">{titre}</p>
+      <div className="mt-1 text-sm text-zinc-700">{children}</div>
+    </div>
+  );
+}
+
+function ListeMontants({ lignes }) {
+  return (
+    <ul className="flex flex-col gap-0.5">
+      {lignes.map(({ libelle, montant }) => (
+        <li key={libelle}>
+          {libelle} : {montant}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function DeclarationHatvp({ hatvp }) {
+  if (!hatvp) return null;
+  if (!hatvp.declaration) {
+    return (
+      <SousPartie titre="Déclaration HATVP">
+        <p>{hatvp.statut}</p>
+      </SousPartie>
+    );
+  }
+  return (
+    <SousPartie titre="Déclaration HATVP">
+      <p>{hatvp.declaration}</p>
+      {hatvp.url ? (
+        <p className="mt-0.5 text-xs text-zinc-400">
+          <a href={hatvp.url} target="_blank" rel="noopener noreferrer" className={CLASSE_LIEN}>
+            Voir la déclaration ↗
+          </a>
+        </p>
+      ) : null}
+      {hatvp.lignes.length ? (
+        <ul className="mt-2 flex flex-col gap-1.5">
+          {hatvp.lignes.map(({ libelle, montants }) => (
+            <li key={libelle}>
+              {libelle}
+              <span className="block text-xs text-zinc-500">
+                {montants.map(({ annee, montant }) => `${annee} : ${montant}`).join(" · ")}
+              </span>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </SousPartie>
+  );
+}
+
+function RemunerationsMoyens({ remunerations }) {
+  if (!remunerations) {
+    return <p className="mt-2 text-sm text-zinc-400">Données en cours de vérification.</p>;
+  }
+  const { sans_mandat: sansMandat, remuneration_personnelle: remuneration, moyens_du_mandat: moyens, hatvp } =
+    remunerations;
+
+  return (
+    <div className="pb-1">
+      {sansMandat ? (
+        <p className="mt-2 text-sm text-zinc-700">Sans mandat électif</p>
+      ) : (
+        <>
+          {remuneration.length ? (
+            <SousPartie titre="Rémunération personnelle">
+              <ListeMontants lignes={remuneration} />
+            </SousPartie>
+          ) : null}
+          {moyens.length ? (
+            <SousPartie titre="Moyens du mandat (ne constituent pas un revenu)">
+              <ListeMontants lignes={moyens} />
+            </SousPartie>
+          ) : null}
+        </>
+      )}
+      <DeclarationHatvp hatvp={hatvp} />
+    </div>
+  );
+}
+
+// --- Condamnations pénales (data/condamnations.json) ------------------------
+
+// « 4 définitives », « 1 non définitive ».
+function compte(n, libelle) {
+  return `${n} ${libelle}${n > 1 ? "s" : ""}`;
+}
+
 function ListeCondamnations({ titre, elements }) {
   if (!elements.length) return null;
   return (
     <div className="mt-2">
-      <p className="text-sm text-zinc-700">
+      <p>
         {titre} ({elements.length}) :
       </p>
-      <ul className="mt-1 flex list-disc flex-col gap-0.5 pl-4 text-sm text-zinc-700 marker:text-zinc-300">
+      <ul className="mt-1 flex list-disc flex-col gap-0.5 pl-4 marker:text-zinc-300">
         {elements.map((element) => (
           <li key={element}>{element}</li>
         ))}
@@ -101,72 +169,64 @@ function ListeCondamnations({ titre, elements }) {
   );
 }
 
-// Rubrique « Condamnations pénales » (data/condamnations.json) : les nombres
-// en synthèse, le détail repliable. Sans icône mais alignée sur le texte des
-// autres rubriques (pl-8 = largeur de l'icône + l'espace qui la suit).
+function Sources({ sources }) {
+  if (!sources.length) return null;
+  if (sources.length === 1) {
+    return (
+      <p className="mt-2 text-xs text-zinc-400">
+        <a href={sources[0]} target="_blank" rel="noopener noreferrer" title={nomDuSite(sources[0])} className={CLASSE_LIEN}>
+          Source ↗
+        </a>
+      </p>
+    );
+  }
+  return (
+    <p className="mt-2 text-xs text-zinc-400">
+      Sources :{" "}
+      {sources.map((url, index) => (
+        <span key={url}>
+          {index ? " · " : null}
+          <a href={url} target="_blank" rel="noopener noreferrer" title={nomDuSite(url)} className={CLASSE_LIEN}>
+            {index + 1}
+          </a>
+        </span>
+      ))}
+    </p>
+  );
+}
+
+// Bas de carte : résumé en gras italique toujours visible ; le détail
+// (italique simple) se déplie au clic. Rien à déplier sans condamnation.
 function Condamnations({ condamnations }) {
   const { definitives, non_definitives: nonDefinitives, note, sources } = condamnations;
-  const aucune = !definitives.length && !nonDefinitives.length;
+  const classeResume = "text-sm font-bold italic text-zinc-700";
+
+  if (!definitives.length && !nonDefinitives.length) {
+    return (
+      <div className="border-t border-zinc-100 py-4">
+        <p className={classeResume}>Aucune condamnation pénale publique recensée</p>
+      </div>
+    );
+  }
+
+  const resume = [
+    definitives.length ? compte(definitives.length, "définitive") : null,
+    nonDefinitives.length ? compte(nonDefinitives.length, "non définitive") : null,
+  ]
+    .filter(Boolean)
+    .join(", ");
 
   return (
-    <li className="pl-8">
-      <p className="text-xs font-bold uppercase tracking-widest text-zinc-500">Condamnations pénales</p>
-      {aucune ? (
-        <p className="mt-1 text-sm text-zinc-700">Aucune condamnation pénale publique recensée</p>
-      ) : (
-        <>
-          <p className="mt-1 text-sm text-zinc-700">
-            {[
-              definitives.length ? compte("Définitive", definitives.length) : null,
-              nonDefinitives.length ? compte("Non définitive", nonDefinitives.length) : null,
-            ]
-              .filter(Boolean)
-              .join(" · ")}
-          </p>
-          {note ? <p className="mt-1 text-xs italic leading-snug text-zinc-400">{note}</p> : null}
-          <details className="mt-1">
-            <summary className="cursor-pointer list-none text-xs text-zinc-400 hover:text-zinc-600 [&::-webkit-details-marker]:hidden">
-              Voir le détail
-            </summary>
-            <ListeCondamnations titre="Définitives" elements={definitives} />
-            <ListeCondamnations titre="Non définitives" elements={nonDefinitives} />
-          </details>
-        </>
-      )}
-      {sources.length ? (
-        <p className="mt-1 text-xs text-zinc-400">
-          {sources.length === 1 ? (
-            <a
-              href={sources[0]}
-              target="_blank"
-              rel="noopener noreferrer"
-              title={nomDuSite(sources[0])}
-              className="underline-offset-2 hover:text-zinc-600 hover:underline"
-            >
-              Source ↗
-            </a>
-          ) : (
-            <>
-              Sources :{" "}
-              {sources.map((url, index) => (
-                <span key={url}>
-                  {index ? " · " : null}
-                  <a
-                    href={url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title={nomDuSite(url)}
-                    className="underline-offset-2 hover:text-zinc-600 hover:underline"
-                  >
-                    {index + 1}
-                  </a>
-                </span>
-              ))}
-            </>
-          )}
-        </p>
-      ) : null}
-    </li>
+    <div className="border-t border-zinc-100 py-4">
+      <Depliable libelle={`Condamnations pénales : ${resume}`} classeBouton={`${classeResume} hover:text-zinc-900`}>
+        <div className="pb-1 text-sm italic text-zinc-700">
+          <ListeCondamnations titre="Définitives" elements={definitives} />
+          <ListeCondamnations titre="Non définitives" elements={nonDefinitives} />
+          {note ? <p className="mt-2 text-xs leading-snug text-zinc-500">{note}</p> : null}
+          <Sources sources={sources} />
+        </div>
+      </Depliable>
+    </div>
   );
 }
 
@@ -245,59 +305,20 @@ export default function CandidatCard({ parcours, score }) {
           );
         })}
 
-        {parcours.indemnites_elu ? (
-          <RubriqueLigne titre="Indemnités d'élu" icone="indemnites">
-            {parcours.indemnites_elu.affichage}
-          </RubriqueLigne>
-        ) : null}
-
-        {parcours.frais_mandat ? (
-          <RubriqueLigne titre="Frais de mandat" icone="frais" mention={parcours.frais_mandat.mention}>
-            {parcours.frais_mandat.sources[0] ? (
-              <a
-                href={parcours.frais_mandat.sources[0].url}
-                target="_blank"
-                rel="noopener noreferrer"
-                title={parcours.frais_mandat.sources[0].label}
-                className="underline-offset-2 hover:underline"
-              >
-                {parcours.frais_mandat.affichage}
-              </a>
-            ) : (
-              parcours.frais_mandat.affichage
-            )}
-          </RubriqueLigne>
-        ) : null}
-
-        <Condamnations condamnations={parcours.condamnations} />
-
-        {parcours.revenus_declares_hatvp ? (
-          <RubriqueLigne titre="Revenus déclarés (HATVP)" icone="revenus">
-            {parcours.revenus_declares_hatvp.affichage === "NA" ? (
-              <span title={INFOBULLE_NA} className="cursor-help text-zinc-400">
-                NA
-              </span>
-            ) : (
-              parcours.revenus_declares_hatvp.affichage
-            )}
-          </RubriqueLigne>
-        ) : null}
+        <li className="flex gap-3">
+          <span className="mt-0.5 shrink-0 text-zinc-400">
+            <Icone nom="indemnites" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <Depliable
+              libelle="Rémunérations et moyens"
+              classeBouton="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-900"
+            >
+              <RemunerationsMoyens remunerations={parcours.remunerations} />
+            </Depliable>
+          </div>
+        </li>
       </ul>
-
-      <p className="mt-3 pl-8 text-xs text-zinc-400">
-        {parcours.hatvp_url ? (
-          <a
-            href={parcours.hatvp_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline-offset-2 hover:text-zinc-600 hover:underline"
-          >
-            Fiche HATVP ↗
-          </a>
-        ) : (
-          "Pas de fiche HATVP en ligne"
-        )}
-      </p>
 
       {parcours.note_contexte ? (
         <p className="mt-5 rounded-xl bg-zinc-50 px-4 py-3 text-xs leading-relaxed text-zinc-600">
@@ -308,6 +329,8 @@ export default function CandidatCard({ parcours, score }) {
       {/* Espace élastique : cale le pied de carte en bas quand les cartes
           d'une même ligne de la grille n'ont pas la même hauteur. */}
       <div aria-hidden="true" className="min-h-5 flex-1" />
+
+      <Condamnations condamnations={parcours.condamnations} />
 
       <footer className="flex justify-end border-t border-zinc-100 pt-4 text-sm">
         {score ? (

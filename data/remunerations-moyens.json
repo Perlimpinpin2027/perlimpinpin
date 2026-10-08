@@ -1,0 +1,141 @@
+{
+  "_meta": {
+    "titre": "Rémunérations et moyens",
+    "derniere_verification": "2026-10-08",
+    "avertissement": "Les moyens du mandat (frais de mandat, collaborateurs) financent l'activité de l'élu et ne sont pas un revenu. Les montants HATVP sont ceux déclarés par l'élu, à la date de sa déclaration. Les déclarations de patrimoine ne sont pas reproduites.",
+    "sources_communes": {
+      "depute": "https://www.assemblee-nationale.fr/dyn/synthese/deputes-groupes-parlementaires/la-situation-materielle-du-depute",
+      "senateur": "https://www.europe1.fr/politique/les-senateurs-ont-eux-aussi-augmente-leurs-frais-de-mandat-de-700-euros-par-mois-4227789",
+      "eurodepute": "https://ca.news.yahoo.com/much-meps-paid-145352606.html"
+    }
+  },
+  "candidats": {
+    "marine-le-pen": {
+      "remuneration_personnelle": [
+        { "libelle": "Indemnité de députée", "montant": "7 637 € brut / mois" }
+      ],
+      "moyens_du_mandat": [
+        { "libelle": "Dotation de fonctionnement (frais de mandat)", "montant": "7 238 € / mois" },
+        { "libelle": "Crédit collaborateurs", "montant": "11 463 € / mois" }
+      ],
+      "hatvp": {
+        "declaration": "Modification substantielle des intérêts, déposée le 30 janvier 2026",
+        "url": "https://www.hatvp.fr/livraison/dossiers/le-pen-marine-diam35065-depute-62.pdf",
+        "lignes": [
+          { "libelle": "Conseillère départementale (06/2021 à 11/2025)", "montants": { "2023": "20 037 € net", "2024": "20 307 € net", "2025": "17 486 € net" } },
+          { "libelle": "Élevage de chats (bénéfice net déclaré)", "montants": { "2023": "5 777 €", "2024": "518 €", "2025": "0 €" } }
+        ]
+      }
+    },
+    "gabriel-attal": {
+      "remuneration_personnelle": [
+        { "libelle": "Indemnité de député", "montant": "7 637 € brut / mois" }
+      ],
+      "moyens_du_mandat": [
+        { "libelle": "Dotation de fonctionnement (frais de mandat)", "montant": "7 238 € / mois" },
+        { "libelle": "Crédit collaborateurs", "montant": "11 463 € / mois" },
+        { "libelle": "Ancien Premier ministre", "montant": "Véhicule avec chauffeur et secrétariat possibles jusqu'en 2034" }
+      ],
+      "hatvp": {
+        "declaration": "Modification substantielle des intérêts, déposée le 24 janvier 2025",
+        "url": "https://www.hatvp.fr/livraison/dossiers/attal-gabriel-diam30321-depute-92.pdf",
+        "lignes": [
+          { "libelle": "Premier ministre (01/2024 à 09/2024)", "montants": { "2024": "79 599 € net" } },
+          { "libelle": "Ministre de l'Éducation nationale (07/2023 à 01/2024)", "montants": { "2023": "49 248 € net", "2024": "2 752 € net" } },
+          { "libelle": "Ministre des Comptes publics (07/2022 à 07/2023)", "montants": { "2022": "66 199 € net", "2023": "63 397 € net" } },
+          { "libelle": "Conseiller municipal", "montants": { "2023": "600 € net", "2024": "600 € net" } }
+        ]
+      }
+    },
+    "bruno-retailleau": {
+      "remuneration_personnelle": [
+        { "libelle": "Indemnité de sénateur", "montant": "7 637 € brut / mois" }
+      ],
+      "moyens_du_mandat": [
+        { "libelle": "Avance de frais de mandat", "montant": "6 600 € / mois" }
+      ],
+      "hatvp": {
+        "statut": "Déclaration déposée après les sénatoriales de septembre 2026, publication en cours par la HATVP"
+      }
+    },
+    "raphael-glucksmann": {
+      "remuneration_personnelle": [
+        { "libelle": "Indemnité d'eurodéputé", "montant": "À COMPLÉTER (site du Parlement européen)" }
+      ],
+      "moyens_du_mandat": [
+        { "libelle": "Indemnité de frais généraux", "montant": "4 950 € / mois" }
+      ],
+      "hatvp": {
+        "statut": "Les intérêts des eurodéputés sont déclarés au Parlement européen, pas à la HATVP"
+      }
+    },
+    "edouard-philippe": {
+      "remuneration_personnelle": [
+        { "libelle": "Indemnités de maire du Havre et de président de Le Havre Seine Métropole", "montant": "À COMPLÉTER (délibérations d'avril 2026)" }
+      ],
+      "moyens_du_mandat": [
+        { "libelle": "Frais de mandat", "montant": "Pas d'enveloppe (frais de représentation éventuels votés par le conseil municipal)" },
+        { "libelle": "Ancien Premier ministre", "montant": "Véhicule avec chauffeur et secrétariat possibles jusqu'en 2030" }
+      ],
+      "hatvp": {
+        "statut": "Déclarations déposées après les municipales de 2026, publication à venir"
+      }
+    },
+    "david-lisnard": {
+      "remuneration_personnelle": [
+        { "libelle": "Indemnités de maire de Cannes et autres mandats locaux", "montant": "À COMPLÉTER (délibérations 2026)" }
+      ],
+      "moyens_du_mandat": [
+        { "libelle": "Frais de mandat", "montant": "Pas d'enveloppe (frais de représentation éventuels votés par le conseil municipal)" }
+      ],
+      "hatvp": {
+        "declaration": "Déclaration d'intérêts du 28 juillet 2021 (une nouvelle déclaration est déposée, publication à venir)",
+        "url": "https://www.hatvp.fr/livraison/dossiers/lisnard-david-di25251-departement-06.pdf",
+        "lignes": [
+          { "libelle": "Maire de Cannes", "montants": { "2019": "58 194 € net", "2020": "55 127 € net" } },
+          { "libelle": "Vice-président du conseil départemental des Alpes-Maritimes", "montants": { "2019": "25 400 € net", "2020": "35 741 € net" } }
+        ]
+      }
+    },
+    "fabien-roussel": {
+      "remuneration_personnelle": [
+        { "libelle": "Indemnité de maire de Saint-Amand-les-Eaux", "montant": "À COMPLÉTER (délibération du 7 avril 2026)" }
+      ],
+      "moyens_du_mandat": [
+        { "libelle": "Frais de mandat", "montant": "Pas d'enveloppe (frais de représentation éventuels votés par le conseil municipal)" }
+      ],
+      "hatvp": {
+        "statut": "Pas de déclaration publique en cours"
+      }
+    },
+    "marine-tondelier": {
+      "remuneration_personnelle": [
+        { "libelle": "Indemnité de conseillère régionale des Hauts-de-France", "montant": "À COMPLÉTER" }
+      ],
+      "moyens_du_mandat": [
+        { "libelle": "Frais de mandat", "montant": "Pas d'enveloppe" }
+      ],
+      "hatvp": {
+        "statut": "Pas de déclaration publique en cours"
+      }
+    },
+    "jean-luc-melenchon": {
+      "remuneration_personnelle": [],
+      "moyens_du_mandat": [],
+      "sans_mandat": true,
+      "hatvp": { "statut": "Pas de déclaration publique en cours (sans mandat)" }
+    },
+    "eric-zemmour": {
+      "remuneration_personnelle": [],
+      "moyens_du_mandat": [],
+      "sans_mandat": true,
+      "hatvp": { "statut": "Pas de déclaration publique en cours (sans mandat)" }
+    },
+    "dominique-de-villepin": {
+      "remuneration_personnelle": [],
+      "moyens_du_mandat": [],
+      "sans_mandat": true,
+      "hatvp": { "statut": "Pas de déclaration publique en cours (sans mandat)" }
+    }
+  }
+}
