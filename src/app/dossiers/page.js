@@ -44,23 +44,37 @@ export default function DossiersPage() {
                   href={`/dossiers/${dossier.slug}`}
                   className="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-[0_24px_60px_-30px_rgba(30,41,82,0.35)] ring-2 ring-pink-200 transition-shadow hover:ring-pink-300 sm:flex-row"
                 >
-                  <div className="relative aspect-[4/5] w-full shrink-0 bg-pink-50 sm:aspect-auto sm:w-2/5">
+                  {/* Image jamais recadrée : 4:5 sur téléphone, version
+                      verticale 1:2 à gauche dès sm (voir FeaturedCard). */}
+                  <div
+                    className="w-full shrink-0 bg-pink-50 sm:w-1/2"
+                    style={dossier.photo?.fondVertical ? { backgroundColor: dossier.photo.fondVertical } : undefined}
+                  >
                     {dossier.photo?.src ? (
                       <img
                         src={dossier.photo.src}
                         alt={dossier.photo.alt ?? dossier.candidat.nom}
-                        className="absolute inset-0 h-full w-full object-cover object-top"
+                        className={`block h-auto w-full ${dossier.photo.srcVertical ? "sm:hidden" : ""}`}
                       />
                     ) : null}
-                    <span className="absolute left-4 top-4 rounded-full bg-pink-700 px-3 py-1.5 text-xs font-semibold uppercase tracking-widest text-white shadow-sm">
-                      Dossier n°{dossier.numero}
-                    </span>
+                    {dossier.photo?.srcVertical ? (
+                      <img
+                        src={dossier.photo.srcVertical}
+                        alt={dossier.photo.alt ?? dossier.candidat.nom}
+                        className="hidden h-auto w-full sm:block"
+                      />
+                    ) : null}
                   </div>
 
                   <div className="flex flex-1 flex-col gap-3 p-6 sm:p-8">
-                    <span className="text-xs font-semibold uppercase tracking-[0.12em] text-zinc-400">
-                      {`// ${dossier.etiquette}`}
-                    </span>
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+                      <span className="rounded-full bg-pink-700 px-3 py-1.5 text-xs font-semibold uppercase tracking-widest text-white">
+                        Dossier n°{dossier.numero}
+                      </span>
+                      <span className="text-xs font-semibold uppercase tracking-[0.12em] text-zinc-400">
+                        {`// ${dossier.etiquette}`}
+                      </span>
+                    </div>
                     <h2 className="text-2xl font-extrabold leading-tight tracking-tight text-zinc-950 sm:text-[1.7rem]">
                       <TitreAvecItalique titre={dossier.titre} motItalique={dossier.motItalique} />
                     </h2>

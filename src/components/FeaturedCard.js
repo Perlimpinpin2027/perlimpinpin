@@ -235,23 +235,42 @@ function ContenuDossier({ dossier }) {
   const href = `/dossiers/${dossier.slug}`;
   return (
     <>
-      <div className="relative aspect-[4/5] w-full shrink-0 bg-pink-50 sm:aspect-auto sm:h-auto sm:w-2/5">
+      {/* Image du dossier, jamais recadrée. Sur téléphone (image au-dessus
+          du texte, pleine largeur) : l'illustration 4:5 (`photo.src`). Dès
+          sm (image à gauche, sur la moitié de la carte) : la version
+          verticale 1:2 (`photo.srcVertical`), faite au format de cette
+          colonne et terminée par un bandeau de couleur ; le fond de la
+          colonne (`photo.fondVertical`, même couleur) prolonge ce bandeau si
+          la carte est un peu plus haute. */}
+      <div
+        className="w-full shrink-0 bg-pink-50 sm:w-1/2"
+        style={dossier.photo?.fondVertical ? { backgroundColor: dossier.photo.fondVertical } : undefined}
+      >
         <img
           src={dossier.photo?.src || "/avatar-placeholder.svg"}
           alt={dossier.photo?.alt ?? dossier.candidat?.nom ?? ""}
-          className="absolute inset-0 h-full w-full object-cover object-top"
+          className={`block h-auto w-full ${dossier.photo?.srcVertical ? "sm:hidden" : ""}`}
         />
-        <span className="absolute left-4 top-4 rounded-full bg-pink-700 px-3 py-1.5 text-xs font-semibold uppercase tracking-widest text-white shadow-sm">
-          Dossier n°{dossier.numero}
-        </span>
+        {dossier.photo?.srcVertical ? (
+          <img
+            src={dossier.photo.srcVertical}
+            alt={dossier.photo?.alt ?? dossier.candidat?.nom ?? ""}
+            className="hidden h-auto w-full sm:block"
+          />
+        ) : null}
       </div>
 
       {/* Marge droite élargie (souris uniquement), comme pour les
           déclarations : place réservée à la flèche « suivante ». */}
       <div className="flex flex-1 flex-col p-6 sm:p-8 [@media(hover:hover)]:pr-14!">
-        <p className="text-xs font-semibold uppercase tracking-[0.12em] text-pink-700">
-          {`// ${dossier.etiquette}`}
-        </p>
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+          <span className="rounded-full bg-pink-700 px-3 py-1.5 text-xs font-semibold uppercase tracking-widest text-white">
+            Dossier n°{dossier.numero}
+          </span>
+          <span className="text-xs font-semibold uppercase tracking-[0.12em] text-pink-700">
+            {`// ${dossier.etiquette}`}
+          </span>
+        </div>
         <p className="mt-3 shrink-0 text-2xl font-extrabold leading-tight tracking-tight text-zinc-950 sm:text-[1.9rem]">
           <TitreAvecItalique titre={dossier.titre} motItalique={dossier.motItalique} />
         </p>

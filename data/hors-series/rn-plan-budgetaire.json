@@ -10,9 +10,11 @@
     "parti": "Rassemblement national"
   },
   "photo": {
-    "src": "/photos/marine-le-pen.jpg",
-    "alt": "Portrait illustré de Marine Le Pen",
-    "credit": "Illustration Perlimpinpin"
+    "src": "/photos/dossiers/rn-plan-budgetaire.jpg",
+    "alt": "Illustration « Les dossiers » : portrait de Marine Le Pen et graphiques",
+    "credit": "Illustration Perlimpinpin",
+    "srcVertical": "/photos/dossiers/rn-plan-budgetaire-vertical.jpg",
+    "fondVertical": "#f8b444"
   },
   "accueil": {
     "afficher": true,
@@ -250,12 +252,12 @@
   "fiches": [
     {
       "numero": 1,
-      "titre": "12 milliards d'économies sur l'immigration",
+      "titre": "12 milliards d'euros d'économie sur l'immigration dès 2027",
       "theme": "Dette et finances publiques",
       "montantMd": 12,
-      "statut": "relecture",
+      "statut": "publiee",
       "relectureSlug": "lepen-budget-immigration",
-      "propositionId": null
+      "propositionId": 52
     },
     {
       "numero": 2,
