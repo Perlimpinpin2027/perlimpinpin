@@ -161,53 +161,5 @@
     "texte": "La citation provient de Public Sénat (24 août 2026), qui la rattache au livre et à l'annonce de candidature ; elle n'a pas été vérifiée sur le texte original. **Le chiffrage budgétaire est une estimation de l'analyste** fondée sur des ratios de la Cour des comptes supposés linéaires, et sur des parts de population illustratives (un cinquième avancé de 2 ans, un tiers reculé d'un an). La voie de la négociation collective est une hypothèse de l'analyste, non annoncée dans la citation analysée. Une précision du candidat (âges, critères, point de référence, méthode de négociation) pourrait faire évoluer plusieurs notes, en particulier la faisabilité budgétaire et l'efficacité."
   },
   "resume_court": "Raphaël Glucksmann propose de faire partir plus tôt les travailleurs aux métiers difficiles et plus tard ceux en bonne santé. Il répond à une injustice réelle : un ouvrier vit en moyenne environ 5 ans de moins qu'un cadre, et la loi demande déjà que la retraite soit équitable au regard de l'espérance de vie en bonne santé.\n\nLe principe est solide et juridiquement simple. Mais tout repose sur une question qu'il laisse ouverte : comment mesurer la pénibilité et la « bonne santé » ? La France et la Belgique ont déjà buté dessus, et sans âges ni critères, la mesure reste une direction plutôt qu'une réforme. Une négociation entre partenaires sociaux pourrait débloquer la définition des critères, sans garantie. Note : 61/100, plausible sous condition, en supposant un classement par groupes de métiers, négocié, autour du droit actuel.",
-  "phrase_teasing": "Partir plus tard quand on va bien : qui en jugera ?",
-  "relecture": {
-    "titre": "Retraite selon la pénibilité : le bon diagnostic, sans le mode d'emploi",
-    "candidat": "Raphaël Glucksmann",
-    "parti": "Place publique",
-    "theme": "Retraites",
-    "date": "2026-10-06",
-    "version": 1,
-    "mesure_initiale": "Réformer les retraites en faisant de la pénibilité le premier critère, avec des départs plus précoces pour les carrières difficiles et plus tardifs pour les personnes en bonne santé.",
-    "extrait": {
-      "citation": "« L'équité exige que ceux qui ont les carrières les plus hachées et les métiers les plus difficiles puissent partir à la retraite plus tôt. (…) Ceux qui ont une espérance de vie en bonne santé plus longue doivent en revanche partir plus tard »",
-      "source": "Raphaël Glucksmann, livre « Nous avons encore envie » (mai 2026) et annonce de candidature sur TF1, rapporté par Public Sénat le 24 août 2026 · Non vérifié sur le texte original"
-    },
-    "verdict_tient": "l'injustice visée est réelle et déjà reconnue par la loi, la mesure est juridiquement simple et cohérente avec le parcours du candidat.",
-    "verdict_flou": "aucun âge, aucun critère ni chiffrage : la mesure de la pénibilité et de la « bonne santé », là où la France et la Belgique ont déjà échoué, reste entièrement à construire.",
-    "niveau_confiance": "Moyen",
-    "questions": [
-      {
-        "titre": "Citation et interprétation retenue",
-        "texte": "La citation vient de Public Sénat, pas du livre lui-même. La note suppose une modulation par groupes de métiers autour du droit actuel, et non un examen de santé individuel. Quelqu'un a-t-il le passage exact du livre, ou une précision ultérieure du candidat sur l'âge de référence (64 ans, 62 ans ou suppression de l'âge légal) ?"
-      },
-      {
-        "titre": "Faisabilité budgétaire : 4/10 INCERTAIN",
-        "texte": "Notre estimation donne deux effets de 2 à 3 milliards d'euros en sens opposé, donc un solde proche de zéro qui dépend du calibrage. Faut-il rester en INCERTAIN (pas de dérive massive) ou passer en FRAGILE parce qu'aucun sens net ne peut être établi, ce qui plafonnerait l'Opérationnalité à 10/30 ?"
-      },
-      {
-        "titre": "Négociation collective et efficacité (21/30)",
-        "texte": "La note suppose que les critères seraient négociés entre partenaires sociaux, ce qui a fait remonter l'efficacité de 18 à 21. Le candidat ne s'y engage pas dans la citation analysée. Connaissez-vous une déclaration où il s'engage sur cette méthode ? Et le précédent belge (échec de la négociation en 2018) justifie-t-il de rester sous le seuil SOLIDE (24) ?"
-      },
-      {
-        "titre": "Degré de préparation : 2/10 FRAGILE",
-        "texte": "Le candidat a dit ne pas présenter de réforme détaillée. Connaissez-vous un document de campagne plus précis (âges, liste de métiers, critères) qui permettrait de remonter cette note ?"
-      },
-      {
-        "titre": "Effets rebonds : 14/20",
-        "texte": "Trois effets retenus : pression des branches pour être reconnues pénibles, report vers le chômage des seniors dont l'âge recule, affaiblissement de la prévention. Des accords de branche peuvent atténuer les deux derniers. Cette atténuation possible justifie-t-elle 14, ou faut-il monter à SOLIDE (16) ou redescendre ?"
-      },
-      {
-        "titre": "Titre et teasing provisoires",
-        "texte": "Titre court proposé : « La retraite selon la pénibilité » (31 caractères). Teasing : « Partir plus tard quand on va bien : qui en jugera ? » (51 caractères). Vous conviennent-ils ?"
-      }
-    ],
-    "archive": {
-      "date": "2026-10-08",
-      "version_suivante": "data/analyses finales/Glucksmann/glucksmann_retraites_penibilite_etape1_v2.json",
-      "synthese": "Relecture interne, sans commentaire du Club. La v2 reprend la v1 sans changement : 61/100, plausible sous condition.",
-      "reponses": []
-    }
-  }
+  "phrase_teasing": "Partir plus tard quand on va bien : qui en jugera ?"
 }
