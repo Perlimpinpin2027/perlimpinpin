@@ -60,7 +60,7 @@
     },
     "raphael-glucksmann": {
       "remuneration_personnelle": [
-        { "libelle": "Indemnité d'eurodéputé", "montant": "À COMPLÉTER (site du Parlement européen)" }
+        { "libelle": "Indemnité d'eurodéputé", "montant": "11 255 € brut/mois" }
       ],
       "moyens_du_mandat": [
         { "libelle": "Indemnité de frais généraux", "montant": "4 950 € / mois" }
@@ -71,7 +71,7 @@
     },
     "edouard-philippe": {
       "remuneration_personnelle": [
-        { "libelle": "Indemnités de maire du Havre et de président de Le Havre Seine Métropole", "montant": "À COMPLÉTER (délibérations d'avril 2026)" }
+        { "libelle": "Indemnités de maire du Havre et de président de Le Havre Seine Métropole", "montant": "8 898 € brut/mois (plafond légal)" }
       ],
       "moyens_du_mandat": [
         { "libelle": "Frais de mandat", "montant": "Pas d'enveloppe (frais de représentation éventuels votés par le conseil municipal)" },
@@ -83,7 +83,7 @@
     },
     "david-lisnard": {
       "remuneration_personnelle": [
-        { "libelle": "Indemnités de maire de Cannes et autres mandats locaux", "montant": "À COMPLÉTER (délibérations 2026)" }
+        { "libelle": "Indemnités de maire de Cannes et autres mandats locaux", "montant": "8 898 € brut/mois (plafond légal)" }
       ],
       "moyens_du_mandat": [
         { "libelle": "Frais de mandat", "montant": "Pas d'enveloppe (frais de représentation éventuels votés par le conseil municipal)" }
@@ -99,7 +99,7 @@
     },
     "fabien-roussel": {
       "remuneration_personnelle": [
-        { "libelle": "Indemnité de maire de Saint-Amand-les-Eaux", "montant": "À COMPLÉTER (délibération du 7 avril 2026)" }
+        { "libelle": "Indemnité de maire de Saint-Amand-les-Eaux", "montant": "jusqu'à 2 779 € brut/mois" }
       ],
       "moyens_du_mandat": [
         { "libelle": "Frais de mandat", "montant": "Pas d'enveloppe (frais de représentation éventuels votés par le conseil municipal)" }
@@ -110,7 +110,7 @@
     },
     "marine-tondelier": {
       "remuneration_personnelle": [
-        { "libelle": "Indemnité de conseillère régionale des Hauts-de-France", "montant": "À COMPLÉTER" }
+        { "libelle": "Indemnité de conseillère régionale des Hauts-de-France", "montant": "2 734 € brut/mois" }
       ],
       "moyens_du_mandat": [
         { "libelle": "Frais de mandat", "montant": "Pas d'enveloppe" }

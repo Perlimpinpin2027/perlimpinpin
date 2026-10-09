@@ -195,11 +195,11 @@ function Sources({ sources }) {
   );
 }
 
-// Bas de carte : résumé en gras italique toujours visible ; le détail
+// Bas de carte : résumé en italique toujours visible ; le détail
 // (italique simple) se déplie au clic. Rien à déplier sans condamnation.
 function Condamnations({ condamnations }) {
   const { definitives, non_definitives: nonDefinitives, note, sources } = condamnations;
-  const classeResume = "text-sm font-bold italic text-zinc-700";
+  const classeResume = "text-sm font-normal italic text-zinc-700";
 
   if (!definitives.length && !nonDefinitives.length) {
     return (
