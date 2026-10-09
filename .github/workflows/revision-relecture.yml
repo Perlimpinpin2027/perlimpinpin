@@ -1,0 +1,89 @@
+# Robot de révision d'une relecture close (perlimpinpin.ai/relectures).
+# Déclenché par le bouton « Envoyer en révision » (mode comité), via
+# POST /api/relectures/revision, ou à la main : Actions → Révision d'une
+# relecture → Run workflow, avec le slug de la fiche.
+#
+# Phase A (version minimale) : lit les commentaires en base (lecture seule,
+# scripts/relecture-comments.js) et écrit dans le résumé le titre de la fiche
+# et le nombre de commentaires. Rien d'autre : aucun appel à l'IA, aucun commit.
+# Aucun nom ni e-mail d'adhérent dans les logs : seulement des comptes.
+#
+# Secrets (Settings → Secrets and variables → Actions) : DATABASE_URL.
+
+name: Révision d'une relecture
+# Titre du run : sert à l'API pour repérer une révision déjà en cours.
+run-name: Révision ${{ inputs.slug }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: "Slug de la fiche (nom du fichier de data/relectures/, sans .json)"
+        required: true
+        type: string
+
+concurrency:
+  group: revision-${{ inputs.slug }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  revision:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SLUG: ${{ inputs.slug }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+    steps:
+      - name: Récupération de main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # Le postinstall lance « prisma generate » (client utilisé par relecture-comments.js).
+      - name: Installation des modules
+        run: npm ci
+
+      - name: Vérification de la fiche
+        run: |
+          if ! echo "$SLUG" | grep -Eq '^[a-z0-9-]{1,120}$'; then
+            echo "✗ Slug invalide." ; exit 1
+          fi
+          if [ ! -f "data/relectures/$SLUG.json" ]; then
+            echo "✗ data/relectures/$SLUG.json introuvable." ; exit 1
+          fi
+          if [ -z "$DATABASE_URL" ]; then
+            echo "✗ Secret DATABASE_URL manquant." ; exit 1
+          fi
+
+      # Sortie JSON écrite dans un fichier temporaire du runner (jamais affichée :
+      # elle contient les noms des auteurs), puis seul le compte est publié.
+      - name: Lecture des commentaires (base en lecture seule)
+        run: node scripts/relecture-comments.js "$SLUG" --json > "$RUNNER_TEMP/commentaires.json"
+
+      - name: Résumé
+        run: |
+          node --input-type=module -e '
+            import { readFileSync, appendFileSync } from "node:fs";
+            const slug = process.env.SLUG;
+            const fiche = JSON.parse(readFileSync(`data/relectures/${slug}.json`, "utf8"));
+            const commentaires = JSON.parse(readFileSync(`${process.env.RUNNER_TEMP}/commentaires.json`, "utf8"));
+            const n = commentaires.length;
+            const lignes = [
+              `## Révision : ${fiche.relecture.titre}`,
+              "",
+              `- Fiche : \`${slug}\``,
+              `- ${n} commentaire${n > 1 ? "s" : ""} en base`,
+              fiche.relecture.archive ? "- ⚠ Fiche déjà archivée" : "",
+            ].filter((l, i) => l || i === 1);
+            appendFileSync(process.env.GITHUB_STEP_SUMMARY, lignes.join("\n") + "\n");
+            console.log(lignes.join("\n"));
+          '

@@ -5,6 +5,8 @@ const nextConfig = {
   // absent du bundle serverless déployé.
   outputFileTracingIncludes: {
     "/api/live/analyze": ["./data/prompt-methodologie.md"],
+    // « Envoyer en révision » vérifie que la fiche existe et n'est pas archivée.
+    "/api/relectures/revision": ["./data/relectures/*.json"],
   },
   // Next.js ne résout pas automatiquement /relectures vers
   // public/relectures/index.html (pas de fallback "clean URL" sur les
