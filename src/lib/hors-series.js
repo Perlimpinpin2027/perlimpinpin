@@ -49,7 +49,8 @@ export function texteAvancement({ publiees, enRelecture, aVenir }) {
 // JSON, avec `afficher: true`), réduits aux seules données utiles à la
 // carte, qui est un composant client (le JSON complet n'est ainsi pas
 // envoyé au navigateur). Ils y sont rangés à leur date de mise en ligne
-// (`datePublication`) parmi les analyses, voir getFeaturedRotation.
+// (`datePublication`) parmi les analyses, voir getFeaturedRotation ; avec
+// `accueil.enTete: true`, le dossier passe en première carte.
 export function getHorsSeriesAccueil() {
   return HORS_SERIES.filter((hs) => hs.accueil?.afficher).map((hs) => {
     const avancement = avancementHorsSerie(hs);
@@ -63,6 +64,7 @@ export function getHorsSeriesAccueil() {
       motItalique: hs.motItalique,
       accroche: hs.accueil.accroche,
       datePublication: hs.datePublication,
+      enTete: hs.accueil.enTete === true,
       photo: hs.photo,
       candidat: hs.candidat,
       avancement,

@@ -19,6 +19,7 @@
   },
   "accueil": {
     "afficher": true,
+    "enTete": true,
     "titre": "Le plan budgétaire de Marine Le Pen",
     "accroche": "140 milliards d'économies promises d'ici 2032. Nous vérifions, poste par poste, ce qui tient face aux budgets réels, au droit et aux précédents."
   },

@@ -130,6 +130,9 @@ function reorderRecentNoAdjacentSameCandidat(items) {
   return result;
 }
 
+// Plus grande date représentable en JavaScript (an 275760).
+const DATE_MAX = 8.64e15;
+
 // Toutes les analyses publiées, les plus récemment publiées en premier,
 // sans jamais enchaîner deux cartes du même candidat quand c'est évitable.
 // Alimente le carrousel "Prix Perlimpinpin de la semaine" + la carte Score
@@ -166,7 +169,9 @@ export async function getFeaturedRotation(dossiers = []) {
     items.push({
       dossier,
       personName: dossier.candidat?.nom ?? `dossier-${dossier.slug}`,
-      dateSort: new Date(dossier.datePublication ?? 0),
+      // Dossier « en tête » : date maximale, il passe donc devant tout le
+      // reste ; la carte suivante reste d'un autre candidat (voir ci-dessus).
+      dateSort: dossier.enTete ? new Date(DATE_MAX) : new Date(dossier.datePublication ?? 0),
     });
   }
   // Le regroupement par candidat suppose chaque groupe trié du plus récent
