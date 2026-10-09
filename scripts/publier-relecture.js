@@ -22,8 +22,8 @@
 //
 // Garde-fous : branche main uniquement, copie à jour avec origin/main,
 // bloc archive présent, version suivante présente, JSON valide et au format
-// Étape 1 du pipeline (sections en accordéon, score cohérent), y compris en
-// simulation.
+// Étape 1 du pipeline (sections en accordéon) ou sortie de l'étape 3 (robot de
+// révision), score cohérent, y compris en simulation.
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -117,7 +117,7 @@ if (suivante) {
   if (erreursSuivante.length) {
     fail(
       `version suivante non conforme : ${suivante}\n- ${erreursSuivante.join("\n- ")}\n` +
-        "La version suivante doit être au format Étape 1 du pipeline (sections en accordéon { synthese, texte }).",
+        "La version suivante doit être au format Étape 1 du pipeline (sections en accordéon { synthese, texte }) ou être la sortie de l'étape 3 (fiche_complete).",
     );
   }
   fichiers.push(suivante);

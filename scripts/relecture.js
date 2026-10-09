@@ -21,7 +21,7 @@ import { execFileSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import dotenv from "dotenv";
-import { checkNotationCoherence, validateEtape1Structure } from "./lib/scoring.js";
+import { checkNotationCoherence, validateEtape1Structure, validateFicheCompleteStructure } from "./lib/scoring.js";
 import { formatClosedAt } from "../src/lib/relecture.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -106,14 +106,38 @@ export function erreursFormatEtape1(fiche) {
 }
 
 // Version suivante (data/analyses finales/…) avant publication : format
-// Étape 1 et cohérence du score (scripts/publier-relecture.js).
+// Étape 1 (…_v2.json, rédigée à la main) ou sortie de l'étape 3 (…_etape3.json,
+// robot de révision : objet à fiche_complete), et cohérence du score
+// (scripts/publier-relecture.js).
 export function erreursVersionSuivante(fiche) {
+  if (fiche && typeof fiche === "object" && !Array.isArray(fiche) && "fiche_complete" in fiche) {
+    return erreursSortieEtape3(fiche);
+  }
   const erreurs = erreursFormatEtape1(fiche);
   const notation = fiche?.notation_detaillee;
   if (notation && typeof notation === "object" && !erreurs.some((e) => e.startsWith("notation_detaillee"))) {
     erreurs.push(...checkNotationCoherence(notation).map((e) => `score : ${e}`));
   }
   return erreurs;
+}
+
+// Sortie de l'étape 3 : fiche finale assemblée comme dans runPipeline
+// (scripts/analyze.js) et scripts/import-etape3.js, les champs de rédaction
+// à la racine primant sur ceux de fiche_complete.
+function erreursSortieEtape3(sortie) {
+  const fc = sortie.fiche_complete;
+  if (!fc || typeof fc !== "object" || Array.isArray(fc)) return ["fiche_complete : objet attendu."];
+  const finale = {
+    ...fc,
+    titre_fiche: sortie.titre_fiche,
+    resume_court: sortie.resume_court,
+    teaser_accueil: sortie.teaser_accueil,
+    verdict_final: sortie.verdict_final ?? fc.verdict_final,
+    verdict_conclusion: sortie.verdict_conclusion,
+  };
+  const { valid, errors } = validateFicheCompleteStructure(finale);
+  if (!valid) return errors.map((e) => `format étape 3 : ${e}`);
+  return checkNotationCoherence(finale.notation_detaillee).map((e) => `score : ${e}`);
 }
 
 export function slugDepuisChemin(chemin) {

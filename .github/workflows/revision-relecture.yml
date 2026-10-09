@@ -3,12 +3,16 @@
 # POST /api/relectures/revision, ou à la main : Actions → Révision d'une
 # relecture → Run workflow, avec le slug de la fiche.
 #
-# Phase A (version minimale) : lit les commentaires en base (lecture seule,
-# scripts/relecture-comments.js) et écrit dans le résumé le titre de la fiche
-# et le nombre de commentaires. Rien d'autre : aucun appel à l'IA, aucun commit.
-# Aucun nom ni e-mail d'adhérent dans les logs : seulement des comptes.
+# 1. scripts/reviser-relecture.js : étapes 2, 3 et 3 bis sur la fiche relue,
+#    avec les commentaires du Club (fiche finale en brouillon sur /test), puis
+#    sorties dans data/analyses finales/, bloc archive et page /relectures.
+# 2. Branche revision/<slug>, commit, push et pull request « Révision <slug> »
+#    vers main, NON fusionnée : Arno relit /test et la PR, puis fusionne
+#    (workflow « Après révision » : PerlimpinPOINTS) et clique sur Publier.
 #
-# Secrets (Settings → Secrets and variables → Actions) : DATABASE_URL.
+# Aucun nom ni e-mail d'adhérent dans les journaux : seulement des comptes.
+# Secrets (Settings → Secrets and variables → Actions) : DATABASE_URL,
+# ANTHROPIC_API_KEY, MISTRAL_API_KEY, GIT_AUTHOR_NAME, GIT_AUTHOR_EMAIL.
 
 name: Révision d'une relecture
 # Titre du run : sert à l'API pour repérer une révision déjà en cours.
@@ -27,20 +31,23 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
-  contents: read
+  contents: write
+  pull-requests: write
 
 jobs:
   revision:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 45
     env:
       SLUG: ${{ inputs.slug }}
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      BRANCHE: revision/${{ inputs.slug }}
     steps:
       - name: Récupération de main
         uses: actions/checkout@v4
         with:
           ref: main
+          fetch-depth: 0
 
       - name: Node 22
         uses: actions/setup-node@v4
@@ -48,42 +55,82 @@ jobs:
           node-version: 22
           cache: npm
 
-      # Le postinstall lance « prisma generate » (client utilisé par relecture-comments.js).
+      # Le postinstall lance « prisma generate » (client utilisé par les scripts).
       - name: Installation des modules
         run: npm ci
 
-      - name: Vérification de la fiche
+      # Avant tout appel payant.
+      - name: Vérifications
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+          AUTEUR_NOM: ${{ secrets.GIT_AUTHOR_NAME }}
+          AUTEUR_EMAIL: ${{ secrets.GIT_AUTHOR_EMAIL }}
         run: |
-          if ! echo "$SLUG" | grep -Eq '^[a-z0-9-]{1,120}$'; then
-            echo "✗ Slug invalide." ; exit 1
-          fi
-          if [ ! -f "data/relectures/$SLUG.json" ]; then
-            echo "✗ data/relectures/$SLUG.json introuvable." ; exit 1
-          fi
-          if [ -z "$DATABASE_URL" ]; then
-            echo "✗ Secret DATABASE_URL manquant." ; exit 1
+          if ! echo "$SLUG" | grep -Eq '^[a-z0-9-]{1,120}$'; then echo "✗ Slug invalide."; exit 1; fi
+          if [ ! -f "data/relectures/$SLUG.json" ]; then echo "✗ data/relectures/$SLUG.json introuvable."; exit 1; fi
+          for s in DATABASE_URL ANTHROPIC_API_KEY AUTEUR_NOM AUTEUR_EMAIL; do
+            if [ -z "${!s}" ]; then echo "✗ Secret manquant ($s, voir l'en-tête du workflow)."; exit 1; fi
+          done
+          if [ -z "$MISTRAL_API_KEY" ]; then echo "⚠ MISTRAL_API_KEY absent : étape 2 sautée (mode dégradé)."; fi
+          if git ls-remote --exit-code --heads origin "$BRANCHE" > /dev/null; then
+            echo "✗ La branche $BRANCHE existe déjà : une révision de cette fiche attend dans une PR. Ferme-la et supprime la branche pour relancer."
+            exit 1
           fi
 
-      # Sortie JSON écrite dans un fichier temporaire du runner (jamais affichée :
-      # elle contient les noms des auteurs), puis seul le compte est publié.
-      - name: Lecture des commentaires (base en lecture seule)
-        run: node scripts/relecture-comments.js "$SLUG" --json > "$RUNNER_TEMP/commentaires.json"
+      - name: Révision (étapes 2, 3 et 3 bis avec les commentaires du Club)
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+        run: node scripts/reviser-relecture.js "$SLUG" --sortie "$RUNNER_TEMP/revision"
 
+      - name: Contrôle des fichiers modifiés
+        run: |
+          attendus="$RUNNER_TEMP/revision/fichiers.txt"
+          git -c core.quotepath=false status --porcelain --untracked-files=all | sed 's/^...//; s/^"\(.*\)"$/\1/' > "$RUNNER_TEMP/modifies.txt"
+          inattendus=$(grep -vxF -f "$attendus" "$RUNNER_TEMP/modifies.txt" || true)
+          if [ -n "$inattendus" ]; then
+            echo "✗ Fichiers inattendus modifiés :"; echo "$inattendus"; exit 1
+          fi
+          cat "$RUNNER_TEMP/modifies.txt"
+
+      - name: Branche, commit et pull request
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          AUTEUR_NOM: ${{ secrets.GIT_AUTHOR_NAME }}
+          AUTEUR_EMAIL: ${{ secrets.GIT_AUTHOR_EMAIL }}
+        run: |
+          git config user.name "$AUTEUR_NOM"
+          git config user.email "$AUTEUR_EMAIL"
+          git switch -c "$BRANCHE"
+          while IFS= read -r f; do [ -n "$f" ] && git add -- "$f"; done < "$RUNNER_TEMP/revision/fichiers.txt"
+          git commit -q -m "Révision $SLUG : réponses aux commentaires et fiche finale"
+          git push -q origin "$BRANCHE"
+          lien=$(gh pr create --base main --head "$BRANCHE" --title "Révision $SLUG" --body-file "$RUNNER_TEMP/revision/rapport.md")
+          echo "lien=$lien" >> "$GITHUB_OUTPUT"
+          echo "Pull request : $lien"
+
+      # Rapport sans aucun nom d'adhérent (scripts/lib/revision-relecture.js).
       - name: Résumé
+        if: ${{ always() }}
+        env:
+          LIEN_PR: ${{ steps.pr.outputs.lien }}
         run: |
-          node --input-type=module -e '
-            import { readFileSync, appendFileSync } from "node:fs";
-            const slug = process.env.SLUG;
-            const fiche = JSON.parse(readFileSync(`data/relectures/${slug}.json`, "utf8"));
-            const commentaires = JSON.parse(readFileSync(`${process.env.RUNNER_TEMP}/commentaires.json`, "utf8"));
-            const n = commentaires.length;
-            const lignes = [
-              `## Révision : ${fiche.relecture.titre}`,
-              "",
-              `- Fiche : \`${slug}\``,
-              `- ${n} commentaire${n > 1 ? "s" : ""} en base`,
-              fiche.relecture.archive ? "- ⚠ Fiche déjà archivée" : "",
-            ].filter((l, i) => l || i === 1);
-            appendFileSync(process.env.GITHUB_STEP_SUMMARY, lignes.join("\n") + "\n");
-            console.log(lignes.join("\n"));
-          '
+          rapport="$RUNNER_TEMP/revision/rapport.md"
+          if [ ! -f "$rapport" ]; then exit 0; fi
+          {
+            if [ -n "$LIEN_PR" ]; then echo "**Pull request : $LIEN_PR**"; else echo "**⚠ Pull request non créée : voir le journal.**"; fi
+            echo
+            cat "$rapport"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # logs/ n'est pas conservé sur le serveur GitHub : le journal des
+      # insertions (analyse créée en brouillon) est gardé ici 90 jours.
+      - name: Journal des insertions
+        if: ${{ always() && hashFiles('logs/*.jsonl') != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: journal-revision-${{ inputs.slug }}-${{ github.run_id }}
+          path: logs/*.jsonl
+          retention-days: 90

@@ -439,7 +439,7 @@ function renderFiltres(fiches) {
 
 const CHAMPS_RELECTURE = ["titre", "candidat", "theme", "date", "version"];
 
-function verifierArchive(a) {
+export function verifierArchive(a) {
   if (a == null) return null;
   if (!/^\d{4}-\d{2}-\d{2}$/.test(a.date ?? "")) return "date manquante ou pas au format AAAA-MM-JJ.";
   if (!Array.isArray(a.reponses)) return "\"reponses\" doit être une liste (éventuellement vide).";
