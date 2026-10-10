@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { publierBrouillonCore } from "../src/lib/test-publier.js";
+import { fusionnerRevisionCore, publierBrouillonCore } from "../src/lib/test-publier.js";
 
 // Logique de « Publier » de /test/[id], testée avec une FAUSSE base : aucune
 // connexion réelle, aucune écriture possible. Les méthodes d'écriture de la fausse
@@ -191,4 +191,145 @@ test("publierBrouillon (actions.js) branche isEditor et TEST_DRY_RUN sur la logi
   const source = readFileSync(new URL("../src/app/test/actions.js", import.meta.url), "utf8");
   assert.match(source, /publierBrouillonCore\(analyseId, \{[\s\S]*isEditor,[\s\S]*prisma,[\s\S]*dryRun: process\.env\.TEST_DRY_RUN === "1"/);
   assert.match(source, /^"use server";/);
+});
+
+// ---------- Fiche issue d'une révision : fusion de la PR « Révision <slug> » ----------
+
+const REVISION = { slug: "lepen-budget-immigration", reponses: [], synthese: "s" };
+const AVEC_REVISION = { ...BROUILLON, contenuComplet: { titre_fiche: "x", revision: REVISION } };
+const PR = { numero: 12, lien: "https://github.com/Perlimpinpin2027/perlimpinpin/pull/12" };
+
+// Faux GitHub : `appels` liste les appels ; fusionner lève une erreur si interdit.
+function fauxGitHub({ verification = { ok: true, pr: PR }, fusion = { ok: true }, fusionAutorisee = true } = {}) {
+  const appels = [];
+  return {
+    appels,
+    github: {
+      verifier: async (slug) => (appels.push(["verifier", slug]), verification),
+      fusionner: async (pr) => {
+        appels.push(["fusionner", pr]);
+        if (!fusionAutorisee) throw new Error("FUSION INTERDITE");
+        return fusion;
+      },
+    },
+  };
+}
+
+test("révision : publication sans champ revision, GitHub n'est jamais appelé (comportement inchangé)", async () => {
+  const { prisma } = fausseBase({ ecrituresAutorisees: true, analyse: { ...BROUILLON, contenuComplet: { titre_fiche: "x" } } });
+  const interdit = { verifier: () => assert.fail("pas d'appel GitHub"), fusionner: () => assert.fail("pas d'appel GitHub") };
+  const resultat = await publierBrouillonCore(7, { isEditor: editeur, prisma, dryRun: false, github: interdit });
+  assert.deepEqual(resultat, { ok: true, simulation: false, analyseId: 7, propositionId: 70, candidatNom: "David Lisnard" });
+});
+
+test("révision : PR non fusionnable → refus avec la raison et le lien, rien n'est écrit ni fusionné", async () => {
+  for (const dryRun of [false, true]) {
+    const { prisma, journal } = fausseBase({ analyse: AVEC_REVISION, ecrituresAutorisees: false });
+    const { github, appels } = fauxGitHub({
+      verification: { ok: false, raison: "la pull request #12 a des conflits avec main (dirty)", lien: PR.lien },
+      fusionAutorisee: false,
+    });
+    const resultat = await publierBrouillonCore(7, { isEditor: editeur, prisma, dryRun, github });
+    assert.equal(resultat.ok, false);
+    assert.equal(
+      resultat.message,
+      "La révision n'est pas fusionnable : la pull request #12 a des conflits avec main (dirty). Rien n'a été publié.",
+    );
+    assert.equal(resultat.lienPR, PR.lien);
+    assert.ok(!journal.includes("$transaction"));
+    assert.deepEqual(appels, [["verifier", "lepen-budget-immigration"]]);
+  }
+});
+
+test("révision : publication puis fusion squash de la PR", async () => {
+  const { prisma, journal } = fausseBase({ analyse: AVEC_REVISION, ecrituresAutorisees: true });
+  const { github, appels } = fauxGitHub();
+  const resultat = await publierBrouillonCore(7, { isEditor: editeur, prisma, dryRun: false, github });
+  assert.equal(resultat.ok, true);
+  assert.deepEqual(resultat.revision, { slug: "lepen-budget-immigration", fusionnee: true, lienPR: PR.lien });
+  assert.equal(resultat.avertissement, undefined);
+  // Vérification avant la transaction, fusion après.
+  assert.deepEqual(appels, [
+    ["verifier", "lepen-budget-immigration"],
+    ["fusionner", { slug: "lepen-budget-immigration", numero: 12 }],
+  ]);
+  assert.ok(journal.includes("tx.candidat.update"));
+});
+
+test("révision : la fusion échoue après publication → fiche publiée, avertissement", async () => {
+  for (const github of [
+    fauxGitHub({ fusion: { ok: false, raison: "GitHub refuse la fusion (405) : Base branch was modified" } }).github,
+    fauxGitHub({ fusionAutorisee: false }).github, // GitHub injoignable
+  ]) {
+    const { prisma, journal } = fausseBase({ analyse: AVEC_REVISION, ecrituresAutorisees: true });
+    const resultat = await publierBrouillonCore(7, { isEditor: editeur, prisma, dryRun: false, github });
+    assert.equal(resultat.ok, true);
+    assert.equal(resultat.simulation, false);
+    assert.equal(resultat.propositionId, 70);
+    assert.match(resultat.avertissement, /^Fiche publiée, mais les réponses aux commentaires n'ont pas pu être publiées : /);
+    assert.deepEqual(resultat.revision, { slug: "lepen-budget-immigration", fusionnee: false, lienPR: PR.lien });
+    assert.ok(journal.includes("tx.analyse.updateMany") && journal.includes("tx.candidat.update"));
+  }
+});
+
+test("révision : simulation → vérification seulement, aucune écriture, aucune fusion", async () => {
+  const { prisma, journal } = fausseBase({ analyse: AVEC_REVISION, ecrituresAutorisees: false });
+  const { github, appels } = fauxGitHub({ fusionAutorisee: false });
+  const resultat = await publierBrouillonCore(7, { isEditor: editeur, prisma, dryRun: true, github });
+  assert.equal(resultat.ok, true);
+  assert.equal(resultat.simulation, true);
+  assert.match(resultat.message, /serait publiée .* Puis la pull request #12 \(révision « lepen-budget-immigration »\) serait fusionnée \(squash\)/);
+  assert.deepEqual(appels, [["verifier", "lepen-budget-immigration"]]);
+  assert.ok(!journal.includes("$transaction"));
+});
+
+test("révision : GitHub non configuré → refus avant toute écriture", async () => {
+  const { prisma, journal } = fausseBase({ analyse: AVEC_REVISION });
+  const resultat = await publierBrouillonCore(7, { isEditor: editeur, prisma, dryRun: false });
+  assert.match(resultat.message, /n'est pas fusionnable : accès à GitHub non configuré\. Rien n'a été publié\./);
+  assert.ok(!journal.includes("$transaction"));
+});
+
+test("Réessayer la fusion : fiche déjà publiée seulement, aucune écriture en base", async () => {
+  const publiee = { ...AVEC_REVISION, statut: "publie" };
+
+  const succes = fausseBase({ analyse: publiee });
+  const gh = fauxGitHub();
+  assert.deepEqual(await fusionnerRevisionCore(7, { isEditor: editeur, prisma: succes.prisma, dryRun: false, github: gh.github }), {
+    ok: true,
+    simulation: false,
+    analyseId: 7,
+    propositionId: 70,
+    revision: { slug: "lepen-budget-immigration", fusionnee: true, lienPR: PR.lien },
+  });
+  assert.equal(gh.appels.length, 2);
+  assert.ok(succes.journal.every((a) => !/update|\$transaction/.test(a)));
+
+  const echec = await fusionnerRevisionCore(7, {
+    isEditor: editeur,
+    prisma: fausseBase({ analyse: publiee }).prisma,
+    dryRun: false,
+    github: fauxGitHub({ fusion: { ok: false, raison: "GitHub a répondu 500 (la fusion)." } }).github,
+  });
+  assert.equal(echec.ok, false);
+  assert.equal(echec.avertissement, true);
+  assert.equal(echec.lienPR, PR.lien);
+
+  const options = (analyse, isEditor = editeur) => ({ isEditor, prisma: fausseBase({ analyse }).prisma, github: fauxGitHub().github });
+  assert.deepEqual(await fusionnerRevisionCore(7, options(publiee, pasEditeur)), { ok: false, message: "Non autorisé." });
+  assert.match((await fusionnerRevisionCore(7, options(AVEC_REVISION))).message, /Publie d'abord/);
+  assert.match((await fusionnerRevisionCore(7, options({ ...BROUILLON, statut: "publie" }))).message, /ne vient pas d'une révision/);
+
+  const sim = fauxGitHub({ fusionAutorisee: false });
+  const resultatSim = await fusionnerRevisionCore(7, { isEditor: editeur, prisma: fausseBase({ analyse: publiee }).prisma, dryRun: true, github: sim.github });
+  assert.equal(resultatSim.simulation, true);
+  assert.deepEqual(sim.appels.map((a) => a[0]), ["verifier"]);
+});
+
+test("actions.js : GitHub branché (src/lib/github.js), avertissement affiché sans redirection", () => {
+  const source = readFileSync(new URL("../src/app/test/actions.js", import.meta.url), "utf8");
+  assert.match(source, /publierBrouillonCore\(analyseId, \{[\s\S]*?github,[\s\S]*?\}\)/);
+  assert.match(source, /fusionnerRevisionCore\(analyseId, \{[\s\S]*?isEditor,[\s\S]*?dryRun: process\.env\.TEST_DRY_RUN === "1",[\s\S]*?github,/);
+  assert.match(source, /from "@\/lib\/github"/);
+  assert.match(source, /if \(resultat\.avertissement\) return resultat;/);
 });

@@ -1,13 +1,17 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { publierBrouillon } from "./actions";
+import { publierBrouillon, reessayerFusion } from "./actions";
 
 // Bouton « Publier sur le site » avec confirmation dans la page (pas de
 // window.confirm). Affiché seulement aux personnes déverrouillées, mais c'est
 // l'action serveur qui vérifie vraiment l'accès. En cas de succès, l'action
 // redirige vers la fiche publique ; sinon elle renvoie un message à afficher ici.
-export default function PublishBox({ analyseId, candidatNom, simulation }) {
+//
+// Fiche issue d'une révision (`revision`) : la publication fusionne aussi la PR
+// « Révision <slug> ». Si la fiche est publiée mais que la fusion échoue,
+// l'action renvoie un avertissement (orange) et on propose « Réessayer la fusion ».
+export default function PublishBox({ analyseId, candidatNom, simulation, revision = false }) {
   const [confirmation, setConfirmation] = useState(false);
   const [message, setMessage] = useState(null);
   const [enCours, startTransition] = useTransition();
@@ -22,9 +26,23 @@ export default function PublishBox({ analyseId, candidatNom, simulation }) {
     });
   }
 
+  function reessayer() {
+    startTransition(async () => {
+      const resultat = await reessayerFusion(analyseId);
+      // Fusion réussie : la page a été redirigée vers la fiche publique. Un échec
+      // garde l'avertissement pour pouvoir réessayer encore.
+      if (resultat) setMessage(resultat.ok ? resultat : { ...resultat, avertissement: true });
+    });
+  }
+
+  // Fiche publiée, réponses non publiées : plus de bouton « Publier ».
+  const publieeSansFusion = Boolean(message?.avertissement);
+  const texte = message?.ok && typeof message.avertissement === "string" ? message.avertissement : message?.message;
+  const lienPR = message?.lienPR || message?.revision?.lienPR;
+
   return (
     <div className="flex flex-col gap-2">
-      {!confirmation ? (
+      {publieeSansFusion ? null : !confirmation ? (
         <div className="flex flex-wrap items-center gap-3">
           <button
             type="button"
@@ -53,6 +71,9 @@ export default function PublishBox({ analyseId, candidatNom, simulation }) {
           <p className="text-sm">
             Elle sera visible par tout le monde sur le site public et comptera
             dans la moyenne de {candidatNom}.
+            {revision
+              ? " Les réponses aux commentaires du Club seront aussi publiées sur /relectures."
+              : ""}
           </p>
           <div className="flex flex-wrap gap-2">
             <button
@@ -76,12 +97,39 @@ export default function PublishBox({ analyseId, candidatNom, simulation }) {
       )}
 
       {message ? (
-        <p
-          role="status"
-          className={`text-sm font-semibold ${message.ok ? "text-emerald-900" : "text-red-800"}`}
-        >
-          {message.message}
-        </p>
+        <div role="status" className="flex flex-col gap-2">
+          <p
+            className={`text-sm font-semibold ${
+              publieeSansFusion ? "text-orange-700" : message.ok ? "text-emerald-900" : "text-red-800"
+            }`}
+          >
+            {texte}
+          </p>
+          {publieeSansFusion || lienPR ? (
+            <div className="flex flex-wrap items-center gap-3">
+              {publieeSansFusion ? (
+                <button
+                  type="button"
+                  onClick={reessayer}
+                  disabled={enCours}
+                  className="rounded-full bg-orange-700 px-4 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-orange-800 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  {enCours ? "Fusion…" : "Réessayer la fusion"}
+                </button>
+              ) : null}
+              {lienPR ? (
+                <a
+                  href={lienPR}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm underline underline-offset-2"
+                >
+                  Voir la PR
+                </a>
+              ) : null}
+            </div>
+          ) : null}
+        </div>
       ) : null}
     </div>
   );

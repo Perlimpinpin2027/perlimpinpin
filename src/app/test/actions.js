@@ -14,7 +14,8 @@ import {
   secretUtilisable,
 } from "@/lib/test-auth-core";
 import { enregistrerTexteCore } from "@/lib/test-enregistrer";
-import { publierBrouillonCore } from "@/lib/test-publier";
+import { fusionnerRevisionCore, publierBrouillonCore } from "@/lib/test-publier";
+import { fusionnerRevision, verifierRevisionFusionnable } from "@/lib/github";
 
 // Actions serveur de /test. Rappel : un fichier "use server" n'exporte que des
 // fonctions asynchrones, et chacune est appelable depuis n'importe quel client :
@@ -61,12 +62,17 @@ export async function verrouiller() {
   return { ok: true, message: "" };
 }
 
+// Accès à GitHub pour les fiches issues d'une révision : vérification puis
+// fusion de la PR « Révision <slug> » (voir src/lib/github.js).
+const github = { verifier: verifierRevisionFusionnable, fusionner: fusionnerRevision };
+
 // Publie un brouillon (voir src/lib/test-publier.js pour les règles).
 export async function publierBrouillon(analyseId) {
   const resultat = await publierBrouillonCore(analyseId, {
     isEditor,
     prisma,
     dryRun: process.env.TEST_DRY_RUN === "1",
+    github,
   });
 
   if (!resultat.ok) {
@@ -79,7 +85,8 @@ export async function publierBrouillon(analyseId) {
 
   // Ligne d'audit pour les logs Vercel.
   console.log(
-    `[test] analyse #${resultat.analyseId} publiée (mesure #${resultat.propositionId}, ${resultat.candidatNom}) le ${new Date().toISOString()}`,
+    `[test] analyse #${resultat.analyseId} publiée (mesure #${resultat.propositionId}, ${resultat.candidatNom}) le ${new Date().toISOString()}` +
+      (resultat.revision ? ` ; révision « ${resultat.revision.slug} » ${resultat.revision.fusionnee ? "fusionnée" : "NON fusionnée"}` : ""),
   );
 
   // Les pages publiques mises en cache doivent voir la nouvelle analyse.
@@ -87,7 +94,25 @@ export async function publierBrouillon(analyseId) {
     revalidatePath(chemin);
   }
 
+  // Fiche publiée mais PR non fusionnée : on reste sur la page pour afficher
+  // l'avertissement et le bouton « Réessayer la fusion ».
+  if (resultat.avertissement) return resultat;
+
   // redirect lève une exception : il doit rester hors de tout try/catch.
+  redirect(`/declarations/${resultat.propositionId}`);
+}
+
+// « Réessayer la fusion » de la PR de révision d'une fiche déjà publiée.
+export async function reessayerFusion(analyseId) {
+  const resultat = await fusionnerRevisionCore(analyseId, {
+    isEditor,
+    prisma,
+    dryRun: process.env.TEST_DRY_RUN === "1",
+    github,
+  });
+  if (!resultat.ok || resultat.simulation) return resultat;
+
+  console.log(`[test] révision « ${resultat.revision.slug} » fusionnée (analyse #${resultat.analyseId}) le ${new Date().toISOString()}`);
   redirect(`/declarations/${resultat.propositionId}`);
 }
 

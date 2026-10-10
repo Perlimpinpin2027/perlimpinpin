@@ -5,6 +5,7 @@ import { editionConfiguree, isEditor } from "@/lib/test-auth";
 import DeclarationDetailPage from "@/app/declarations/[id]/page";
 import EditorBar from "../EditorBar";
 import PublishBox from "../PublishBox";
+import ReponsesRevision from "../ReponsesRevision";
 
 // Toujours recalculée à chaque visite (même choix que la liste /test).
 export const dynamic = "force-dynamic";
@@ -36,6 +37,7 @@ export default async function TestDetailPage({ params }) {
       id: true,
       statut: true,
       updatedAt: true,
+      contenuComplet: true,
       proposition: { select: { candidat: { select: { nom: true } } } },
     },
   });
@@ -46,6 +48,9 @@ export default async function TestDetailPage({ params }) {
 
   const configuree = editionConfiguree();
   const editeur = configuree && (await isEditor());
+  // Fiche issue d'une révision (robot de révision) : réponses aux commentaires
+  // du Club, montrées aux seules personnes déverrouillées.
+  const revision = derniere.contenuComplet?.revision?.slug ? derniere.contenuComplet.revision : null;
 
   return (
     <>
@@ -73,12 +78,15 @@ export default async function TestDetailPage({ params }) {
                   analyseId={derniere.id}
                   candidatNom={derniere.proposition.candidat.nom}
                   simulation={process.env.TEST_DRY_RUN === "1"}
+                  revision={Boolean(revision)}
                 />
               ) : null}
             </div>
           ) : null}
         </div>
       </div>
+
+      {editeur && revision ? <ReponsesRevision revision={revision} /> : null}
 
       {/* Pour un éditeur seulement : le crayon de modification (titre, résumé). La
           version sert à détecter une modification faite entre-temps par quelqu'un d'autre. */}

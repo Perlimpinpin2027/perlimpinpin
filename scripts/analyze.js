@@ -174,6 +174,24 @@ export function lireCommentaires(chemin) {
   });
 }
 
+// --revision <slug> (robot de révision) : champ `revision` de contenuComplet,
+// qui relie le brouillon à sa PR « Révision <slug> » (bouton Publier de
+// /test/[id]) et porte les réponses aux commentaires, affichées aux seuls
+// éditeurs. Ni nom ni e-mail ; jamais affiché sur la fiche publique.
+export function construireChampRevision(slug, commentaires, revisionRelecture) {
+  const parId = new Map((revisionRelecture?.reponses ?? []).map((r) => [r.commentaire_id, r]));
+  return {
+    slug,
+    reponses: commentaires.map((c) => ({
+      section: c.sectionLabel ?? null,
+      commentaire: c.body,
+      reponse: parId.get(c.id)?.reponse ?? null,
+      retenu: parId.get(c.id)?.retenu === true,
+    })),
+    synthese: revisionRelecture?.synthese ?? null,
+  };
+}
+
 function fillTemplate(template, vars) {
   return template.replace(/\{\{(\w+)\}\}/g, (match, key) => (key in vars ? String(vars[key]) : match));
 }
@@ -1597,7 +1615,7 @@ async function main() {
       "Usage: node scripts/analyze.js chemin/vers/analyse-etape1.json --candidat \"Nom\" --theme \"Thème\" --source \"Texte de la proposition\"\n" +
         "   ou: node scripts/analyze.js --etape1 '{...JSON collé...}' --candidat \"Nom\" --theme \"Thème\" --source \"...\"\n" +
         "   ou (pipeline automatisé, sans confirmation manuelle) : ajouter --auto --seuil-score <0-100>\n" +
-        "   options : --commentaires commentaires.json (commentaires du Club), --resultat resultat.json (récapitulatif)",
+        "   options : --commentaires commentaires.json (commentaires du Club), --resultat resultat.json (récapitulatif), --revision <slug> (robot de révision)",
     );
     process.exitCode = 1;
     return;
@@ -1620,9 +1638,18 @@ async function main() {
     process.exitCode = 1;
     return;
   }
+  // --revision <slug> (facultatif, robot de révision) : vérifié avant tout appel payant.
+  if (args.revision !== undefined && (typeof args.revision !== "string" || !/^[a-z0-9-]{1,120}$/.test(args.revision))) {
+    console.error("--revision attend le slug de la fiche relue (minuscules, chiffres et tirets).");
+    process.exitCode = 1;
+    return;
+  }
 
   const item = { candidatNom, theme, source };
   const pipelineResult = await runPipeline(etape1Input, { commentaires: commentaires?.length ? commentaires : null });
+  if (args.revision !== undefined) {
+    pipelineResult.parsed.revision = construireChampRevision(args.revision, commentaires ?? [], pipelineResult.revisionRelecture);
+  }
 
   if (isAuto) {
     const seuilScore = Number(args["seuil-score"]);
