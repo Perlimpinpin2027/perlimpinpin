@@ -979,6 +979,18 @@ function loadEtape1(input) {
   }
 }
 
+// Le FORMAT ÉTAPE 3 place verdict_final à la racine de la réponse, et le
+// modèle ne le recopie pas toujours dans fiche_complete, où le schéma
+// l'exige. Sans lui, la validation échoue, et la réparation ne peut pas le
+// retrouver (elle ne reçoit que fiche_complete). On reprend donc celui de la
+// racine, seulement s'il manque : c'est de toute façon lui qui prime ensuite
+// (voir `parsed` dans runPipeline), comme dans scripts/import-etape3.js.
+export function ficheCompleteAvecVerdictRacine(arbitrage3) {
+  const fiche = arbitrage3?.fiche_complete ?? {};
+  if (fiche.verdict_final !== undefined || arbitrage3?.verdict_final === undefined) return fiche;
+  return { ...fiche, verdict_final: arbitrage3.verdict_final };
+}
+
 // --- Orchestration du pipeline (étapes 2 et 3) ------------------------------
 // L'étape 1 (recherche + analyse) est produite manuellement, en dehors de ce
 // script — voir loadEtape1() ci-dessus. Le pipeline automatisé enchaîne
@@ -1033,7 +1045,7 @@ async function runPipeline(etape1Input, { commentaires = null } = {}) {
   }
 
   const auditArbitrage = Array.isArray(arbitrage3.auditArbitrage) ? [...arbitrage3.auditArbitrage] : [];
-  const rawFicheComplete = cleanContenu(arbitrage3.fiche_complete ?? {});
+  const rawFicheComplete = cleanContenu(ficheCompleteAvecVerdictRacine(arbitrage3));
   const ficheComplete = await validateFicheCompleteWithRepair(rawFicheComplete, "Étape 3");
 
   // titre_fiche/resume_court/teaser_accueil/verdict_final sont produits à la
