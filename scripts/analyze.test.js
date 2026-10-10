@@ -1,6 +1,48 @@
 import { test, describe } from "node:test";
 import assert from "node:assert/strict";
-import { callMistralQualityControl } from "./analyze.js";
+import { readFileSync } from "node:fs";
+import { callMistralQualityControl, ficheCompleteAvecVerdictRacine } from "./analyze.js";
+import { validateFicheCompleteStructure } from "./lib/scoring.js";
+
+// Échec du robot de révision sur le-pen-contribution-ue-5-milliards (10 octobre
+// 2026) : verdict_final seulement à la racine de la réponse d'étape 3, absent
+// de fiche_complete → « Étape 3 : structure toujours invalide après tentative
+// de réparation. verdict_final: Invalid input: expected string, received
+// undefined ». Reproduit avec une vraie sortie d'étape 3, sans appel aux API.
+describe("Étape 3 — verdict_final placé seulement à la racine", () => {
+  const sortieReelle = () =>
+    JSON.parse(readFileSync(new URL("../data/analyses finales/Zemmour/zemmour_rsa_trois_ans_etape3.json", import.meta.url), "utf8"));
+
+  test("sans le correctif, fiche_complete seule est refusée ; avec, elle est valide et prend le verdict de la racine", () => {
+    const arbitrage3 = sortieReelle();
+    delete arbitrage3.fiche_complete.verdict_final;
+    assert.ok(arbitrage3.verdict_final, "la sortie réelle a bien un verdict_final à la racine");
+
+    const avant = validateFicheCompleteStructure(arbitrage3.fiche_complete);
+    assert.equal(avant.valid, false);
+    assert.match(avant.errors.join("\n"), /verdict_final: Invalid input: expected string, received undefined/);
+
+    const fiche = ficheCompleteAvecVerdictRacine(arbitrage3);
+    assert.equal(fiche.verdict_final, arbitrage3.verdict_final);
+    assert.equal(validateFicheCompleteStructure(fiche).valid, true);
+  });
+
+  test("verdict_final déjà dans fiche_complete : rien ne change (même objet)", () => {
+    const arbitrage3 = sortieReelle();
+    arbitrage3.verdict_final = "Un autre verdict, à la racine.";
+    assert.equal(ficheCompleteAvecVerdictRacine(arbitrage3), arbitrage3.fiche_complete);
+  });
+
+  test("verdict_final absent partout : rien n'est inventé, la validation échoue toujours", () => {
+    const arbitrage3 = sortieReelle();
+    delete arbitrage3.fiche_complete.verdict_final;
+    delete arbitrage3.verdict_final;
+    const fiche = ficheCompleteAvecVerdictRacine(arbitrage3);
+    assert.ok(!("verdict_final" in fiche));
+    assert.equal(validateFicheCompleteStructure(fiche).valid, false);
+    assert.deepEqual(ficheCompleteAvecVerdictRacine({}), {});
+  });
+});
 
 // CAS 10 de la spec ("Mistral indisponible -> le pipeline continue") :
 // runPipeline() enveloppe cet appel dans un try/catch (voir analyze.js,
