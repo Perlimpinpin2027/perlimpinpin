@@ -1,0 +1,50 @@
+# Après la fusion d'une PR de révision (branche revision/<slug>, ouverte par le
+# workflow « Révision d'une relecture ») : marque en base les commentaires
+# retenus de la fiche (scripts/marquer-retenus.js, +20 PerlimpinPOINTS chacun).
+# Le résumé du job indique les points attribués. Aucun nom d'adhérent dans le
+# journal (CI=true, voir marquer-retenus.js).
+#
+# Secret (Settings → Secrets and variables → Actions) : DATABASE_URL.
+
+name: Après révision
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  points:
+    if: ${{ github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'revision/') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    concurrency:
+      group: apres-${{ github.event.pull_request.head.ref }}
+      cancel-in-progress: false
+    env:
+      BRANCHE: ${{ github.event.pull_request.head.ref }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+    steps:
+      - name: Récupération de main (PR fusionnée)
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Installation des modules
+        run: npm ci
+
+      - name: PerlimpinPOINTS des commentaires retenus
+        run: |
+          slug="${BRANCHE#revision/}"
+          if ! echo "$slug" | grep -Eq '^[a-z0-9-]{1,120}$'; then echo "✗ Slug invalide : $slug"; exit 1; fi
+          if [ -z "$DATABASE_URL" ]; then echo "✗ Secret DATABASE_URL manquant."; exit 1; fi
+          node scripts/marquer-retenus.js "$slug" --appliquer --oui

@@ -338,6 +338,62 @@ export function validateFicheCompleteStructure(raw) {
   return { valid: true, errors: [], fiche: zodResult.data };
 }
 
+// --- Commentaires du Club (relecture) -------------------------------------------
+// Seulement quand analyze.js reçoit --commentaires (voir les points 6 de
+// l'ÉTAPE 2 et 9 de l'ÉTAPE 3 dans data/prompt-methodologie.md).
+
+const zodErreurs = (error) => error.issues.map((issue) => `${issue.path.join(".") || "(racine)"}: ${issue.message}`);
+
+// Étape 2 (Mistral) : avis sur chaque commentaire. Facultatif : un avis
+// invalide est écarté (étape 3 menée comme sans avis Mistral sur les
+// commentaires), jamais bloquant.
+export const AvisCommentairesEtape2Schema = z.array(
+  z
+    .object({
+      commentaire_id: z.string().min(1),
+      type: z.enum(["coherence", "forme", "fait_a_verifier"]),
+      fonde: z.enum(["oui", "non", "partiel", "a_verifier"]),
+      correction_proposee: z.string().nullable(),
+      projet_reponse: z.string().nullable(),
+      a_verifier: z.string().nullable(),
+    })
+    .passthrough(),
+);
+
+export function validateAvisCommentairesEtape2(raw) {
+  const result = AvisCommentairesEtape2Schema.safeParse(raw);
+  return result.success ? { valid: true, errors: [], avis: result.data } : { valid: false, errors: zodErreurs(result.error), avis: null };
+}
+
+// Étape 3 (Claude) : revision_relecture, obligatoire si des commentaires ont
+// été fournis. Exactement une réponse par commentaire (mêmes commentaire_id).
+export const RevisionRelectureSchema = z.object({
+  synthese: z.string().trim().min(1),
+  reponses: z.array(
+    z.object({
+      commentaire_id: z.string().min(1),
+      reponse: z.string().trim().min(1),
+      retenu: z.boolean(),
+    }),
+  ),
+  notes_pour_arno: z.string(),
+});
+
+export function validateRevisionRelecture(raw, commentaireIds) {
+  const result = RevisionRelectureSchema.safeParse(raw);
+  if (!result.success) return { valid: false, errors: zodErreurs(result.error), revision: null };
+  const errors = [];
+  const vus = result.data.reponses.map((r) => r.commentaire_id);
+  const attendus = new Set(commentaireIds);
+  const manquants = commentaireIds.filter((id) => !vus.includes(id));
+  const inconnus = vus.filter((id) => !attendus.has(id));
+  const doublons = vus.filter((id, i) => vus.indexOf(id) !== i);
+  if (manquants.length) errors.push(`reponses : aucune réponse pour ${manquants.join(", ")}.`);
+  if (inconnus.length) errors.push(`reponses : commentaire_id inconnu(s) ${[...new Set(inconnus)].join(", ")}.`);
+  if (doublons.length) errors.push(`reponses : plusieurs réponses pour ${[...new Set(doublons)].join(", ")}.`);
+  return errors.length ? { valid: false, errors, revision: null } : { valid: true, errors: [], revision: result.data };
+}
+
 // Longueurs maximales de titre_fiche et teaser_accueil (étape 3, sections
 // « ### Titre » et « ### Teaser accueil » de data/prompt-methodologie.md) :
 // au-delà, la carte « à la une » de l'accueil les coupe. Contrôle NON
