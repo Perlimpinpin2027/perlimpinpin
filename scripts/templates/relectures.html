@@ -151,6 +151,8 @@ h3{margin:0}
 .chrono-ghost:hover{border-color:var(--ink)}
 .chrono-ghost:disabled{opacity:.6;cursor:default}
 .chrono-run + .chrono-form{margin-top:8px}
+.revision{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:8px;font-size:12.5px;color:var(--muted)}
+.revision a{color:var(--ink)}
 .done-badge{display:inline-flex;align-items:center;gap:7px;background:var(--ok-soft);color:var(--ok);border-radius:999px;padding:3px 11px;font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.02em}
 .done-badge::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
 .closed-banner{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:0 0 18px;padding:12px 16px;border:1px solid var(--rule);border-radius:14px;background:var(--surface);font-size:13.5px;color:var(--muted)}
@@ -893,7 +895,61 @@ mark.anno-hl.pending{background:var(--hl-strong)}
       '<button class="chrono-ghost" type="submit">' + (state === "closed" ? "Rouvrir" : "Prolonger") + "</button>" +
       '<button class="chrono-ghost" type="button" data-chrono-action="stop">Arrêter</button>' +
       (state === "running" ? '<button class="chrono-ghost" type="button" data-chrono-action="close">Clore maintenant</button>' : "") +
-      err;
+      err + (state === "closed" ? '<div class="revision" data-revision="' + esc(slug) + '">' + revisionHtml(slug) + "</div>" : "");
+  }
+
+  // ---------- envoi en révision (mode comité, relecture close) ----------
+  // Déclenche le robot de révision (workflow GitHub) via /api/relectures/revision.
+  // Les cartes archivées n'ont pas de chrono, donc pas de bouton.
+  var REVISION_API = "/api/relectures/revision";
+  var revisionBySlug = {}; // ficheSlug -> { etape: "confirmer" | "envoi" | "lancee", lien, erreur }
+
+  function revisionHtml(slug) {
+    var r = revisionBySlug[slug] || {};
+    if (r.etape === "lancee") {
+      return "<span>" + (r.dejaLance ? "Révision déjà en cours" : "Révision lancée") + '</span><a href="' + esc(r.lien) +
+        '" target="_blank" rel="noopener">Suivre sur GitHub</a>';
+    }
+    if (r.etape === "confirmer" || r.etape === "envoi") {
+      var off = r.etape === "envoi" ? " disabled" : "";
+      return "<span>Le pipeline va répondre aux commentaires et préparer la fiche finale. Continuer ?</span>" +
+        '<button class="chrono-btn" type="button" data-revision-action="envoyer"' + off + ">" + (off ? "Envoi…" : "Continuer") + "</button>" +
+        '<button class="chrono-ghost" type="button" data-revision-action="annuler"' + off + ">Annuler</button>";
+    }
+    return '<button class="chrono-ghost" type="button" data-revision-action="demander">Envoyer en révision</button>' +
+      (r.erreur ? '<span class="chrono-err">' + esc(r.erreur) + "</span>" : "");
+  }
+
+  function setRevision(slug, etat) {
+    revisionBySlug[slug] = etat;
+    var el = document.querySelector('[data-revision="' + slug + '"]');
+    if (el) el.innerHTML = revisionHtml(slug);
+  }
+
+  function envoyerRevision(slug) {
+    if ((revisionBySlug[slug] || {}).etape !== "confirmer") return; // un seul envoi
+    setRevision(slug, { etape: "envoi" });
+    fetch(REVISION_API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-relecture-admin-code": getAdminCode() },
+      body: JSON.stringify({ ficheSlug: slug }),
+    })
+      .then(function (r) {
+        return r.json().catch(function () { return {}; }).then(function (res) {
+          if (r.status === 401) {
+            revisionBySlug[slug] = {};
+            setAdminCode("");
+            renderAdmin("Code comité refusé.");
+            renderAllChronos();
+            return;
+          }
+          if (!r.ok) throw new Error(res.error || "Échec, réessaie.");
+          setRevision(slug, { etape: "lancee", lien: res.lien, dejaLance: res.dejaLance });
+        });
+      })
+      .catch(function (e) {
+        setRevision(slug, { erreur: e.message || "Échec, réessaie." });
+      });
   }
 
   function tickChrono(slug) {
@@ -1083,6 +1139,15 @@ mark.anno-hl.pending{background:var(--hl-strong)}
       setAdminCode("");
       renderAdmin();
       renderAllChronos();
+      return;
+    }
+    var rev = ev.target.closest && ev.target.closest("[data-revision-action]");
+    if (rev) {
+      var revSlug = rev.closest("[data-revision]").getAttribute("data-revision");
+      var revAction = rev.getAttribute("data-revision-action");
+      if (revAction === "demander") setRevision(revSlug, { etape: "confirmer" });
+      else if (revAction === "annuler") setRevision(revSlug, {});
+      else if (revAction === "envoyer") envoyerRevision(revSlug);
       return;
     }
     var act = ev.target.closest && ev.target.closest("[data-chrono-action]");
