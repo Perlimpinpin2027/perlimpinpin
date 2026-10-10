@@ -2,7 +2,8 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { prisma } from "@/lib/prisma";
 import { isAdmin } from "@/lib/relecture-admin";
-import { SLUG_PATTERN, declencherRevision, verifierDemande } from "@/lib/relecture-revision";
+import { declencherRevision } from "@/lib/github";
+import { SLUG_PATTERN, verifierDemande } from "@/lib/relecture-revision";
 
 // « Envoyer en révision » (/relectures, mode comité) : déclenche le robot de
 // révision (workflow GitHub revision-relecture.yml) pour une relecture close

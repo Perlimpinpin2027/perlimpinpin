@@ -111,6 +111,7 @@ export async function reviser(slug, { sortie, root = ROOT, lire = lireBase, lanc
     "scripts/analyze.js", etape1,
     "--candidat", candidat, "--theme", theme, "--source", source,
     "--auto", "--seuil-score", "0",
+    "--revision", slug,
     "--resultat", fichierResultat,
     ...(commentaires.length ? ["--commentaires", fichierCommentaires] : []),
   ];

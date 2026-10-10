@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { declencherRevision, verifierDemande } from "../src/lib/relecture-revision.js";
+import { declencherRevision } from "../src/lib/github.js";
+import { verifierDemande } from "../src/lib/relecture-revision.js";
 
 // Logique de POST /api/relectures/revision (« Envoyer en révision ») :
 // contrôles de la demande et appel à l'API GitHub, fetch simulé.

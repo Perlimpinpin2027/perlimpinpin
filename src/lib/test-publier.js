@@ -5,6 +5,15 @@
 //
 // Reproduit EXACTEMENT scripts/publish.js : statut "publie", puis recalcul de
 // Candidat.scoreMoyen (moyenne des scoreFaisabilite des analyses "publie").
+//
+// Fiche issue d'une révision (contenuComplet.revision, écrit par le robot de
+// révision) : la même action fusionne aussi la PR « Révision <slug> », qui
+// publie l'archive et les réponses sur /relectures (puis apres-revision.yml
+// attribue les PerlimpinPOINTS). Ordre : vérification que la PR est
+// fusionnable AVANT toute écriture, publication en base, puis fusion. Si la
+// fusion échoue, la fiche reste publiée et le résultat porte un avertissement.
+// Les appels à GitHub sont passés en paramètre (github.verifier,
+// github.fusionner : voir src/lib/github.js).
 
 const NON_AUTORISE = "Non autorisé.";
 
@@ -12,11 +21,37 @@ const NON_AUTORISE = "Non autorisé.";
 // proprement, avec un message à montrer à l'utilisateur.
 class PublicationRefusee extends Error {}
 
-function refus(message) {
-  return { ok: false, message };
+function refus(message, extra = {}) {
+  return { ok: false, message, ...extra };
 }
 
-export async function publierBrouillonCore(analyseId, { isEditor, prisma, dryRun }) {
+// Slug de la révision (contenuComplet.revision.slug), ou null.
+function slugRevision(analyse) {
+  const slug = analyse.contenuComplet?.revision?.slug;
+  return typeof slug === "string" && slug ? slug : null;
+}
+
+// Vérifie (lecture seule) que la PR de révision est fusionnable.
+async function verifierRevision(slug, github) {
+  if (!github?.verifier) return { ok: false, raison: "accès à GitHub non configuré", lien: null };
+  try {
+    return await github.verifier(slug);
+  } catch (error) {
+    return { ok: false, raison: `GitHub injoignable (${error.message})`, lien: null };
+  }
+}
+
+async function fusionner(slug, numero, github) {
+  try {
+    return await github.fusionner({ slug, numero });
+  } catch (error) {
+    return { ok: false, raison: `GitHub injoignable (${error.message})` };
+  }
+}
+
+const AVERTISSEMENT_FUSION = "Fiche publiée, mais les réponses aux commentaires n'ont pas pu être publiées";
+
+export async function publierBrouillonCore(analyseId, { isEditor, prisma, dryRun, github }) {
   // 1. Accès : avant tout, sans toucher à la base.
   if (!(await isEditor())) return refus(NON_AUTORISE);
 
@@ -33,6 +68,7 @@ export async function publierBrouillonCore(analyseId, { isEditor, prisma, dryRun
       statut: true,
       scoreFaisabilite: true,
       propositionId: true,
+      contenuComplet: true,
       proposition: {
         select: { candidatId: true, candidat: { select: { nom: true } } },
       },
@@ -72,7 +108,21 @@ export async function publierBrouillonCore(analyseId, { isEditor, prisma, dryRun
 
   const { candidatId, candidat } = analyse.proposition;
 
-  // 5. Simulation : on calcule la future moyenne, on n'écrit RIEN.
+  // 5. Fiche issue d'une révision : la PR doit être fusionnable AVANT toute
+  // écriture (aussi en simulation, cette vérification ne fait que lire).
+  const slug = slugRevision(analyse);
+  let pr = null;
+  if (slug) {
+    const verification = await verifierRevision(slug, github);
+    if (!verification.ok) {
+      return refus(`La révision n'est pas fusionnable : ${verification.raison}. Rien n'a été publié.`, {
+        lienPR: verification.lien ?? null,
+      });
+    }
+    pr = verification.pr;
+  }
+
+  // 6. Simulation : on calcule la future moyenne, on n'écrit RIEN.
   if (dryRun) {
     const publiees = await prisma.analyse.findMany({
       where: { statut: "publie", proposition: { candidatId } },
@@ -80,14 +130,16 @@ export async function publierBrouillonCore(analyseId, { isEditor, prisma, dryRun
     });
     const somme = publiees.reduce((total, a) => total + a.scoreFaisabilite, 0);
     const moyenne = (somme + analyse.scoreFaisabilite) / (publiees.length + 1);
+    const fusion = pr ? ` Puis la pull request #${pr.numero} (révision « ${slug} ») serait fusionnée (squash) : réponses publiées sur /relectures.` : "";
     return {
       ok: true,
       simulation: true,
-      message: `[Simulation] Cette analyse serait publiée et la moyenne de ${candidat.nom} deviendrait ${Number(moyenne.toFixed(1))}/100.`,
+      message: `[Simulation] Cette analyse serait publiée et la moyenne de ${candidat.nom} deviendrait ${Number(moyenne.toFixed(1))}/100.${fusion}`,
+      ...(pr ? { lienPR: pr.lien } : {}),
     };
   }
 
-  // 6. Vraie publication : les deux écritures dans une seule transaction, dans
+  // 7. Vraie publication : les deux écritures dans une seule transaction, dans
   // le même ordre que scripts/publish.js. Si l'une échoue, aucune n'est gardée.
   try {
     const candidatMisAJour = await prisma.$transaction(async (tx) => {
@@ -113,12 +165,22 @@ export async function publierBrouillonCore(analyseId, { isEditor, prisma, dryRun
       });
     });
 
-    return {
+    const publie = {
       ok: true,
       simulation: false,
       analyseId: analyse.id,
       propositionId: analyse.propositionId,
       candidatNom: candidatMisAJour.nom,
+    };
+    if (!pr) return publie;
+
+    // 8. Fusion de la PR de révision, une fois la fiche publiée.
+    const fusion = await fusionner(slug, pr.numero, github);
+    if (fusion.ok) return { ...publie, revision: { slug, fusionnee: true, lienPR: pr.lien } };
+    return {
+      ...publie,
+      revision: { slug, fusionnee: false, lienPR: pr.lien },
+      avertissement: `${AVERTISSEMENT_FUSION} : ${fusion.raison}.`,
     };
   } catch (error) {
     if (error instanceof PublicationRefusee) return refus(error.message);
@@ -127,4 +189,39 @@ export async function publierBrouillonCore(analyseId, { isEditor, prisma, dryRun
       "La publication a échoué et rien n'a été enregistré. Réessaie, ou publie avec scripts/publish.js.",
     );
   }
+}
+
+// « Réessayer la fusion » : fiche déjà publiée dont la PR de révision n'a pas
+// pu être fusionnée. Aucune écriture en base, seulement l'appel à GitHub.
+export async function fusionnerRevisionCore(analyseId, { isEditor, prisma, dryRun, github }) {
+  if (!(await isEditor())) return refus(NON_AUTORISE);
+  if (typeof analyseId !== "number" || !Number.isInteger(analyseId) || analyseId <= 0) {
+    return refus("Analyse introuvable.");
+  }
+  const analyse = await prisma.analyse.findUnique({
+    where: { id: analyseId },
+    select: { id: true, statut: true, propositionId: true, contenuComplet: true },
+  });
+  if (!analyse) return refus("Analyse introuvable.");
+  const slug = slugRevision(analyse);
+  if (!slug) return refus("Cette analyse ne vient pas d'une révision : rien à fusionner.");
+  if (analyse.statut !== "publie") return refus("Publie d'abord la fiche : la fusion se fait avec la publication.");
+
+  const verification = await verifierRevision(slug, github);
+  if (!verification.ok) {
+    return refus(`La révision n'est pas fusionnable : ${verification.raison}.`, { lienPR: verification.lien ?? null });
+  }
+  if (dryRun) {
+    return {
+      ok: true,
+      simulation: true,
+      message: `[Simulation] La pull request #${verification.pr.numero} (révision « ${slug} ») serait fusionnée (squash).`,
+      lienPR: verification.pr.lien,
+    };
+  }
+  const fusion = await fusionner(slug, verification.pr.numero, github);
+  if (!fusion.ok) {
+    return refus(`${AVERTISSEMENT_FUSION} : ${fusion.raison}.`, { lienPR: verification.pr.lien, avertissement: true });
+  }
+  return { ok: true, simulation: false, analyseId: analyse.id, propositionId: analyse.propositionId, revision: { slug, fusionnee: true, lienPR: verification.pr.lien } };
 }

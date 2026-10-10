@@ -12,7 +12,8 @@ import {
 } from "./lib/revision-relecture.js";
 import { reviser } from "./reviser-relecture.js";
 import {
-  blocCommentaires, buildCoutPipeline, construireMessageEtape2, construireRequeteEtape3, retirerBloc, reunirTexteFinal,
+  blocCommentaires, buildCoutPipeline, construireChampRevision, construireMessageEtape2, construireRequeteEtape3, retirerBloc,
+  reunirTexteFinal,
 } from "./analyze.js";
 
 // Robot de révision (phase B) : aucun appel réseau, aucune base (dossiers
@@ -327,6 +328,8 @@ test("reviser : analyze.js lancé avec les bons paramètres, sorties écrites, a
   assert.equal(val("--theme"), "Emploi & Chômage");
   assert.match(val("--source"), / Citation : /);
   assert.ok(args.includes("--auto") && val("--seuil-score") === "0");
+  // Lien brouillon ↔ PR de révision (bouton Publier de /test, phase C).
+  assert.equal(val("--revision"), "ma-fiche");
   // Fichier --commentaires : ni nom ni e-mail ; étape 1 sans le bloc relecture.
   const envoyes = JSON.parse(readFileSync(val("--commentaires"), "utf8"));
   assert.deepEqual(Object.keys(envoyes[0]), ["id", "sectionLabel", "body", "quotedText"]);
@@ -371,4 +374,23 @@ test("reviser : arrêts avant tout appel (déjà archivée, candidat inconnu, do
   await assert.rejects(reviser("ma-fiche", opts(doublon, lireFaux(COMMENTAIRES, props))), /Déjà analysée : analyse #49/);
 
   for (const root of [archivee, inconnu, doublon]) rmSync(root, { recursive: true });
+});
+
+// ---------- champ revision de contenuComplet (phase C) ----------
+
+test("construireChampRevision : slug, réponses dans l'ordre des commentaires, ni nom ni e-mail", () => {
+  const commentaires = COMMENTAIRES.map(({ id, sectionLabel, body, quotedText }) => ({ id, sectionLabel, body, quotedText }));
+  const champ = construireChampRevision("ma-fiche", commentaires, REVISION);
+  assert.deepEqual(champ, {
+    slug: "ma-fiche",
+    reponses: [
+      { section: "Contexte national", commentaire: COMMENTAIRES[0].body, reponse: REVISION.reponses[1].reponse, retenu: true },
+      { section: "Titre", commentaire: COMMENTAIRES[1].body, reponse: REVISION.reponses[0].reponse, retenu: false },
+    ],
+    synthese: REVISION.synthese,
+  });
+  const texte = JSON.stringify(champ);
+  assert.ok(!texte.includes("Alexis") && !texte.includes("@"));
+  // Révision sans commentaire : le lien vers la PR existe quand même.
+  assert.deepEqual(construireChampRevision("ma-fiche", [], null), { slug: "ma-fiche", reponses: [], synthese: null });
 });
