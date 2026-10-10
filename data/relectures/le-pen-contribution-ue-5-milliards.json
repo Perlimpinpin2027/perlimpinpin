@@ -144,6 +144,11 @@
         "titre": "Titre court et phrase d'accroche",
         "texte": "Titre court provisoire : « Contribution nette à l'UE : 5 Md€ ». Phrase d'accroche provisoire : « 11 milliards d'économies dès 2027 sur la facture européenne. Mais ce chèque-là se signe à 27, et la France n'a qu'une voix. » Sont-ils fidèles et assez clairs ?"
       }
-    ]
+    ],
+    "archive": {
+      "date": "2026-10-10",
+      "version_suivante": "data/analyses finales/LePen/le_pen_contribution_ue_5_milliards_etape3.json",
+      "reponses": []
+    }
   }
 }
