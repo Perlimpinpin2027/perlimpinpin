@@ -12,7 +12,7 @@ import {
 // qu'un contrôle rapide du cookie (signature, expiration) ; getAdherent() est
 // le vrai contrôle : cookie valide ET compte toujours présent et activé.
 
-// Adhérent connecté { id, email, nom, activatedAt }, ou null (pas de cookie, cookie invalide
+// Adhérent connecté { id, email, nom, pseudo, activatedAt }, ou null (pas de cookie, cookie invalide
 // ou expiré, compte supprimé ou réinitialisé, secret absent : fail closed).
 export const getAdherent = cache(async () => {
   try {
@@ -22,14 +22,14 @@ export const getAdherent = cache(async () => {
 
     const adherent = await prisma.adherent.findUnique({
       where: { id: session.adherentId },
-      select: { id: true, email: true, nom: true, motDePasseHash: true, activatedAt: true },
+      select: { id: true, email: true, nom: true, pseudo: true, motDePasseHash: true, activatedAt: true },
     });
     if (!adherent?.motDePasseHash) return null;
     // Session ouverte avant la dernière activation (compte réinitialisé par
     // scripts/reset-adherent.js puis réactivé) : elle ne vaut plus.
     if (!adherent.activatedAt || adherent.activatedAt.getTime() > session.emiseLe) return null;
 
-    return { id: adherent.id, email: adherent.email, nom: adherent.nom, activatedAt: adherent.activatedAt };
+    return { id: adherent.id, email: adherent.email, nom: adherent.nom, pseudo: adherent.pseudo, activatedAt: adherent.activatedAt };
   } catch (error) {
     // Les signaux internes de Next (rendu dynamique…) ne sont pas des erreurs de
     // session : on les laisse remonter (même précaution que dans /live et /test).

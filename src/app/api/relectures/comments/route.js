@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { getAdherent } from "@/lib/relecture-auth";
 import { SESSION_EXPIREE, posterCommentaire } from "@/lib/relecture-comments-core";
+import { nomAffiche } from "@/lib/club-pseudo-core";
 
 // Commentaires de relecture (Club Perlimpinpin) : lecture et écriture réservées
 // aux adhérents connectés. La vérification est faite ici, pas seulement dans le
@@ -18,9 +19,19 @@ export async function GET(request) {
   const comments = await prisma.relectureComment.findMany({
     where: { ficheSlug },
     orderBy: { createdAt: "asc" },
+    include: { adherent: { select: { nom: true, pseudo: true } } },
   });
 
-  return Response.json(comments);
+  // Nom affiché : celui du compte AUJOURD'HUI (pseudo s'il existe, sinon nom
+  // par défaut), pour que changer de pseudo s'applique aussi aux anciens
+  // commentaires. Sans compte (commentaires anciens ou compte supprimé), on
+  // garde la copie enregistrée avec le commentaire.
+  return Response.json(
+    comments.map(({ adherent, ...comment }) => ({
+      ...comment,
+      authorName: nomAffiche(adherent) ?? comment.authorName,
+    }))
+  );
 }
 
 export async function POST(request) {

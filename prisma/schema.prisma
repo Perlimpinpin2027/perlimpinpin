@@ -417,6 +417,9 @@ model Adherent {
   email            String    @unique
   // Nom affiché (ex. "Camille D.")
   nom              String
+  // Pseudonyme choisi par le membre, affiché à la place de `nom` dans le
+  // Club. null = on affiche `nom`. Les e-mails utilisent toujours `nom`.
+  pseudo           String?   @unique
   // Hachage bcrypt ; null = compte pas encore activé
   motDePasseHash   String?
   activatedAt      DateTime?

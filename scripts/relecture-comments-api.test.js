@@ -52,6 +52,13 @@ test("connecté : authorName et adherentId viennent du compte", async () => {
   assert.equal(body.adherentId, 7);
 });
 
+test("avec un pseudo : le nom du compte en base, le pseudo dans la réponse", async () => {
+  const { status, body, crees } = await poster(COMMENTAIRE, { adherent: { ...ADHERENT, pseudo: "Hélène 42" } });
+  assert.equal(status, 201);
+  assert.equal(crees[0].authorName, "Camille D.");
+  assert.equal(body.authorName, "Hélène 42");
+});
+
 test("un authorName (ou adherentId) envoyé par la page est ignoré", async () => {
   const { status, crees } = await poster({ ...COMMENTAIRE, authorName: "Quelqu'un d'autre", adherentId: 99 });
   assert.equal(status, 201);

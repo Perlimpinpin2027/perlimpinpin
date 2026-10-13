@@ -75,5 +75,7 @@ export async function posterCommentaire({ adherent, data, trouverFiche, creer, m
     body,
     ...annotation,
   });
-  return { status: 201, body: comment };
+  // En base, authorName garde le nom du compte ; à l'écran, le pseudo s'il
+  // existe (même règle que GET, qui le relit depuis le compte).
+  return { status: 201, body: { ...comment, authorName: adherent.pseudo || adherent.nom } };
 }

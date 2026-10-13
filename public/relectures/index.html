@@ -386,6 +386,23 @@ mark.anno-hl.pending{background:var(--hl-strong)}
 .moi-av{width:52px;height:52px;border-radius:50%;background:var(--soft);display:grid;place-items:center;flex:none;color:var(--ink)}
 .moi-who>div{min-width:0}
 .moi-who b{display:block;font-family:var(--mono);font-size:17px;font-weight:500;line-height:1.3;overflow-wrap:anywhere}
+.moi-nom{display:flex;align-items:center;gap:6px;min-width:0}
+.moi-nom b{min-width:0}
+.moi-nom[hidden]{display:none}
+.moi-edit{flex:none;display:grid;place-items:center;width:30px;height:30px;margin:-4px 0;border:0;border-radius:8px;background:none;color:var(--faint);cursor:pointer}
+.moi-edit:hover,.moi-edit:focus-visible{color:var(--ink);background:var(--soft)}
+.moi-pseudo{display:grid;gap:6px;margin:0 0 4px}
+.moi-pseudo[hidden]{display:none}
+.moi-pseudo input{width:100%;box-sizing:border-box;font-family:var(--mono);font-size:16px;color:var(--ink);background:var(--bg);border:1px solid var(--rule);border-radius:10px;padding:7px 10px}
+.moi-pseudo input:focus{outline:2px solid var(--ink);outline-offset:-1px}
+.moi-pseudo p{margin:0;font-family:var(--mono);font-size:11.5px;line-height:1.4;color:var(--faint)}
+.moi-pseudo .moi-err{color:#c2410c}
+.moi-pseudo .moi-err:empty{display:none}
+.moi-pseudo-btns{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin-top:2px}
+.moi-pseudo-btns .btn-dark{font-size:13px;padding:6px 14px}
+.moi-pseudo-btns .btn-dark:disabled{opacity:.6;cursor:default}
+.moi-annuler{font:inherit;font-size:13px;color:var(--muted);background:none;border:0;padding:6px 2px;cursor:pointer;text-decoration:underline;text-decoration-color:var(--rule);text-underline-offset:4px}
+.moi-annuler:hover{color:var(--ink)}
 .moi-who>div>span{display:block;font-family:var(--mono);font-size:12px;color:var(--muted);line-height:1.4}
 .moi-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding-top:18px;border-top:1px solid var(--rule)}
 .moi-card{display:grid;gap:6px;align-content:start;border:1px solid var(--rule);border-radius:16px;padding:12px 12px 12px 14px;min-width:0}
@@ -450,7 +467,16 @@ mark.anno-hl.pending{background:var(--hl-strong)}
   <p class="label" id="moi-titre">// Mon compte</p>
   <div class="moi-who">
     <span class="moi-av" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5c1.2-3.6 4-5.5 7.5-5.5s6.3 1.9 7.5 5.5"/></svg></span>
-    <div><b data-moi-nom></b><span data-moi-depuis></span></div>
+    <div>
+      <div class="moi-nom" data-moi-ligne><b data-moi-nom></b><button type="button" class="moi-edit" data-moi-edit aria-label="Modifier mon pseudo" title="Modifier mon pseudo"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4z"/></svg></button></div>
+      <form class="moi-pseudo" data-moi-form hidden novalidate>
+        <input type="text" data-moi-input maxlength="24" autocomplete="off" spellcheck="false" aria-label="Pseudo" aria-describedby="moi-aide moi-err">
+        <p class="moi-aide" id="moi-aide">3 à 24 caractères. Laisse vide pour revenir à ton nom.</p>
+        <p class="moi-err" id="moi-err" data-moi-err role="alert"></p>
+        <div class="moi-pseudo-btns"><button type="submit" class="btn-dark" data-moi-ok>Enregistrer</button><button type="button" class="moi-annuler" data-moi-annuler>Annuler</button></div>
+      </form>
+      <span data-moi-depuis></span>
+    </div>
   </div>
   <div class="moi-cards">
     <div class="moi-card"><span class="k">PerlimpinPOINTS</span><div class="moi-v"><span class="moi-pts" data-moi-points>0</span><svg class="moi-bars" width="30" height="28" viewBox="0 0 30 28" aria-hidden="true"><rect x="2" y="16" width="6" height="10" rx="2" fill="currentColor"/><rect x="12" y="9" width="6" height="17" rx="2" fill="currentColor"/><rect x="22" y="2" width="6" height="24" rx="2" fill="currentColor"/></svg></div></div>
@@ -1035,6 +1061,15 @@ Est-ce qu&#x27;on parle du nombre d&#x27;actif pour un retraité ? Si c&#x27;est
     moiEl.hidden = false;
   }
 
+  // Compte affiché (réponse de GET /api/relectures/moi) : `nom` = nom affiché
+  // (pseudo s'il existe), `pseudo`, `nomParDefaut` (« Prénom + initiale »).
+  var moiCourant = null;
+
+  function afficherNom(nom) {
+    var etat = document.querySelector("[data-adh-etat]");
+    if (etat) etat.textContent = "Connecté en tant que " + nom;
+  }
+
   function chargerCompte() {
     return fetch("/api/relectures/moi", { cache: "no-store" })
       .then(function (r) {
@@ -1043,13 +1078,97 @@ Est-ce qu&#x27;on parle du nombre d&#x27;actif pour un retraité ? Si c&#x27;est
       })
       .then(function (moi) {
         if (!moi || !moi.nom) return;
-        var etat = document.querySelector("[data-adh-etat]");
-        if (etat) etat.textContent = "Connecté en tant que " + moi.nom;
+        moiCourant = moi;
+        afficherNom(moi.nom);
         renderCompte(moi);
       })
       .catch(function () { /* hors ligne : le bandeau garde « Connecté », le panneau son dernier état */ });
   }
   chargerCompte();
+
+  // ---------- pseudo (crayon à côté du nom, panneau « Mon compte ») ----------
+  // Enregistré par PATCH /api/relectures/moi, qui valide tout (longueur,
+  // caractères, mots interdits, pseudo déjà pris) et renvoie un message prêt
+  // à afficher. Entrée = enregistrer, Échap = annuler.
+  (function () {
+    if (!moiEl) return;
+    var ligne = moiEl.querySelector("[data-moi-ligne]");
+    var form = moiEl.querySelector("[data-moi-form]");
+    var input = moiEl.querySelector("[data-moi-input]");
+    var err = moiEl.querySelector("[data-moi-err]");
+    var ok = moiEl.querySelector("[data-moi-ok]");
+    var crayon = moiEl.querySelector("[data-moi-edit]");
+
+    function ouvrir() {
+      if (!moiCourant) return;
+      input.value = moiCourant.nom || "";
+      err.textContent = "";
+      input.removeAttribute("aria-invalid");
+      ligne.hidden = true;
+      form.hidden = false;
+      input.focus();
+      input.select();
+    }
+
+    function fermer() {
+      form.hidden = true;
+      ligne.hidden = false;
+      ok.disabled = false;
+      crayon.focus();
+    }
+
+    function erreur(message) {
+      err.textContent = message;
+      input.setAttribute("aria-invalid", "true");
+      input.focus();
+    }
+
+    crayon.addEventListener("click", ouvrir);
+    moiEl.querySelector("[data-moi-annuler]").addEventListener("click", fermer);
+    input.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") { e.preventDefault(); fermer(); }
+    });
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (ok.disabled) return;
+      var saisie = input.value.trim();
+      // Rien n'a changé (nom affiché laissé tel quel) : pas d'appel.
+      if (saisie === (moiCourant.nom || "") || (saisie === "" && !moiCourant.pseudo)) return fermer();
+
+      ok.disabled = true;
+      err.textContent = "";
+      fetch("/api/relectures/moi", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pseudo: saisie }),
+      })
+        .then(function (r) {
+          if (r.status === 401) throw erreurSession();
+          return r.json().catch(function () { return {}; }).then(function (body) {
+            if (!r.ok) throw new Error(body.error || "Enregistrement impossible. Réessayez.");
+            return body;
+          });
+        })
+        .then(function (body) {
+          moiCourant = Object.assign({}, moiCourant, { pseudo: body.pseudo, nom: body.nomAffiche });
+          moiEl.querySelector("[data-moi-nom]").textContent = body.nomAffiche || "";
+          afficherNom(body.nomAffiche);
+          // Les commentaires d'une fiche seront rechargés avec le nouveau nom.
+          loadedFiche = null;
+          fermer();
+        })
+        .catch(function (e) {
+          ok.disabled = false;
+          if (e && e.expired) {
+            remplirErreur(err, e);
+            input.setAttribute("aria-invalid", "true");
+          } else {
+            erreur((e && e.message) || "Enregistrement impossible. Réessayez.");
+          }
+        });
+    });
+  })();
 
   var commentsBySection = {}; // sectionId -> array of comments
   var loadedFiche = null;
