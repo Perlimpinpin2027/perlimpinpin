@@ -27,6 +27,7 @@ const RESUME_VALIDE = "Un nouveau résumé, assez long pour être valide.";
 function fausseBase({
   analyse = ANALYSE,
   plusRecenteId = analyse?.id,
+  publieeId = null,
   count = 1,
   ecrituresAutorisees = false,
   echecTransaction = null,
@@ -50,7 +51,10 @@ function fausseBase({
   const prisma = {
     analyse: {
       findUnique: lecture("analyse.findUnique", analyse),
-      findFirst: lecture("analyse.findFirst", { id: plusRecenteId }),
+      // Recherche d'une version publiée de la mesure, ou de l'analyse la plus récente.
+      findFirst: lecture("analyse.findFirst", (args) =>
+        args?.where?.statut === "publie" ? (publieeId ? { id: publieeId } : null) : { id: plusRecenteId },
+      ),
       update: ecriture("analyse.update", {}),
       updateMany: ecriture("analyse.updateMany", {}),
     },
@@ -381,4 +385,199 @@ test("version basique : fiche sans version_basique en base → refus clair, aucu
       assert.ok(!journal.includes("$transaction"));
     }
   }
+});
+
+// --- Mesure initiale (colonne Proposition.texteOriginal) ----------------------
+
+const MESURE_AVANT = "Mesure d'origine. citation : « … » (source)";
+const MESURE_APRES = "Mesure corrigée. citation : « … » (Le Monde, 2026)";
+const ANALYSE_MESURE = { ...ANALYSE, proposition: { texteOriginal: MESURE_AVANT } };
+
+test("mesure initiale : Proposition.texteOriginal écrite, contenu de l'analyse intact, version avancée", async () => {
+  const { prisma, journal, appels } = fausseBase({ analyse: ANALYSE_MESURE, ecrituresAutorisees: true });
+  const resultat = await enregistrerTexteCore(entree({ champ: "proposition.texteOriginal", valeur: ` ${MESURE_APRES}\r\n` }), {
+    isEditor: editeur,
+    prisma,
+    dryRun: false,
+  });
+
+  assert.equal(resultat.ok, true);
+  assert.equal(resultat.champ, "proposition.texteOriginal");
+  assert.equal(resultat.avant, MESURE_AVANT);
+  assert.equal(resultat.apres, MESURE_APRES);
+  assert.deepEqual(journal.filter((a) => /update|\$transaction/.test(a)), [
+    "$transaction",
+    "tx.analyse.updateMany",
+    "tx.proposition.update",
+  ]);
+  const [, argsAnalyse] = appels[0];
+  assert.deepEqual(argsAnalyse.where, { id: 7, statut: "brouillon", updatedAt: new Date(VERSION) });
+  assert.deepEqual(Object.keys(argsAnalyse.data), ["updatedAt"]); // ni contenu, ni teaser
+  assert.equal(argsAnalyse.data.updatedAt.toISOString(), resultat.versionSuivante);
+  assert.deepEqual(appels[1][1], { where: { id: 70 }, data: { texteOriginal: MESURE_APRES } });
+});
+
+test("mesure initiale : une version publiée existe → refus, aucune écriture (même en simulation)", async () => {
+  for (const dryRun of [false, true]) {
+    const { prisma, journal } = fausseBase({ analyse: ANALYSE_MESURE, publieeId: 3, ecrituresAutorisees: true });
+    const resultat = await enregistrerTexteCore(entree({ champ: "proposition.texteOriginal", valeur: MESURE_APRES }), {
+      isEditor: editeur,
+      prisma,
+      dryRun,
+    });
+    assert.equal(resultat.ok, false);
+    assert.match(resultat.message, /déjà une version publiée/);
+    assert.ok(!journal.includes("$transaction"));
+  }
+});
+
+test("mesure initiale : conflit (count = 0) → la proposition n'est pas touchée", async () => {
+  const { prisma, journal } = fausseBase({ analyse: ANALYSE_MESURE, ecrituresAutorisees: true, count: 0 });
+  const resultat = await enregistrerTexteCore(entree({ champ: "proposition.texteOriginal", valeur: MESURE_APRES }), {
+    isEditor: editeur,
+    prisma,
+    dryRun: false,
+  });
+  assert.equal(resultat.ok, false);
+  assert.match(resultat.message, /modifié entre-temps/);
+  assert.ok(!journal.includes("tx.proposition.update"));
+});
+
+test("mesure initiale : simulation → nombre de caractères, aucune écriture", async () => {
+  const { prisma, journal } = fausseBase({ analyse: ANALYSE_MESURE });
+  const resultat = await enregistrerTexteCore(entree({ champ: "proposition.texteOriginal", valeur: MESURE_APRES }), {
+    isEditor: editeur,
+    prisma,
+    dryRun: true,
+  });
+  assert.deepEqual(resultat, {
+    ok: true,
+    simulation: true,
+    message: `[Simulation] Le texte serait enregistré (${MESURE_APRES.length} caractères).`,
+  });
+  assert.ok(journal.every((appel) => !/update|\$transaction/i.test(appel)));
+});
+
+// --- Reste de la fiche ----------------------------------------------------------
+
+const CONTENU_FICHE = {
+  ...CONTENU,
+  analyse_par_criteres: [{ critere: "efficacite", titre: "Efficacité", note: 18, note_max: 30, texte: "Ancien texte." }],
+  sources_utilisees: ["A", "B", "C"],
+  version_basique: { ...VERSION_BASIQUE, sources_principales: [0, 2] },
+};
+const ANALYSE_FICHE = { ...ANALYSE, contenuComplet: CONTENU_FICHE, proposition: { texteOriginal: "x", theme: "Logement" } };
+
+test("verdict final : contenu + colonne Analyse.verdict dans la même écriture", async () => {
+  const { prisma, appels } = fausseBase({ analyse: ANALYSE_FICHE, ecrituresAutorisees: true });
+  const verdict = "Ce qui tient, assez long.\n\nCe qui reste flou.";
+  const resultat = await enregistrerTexteCore(entree({ champ: "verdict_final", valeur: verdict }), {
+    isEditor: editeur,
+    prisma,
+    dryRun: false,
+  });
+  assert.equal(resultat.ok, true);
+  assert.equal(resultat.avant, CONTENU.verdict_final);
+  const [, args] = appels[0];
+  assert.deepEqual(Object.keys(args.data).sort(), ["contenuComplet", "updatedAt", "verdict"]);
+  assert.equal(args.data.verdict, verdict);
+  assert.equal(args.data.contenuComplet.verdict_final, verdict);
+});
+
+test("critère : texte modifié, note intacte, aucune colonne dérivée", async () => {
+  const { prisma, appels } = fausseBase({ analyse: ANALYSE_FICHE, ecrituresAutorisees: true });
+  const resultat = await enregistrerTexteCore(
+    entree({ champ: "analyse_par_criteres.efficacite", valeur: "Nouveau texte du critère efficacité." }),
+    { isEditor: editeur, prisma, dryRun: false },
+  );
+  assert.equal(resultat.ok, true);
+  assert.equal(resultat.avant, "Ancien texte.");
+  assert.equal(resultat.apres, "Nouveau texte du critère efficacité.");
+  const ecrit = appels[0][1].data.contenuComplet;
+  assert.deepEqual(ecrit.analyse_par_criteres[0], { ...CONTENU_FICHE.analyse_par_criteres[0], texte: "Nouveau texte du critère efficacité." });
+  assert.deepEqual(ecrit.notation_detaillee, CONTENU.notation_detaillee);
+});
+
+test("bloc absent de la fiche (critère, section) : refus clair, aucune écriture", async () => {
+  for (const [champ, attendu] of [
+    ["analyse_par_criteres.degre_preparation", /introuvable/],
+    ["angles_morts.texte", /n'existe pas/],
+    ["mesure_vers_objectif.objectif_court", /Mesure initiale/],
+  ]) {
+    const { prisma, journal } = fausseBase({ analyse: ANALYSE_FICHE, ecrituresAutorisees: true });
+    const resultat = await enregistrerTexteCore(entree({ champ, valeur: "Un texte assez long pour être valide." }), {
+      isEditor: editeur,
+      prisma,
+      dryRun: false,
+    });
+    assert.equal(resultat.ok, false, champ);
+    assert.match(resultat.message, attendu, champ);
+    assert.ok(!journal.includes("$transaction"), champ);
+  }
+});
+
+test("sources : supprimer une source principale de la version basique est refusé", async () => {
+  const { prisma, journal } = fausseBase({ analyse: ANALYSE_FICHE, ecrituresAutorisees: true });
+  const resultat = await enregistrerTexteCore(entree({ champ: "sources_utilisees", valeur: "A\nB" }), {
+    isEditor: editeur,
+    prisma,
+    dryRun: false,
+  });
+  assert.equal(resultat.ok, false);
+  assert.match(resultat.message, /source n° 3/);
+  assert.ok(!journal.includes("$transaction"));
+
+  const ok = fausseBase({ analyse: ANALYSE_FICHE, ecrituresAutorisees: true });
+  const ajout = await enregistrerTexteCore(entree({ champ: "sources_utilisees", valeur: "A\nB\nC\nD" }), {
+    isEditor: editeur,
+    prisma: ok.prisma,
+    dryRun: false,
+  });
+  assert.equal(ajout.ok, true);
+  assert.deepEqual(ok.appels[0][1].data.contenuComplet.sources_utilisees, ["A", "B", "C", "D"]);
+});
+
+test("thématique : Proposition.theme, refusée si la mesure a une version publiée", async () => {
+  const { prisma, appels } = fausseBase({ analyse: ANALYSE_FICHE, ecrituresAutorisees: true });
+  const resultat = await enregistrerTexteCore(entree({ champ: "proposition.theme", valeur: "Retraites" }), {
+    isEditor: editeur,
+    prisma,
+    dryRun: false,
+  });
+  assert.equal(resultat.ok, true);
+  assert.equal(resultat.avant, "Logement");
+  assert.deepEqual(appels[1][1], { where: { id: 70 }, data: { theme: "Retraites" } });
+
+  const publiee = fausseBase({ analyse: ANALYSE_FICHE, publieeId: 3, ecrituresAutorisees: true });
+  const refus = await enregistrerTexteCore(entree({ champ: "proposition.theme", valeur: "Retraites" }), {
+    isEditor: editeur,
+    prisma: publiee.prisma,
+    dryRun: false,
+  });
+  assert.equal(refus.ok, false);
+  assert.match(refus.message, /« Thématique »/);
+});
+
+test("catégorie vidée : null enregistré ; simulation → « La valeur serait effacée. »", async () => {
+  const contenuComplet = { ...CONTENU, mesure_vers_objectif: { objectif_court: "Objectif", categorie_objectif: "Logement" } };
+  const { prisma, appels } = fausseBase({ analyse: { ...ANALYSE, contenuComplet }, ecrituresAutorisees: true });
+  const resultat = await enregistrerTexteCore(entree({ champ: "mesure_vers_objectif.categorie_objectif", valeur: "" }), {
+    isEditor: editeur,
+    prisma,
+    dryRun: false,
+  });
+  assert.equal(resultat.ok, true);
+  assert.equal(resultat.avant, "Logement");
+  assert.equal(resultat.apres, null);
+  assert.deepEqual(appels[0][1].data.contenuComplet.mesure_vers_objectif, { objectif_court: "Objectif", categorie_objectif: null });
+
+  const simulation = fausseBase({ analyse: { ...ANALYSE, contenuComplet } });
+  assert.deepEqual(
+    await enregistrerTexteCore(entree({ champ: "mesure_vers_objectif.categorie_objectif", valeur: "" }), {
+      isEditor: editeur,
+      prisma: simulation.prisma,
+      dryRun: true,
+    }),
+    { ok: true, simulation: true, message: "[Simulation] La valeur serait effacée." },
+  );
 });

@@ -51,6 +51,10 @@ export default async function TestDetailPage({ params }) {
   // Fiche issue d'une révision (robot de révision) : réponses aux commentaires
   // du Club, montrées aux seules personnes déverrouillées.
   const revision = derniere.contenuComplet?.revision?.slug ? derniere.contenuComplet.revision : null;
+  // Une version déjà publiée de la mesure : la mesure initiale (colonne de la
+  // proposition, partagée) n'est alors pas modifiable (voir test-enregistrer.js).
+  const mesurePubliee =
+    editeur && (await prisma.analyse.count({ where: { propositionId, statut: "publie" } })) > 0;
 
   return (
     <>
@@ -88,14 +92,15 @@ export default async function TestDetailPage({ params }) {
 
       {editeur && revision ? <ReponsesRevision revision={revision} /> : null}
 
-      {/* Pour un éditeur seulement : le crayon de modification (titre, résumé). La
-          version sert à détecter une modification faite entre-temps par quelqu'un d'autre. */}
+      {/* Pour un éditeur seulement : le crayon de modification (titre, résumé, mesure
+          initiale…). La version sert à détecter une modification faite entre-temps par
+          quelqu'un d'autre. */}
       <DeclarationDetailPage
         params={params}
         preview
         edition={
           editeur
-            ? { analyseId: derniere.id, versionAttendue: derniere.updatedAt.toISOString() }
+            ? { analyseId: derniere.id, versionAttendue: derniere.updatedAt.toISOString(), mesurePubliee }
             : null
         }
       />

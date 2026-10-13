@@ -12,6 +12,7 @@ import MonoTag from "@/components/MonoTag";
 import EtapeRaisonnement from "@/components/EtapeRaisonnement";
 import SupportBanner from "@/components/SupportBanner";
 import Editable from "@/app/test/Editable";
+import { CRITERES_ANALYSE } from "@/lib/test-edition";
 import { getDeclarationDetail } from "@/lib/queries";
 import { getScoreBadge, PLAFOND_DECLENCHEUR_LABELS } from "@/lib/score";
 import { vignettePhoto } from "@/lib/photo-vignette";
@@ -377,7 +378,8 @@ const VERDICT_LABELS = [
   { text: "Ce qui reste flou", dotClass: "bg-amber-500", textClass: "text-amber-700" },
 ];
 
-function VerdictBody({ verdict, conclusion }) {
+// `editionVerdict` / `editionConclusion` : crayons de /test/[id] (null ailleurs).
+function VerdictBody({ verdict, conclusion, editionVerdict = null, editionConclusion = null }) {
   const paragraphs = Array.isArray(verdict)
     ? verdict.map((item) => (typeof item === "string" ? item.trim() : "")).filter(Boolean)
     : splitIntoParagraphs(verdict);
@@ -390,7 +392,8 @@ function VerdictBody({ verdict, conclusion }) {
 
   return (
     <>
-      <div className="flex flex-col gap-4">
+      <Editable edition={editionVerdict} champ="verdict_final" valeurBrute={verdict} multiligne>
+      <div className={`flex flex-col gap-4${editionVerdict ? " pr-11" : ""}`}>
         {paragraphs.map((paragraph, index) => (
           <div key={index}>
             {showLabels ? (
@@ -408,7 +411,16 @@ function VerdictBody({ verdict, conclusion }) {
           </div>
         ))}
       </div>
-      {hasConclusion ? (
+      </Editable>
+      {hasConclusion && editionConclusion ? (
+        <div className="mt-4 border-t border-zinc-100 pt-4">
+          <Editable edition={editionConclusion} champ="verdict_conclusion" valeurBrute={conclusion} multiligne>
+            <p className="pr-11 font-semibold text-zinc-900">
+              {renderRichText(attacherPetitsMots(conclusion.trim()))}
+            </p>
+          </Editable>
+        </div>
+      ) : hasConclusion ? (
         <p className="mt-4 border-t border-zinc-100 pt-4 font-semibold text-zinc-900">
           {renderRichText(attacherPetitsMots(conclusion.trim()))}
         </p>
@@ -493,6 +505,31 @@ function SourcesList({ value }) {
   );
 }
 
+// Section « synthèse + texte » (AccordionSection). En mode édition (/test/[id],
+// section au format { synthese, texte }), elle est affichée DÉPLIÉE avec un
+// crayon sur la synthèse et un sur le texte, rendu identique au texte déplié de
+// l'accordéon. Sinon : AccordionSection telle quelle.
+function SectionAccordeon({ section, value, splitParagraphs = false, edition = null }) {
+  const editable =
+    edition && value && typeof value.synthese === "string" && typeof value.texte === "string";
+  if (!editable) return <AccordionSection value={value} splitParagraphs={splitParagraphs} />;
+
+  return (
+    <div>
+      <Editable edition={edition} champ={`${section}.synthese`} valeurBrute={value.synthese} multiligne>
+        <p className="pr-11 font-medium text-slate-700">{renderRichText(value.synthese)}</p>
+      </Editable>
+      <div className="mt-3 border-t border-zinc-100 pt-3">
+        <Editable edition={edition} champ={`${section}.texte`} valeurBrute={value.texte} multiligne>
+          <div className="pr-11">
+            <AccordionSection value={value.texte} splitParagraphs={splitParagraphs} />
+          </div>
+        </Editable>
+      </div>
+    </div>
+  );
+}
+
 // Une card de critère, partagée par les formats successifs de
 // analyse_par_criteres : tableau structuré (barème 2026 ou schémas
 // antérieurs, un objet par critère dont éventuellement le juridique de
@@ -512,12 +549,13 @@ function CriteriaCard({
   plafondApplique,
   plafondDeclencheur,
   texte,
+  margeCrayon = false,
 }) {
   return (
     <div
       className={`rounded-xl border p-4 ${
         isGardeFou ? "border-amber-200 bg-amber-50/50" : "border-blue-100 bg-blue-50/40"
-      }`}
+      }${margeCrayon ? " pr-12" : ""}`}
     >
       <div className="flex items-center gap-3">
         <span
@@ -568,25 +606,40 @@ function CriteriaCard({
 // tableau structuré (barème 2026 ou schémas antérieurs, un objet par
 // critère), objet keyé (plus ancien format à 5 clés), ou simple chaîne
 // (repli générique) pour tout format non reconnu.
-function CriteresCards({ criteres, notation }) {
+// `edition` (/test/[id]) : crayon sur le TEXTE de chaque critère du tableau
+// structuré (jamais sur sa note). Un critère en double n'a de crayon que sur sa
+// première carte (c'est celle que l'enregistrement retrouve).
+function CriteresCards({ criteres, notation, edition = null }) {
   if (Array.isArray(criteres)) {
     if (criteres.length === 0) return <TextOrList value={null} />;
     return (
       <div className="flex flex-col gap-4">
-        {criteres.map((item, index) => (
-          <CriteriaCard
-            key={item.critere ?? index}
-            icon={CRITERE_ICONS[item.critere] ?? ICON_FACTUEL}
-            label={item.titre ?? item.critere ?? "Critère"}
-            note={item.note}
-            max={item.note_max ?? 25}
-            isGardeFou={Boolean(item.est_garde_fou)}
-            vetoApplique={Boolean(item.veto_applique)}
-            plafondApplique={Boolean(item.plafond_applique)}
-            plafondDeclencheur={item.plafond_declencheur}
-            texte={item.texte}
-          />
-        ))}
+        {criteres.map((item, index) => {
+          const champ = `analyse_par_criteres.${item.critere}`;
+          const editionCarte =
+            edition &&
+            Object.hasOwn(CRITERES_ANALYSE, item.critere) &&
+            typeof item.texte === "string" &&
+            criteres.findIndex((autre) => autre?.critere === item.critere) === index
+              ? edition
+              : null;
+          return (
+            <Editable key={item.critere ?? index} edition={editionCarte} champ={champ} valeurBrute={item.texte} multiligne>
+              <CriteriaCard
+                icon={CRITERE_ICONS[item.critere] ?? ICON_FACTUEL}
+                label={item.titre ?? item.critere ?? "Critère"}
+                note={item.note}
+                max={item.note_max ?? 25}
+                isGardeFou={Boolean(item.est_garde_fou)}
+                vetoApplique={Boolean(item.veto_applique)}
+                plafondApplique={Boolean(item.plafond_applique)}
+                plafondDeclencheur={item.plafond_declencheur}
+                texte={item.texte}
+                margeCrayon={Boolean(editionCarte)}
+              />
+            </Editable>
+          );
+        })}
       </div>
     );
   }
@@ -740,8 +793,9 @@ function ConfidenceGauge({ level }) {
 // secondaire/méta sur l'analyse elle-même, pas un point de contenu au même niveau que le
 // raisonnement, mais doivent tout de même se détacher visuellement du reste
 // de la page (voir la demande d'origine).
-function FiabiliteSection({ contenu }) {
+function FiabiliteSection({ contenu, edition = null }) {
   const level = resolveConfidenceLevel(contenu);
+  const editionConfiance = typeof contenu.niveau_de_confiance === "string" ? edition : null;
   return (
     <div
       className="rounded-2xl px-5 py-4 shadow-[0_8px_30px_-8px_rgba(0,0,0,0.12)]"
@@ -777,9 +831,16 @@ function FiabiliteSection({ contenu }) {
             <div className="mt-1.5">
               <ConfidenceGauge level={level} />
             </div>
-            <div className="mt-2 text-sm leading-relaxed text-zinc-500">
-              <TextOrList value={contenu.niveau_de_confiance} />
-            </div>
+            <Editable
+              edition={editionConfiance}
+              champ="niveau_de_confiance"
+              valeurBrute={contenu.niveau_de_confiance}
+              multiligne
+            >
+              <div className={`mt-2 text-sm leading-relaxed text-zinc-500${editionConfiance ? " pr-11" : ""}`}>
+                <TextOrList value={contenu.niveau_de_confiance} />
+              </div>
+            </Editable>
           </div>
         </div>
 
@@ -800,7 +861,7 @@ function FiabiliteSection({ contenu }) {
           <div className="min-w-0 pt-1">
             <span className="text-base font-bold text-zinc-900">Limites identifiées</span>
             <div className="mt-2 text-sm leading-relaxed text-zinc-500">
-              <AccordionSection value={contenu.limites} />
+              <SectionAccordeon section="limites" value={contenu.limites} edition={edition} />
             </div>
           </div>
         </div>
@@ -828,8 +889,8 @@ function VueExpertSi({ actif, children }) {
 // `preview` : utilisé par /test/[id] pour relire un brouillon. On y masque les
 // blocs qui écrivent en base (vote, feedback) et le lien de retour pointe vers
 // la liste des brouillons. Sur le site public, `preview` reste faux : rien ne change.
-// `edition` : { analyseId, versionAttendue } pour un éditeur (crayon sur le titre et
-// le résumé), sinon null.
+// `edition` : { analyseId, versionAttendue, mesurePubliee } pour un éditeur (crayon
+// sur le titre, le résumé, la mesure initiale…), sinon null.
 export default async function DeclarationDetailPage({ params, preview = false, edition = null }) {
   const { id } = await params;
   const propositionId = Number(id);
@@ -885,6 +946,11 @@ export default async function DeclarationDetailPage({ params, preview = false, e
   const versionBasique = lireVersionBasique(contenu, propositionId);
   const EnveloppeVue = versionBasique ? VueAnalyseProvider : Fragment;
   const sectionsBasique = versionBasique ? TOC_SECTIONS_BASIQUE : undefined;
+  // Mesure initiale (colonne de la proposition, partagée par ses analyses) :
+  // pas de crayon si une version de la mesure est déjà publiée.
+  const editionMesure = edition && !edition.mesurePubliee ? edition : null;
+  // Fiche sans bandeau « Mesure initiale » : le crayon de la mesure passe sur la citation.
+  const editionExtrait = contenu.mesure_vers_objectif ? null : editionMesure;
 
   // Étapes du « raisonnement complet », dans l'ordre d'affichage. Seules les
   // étapes réellement présentes sont gardées, puis numérotées sans trou au
@@ -897,55 +963,80 @@ export default async function DeclarationDetailPage({ params, preview = false, e
   // antérieures au pipeline à 4 étapes.
   // impact_environnement et impact_temporel_et_sectoriel sont nullables (voir
   // data/prompt-methodologie.md) : étape omise quand ils sont absents.
+  // Section « synthèse + texte » du raisonnement, avec ses crayons en mode édition.
+  const section = (cle, options = {}) => (
+    <SectionAccordeon section={cle} value={contenu[cle]} edition={edition} {...options} />
+  );
+  // Sources : crayon seulement pour une liste de textes (pas d'objets structurés).
+  const sourcesEditables =
+    Array.isArray(contenu.sources_utilisees) &&
+    contenu.sources_utilisees.length > 0 &&
+    contenu.sources_utilisees.every((source) => typeof source === "string");
+  const editionSources = sourcesEditables ? edition : null;
   const etapesRaisonnement = [
-    !isV4 && { titre: "Mesure reformulée", contenu: <AccordionSection value={contenu.mesure_reformulee} /> },
+    !isV4 && { titre: "Mesure reformulée", contenu: section("mesure_reformulee") },
     !isV4 && {
       titre: "Mise en contexte dans le programme",
-      contenu: <AccordionSection value={contenu.contexte_programme} />,
+      contenu: section("contexte_programme"),
     },
     !isV4 && {
       id: "contexte",
       titre: "Contexte national",
-      contenu: <AccordionSection value={contenu.contexte_national} splitParagraphs />,
+      contenu: section("contexte_national", { splitParagraphs: true }),
     },
     !isV4 && {
       titre: "Contexte international",
-      contenu: <AccordionSection value={contenu.contexte_international} splitParagraphs />,
+      contenu: section("contexte_international", { splitParagraphs: true }),
     },
     !isV4 &&
       contenu.impact_environnement && {
         titre: "Impact environnemental",
-        contenu: <AccordionSection value={contenu.impact_environnement} />,
+        contenu: section("impact_environnement"),
       },
     {
       id: "analyse-criteres",
       titre: "Analyse par critères",
-      contenu: <CriteresCards criteres={contenu.analyse_par_criteres} notation={notation} />,
+      contenu: <CriteresCards criteres={contenu.analyse_par_criteres} notation={notation} edition={edition} />,
     },
-    !isV4 && { titre: "Longévité des effets", contenu: <AccordionSection value={contenu.analyse_longevites} /> },
+    !isV4 && { titre: "Longévité des effets", contenu: section("analyse_longevites") },
     !isV4 &&
       contenu.impact_temporel_et_sectoriel && {
         titre: "Impact temporel et sectoriel",
-        contenu: <AccordionSection value={contenu.impact_temporel_et_sectoriel} />,
+        contenu: section("impact_temporel_et_sectoriel"),
       },
-    !isV4 && { titre: "Ce qui est établi", contenu: <AccordionSection value={contenu.ce_qui_est_etabli} /> },
-    !isV4 && { titre: "Ce qui est probable", contenu: <AccordionSection value={contenu.ce_qui_est_probable} /> },
-    !isV4 && { titre: "Ce qui est discutable", contenu: <AccordionSection value={contenu.ce_qui_est_discutable} /> },
-    !isV4 && { titre: "Ce qui est inconnu", contenu: <AccordionSection value={contenu.ce_qui_est_inconnu} /> },
+    !isV4 && { titre: "Ce qui est établi", contenu: section("ce_qui_est_etabli") },
+    !isV4 && { titre: "Ce qui est probable", contenu: section("ce_qui_est_probable") },
+    !isV4 && { titre: "Ce qui est discutable", contenu: section("ce_qui_est_discutable") },
+    !isV4 && { titre: "Ce qui est inconnu", contenu: section("ce_qui_est_inconnu") },
     !isV4 && {
       id: "angles-morts",
       titre: "Angles morts et effets de bord",
-      contenu: <AccordionSection value={contenu.angles_morts} />,
+      contenu: section("angles_morts"),
     },
     {
       id: "verdict",
       titre: "Verdict final",
-      contenu: <VerdictBody verdict={contenu.verdict_final} conclusion={contenu.verdict_conclusion} />,
+      contenu: (
+        <VerdictBody
+          verdict={contenu.verdict_final}
+          conclusion={contenu.verdict_conclusion}
+          editionVerdict={typeof contenu.verdict_final === "string" ? edition : null}
+          editionConclusion={typeof contenu.verdict_conclusion === "string" ? edition : null}
+        />
+      ),
     },
     {
       id: versionBasique ? ID_SOURCES_EXPERT : undefined,
       titre: "Sources utilisées",
-      contenu: <SourcesList value={contenu.sources_utilisees} />,
+      contenu: editionSources ? (
+        <Editable edition={editionSources} champ="sources_utilisees" valeurBrute={contenu.sources_utilisees} multiligne>
+          <div className="pr-11">
+            <SourcesList value={contenu.sources_utilisees} />
+          </div>
+        </Editable>
+      ) : (
+        <SourcesList value={contenu.sources_utilisees} />
+      ),
     },
   ].filter(Boolean);
 
@@ -980,9 +1071,19 @@ export default async function DeclarationDetailPage({ params, preview = false, e
                   fiche déclaration) — les labels de thème identiques
                   ailleurs sur le site (accueil, à propos) restent en rouge,
                   ne pas généraliser cette couleur. */}
-              <span className="mt-6 block text-xs font-bold uppercase tracking-widest text-blue-600">
-                {declaration.theme}
-              </span>
+              {editionMesure ? (
+                <div className="mt-6">
+                  <Editable edition={editionMesure} champ="proposition.theme" valeurBrute={declaration.theme} multiligne={false}>
+                    <span className="block min-h-8 pr-11 pt-1.5 text-xs font-bold uppercase tracking-widest text-blue-600">
+                      {declaration.theme}
+                    </span>
+                  </Editable>
+                </div>
+              ) : (
+                <span className="mt-6 block text-xs font-bold uppercase tracking-widest text-blue-600">
+                  {declaration.theme}
+                </span>
+              )}
               {/* font-sans, pas font-serif : la maquette de cette page (voir
                   public/maquettes) montre un titre en sans-serif comme
                   partout ailleurs sur le site, pas la serif éditoriale
@@ -1077,6 +1178,8 @@ export default async function DeclarationDetailPage({ params, preview = false, e
                 categorieObjectif={contenu.mesure_vers_objectif.categorie_objectif}
                 titre={declaration.texteOriginal}
                 objectifCourt={contenu.mesure_vers_objectif.objectif_court}
+                edition={edition}
+                editionMesure={editionMesure}
               />
             ) : null}
 
@@ -1206,9 +1309,18 @@ export default async function DeclarationDetailPage({ params, preview = false, e
                 </span>
               </div>
 
-              <blockquote className="mt-3 text-sm leading-relaxed text-zinc-600">
-                &ldquo;{declaration.texteOriginal}&rdquo;
-              </blockquote>
+              {/* Crayon de la mesure initiale ici seulement pour les fiches sans
+                  bandeau « Mesure initiale » (même texte, un seul crayon). */}
+              <Editable
+                edition={editionExtrait}
+                champ="proposition.texteOriginal"
+                valeurBrute={declaration.texteOriginal}
+                multiligne
+              >
+                <blockquote className={`mt-3 text-sm leading-relaxed text-zinc-600${editionExtrait ? " pr-11" : ""}`}>
+                  &ldquo;{declaration.texteOriginal}&rdquo;
+                </blockquote>
+              </Editable>
             </section>
 
             {/* Raisonnement complet : liste numérotée d'étapes à plat,
@@ -1234,7 +1346,7 @@ export default async function DeclarationDetailPage({ params, preview = false, e
                 du raisonnement par le même trait que les autres blocs. */}
             {!isV4 ? (
               <div>
-                <FiabiliteSection contenu={contenu} />
+                <FiabiliteSection contenu={contenu} edition={edition} />
               </div>
             ) : null}
             </VueExpertSi>

@@ -2,8 +2,12 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import {
+  CATEGORIES_OBJECTIF,
   CHAMPS_EDITABLES,
+  CRITERES_ANALYSE,
+  SECTIONS_ACCORDEON,
   appliquerModification,
+  blocPresent,
   lireChamp,
   lirePoints,
   normaliserTexte,
@@ -33,15 +37,29 @@ const CONTENU = {
 
 test("liste blanche : titre_fiche, resume_court et les champs de la version basique, avec leurs limites", () => {
   assert.deepEqual(Object.keys(CHAMPS_EDITABLES).sort(), [
+    ...Object.keys(CRITERES_ANALYSE).map((critere) => `analyse_par_criteres.${critere}`),
+    ...Object.keys(SECTIONS_ACCORDEON).flatMap((section) => [`${section}.synthese`, `${section}.texte`]),
+    "mesure_vers_objectif.categorie_objectif",
+    "mesure_vers_objectif.objectif_court",
+    "niveau_de_confiance",
+    "proposition.texteOriginal",
+    "proposition.theme",
     "resume_court",
+    "sources_utilisees",
     "titre_fiche",
+    "verdict_conclusion",
+    "verdict_final",
     "version_basique.analyse",
     "version_basique.contexte",
     "version_basique.faisabilite",
     "version_basique.points_faibles",
     "version_basique.points_forts",
     "version_basique.resume",
-  ]);
+  ].sort());
+  // Jamais une note, un score ou une qualification.
+  for (const champ of Object.keys(CHAMPS_EDITABLES)) {
+    assert.doesNotMatch(champ, /notation|score|note|qualification|plafond|appreciation/, champ);
+  }
   for (const sousCle of ["resume", "contexte", "analyse", "faisabilite"]) {
     const regles = CHAMPS_EDITABLES[`version_basique.${sousCle}`];
     assert.deepEqual([regles.chemin, regles.type, regles.multiligne, regles.min, regles.max, regles.sansGras], [
@@ -132,8 +150,12 @@ test("champ hors liste blanche refusé (notes, scores, verdict, noms hérités d
   for (const champ of [
     "notation_detaillee",
     "score_global",
-    "verdict_final",
     "scoreFaisabilite",
+    "analyse_par_criteres",
+    "analyse_par_criteres.efficacite.note",
+    "mesure_vers_objectif",
+    "proposition.titre",
+    "proposition.candidatId",
     "constructor",
     "__proto__",
     "toString",
@@ -449,4 +471,149 @@ test("appliquerModification : les champs racine n'altèrent pas la version basiq
   const { contenu } = appliquerModification(CONTENU_BASIQUE, "resume_court", "Un nouveau résumé IA, assez long.");
   assert.deepEqual(contenu.version_basique, VERSION_BASIQUE);
   assert.equal(contenu.resume_court, "Un nouveau résumé IA, assez long.");
+});
+
+// --- Mesure initiale (colonne Proposition.texteOriginal) ----------------------
+
+const MESURE = "Supprimer la taxe X. citation : « Nous supprimerons la taxe X » (France Inter, 3 mars 2026)";
+
+test("mesure initiale : colonne de la proposition, zone qui grandit, limites 10 à 3000", () => {
+  const regles = CHAMPS_EDITABLES["proposition.texteOriginal"];
+  assert.deepEqual(
+    [regles.colonneProposition, regles.multiligne, regles.unParagraphe, regles.sansGras, regles.min, regles.max],
+    ["texteOriginal", true, true, true, 10, 3000],
+  );
+  assert.equal(regles.chemin, undefined);
+  assert.deepEqual(regles.derives("x"), {});
+});
+
+test("mesure initiale : texte valide accepté et normalisé", () => {
+  assert.deepEqual(validerTexte("proposition.texteOriginal", `  ${MESURE}\r\n`), { ok: true, valeur: MESURE });
+});
+
+test("mesure initiale : retour à la ligne, ** , trop court ou trop long refusés", () => {
+  const cas = [
+    [`${MESURE}\nSuite`, /un seul paragraphe/],
+    [`${MESURE}\r\n\r\nSuite`, /un seul paragraphe/],
+    [`Supprimer la **taxe** X.`, /mesure initiale s'affiche sans gras/],
+    ["Court.", /trop court/],
+    ["x".repeat(3001), /trop long/],
+  ];
+  for (const [valeur, attendu] of cas) {
+    const resultat = validerTexte("proposition.texteOriginal", valeur);
+    assert.equal(resultat.ok, false, valeur.slice(0, 40));
+    assert.match(resultat.message, attendu);
+  }
+});
+
+test("mesure initiale : hors de contenuComplet (lireChamp vide, appliquerModification refuse)", () => {
+  assert.equal(lireChamp({ ...CONTENU, "proposition.texteOriginal": "piège" }, "proposition.texteOriginal"), undefined);
+  assert.throws(() => appliquerModification(CONTENU, "proposition.texteOriginal", MESURE), /colonne de la proposition/);
+  assert.equal(valeurEnTexte("proposition.texteOriginal", MESURE), MESURE);
+});
+
+// --- Reste de la fiche : objectif, catégorie, critères, verdict, sources, sections
+
+const FICHE = {
+  titre_fiche: "Titre",
+  mesure_vers_objectif: { objectif_court: "Réduire le chômage", categorie_objectif: "Emploi et chômage" },
+  analyse_par_criteres: [
+    { critere: "operationnalite_moyens", titre: "Opérationnalité & Moyens", note: 12, note_max: 30, plafond_applique: false, texte: "Texte opérationnalité." },
+    { critere: "efficacite", titre: "Efficacité", note: 18, note_max: 30, texte: "Texte efficacité." },
+  ],
+  notation_detaillee: { efficacite: 18, operationnalite_moyens_total: 12, score_total: 50 },
+  verdict_final: "Ce qui tient.\n\nCe qui reste flou.",
+  verdict_conclusion: "En somme, plausible.",
+  sources_utilisees: ["Insee, Emploi (2025), https://insee.fr/a", "Dares, Chômage (2024)", "OCDE, Rapport (2023)"],
+  version_basique: { resume: "R", points_forts: ["a", "b"], points_faibles: ["c", "d"], sources_principales: [0, 2] },
+  contexte_national: { synthese: "Synthèse du contexte.", texte: "Texte complet du contexte national." },
+  niveau_de_confiance: "Moyen. Les données sont partielles.",
+};
+
+test("CATEGORIES_OBJECTIF identique à scripts/lib/scoring.js", async () => {
+  const scoring = await import("./lib/scoring.js");
+  assert.deepEqual(CATEGORIES_OBJECTIF, scoring.CATEGORIES_OBJECTIF);
+});
+
+test("catégorie : valeur de la liste acceptée, vide → null, autre valeur refusée", () => {
+  const champ = "mesure_vers_objectif.categorie_objectif";
+  assert.deepEqual(validerTexte(champ, " Logement "), { ok: true, valeur: "Logement" });
+  assert.deepEqual(validerTexte(champ, ""), { ok: true, valeur: null });
+  assert.match(validerTexte(champ, "Logements").message, /valeur de la liste/);
+  const { contenu } = appliquerModification(FICHE, champ, null);
+  assert.equal(contenu.mesure_vers_objectif.categorie_objectif, null);
+  assert.equal(contenu.mesure_vers_objectif.objectif_court, FICHE.mesure_vers_objectif.objectif_court);
+  assert.throws(() => appliquerModification(FICHE, "mesure_vers_objectif.objectif_court", null), TypeError);
+});
+
+test("objectif visé : seule la sous-clé change ; fiche sans le bloc refusée", () => {
+  const { contenu } = appliquerModification(FICHE, "mesure_vers_objectif.objectif_court", "Baisser les loyers");
+  assert.deepEqual(contenu, { ...FICHE, mesure_vers_objectif: { ...FICHE.mesure_vers_objectif, objectif_court: "Baisser les loyers" } });
+  const { mesure_vers_objectif: _retire, ...sansBloc } = FICHE;
+  assert.equal(blocPresent(sansBloc, "mesure_vers_objectif.objectif_court"), false);
+  assert.throws(() => appliquerModification(sansBloc, "mesure_vers_objectif.objectif_court", "X"), /Mesure initiale/);
+  assert.match(validerTexte("mesure_vers_objectif.objectif_court", "Avec **gras**").message, /objectif visé s'affiche sans gras/);
+});
+
+test("critère : seul le texte du bon critère change, sa note et les autres critères restent intacts", () => {
+  const champ = "analyse_par_criteres.efficacite";
+  assert.equal(lireChamp(FICHE, champ), "Texte efficacité.");
+  const { contenu, derives } = appliquerModification(FICHE, champ, "Nouveau **texte** efficacité.");
+  assert.deepEqual(derives, {});
+  assert.deepEqual(contenu.analyse_par_criteres[1], { ...FICHE.analyse_par_criteres[1], texte: "Nouveau **texte** efficacité." });
+  assert.deepEqual(contenu.analyse_par_criteres[0], FICHE.analyse_par_criteres[0]);
+  assert.deepEqual(contenu.notation_detaillee, FICHE.notation_detaillee);
+  for (const cle of Object.keys(FICHE)) if (cle !== "analyse_par_criteres") assert.deepEqual(contenu[cle], FICHE[cle], cle);
+  // Critère absent, ou ancien format (objet keyé) : refus.
+  assert.equal(blocPresent(FICHE, "analyse_par_criteres.degre_preparation"), false);
+  assert.throws(() => appliquerModification(FICHE, "analyse_par_criteres.degre_preparation", "Texte"), /introuvable/);
+  assert.equal(blocPresent({ analyse_par_criteres: { efficacite: "x" } }, champ), false);
+  // Texte : un seul paragraphe, gras équilibré.
+  assert.match(validerTexte(champ, "Un texte\nsur deux lignes, assez long.").message, /un seul paragraphe/);
+  assert.match(validerTexte(champ, "Un **gras jamais fermé, assez long.").message, /\*\*/);
+});
+
+test("verdict final : paragraphes acceptés, colonne verdict dérivée ; conclusion en un paragraphe", () => {
+  const verdict = "Premier paragraphe du verdict.\n\nSecond paragraphe, **gras**.";
+  assert.deepEqual(validerTexte("verdict_final", verdict), { ok: true, valeur: verdict });
+  const { contenu, derives } = appliquerModification(FICHE, "verdict_final", verdict);
+  assert.equal(contenu.verdict_final, verdict);
+  assert.deepEqual(derives, { verdict });
+  assert.match(validerTexte("verdict_conclusion", "Une conclusion\n\nen deux.").message, /un seul paragraphe/);
+  assert.deepEqual(appliquerModification(FICHE, "verdict_conclusion", "Autre conclusion.").derives, {});
+});
+
+test("sources : une par ligne, sans gras, cohérence avec les sources principales de la version basique", () => {
+  const regles = CHAMPS_EDITABLES.sources_utilisees;
+  assert.equal(valeurEnTexte("sources_utilisees", FICHE.sources_utilisees), FICHE.sources_utilisees.join("\n"));
+  assert.deepEqual(validerTexte("sources_utilisees", "A, https://a.fr\n\nB"), { ok: true, valeur: ["A, https://a.fr", "B"] });
+  assert.match(validerTexte("sources_utilisees", "A **gras**").message, /sources s'affichent sans gras/);
+  // La version basique cite la source n° 3 (index 2) : il en faut au moins 3.
+  assert.match(regles.coherence(FICHE, ["a", "b"]), /source n° 3/);
+  assert.equal(regles.coherence(FICHE, ["a", "b", "c", "d"]), null);
+  assert.equal(regles.coherence({ sources_utilisees: [] }, ["a"]), null);
+  const { contenu } = appliquerModification(FICHE, "sources_utilisees", ["a", "b", "c", "d"]);
+  assert.deepEqual(contenu.version_basique, FICHE.version_basique);
+});
+
+test("sections en accordéon : synthèse et texte modifiés séparément ; section absente refusée", () => {
+  const synthese = appliquerModification(FICHE, "contexte_national.synthese", "Nouvelle synthèse.");
+  assert.deepEqual(synthese.contenu.contexte_national, { ...FICHE.contexte_national, synthese: "Nouvelle synthèse." });
+  const texte = appliquerModification(FICHE, "contexte_national.texte", "Nouveau texte complet.");
+  assert.deepEqual(texte.contenu.contexte_national, { ...FICHE.contexte_national, texte: "Nouveau texte complet." });
+  // Absente, ou encore au format texte simple : pas de crayon, refus.
+  for (const contenu of [FICHE, { ...FICHE, angles_morts: "Texte simple" }, { ...FICHE, angles_morts: null }]) {
+    assert.equal(blocPresent(contenu, "angles_morts.texte"), false);
+    assert.throws(() => appliquerModification(contenu, "angles_morts.texte", "Un texte assez long."), /n'existe pas/);
+  }
+  assert.equal(appliquerModification(FICHE, "niveau_de_confiance", "Élevé. Données solides.").contenu.niveau_de_confiance, "Élevé. Données solides.");
+});
+
+test("thématique : colonne de la proposition, une seule ligne, sans gras", () => {
+  const regles = CHAMPS_EDITABLES["proposition.theme"];
+  assert.deepEqual([regles.colonneProposition, regles.multiligne, regles.min, regles.max], ["theme", false, 2, 120]);
+  assert.deepEqual(validerTexte("proposition.theme", " Logement "), { ok: true, valeur: "Logement" });
+  assert.match(validerTexte("proposition.theme", "Log\nement").message, /seule ligne/);
+  assert.match(validerTexte("proposition.theme", "**Logement**").message, /thématique s'affiche sans gras/);
+  assert.throws(() => appliquerModification(FICHE, "proposition.theme", "Logement"), /colonne de la proposition/);
 });

@@ -40,30 +40,151 @@ export function truncateTeaser(text) {
 }
 
 // --- Liste blanche des champs modifiables ----------------------------------
-// Seuls ces champs de `contenuComplet` peuvent être modifiés. Aucun score ni
-// aucune note n'y figure, jamais.
+// Seuls ces champs de `contenuComplet` (et deux colonnes de la proposition, en
+// fin de liste) peuvent être modifiés. Aucun score ni aucune note n'y figure,
+// jamais.
 //   min/max        : longueur du texte une fois normalisé
-//   multiligne     : false = une seule ligne (titre)
+//   multiligne     : false = une seule ligne (titre) ; true = zone de texte
+//                    qui grandit avec son contenu
+//   unParagraphe   : zone de texte, mais sans retour à la ligne (la fiche
+//                    l'affiche en un seul paragraphe)
+//   sansGras       : ** refusé (messageSansGras : message propre au champ)
+//   aide           : phrase d'aide affichée sous le champ de saisie
 //   derives(valeur): colonnes de la base à tenir à jour en même temps, comme le
-//                    fait scripts/analyze.js à la génération
-//                    (titreProposition -> Proposition.titre, teaser -> Analyse.teaser)
+//                    fait scripts/analyze.js à la génération (titreProposition
+//                    -> Proposition.titre, teaser -> Analyse.teaser, verdict ->
+//                    Analyse.verdict)
+//   chemin         : emplacement dans contenuComplet quand le champ n'est pas à
+//                    la racine : tableau de clés, ou fonction (contenu) -> tableau
+//                    (ou null si le bloc n'existe pas sur cette fiche)
+//   blocAbsent     : message quand le bloc parent n'existe pas sur la fiche
+//   type "liste"   : un point par ligne, enregistré en tableau de chaînes
+//                    (minPoints à maxPoints points de maxParPoint caractères au plus)
+//   type "choix"   : liste déroulante (valeurs de `choix`, ou aucune si `nullable`)
+//   coherence(contenu, valeur) : contrôle supplémentaire avec le reste de la
+//                    fiche, renvoie un message d'erreur ou null
+
+const sansDerive = () => ({});
+
 // Champs de la version basique (contenuComplet.version_basique, voir
-// src/components/VueBasique.js) : désignés par un chemin [clé racine, sous-clé].
-//   type "liste" : un point par ligne, enregistré en tableau de chaînes
-//                  (minPoints à maxPoints points de maxParPoint caractères au plus)
-//   sansGras     : la version basique s'affiche sans gras, ** refusé
+// src/components/VueBasique.js).
 function champVersionBasique(sousCle, libelle, type) {
   const limites =
     type === "liste" ? { minPoints: 2, maxPoints: 5, maxParPoint: 160 } : { min: 20, max: 1500 };
   return {
     libelle,
     chemin: ["version_basique", sousCle],
+    blocAbsent: "Cette fiche n'a pas de version basique : elle ne peut pas être modifiée.",
     type,
     multiligne: true,
     sansGras: true,
     ...limites,
-    derives: () => ({}),
+    derives: sansDerive,
   };
+}
+
+// --- Miroir de scripts/lib/scoring.js (CATEGORIES_OBJECTIF) : à garder identique.
+export const CATEGORIES_OBJECTIF = [
+  "Retraites",
+  "Santé",
+  "Emploi et chômage",
+  "Éducation",
+  "Énergie et climat",
+  "Logement",
+  "Alimentation et agriculture",
+  "Fiscalité et pouvoir d'achat",
+  "Dette et finances publiques",
+  "Immigration",
+  "Sécurité et justice",
+  "Numérique et intelligence artificielle",
+  "Démocratie et institutions",
+];
+
+const AIDE_PARAGRAPHE_GRAS =
+  "Un seul paragraphe (pas de retour à la ligne). Entourez un mot de deux étoiles pour le mettre en gras : **mot**";
+
+// Analyse par critères (tableau contenuComplet.analyse_par_criteres) : seul le
+// TEXTE d'un critère est modifiable, jamais sa note. Le critère est retrouvé par
+// sa clé `critere` (barème 2026 et schémas antérieurs).
+export const CRITERES_ANALYSE = {
+  operationnalite_moyens: "Opérationnalité & Moyens",
+  efficacite: "Efficacité",
+  effets_rebonds_externalites: "Effets rebonds & Externalités",
+  degre_preparation: "Degré de préparation",
+  alignement_logique: "Alignement & Logique globale",
+  solidite_factuelle: "Solidité factuelle",
+  operationnel: "Faisabilité opérationnelle",
+  cout: "Coût et soutenabilité budgétaire",
+  juridique_garde_fou: "Faisabilité juridique (garde-fou)",
+};
+
+function champCritere(critere, libelle) {
+  return {
+    libelle: `Analyse — ${libelle}`,
+    chemin: (contenu) => {
+      const criteres = contenu?.analyse_par_criteres;
+      if (!Array.isArray(criteres)) return null;
+      const index = criteres.findIndex((item) => estObjet(item) && item.critere === critere);
+      return index === -1 ? null : ["analyse_par_criteres", index, "texte"];
+    },
+    blocAbsent: "Ce critère est introuvable dans l'analyse par critères : il ne peut pas être modifié.",
+    multiligne: true,
+    unParagraphe: true,
+    aide: AIDE_PARAGRAPHE_GRAS,
+    min: 20,
+    max: 6000,
+    derives: sansDerive,
+  };
+}
+
+// Sections « synthèse + texte » du raisonnement complet et de la fiabilité
+// (voir AccordionSection) : la synthèse et le texte se modifient séparément.
+export const SECTIONS_ACCORDEON = {
+  mesure_reformulee: "Mesure reformulée",
+  contexte_programme: "Mise en contexte dans le programme",
+  contexte_national: "Contexte national",
+  contexte_international: "Contexte international",
+  impact_environnement: "Impact environnemental",
+  analyse_longevites: "Longévité des effets",
+  impact_temporel_et_sectoriel: "Impact temporel et sectoriel",
+  ce_qui_est_etabli: "Ce qui est établi",
+  ce_qui_est_probable: "Ce qui est probable",
+  ce_qui_est_discutable: "Ce qui est discutable",
+  ce_qui_est_inconnu: "Ce qui est inconnu",
+  angles_morts: "Angles morts et effets de bord",
+  limites: "Limites identifiées",
+};
+
+function champsSection(section, libelle) {
+  const commun = {
+    blocAbsent: "Cette section n'existe pas sur cette fiche : elle ne peut pas être modifiée.",
+    multiligne: true,
+    unParagraphe: true,
+    aide: AIDE_PARAGRAPHE_GRAS,
+    derives: sansDerive,
+  };
+  return {
+    [`${section}.synthese`]: {
+      ...commun,
+      libelle: `${libelle} — synthèse`,
+      chemin: [section, "synthese"],
+      min: 10,
+      max: 400,
+    },
+    [`${section}.texte`]: { ...commun, libelle, chemin: [section, "texte"], min: 20, max: 12000 },
+  };
+}
+
+// Sources utilisées : la version basique désigne ses sources principales par
+// leur position dans cette liste (version_basique.sources_principales).
+function coherenceSources(contenu, sources) {
+  const principales = contenu?.version_basique?.sources_principales;
+  if (!Array.isArray(principales)) return null;
+  const plusGrand = Math.max(-1, ...principales.filter(Number.isInteger));
+  if (plusGrand >= sources.length) {
+    return `La version basique utilise la source n° ${plusGrand + 1} comme source principale : gardez au moins ${plusGrand + 1} sources, dans le même ordre.`;
+  }
+  return null;
 }
 
 export const CHAMPS_EDITABLES = {
@@ -87,6 +208,104 @@ export const CHAMPS_EDITABLES = {
   "version_basique.faisabilite": champVersionBasique("faisabilite", "Faisabilité et mise en œuvre", "texte"),
   "version_basique.points_forts": champVersionBasique("points_forts", "Points forts", "liste"),
   "version_basique.points_faibles": champVersionBasique("points_faibles", "Points faibles", "liste"),
+  "mesure_vers_objectif.objectif_court": {
+    libelle: "Objectif visé",
+    chemin: ["mesure_vers_objectif", "objectif_court"],
+    blocAbsent: "Cette fiche n'a pas de bloc « Mesure initiale → Objectif visé ».",
+    multiligne: true,
+    unParagraphe: true,
+    sansGras: true,
+    messageSansGras: "L'objectif visé s'affiche sans gras : retirez les **.",
+    aide: "Un seul paragraphe, sans gras.",
+    min: 3,
+    max: 500,
+    derives: sansDerive,
+  },
+  "mesure_vers_objectif.categorie_objectif": {
+    libelle: "Catégorie de l'objectif",
+    chemin: ["mesure_vers_objectif", "categorie_objectif"],
+    blocAbsent: "Cette fiche n'a pas de bloc « Mesure initiale → Objectif visé ».",
+    type: "choix",
+    choix: CATEGORIES_OBJECTIF,
+    nullable: true,
+    derives: sansDerive,
+  },
+  ...Object.fromEntries(
+    Object.entries(CRITERES_ANALYSE).map(([critere, libelle]) => [
+      `analyse_par_criteres.${critere}`,
+      champCritere(critere, libelle),
+    ]),
+  ),
+  verdict_final: {
+    libelle: "Verdict final",
+    multiligne: true,
+    aide:
+      "Une ligne vide sépare deux paragraphes (avec exactement 2 paragraphes, la fiche affiche « Ce qui tient » / « Ce qui reste flou »). Gras : **mot**",
+    min: 20,
+    max: 8000,
+    derives: (valeur) => ({ verdict: valeur }),
+  },
+  verdict_conclusion: {
+    libelle: "Conclusion du verdict",
+    multiligne: true,
+    unParagraphe: true,
+    aide: AIDE_PARAGRAPHE_GRAS,
+    min: 10,
+    max: 1500,
+    derives: sansDerive,
+  },
+  sources_utilisees: {
+    libelle: "Sources utilisées",
+    type: "liste",
+    multiligne: true,
+    minPoints: 1,
+    maxPoints: 80,
+    maxParPoint: 1000,
+    messageSansGras: "Les sources s'affichent sans gras : retirez les **.",
+    aide:
+      "Une source par ligne, au format « Organisme, titre (date), https://… ». Ajoutez les nouvelles sources à la fin : la version basique renvoie à certaines sources par leur numéro.",
+    coherence: coherenceSources,
+    derives: sansDerive,
+  },
+  niveau_de_confiance: {
+    libelle: "Niveau de confiance",
+    multiligne: true,
+    unParagraphe: true,
+    aide: "Commencez par « Faible. », « Moyen. » ou « Élevé. » : la jauge en est déduite. Un seul paragraphe, gras : **mot**",
+    min: 5,
+    max: 3000,
+    derives: sansDerive,
+  },
+  ...Object.assign(
+    {},
+    ...Object.entries(SECTIONS_ACCORDEON).map(([section, libelle]) => champsSection(section, libelle)),
+  ),
+  // Colonnes de la proposition : PAS dans contenuComplet. Partagées par toutes
+  // les analyses de la mesure (voir test-enregistrer.js).
+  //   colonneProposition : colonne de Proposition écrite à la place du contenu
+  "proposition.texteOriginal": {
+    libelle: "Mesure initiale",
+    colonneProposition: "texteOriginal",
+    multiligne: true,
+    unParagraphe: true,
+    sansGras: true,
+    messageSansGras: "La mesure initiale s'affiche sans gras : retirez les **.",
+    aide: "Mesure, citation et source, en un seul paragraphe. Pas de gras.",
+    min: 10,
+    max: 3000,
+    derives: sansDerive,
+  },
+  "proposition.theme": {
+    libelle: "Thématique",
+    colonneProposition: "theme",
+    multiligne: false,
+    sansGras: true,
+    messageSansGras: "La thématique s'affiche sans gras : retirez les **.",
+    aide: "Sert aussi aux filtres par thème du site (ex. « Logement », « Retraites »).",
+    min: 2,
+    max: 120,
+    derives: sansDerive,
+  },
 };
 
 function champConnu(champ) {
@@ -98,11 +317,40 @@ function estObjet(valeur) {
   return valeur !== null && typeof valeur === "object" && !Array.isArray(valeur);
 }
 
+// Conteneur JSON dans lequel on peut descendre : objet simple ou tableau.
+function estConteneur(valeur) {
+  return valeur !== null && typeof valeur === "object";
+}
+
+// Chemin du champ dans `contenu` (tableau de clés), ou null si son bloc parent
+// n'existe pas sur cette fiche (ou si c'est une colonne de la proposition). La
+// dernière clé peut manquer (elle sera ajoutée), pas les niveaux au-dessus.
+export function cheminChamp(contenu, champ) {
+  if (!champConnu(champ) || !estObjet(contenu)) return null;
+  const regles = CHAMPS_EDITABLES[champ];
+  if (regles.colonneProposition) return null;
+  const chemin = typeof regles.chemin === "function" ? regles.chemin(contenu) : (regles.chemin ?? [champ]);
+  if (!chemin) return null;
+  let parent = contenu;
+  for (const cle of chemin.slice(0, -1)) {
+    parent = estConteneur(parent) && Object.hasOwn(parent, cle) ? parent[cle] : undefined;
+  }
+  return estObjet(parent) ? chemin : null;
+}
+
+// Le bloc parent du champ existe-t-il sur cette fiche ?
+export function blocPresent(contenu, champ) {
+  return cheminChamp(contenu, champ) !== null;
+}
+
 // Valeur actuelle d'un champ dans `contenu` (en suivant son chemin s'il en a un).
 export function lireChamp(contenu, champ) {
-  if (!champConnu(champ)) return undefined;
-  const chemin = CHAMPS_EDITABLES[champ].chemin ?? [champ];
-  return chemin.reduce((objet, cle) => (estObjet(objet) ? objet[cle] : undefined), contenu);
+  const chemin = cheminChamp(contenu, champ);
+  if (!chemin) return undefined;
+  return chemin.reduce(
+    (objet, cle) => (estConteneur(objet) && Object.hasOwn(objet, cle) ? objet[cle] : undefined),
+    contenu,
+  );
 }
 
 // Texte saisi -> points d'une liste : un point par ligne, lignes vides ignorées.
@@ -128,7 +376,7 @@ function validerListe(regles, texte) {
   if (points.length < regles.minPoints) {
     return {
       ok: false,
-      message: `Il faut au moins ${regles.minPoints} points (un par ligne) : ${points.length} saisi${points.length > 1 ? "s" : ""}.`,
+      message: `Il faut au moins ${regles.minPoints} point${regles.minPoints > 1 ? "s" : ""} (un par ligne) : ${points.length} saisi${points.length > 1 ? "s" : ""}.`,
     };
   }
   if (points.length > regles.maxPoints) {
@@ -145,7 +393,7 @@ function validerListe(regles, texte) {
     };
   }
   if (points.some((point) => point.includes("**"))) {
-    return { ok: false, message: MESSAGE_SANS_GRAS };
+    return { ok: false, message: regles.messageSansGras ?? MESSAGE_SANS_GRAS };
   }
   return { ok: true, valeur: points };
 }
@@ -198,6 +446,13 @@ export function validerTexte(champ, valeur) {
   const regles = CHAMPS_EDITABLES[champ];
   const texte = normaliserTexte(valeur);
 
+  // Liste déroulante : une valeur de la liste, ou rien (null) si permis.
+  if (regles.type === "choix") {
+    if (texte === "" && regles.nullable) return { ok: true, valeur: null };
+    if (!regles.choix.includes(texte)) return { ok: false, message: "Choisissez une valeur de la liste." };
+    return { ok: true, valeur: texte };
+  }
+
   if (aCaractereDeControle(texte)) {
     return { ok: false, message: "Le texte contient des caractères invisibles non autorisés." };
   }
@@ -220,8 +475,11 @@ export function validerTexte(champ, valeur) {
   if (!regles.multiligne && texte.includes("\n")) {
     return { ok: false, message: "Ce champ tient sur une seule ligne : retirez les retours à la ligne." };
   }
+  if (regles.unParagraphe && texte.includes("\n")) {
+    return { ok: false, message: "Ce texte s'affiche en un seul paragraphe : retirez les retours à la ligne." };
+  }
   if (regles.sansGras) {
-    if (texte.includes("**")) return { ok: false, message: MESSAGE_SANS_GRAS };
+    if (texte.includes("**")) return { ok: false, message: regles.messageSansGras ?? MESSAGE_SANS_GRAS };
   } else if (!regles.multiligne) {
     // Le titre s'affiche tel quel (pas de gras) : des ** y resteraient visibles.
     if (texte.includes("**")) {
@@ -269,40 +527,45 @@ function verifierSeuleCleModifiee(avant, apres, cleVisee, prefixe = "") {
 // Applique UNE modification à `contenu` (le JSON contenuComplet) sans toucher à
 // l'objet reçu. Renvoie { contenu: nouveauContenu, derives } où `derives` liste
 // les colonnes à mettre à jour en parallèle (titreProposition, teaser).
-// La valeur doit avoir été validée avant (validerTexte) : une chaîne, ou un
-// tableau de chaînes pour une liste.
+// La valeur doit avoir été validée avant (validerTexte) : une chaîne, un
+// tableau de chaînes pour une liste, ou null pour un choix vide permis.
 export function appliquerModification(contenu, champ, valeur) {
   if (!champConnu(champ)) {
     throw new Error(`Champ non modifiable : ${String(champ)}`);
   }
   const regles = CHAMPS_EDITABLES[champ];
+  if (regles.colonneProposition) {
+    throw new Error(`Champ hors du contenu de l'analyse (colonne de la proposition) : ${champ}`);
+  }
   if (regles.type === "liste") {
     if (!Array.isArray(valeur) || !valeur.every((point) => typeof point === "string")) {
       throw new TypeError("La valeur à enregistrer doit être une liste de chaînes de caractères.");
     }
-  } else if (typeof valeur !== "string") {
+  } else if (!(typeof valeur === "string" || (valeur === null && regles.type === "choix" && regles.nullable))) {
     throw new TypeError("La valeur à enregistrer doit être une chaîne de caractères.");
   }
   if (!estObjet(contenu)) {
     throw new Error("Le contenu de l'analyse est illisible : modification refusée.");
   }
+  const chemin = cheminChamp(contenu, champ);
+  if (!chemin) {
+    throw new Error(regles.blocAbsent ?? "Ce bloc n'existe pas sur cette fiche : modification refusée.");
+  }
 
   const nouveauContenu = structuredClone(contenu);
+  const cleFinale = chemin[chemin.length - 1];
+  const parentNouveau = chemin.slice(0, -1).reduce((objet, cle) => objet[cle], nouveauContenu);
+  parentNouveau[cleFinale] = structuredClone(valeur);
 
-  if (regles.chemin) {
-    const [racine, sousCle] = regles.chemin;
-    if (!estObjet(contenu[racine])) {
-      throw new Error("Cette fiche n'a pas de version basique : modification refusée.");
-    }
-    nouveauContenu[racine][sousCle] = structuredClone(valeur);
-    // Garde-fou à deux niveaux : seule la clé racine visée change, et en son
-    // sein seule la sous-clé visée (sources_principales reste intacte, etc.).
-    verifierSeuleCleModifiee(contenu, nouveauContenu, racine);
-    verifierSeuleCleModifiee(contenu[racine], nouveauContenu[racine], sousCle, `${racine}.`);
-  } else {
-    nouveauContenu[champ] = valeur;
-    // En particulier, pas notation_detaillee (les notes).
-    verifierSeuleCleModifiee(contenu, nouveauContenu, champ);
+  // Garde-fou à chaque niveau du chemin : seule la clé visée change, rien d'autre
+  // (en particulier ni notation_detaillee, ni la note d'un critère, ni
+  // version_basique.sources_principales).
+  let avant = contenu;
+  let apres = nouveauContenu;
+  for (const [niveau, cle] of chemin.entries()) {
+    verifierSeuleCleModifiee(avant, apres, String(cle), chemin.slice(0, niveau).map((c) => `${c}.`).join(""));
+    avant = avant[cle];
+    apres = apres[cle];
   }
 
   if (!egalProfond(contenu.notation_detaillee, nouveauContenu.notation_detaillee)) {

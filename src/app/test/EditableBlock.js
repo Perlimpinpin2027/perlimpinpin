@@ -21,6 +21,7 @@ export default function EditableBlock({
   const router = useRouter();
   const regles = CHAMPS_EDITABLES[champ];
   const estListe = regles.type === "liste";
+  const estChoix = regles.type === "choix";
   // Une liste (tableau de points) s'édite en texte, un point par ligne.
   const texteInitial = valeurEnTexte(champ, valeurBrute);
 
@@ -59,10 +60,10 @@ export default function EditableBlock({
   // La zone de texte du résumé grandit avec son contenu.
   useEffect(() => {
     const zone = champRef.current;
-    if (!edition || !multiligne || !zone) return;
+    if (!edition || !multiligne || estChoix || !zone) return;
     zone.style.height = "auto";
     zone.style.height = `${zone.scrollHeight}px`;
-  }, [edition, multiligne, texte]);
+  }, [edition, multiligne, estChoix, texte]);
 
   const controle = validerTexte(champ, texte);
   const inchange = normaliserTexte(texte) === normaliserTexte(texteInitial);
@@ -170,7 +171,24 @@ export default function EditableBlock({
         {regles.libelle}
       </label>
 
-      {multiligne ? (
+      {estChoix ? (
+        <select
+          id={idChamp}
+          ref={champRef}
+          value={texte}
+          onChange={(evenement) => setTexte(evenement.target.value)}
+          disabled={enCours}
+          autoFocus
+          className={`${classesChamp} text-base`}
+        >
+          {regles.nullable ? <option value="">(aucune)</option> : null}
+          {regles.choix.map((choix) => (
+            <option key={choix} value={choix}>
+              {choix}
+            </option>
+          ))}
+        </select>
+      ) : multiligne ? (
         <textarea
           id={idChamp}
           ref={champRef}
@@ -195,7 +213,9 @@ export default function EditableBlock({
       )}
 
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-xs text-zinc-500">
-        {estListe ? (
+        {estChoix ? (
+          <span />
+        ) : estListe ? (
           <span
             className={
               points.length < regles.minPoints ||
@@ -216,7 +236,9 @@ export default function EditableBlock({
         <span>Échap pour annuler · Ctrl/Cmd + Entrée pour enregistrer</span>
       </div>
 
-      {estListe ? (
+      {regles.aide ? (
+        <p className="text-xs text-zinc-500">{regles.aide}</p>
+      ) : estListe ? (
         <p className="text-xs text-zinc-500">
           Un point par ligne ({regles.minPoints} à {regles.maxPoints} points, {regles.maxParPoint} caractères au plus
           chacun). Pas de gras dans la version basique.

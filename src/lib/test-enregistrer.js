@@ -1,4 +1,4 @@
-import { CHAMPS_EDITABLES, appliquerModification, lireChamp, validerTexte } from "./test-edition.js";
+import { CHAMPS_EDITABLES, appliquerModification, blocPresent, lireChamp, validerTexte } from "./test-edition.js";
 
 // Logique de « Enregistrer » d'un texte modifié depuis /test/[id], SANS
 // dépendance à Next ni à la vraie base : contrôle d'accès, client Prisma et mode
@@ -43,6 +43,7 @@ export async function enregistrerTexteCore(entree, { isEditor, prisma, dryRun })
       updatedAt: true,
       propositionId: true,
       contenuComplet: true,
+      proposition: { select: { texteOriginal: true } },
     },
   });
   if (!analyse) return refus("Analyse introuvable.");
@@ -61,27 +62,52 @@ export async function enregistrerTexteCore(entree, { isEditor, prisma, dryRun })
     );
   }
 
-  // Champ de la version basique sur une fiche qui n'en a pas (en base).
-  const chemin = CHAMPS_EDITABLES[champ].chemin;
-  const parent = chemin ? analyse.contenuComplet?.[chemin[0]] : null;
-  if (chemin && (parent === null || typeof parent !== "object" || Array.isArray(parent))) {
-    return refus("Cette fiche n'a pas de version basique : elle ne peut pas être modifiée.");
+  const { chemin, colonneProposition, blocAbsent, coherence } = CHAMPS_EDITABLES[champ];
+
+  // Colonne de la proposition (mesure initiale, thématique) : partagée par toutes les
+  // analyses de la mesure. Si l'une d'elles est publiée, la modifier changerait
+  // tout de suite la fiche publique : refusé.
+  if (colonneProposition) {
+    const publiee = await prisma.analyse.findFirst({
+      where: { propositionId: analyse.propositionId, statut: "publie" },
+      select: { id: true },
+    });
+    if (publiee) {
+      return refus(
+        `Cette mesure a déjà une version publiée : modifier « ${CHAMPS_EDITABLES[champ].libelle} » changerait aussi la fiche publique. Modification refusée.`,
+      );
+    }
   }
+
+  // Champ d'un bloc que cette fiche n'a pas (version basique, critère, section…).
+  if (chemin && !blocPresent(analyse.contenuComplet, champ)) {
+    return refus(blocAbsent ?? "Ce bloc n'existe pas sur cette fiche : il ne peut pas être modifié.");
+  }
+
+  // Cohérence avec le reste de la fiche (ex. sources principales de la version basique).
+  const incoherence = coherence ? coherence(analyse.contenuComplet, controle.valeur) : null;
+  if (incoherence) return refus(incoherence);
 
   // 4. Concurrence : quelqu'un a-t-il modifié le brouillon depuis l'ouverture de la page ?
   if (analyse.updatedAt.toISOString() !== versionAttendue) return refus(CONFLIT);
 
   // 5. Nouveau contenu (le garde-fou de appliquerModification lève une erreur si
-  // autre chose que le champ visé devait changer).
+  // autre chose que le champ visé devait changer). Une colonne de la proposition
+  // laisse le contenu intact.
   let modification;
   try {
-    modification = appliquerModification(analyse.contenuComplet, champ, controle.valeur);
+    modification = colonneProposition
+      ? { contenu: null, derives: { [colonneProposition]: controle.valeur } }
+      : appliquerModification(analyse.contenuComplet, champ, controle.valeur);
   } catch (error) {
     console.error("[test] modification refusée par le garde-fou :", error);
     return refus("Ce brouillon ne peut pas être modifié : son contenu n'a pas la forme attendue.");
   }
   const { contenu, derives } = modification;
-  const avant = lireChamp(analyse.contenuComplet, champ);
+  const avant = colonneProposition
+    ? analyse.proposition?.[colonneProposition]
+    : lireChamp(analyse.contenuComplet, champ);
+  const apres = colonneProposition ? controle.valeur : lireChamp(contenu, champ);
 
   // Simulation : on valide tout, on n'écrit RIEN.
   if (dryRun) {
@@ -90,7 +116,9 @@ export async function enregistrerTexteCore(entree, { isEditor, prisma, dryRun })
       simulation: true,
       message: Array.isArray(controle.valeur)
         ? `[Simulation] La liste serait enregistrée (${controle.valeur.length} points).`
-        : `[Simulation] Le texte serait enregistré (${controle.valeur.length} caractères).`,
+        : controle.valeur === null
+          ? "[Simulation] La valeur serait effacée."
+          : `[Simulation] Le texte serait enregistré (${controle.valeur.length} caractères).`,
     };
   }
 
@@ -105,10 +133,13 @@ export async function enregistrerTexteCore(entree, { isEditor, prisma, dryRun })
         // Toujours un brouillon ET toujours dans l'état vu par l'éditeur : sinon
         // (count = 0) quelqu'un est passé avant, on annule tout.
         where: { id: analyse.id, statut: "brouillon", updatedAt: dateAttendue },
+        // Colonne de la proposition : seule la version du brouillon avance
+        // (elle sert de verrou contre les modifications simultanées).
         data: {
-          contenuComplet: contenu,
+          ...(contenu ? { contenuComplet: contenu } : {}),
           updatedAt: versionSuivante,
           ...(derives.teaser !== undefined ? { teaser: derives.teaser } : {}),
+          ...(derives.verdict !== undefined ? { verdict: derives.verdict } : {}),
         },
       });
       if (count !== 1) throw new ModificationRefusee(CONFLIT);
@@ -117,6 +148,12 @@ export async function enregistrerTexteCore(entree, { isEditor, prisma, dryRun })
         await tx.proposition.update({
           where: { id: analyse.propositionId },
           data: { titre: derives.titreProposition },
+        });
+      }
+      if (colonneProposition) {
+        await tx.proposition.update({
+          where: { id: analyse.propositionId },
+          data: { [colonneProposition]: derives[colonneProposition] },
         });
       }
     });
@@ -134,6 +171,6 @@ export async function enregistrerTexteCore(entree, { isEditor, prisma, dryRun })
     propositionId: analyse.propositionId,
     champ,
     avant,
-    apres: lireChamp(contenu, champ),
+    apres,
   };
 }
