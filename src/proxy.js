@@ -20,8 +20,9 @@ export async function proxy(request) {
 }
 
 // Protège tout /relectures (y compris /relectures/index.html, fichier de public/ :
-// le proxy passe avant les fichiers statiques) sauf connexion, inscription et
-// déconnexion. Contrôle « optimiste » : signature et expiration du cookie, sans
+// le proxy passe avant les fichiers statiques) sauf connexion, inscription,
+// déconnexion et désinscription des mails (jeton signé dans le lien, voir
+// PAGES_PUBLIQUES dans relecture-auth-core.js). Contrôle « optimiste » : signature et expiration du cookie, sans
 // base. Le vrai contrôle (compte toujours activé) est fait par getAdherent().
 function proxyRelectures(request) {
   if (!cheminRelectureProtege(request.nextUrl.pathname)) return NextResponse.next();

@@ -148,6 +148,8 @@ test("proxy : tout /relectures est protégé, sauf connexion, inscription et dé
     "/relectures/connexion/",
     "/relectures/inscription",
     "/relectures/deconnexion",
+    "/relectures/desinscription",
+    "/RELECTURES/Desinscription/",
     "/live",
     "/api/relectures/comments",
     "/relecturesx",

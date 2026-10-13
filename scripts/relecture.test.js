@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import {
   CLES, CLES_OBJECTIF, CLES_NOTATION, CLES_RELECTURE, CLES_RELECTURE_FACULTATIVES, DATA_DIR, RelectureError,
-  ajouter, ficheEnLigne, fichesExistantes, lancer, parseDuree, redigerMail, slugDepuisChemin, verifierFiche,
+  ajouter, ficheEnLigne, fichesExistantes, lancer, parseDuree, prolonger, redigerMail, slugDepuisChemin, verifierFiche,
   estNuit, finVersDuree, partiesParis, proposerFinJournee, erreursVersionSuivante,
 } from "./relecture.js";
 
@@ -407,4 +407,61 @@ test("lancer : avertissement affiché avant l'envoi en mode réel", async () => 
     log: (s) => { if (String(s).startsWith("⚠")) ordre.push("avertissement"); },
   });
   assert.deepEqual(ordre, ["avertissement", "GET", "POST"]);
+});
+
+// ---------- prolonger ----------
+
+test("prolonger --dry-run : aucune requête, corps extend, code masqué", async () => {
+  const out = capture();
+  const res = await prolonger("zemmour-retraites", "90min", {
+    dryRun: true, fetchFn: () => assert.fail("aucune requête en dry-run"), code: CODE, log: out.log,
+  });
+  assert.deepEqual(res.corps, { ficheSlug: "zemmour-retraites", action: "extend", duration: 90, unit: "min" });
+  assert.match(out.texte(), /\[dry-run\]/);
+  assert.match(out.texte(), /"action":"extend"/);
+  assert.doesNotMatch(out.texte(), new RegExp(CODE));
+});
+
+test("prolonger : POST extend avec le code en en-tête (jamais affiché), nouvelle échéance annoncée", async () => {
+  const deadline = "2026-09-28T16:00:00.000Z";
+  const { fn, appels } = fetchSimule({ POST: { status: 200, body: { fiche: { ficheSlug: "zemmour-retraites", reviewDeadline: deadline } } } });
+  const out = capture();
+  const res = await prolonger("zemmour-retraites", "1j", { fetchFn: fn, code: CODE, log: out.log });
+  assert.equal(appels.length, 1);
+  assert.equal(appels[0].url, "https://perlimpinpin.ai/api/relectures/chrono");
+  assert.equal(appels[0].opts.headers["x-relecture-admin-code"], CODE);
+  assert.deepEqual(JSON.parse(appels[0].opts.body), { ficheSlug: "zemmour-retraites", action: "extend", duration: 24, unit: "h" });
+  assert.equal(res.echeance.toISOString(), deadline);
+  assert.match(out.texte(), /Chrono prolongé/);
+  assert.match(out.texte(), /28 sept\. 2026 à 18:00/);
+  assert.doesNotMatch(out.texte(), /la nuit/);
+  assert.doesNotMatch(out.texte(), new RegExp(CODE));
+});
+
+test("prolonger : avertit si la nouvelle clôture tombe la nuit", async () => {
+  const { fn } = fetchSimule({ POST: { status: 200, body: { fiche: { reviewDeadline: "2026-09-28T21:00:00.000Z" } } } });
+  const out = capture();
+  await prolonger("zemmour-retraites", "2h", { fetchFn: fn, code: CODE, log: out.log });
+  assert.match(out.texte(), /la nuit/);
+});
+
+test("prolonger : erreurs de l'API remontées (401, aucun chrono lancé), code non affiché", async () => {
+  const r401 = fetchSimule({ POST: { status: 401, body: { error: "Code admin absent ou invalide." } } });
+  await assert.rejects(prolonger("zemmour-retraites", "2h", { fetchFn: r401.fn, code: CODE, log: () => {} }), /Code comité refusé/);
+  const r409 = fetchSimule({ POST: { status: 409, body: { error: "Aucun chrono lancé sur cette fiche." } } });
+  await assert.rejects(
+    prolonger("zemmour-retraites", "2h", { fetchFn: r409.fn, code: CODE, log: () => {} }),
+    (e) => /HTTP 409/.test(e.message) && /Aucun chrono lancé/.test(e.message) && !e.message.includes(CODE),
+  );
+});
+
+test("prolonger : slug invalide, durée absente ou invalide, fiche inconnue, code absent refusés avant tout envoi", async () => {
+  const fetchFn = () => assert.fail("aucune requête attendue");
+  await assert.rejects(prolonger("Zemmour", "2h", { fetchFn, code: CODE }), /Usage/);
+  await assert.rejects(prolonger("zemmour-retraites", undefined, { fetchFn, code: CODE }), /Usage/);
+  await assert.rejects(prolonger("zemmour-retraites", "abc", { fetchFn, code: CODE }), /Durée invalide/);
+  await assert.rejects(prolonger("zemmour-retraites", "31j", { fetchFn, code: CODE }), /Durée invalide/);
+  await assert.rejects(prolonger("fiche-inexistante", "2h", { fetchFn, code: CODE }), /Fiche inconnue/);
+  await assert.rejects(prolonger("zemmour-retraites", "2h", { fetchFn, code: "" }), /RELECTURE_ADMIN_CODE/);
+  await assert.rejects(prolonger("zemmour-retraites", "2h", { fetchFn, code: "court" }), /RELECTURE_ADMIN_CODE/);
 });

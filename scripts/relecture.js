@@ -13,8 +13,26 @@
 //     8h et propose une heure de fin en journée. Le code comité est
 //     lu dans .env (RELECTURE_ADMIN_CODE) et n'est jamais affiché.
 //     --dry-run : aucune requête réseau, affiche seulement ce qui serait fait.
+//     Après le lancement du chrono, envoie l'appel à relecture à chaque adhérent
+//     non désinscrit, depuis club@perlimpinpin.ai (voir appelRelecture) : aperçu,
+//     puis envoi seulement si l'on tape « oui » (sinon, mail à copier comme avant).
+//     --sans-mail : lance le chrono sans rien envoyer (mail à copier affiché).
+//     --test-a <adresse> : NE lance PAS le chrono ; envoie UN mail (contenu réel,
+//       prénom fictif) à cette adresse, sans toucher au journal. --site <url>
+//       (ex. http://localhost:3000) : base des liens de désinscription de ce mail.
 //
-// Aucune écriture directe en base : le chrono passe par l'API du site.
+//   node scripts/relecture.js prolonger <slug> <durée> [--dry-run]
+//     Prolonge le chrono d'une relecture lancée (POST /api/relectures/chrono,
+//     action "extend") : la durée s'ajoute à l'échéance (ou à maintenant si elle
+//     est passée). Même code comité que lancer, jamais affiché. Aucun mail.
+//
+//   node scripts/relecture.js envoyer <slug> [--test-a <adresse>]
+//     Renvoie les mails d'une relecture déjà lancée (envoi interrompu) sans
+//     toucher au chrono. Adhérents déjà servis (journal logs/mails-relecture.jsonl)
+//     sautés. Échéance lue en base (lecture seule).
+//
+// Aucune écriture directe en base : le chrono passe par l'API du site ; la base
+// n'est que lue (adhérents, échéance pour « envoyer »).
 
 import { readFileSync, writeFileSync, existsSync, unlinkSync, readdirSync } from "node:fs";
 import { execFileSync } from "node:child_process";
@@ -22,7 +40,12 @@ import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import dotenv from "dotenv";
 import { checkNotationCoherence, validateEtape1Structure } from "./lib/scoring.js";
+import { createInterface } from "node:readline/promises";
 import { formatClosedAt } from "../src/lib/relecture.js";
+import { liensDesinscription } from "../src/lib/desinscription-core.js";
+import { masquerEmail, prenomDepuisNom, redigerMailAdherent } from "./lib/mail-relecture.js";
+import { creerTransport, dejaEnvoyes, envoyerUnParUn, journaliser, messageNodemailer } from "./lib/mail-club.js";
+import { estProduction, hoteDe } from "./lib/garde-fou-base.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 export const DATA_DIR = path.join(ROOT, "data/relectures");
@@ -281,7 +304,10 @@ export function lireCodeAdmin(envPath = path.join(ROOT, ".env")) {
 export async function lancer(
   slug,
   dureeTexte,
-  { dryRun = false, fin, fetchFn = globalThis.fetch, code = lireCodeAdmin(), dataDir = DATA_DIR, siteUrl = SITE_URL, log = console.log, now = () => new Date() } = {},
+  {
+    dryRun = false, fin, fetchFn = globalThis.fetch, code = lireCodeAdmin(), dataDir = DATA_DIR, siteUrl = SITE_URL,
+    log = console.log, now = () => new Date(), etapeMail, testA,
+  } = {},
 ) {
   if (!slug || !SLUG_PATTERN.test(slug)) {
     throw new RelectureError("Usage : node scripts/relecture.js lancer <slug> [durée, défaut 10h | --fin HH:MM] [--dry-run]");
@@ -307,7 +333,11 @@ export async function lancer(
   }
 
   let echeance;
-  if (dryRun) {
+  if (testA && !dryRun) {
+    // Mail de test : le chrono n'est PAS lancé, on prend l'échéance estimée.
+    echeance = estimee;
+    log(`--test-a : chrono NON lancé. Échéance estimée utilisée dans le mail : ${formatClosedAt(echeance)} (heure de Paris).`);
+  } else if (dryRun) {
     log("[dry-run] Aucune requête envoyée. Ce qui serait fait :");
     log(`  1. GET ${pageUrl} et vérifier qu'elle contient data-fiche="${slug}"`);
     log(`     en-tête x-relecture-admin-code : lu dans .env (masqué) — la page est réservée aux adhérents`);
@@ -340,32 +370,275 @@ export async function lancer(
     log(`✓ Chrono lancé pour « ${slug} » : clôture le ${formatClosedAt(echeance)} (heure de Paris).`);
   }
 
+  // Envoi des mails aux adhérents (voir appelRelecture) : s'il n'a pas eu lieu
+  // (--sans-mail, réponse autre que « oui »), on affiche le mail à copier.
+  const envoye = etapeMail ? await etapeMail({ slug, fiche, echeance, dryRun }) : false;
   const mail = redigerMail({ fiche, echeance, siteUrl });
+  if (!envoye) afficherMailACopier(mail, log);
+  return { echeance, mail, corps };
+}
+
+// ---------- prolonger ----------
+
+// Ajoute une durée au chrono d'une relecture déjà lancée (action « extend » de
+// l'API : la durée s'ajoute à l'échéance, ou à maintenant si elle est passée).
+// Aucun mail envoyé.
+export async function prolonger(
+  slug,
+  dureeTexte,
+  { dryRun = false, fetchFn = globalThis.fetch, code = lireCodeAdmin(), dataDir = DATA_DIR, siteUrl = SITE_URL, log = console.log } = {},
+) {
+  if (!slug || !SLUG_PATTERN.test(slug) || dureeTexte === undefined) {
+    throw new RelectureError("Usage : node scripts/relecture.js prolonger <slug> <durée> [--dry-run]  (durée : 2h, 90min, 1j)");
+  }
+  const duree = parseDuree(dureeTexte);
+  lireFicheLocale(slug, dataDir); // slug mal tapé : erreur avant tout envoi
+  if (!code || code.length < 12) {
+    throw new RelectureError("RELECTURE_ADMIN_CODE absent ou trop court dans .env (12 caractères minimum).");
+  }
+  const apiUrl = `${siteUrl}/api/relectures/chrono`;
+  const corps = { ficheSlug: slug, action: "extend", duration: duree.duration, unit: duree.unit };
+
+  if (dryRun) {
+    log("[dry-run] Aucune requête envoyée. Ce qui serait fait :");
+    log(`  POST ${apiUrl}`);
+    log(`  en-tête x-relecture-admin-code : lu dans .env (masqué)`);
+    log(`  corps : ${JSON.stringify(corps)}`);
+    log("  Nouvelle échéance : l'actuelle (ou maintenant si elle est passée) + la durée.");
+    return { corps };
+  }
+
+  const res = await fetchFn(apiUrl, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "x-relecture-admin-code": code },
+    body: JSON.stringify(corps),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (res.status === 401) throw new RelectureError("Code comité refusé par le site (RELECTURE_ADMIN_CODE).");
+  if (!res.ok) throw new RelectureError(`Chrono non prolongé (HTTP ${res.status}) : ${data.error ?? "erreur inconnue"}`);
+  const echeance = new Date(data.fiche.reviewDeadline);
+  log(`✓ Chrono prolongé pour « ${slug} » : nouvelle clôture le ${formatClosedAt(echeance)} (heure de Paris).`);
+  if (estNuit(echeance)) log("⚠ Cette clôture tombe la nuit (entre 22h et 8h, heure de Paris).");
+  return { echeance, corps };
+}
+
+function afficherMailACopier(mail, log) {
   log("\n----- Mail à copier -----");
   log(`Objet : ${mail.objet}\n`);
   log(mail.texte);
   log("-------------------------");
-  return { echeance, mail, corps };
+}
+
+// ---------- mails aux adhérents ----------
+
+// Adhérent fictif des aperçus (--dry-run) et identifiant des mails de test
+// (--test-a) : aucun compte n'a cet identifiant, donc cliquer sur le lien de
+// désinscription d'un mail de test ne désinscrit personne.
+export const ADHERENT_FICTIF = { id: 999999999, nom: "Camille D.", email: "camille.d@exemple.fr", activatedAt: new Date() };
+
+function demanderOui(question) {
+  const rl = createInterface({ input: process.stdin, output: process.stdout });
+  return rl.question(question).then((r) => r.trim().toLowerCase() === "oui").finally(() => rl.close());
+}
+
+// Client Prisma chargé seulement quand on lit vraiment la base (jamais en
+// --dry-run ni dans les tests). Lecture seule.
+async function ouvrirBase() {
+  const { PrismaClient } = await import("../src/generated/prisma/client.ts");
+  const { PrismaNeon } = await import("@prisma/adapter-neon");
+  const { neonConfig } = await import("@neondatabase/serverless");
+  const { default: ws } = await import("ws");
+  neonConfig.webSocketConstructor = ws;
+  const host = hoteDe(process.env.DATABASE_URL);
+  if (!host) throw new RelectureError("DATABASE_URL absente ou illisible dans .env.");
+  return { prisma: new PrismaClient({ adapter: new PrismaNeon({ connectionString: process.env.DATABASE_URL }) }), host };
+}
+
+// Adhérents à qui écrire (non désinscrits), lecture seule.
+export async function lireAdherents(prisma) {
+  return prisma.adherent.findMany({
+    where: { desinscritMailsRelectureAt: null },
+    select: { id: true, email: true, nom: true, activatedAt: true },
+    orderBy: { id: "asc" },
+  });
+}
+
+// Mail complet d'un adhérent : contenu + message nodemailer (en-têtes de désinscription).
+export function preparerMail({ fiche, echeance, adherent, secret, siteUrl = SITE_URL }) {
+  const liens = liensDesinscription({ secret, adherentId: adherent.id, siteUrl });
+  const mail = redigerMailAdherent({ fiche, prenom: prenomDepuisNom(adherent.nom), echeance, lienDesinscription: liens.page });
+  return { mail, message: messageNodemailer({ a: adherent.email, mail, unClic: liens.unClic }) };
+}
+
+function afficherApercu(mail, email, log) {
+  log(`\n----- Aperçu (destinataire ${masquerEmail(email)}) -----`);
+  log(`Objet : ${mail.objet}\n`);
+  log(mail.texte);
+  log("-----------------------------------------------");
+}
+
+// Étape « mails » de lancer / envoyer. Retourne true si les mails ont été
+// envoyés (ou si c'était un aperçu --dry-run / un mail de test), false si rien
+// n'est parti (l'appelant affiche alors le mail à copier).
+export async function appelRelecture({
+  slug, fiche, echeance, dryRun = false, testA, siteLiens = SITE_URL,
+  secret = process.env.AUTH_SECRET, log = console.log, demander = demanderOui,
+  base = ouvrirBase, transport = creerTransport, journal = journaliser, envoyes = dejaEnvoyes, pauseMs,
+}) {
+  if (dryRun) {
+    const liens = { page: `${SITE_URL}/relectures/desinscription?t=(jeton signé)` };
+    const mail = redigerMailAdherent({ fiche, prenom: prenomDepuisNom(ADHERENT_FICTIF.nom), echeance, lienDesinscription: liens.page });
+    log("\n[dry-run] Aucun mail envoyé, aucune lecture de la base. Aperçu avec un adhérent fictif :");
+    afficherApercu(mail, ADHERENT_FICTIF.email, log);
+    return true;
+  }
+  if (!secret) throw new RelectureError("AUTH_SECRET absent de .env : impossible de signer les liens de désinscription.");
+
+  if (testA) {
+    // Un seul mail, contenu réel, prénom fictif, rien dans le journal.
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(testA)) throw new RelectureError(`--test-a : adresse invalide « ${testA} ».`);
+    const { mail, message } = preparerMail({ fiche, echeance, adherent: { ...ADHERENT_FICTIF, email: testA }, secret, siteUrl: siteLiens });
+    afficherApercu(mail, testA, log);
+    const t = await transport();
+    try {
+      await t.sendMail(message);
+    } catch (e) {
+      throw new RelectureError(`Mail de test non envoyé (${e.code ?? "erreur"}${e.responseCode ? ` ${e.responseCode}` : ""}).`);
+    } finally {
+      t.close?.();
+    }
+    log(`✓ Mail de test envoyé à ${masquerEmail(testA)} (journal non modifié).`);
+    return true;
+  }
+
+  const { prisma, host } = await base();
+  let adherents;
+  try {
+    log(`\nBase lue (lecture seule) : ${host}${estProduction(host) ? " (production)" : " (COPIE / TEST)"}`);
+    adherents = await lireAdherents(prisma);
+  } finally {
+    await prisma.$disconnect();
+  }
+
+  const deja = envoyes(slug);
+  const aEcrire = adherents.filter((a) => !deja.has(a.id));
+  if (deja.size) log(`${adherents.length - aEcrire.length} adhérent(s) déjà destinataire(s) de ce mail (journal) : sautés.`);
+  if (!aEcrire.length) {
+    log("Aucun adhérent à qui écrire.");
+    return true;
+  }
+  const actives = aEcrire.filter((a) => a.activatedAt).length;
+  log(`Destinataires : ${aEcrire.length} (${actives} compte(s) activé(s), ${aEcrire.length - actives} non activé(s)).`);
+
+  const messages = aEcrire.map((adherent) => ({ id: adherent.id, ...preparerMail({ fiche, echeance, adherent, secret }) }));
+  log(`Objet : ${messages[0].mail.objet}`);
+  afficherApercu(messages[0].mail, aEcrire[0].email, log);
+
+  if (!(await demander(`Envoyer ce mail à ${aEcrire.length} adhérent(s) ? Tape oui : `))) {
+    log("Rien n'a été envoyé.");
+    return false;
+  }
+
+  const t = await transport();
+  let bilan;
+  try {
+    bilan = await envoyerUnParUn({
+      transport: t,
+      messages: messages.map(({ id, message }) => ({ id, message })),
+      apresEnvoi: ({ id, statut }) => journal({ slug, adherentId: id, statut }),
+      log,
+      ...(pauseMs !== undefined ? { pauseMs } : {}),
+    });
+  } finally {
+    t.close?.();
+  }
+  log(`\nBilan : ${bilan.envoyes} envoyé(s), ${bilan.echecs.length} échec(s).`);
+  if (bilan.echecs.length) {
+    log(`Échecs (identifiants d'adhérents) : ${bilan.echecs.map((e) => `${e.id} (${e.erreur})`).join(", ")}`);
+    log(`Pour réessayer sans doublon : node scripts/relecture.js envoyer ${slug}`);
+  }
+  return true;
+}
+
+// ---------- envoyer ----------
+
+// Renvoie les mails d'une relecture déjà lancée (envoi interrompu), sans toucher
+// au chrono. Aucune route du site ne donne l'échéance sans session adhérent
+// (GET /api/relectures/chrono l'exige) : elle est lue directement en base, en
+// lecture seule (table RelectureFiche).
+export async function envoyer(slug, { dataDir = DATA_DIR, base = ouvrirBase, now = () => new Date(), log = console.log, ...options } = {}) {
+  if (!slug || !SLUG_PATTERN.test(slug)) {
+    throw new RelectureError("Usage : node scripts/relecture.js envoyer <slug> [--test-a <adresse>]");
+  }
+  const fiche = lireFicheLocale(slug, dataDir);
+  const { prisma, host } = await base();
+  let ligne;
+  try {
+    ligne = await prisma.relectureFiche.findUnique({ where: { ficheSlug: slug }, select: { reviewDeadline: true } });
+  } finally {
+    await prisma.$disconnect();
+  }
+  if (!ligne?.reviewDeadline) throw new RelectureError(`Aucun chrono lancé pour « ${slug} » (base ${host}).`);
+  const echeance = ligne.reviewDeadline;
+  if (echeance.getTime() <= now().getTime()) {
+    throw new RelectureError(`La relecture de « ${slug} » est déjà close (${formatClosedAt(echeance)}) : aucun mail envoyé.`);
+  }
+  log(`Échéance lue en base : ${formatClosedAt(echeance)} (heure de Paris).`);
+  return appelRelecture({ slug, fiche, echeance, base, log, ...options });
 }
 
 // ---------- CLI ----------
 
+const USAGE = [
+  "Usage :",
+  "  node scripts/relecture.js ajouter <chemin/fiche.json>",
+  "  node scripts/relecture.js lancer <slug> [durée, défaut 10h | --fin HH:MM] [--dry-run] [--sans-mail] [--test-a <adresse> [--site <url>]]",
+  "  node scripts/relecture.js envoyer <slug> [--test-a <adresse> [--site <url>]]",
+  "  node scripts/relecture.js prolonger <slug> <durée> [--dry-run]",
+].join("\n");
+
 async function main(argv) {
-  const dryRun = argv.includes("--dry-run");
-  let reste = argv.filter((a) => a !== "--dry-run");
-  let fin;
-  const iFin = reste.indexOf("--fin");
-  if (iFin >= 0) {
-    fin = reste[iFin + 1];
-    if (!fin || fin.startsWith("--")) throw new RelectureError("--fin attend une heure HH:MM (heure de Paris), ex. --fin 20:00.");
-    reste = reste.filter((_, i) => i !== iFin && i !== iFin + 1);
-  }
-  const [commande, ...args] = reste;
+  const drapeau = (nom) => {
+    const present = argv.includes(nom);
+    argv = argv.filter((a) => a !== nom);
+    return present;
+  };
+  const valeur = (nom, aide) => {
+    const i = argv.indexOf(nom);
+    if (i < 0) return undefined;
+    const v = argv[i + 1];
+    if (!v || v.startsWith("--")) throw new RelectureError(`${nom} attend ${aide}.`);
+    argv = argv.filter((_, j) => j !== i && j !== i + 1);
+    return v;
+  };
+  const dryRun = drapeau("--dry-run");
+  const sansMail = drapeau("--sans-mail");
+  const fin = valeur("--fin", "une heure HH:MM (heure de Paris), ex. --fin 20:00");
+  const testA = valeur("--test-a", "une adresse e-mail");
+  const site = valeur("--site", "une adresse de site, ex. http://localhost:3000");
+  if (site && !testA) throw new RelectureError("--site ne sert qu'avec --test-a (liens de désinscription du mail de test).");
+  if (site && !/^https?:\/\/[^\s/]+$/.test(site)) throw new RelectureError(`--site : adresse invalide « ${site} » (ex. http://localhost:3000).`);
+  if (testA && (dryRun || sansMail)) throw new RelectureError("--test-a ne se combine ni avec --dry-run ni avec --sans-mail.");
+  const [commande, ...args] = argv;
   if (commande === "ajouter") return ajouter(args[0]);
-  if (commande === "lancer") return lancer(args[0], args[1], { dryRun, fin });
-  throw new RelectureError(
-    "Usage :\n  node scripts/relecture.js ajouter <chemin/fiche.json>\n  node scripts/relecture.js lancer <slug> [durée, défaut 10h | --fin HH:MM] [--dry-run]",
-  );
+
+  // .env : AUTH_SECRET (liens de désinscription), DATABASE_URL, CLUB_SMTP_*.
+  // Une variable déjà définie dans le terminal est conservée.
+  dotenv.config({ path: path.join(ROOT, ".env"), quiet: true });
+  const optionsMail = { testA, siteLiens: site ?? SITE_URL };
+  if (commande === "lancer") {
+    const etapeMail = sansMail ? undefined : (ctx) => appelRelecture({ ...ctx, ...optionsMail });
+    return lancer(args[0], args[1], { dryRun, fin, testA, etapeMail });
+  }
+  if (commande === "prolonger") {
+    if (sansMail || fin || testA) throw new RelectureError("prolonger : seule l'option --dry-run est prise en charge.");
+    return prolonger(args[0], args[1], { dryRun });
+  }
+  if (commande === "envoyer") {
+    if (dryRun || sansMail || fin) throw new RelectureError("envoyer : options --dry-run, --sans-mail et --fin non prises en charge.");
+    return envoyer(args[0], optionsMail);
+  }
+  throw new RelectureError(USAGE);
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {

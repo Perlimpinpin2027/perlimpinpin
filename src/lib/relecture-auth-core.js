@@ -65,12 +65,18 @@ export function lireSession({ secret, valeur, maintenant = Date.now() }) {
   return { adherentId, emiseLe: expiration - RELECTURE_SESSION_MS };
 }
 
-// Pages de l'espace adhérents accessibles sans être connecté.
-const PAGES_PUBLIQUES = new Set(["/relectures/connexion", "/relectures/inscription", "/relectures/deconnexion"]);
+// Pages de l'espace adhérents accessibles sans être connecté (désinscription :
+// lien reçu par mail, protégé par son jeton signé, voir desinscription-core.js).
+const PAGES_PUBLIQUES = new Set([
+  "/relectures/connexion",
+  "/relectures/inscription",
+  "/relectures/deconnexion",
+  "/relectures/desinscription",
+]);
 
 // Le proxy doit-il exiger une session pour ce chemin ? Protégé par défaut : tout
 // /relectures (y compris /relectures/index.html, servi depuis public/) sauf les
-// trois pages ci-dessus. Comparaison en minuscules et sans « / » final, pour
+// pages ci-dessus. Comparaison en minuscules et sans « / » final, pour
 // qu'une variante d'écriture de l'URL ne contourne pas la protection.
 function normaliserChemin(pathname) {
   return pathname.toLowerCase().replace(/\/+$/, "");

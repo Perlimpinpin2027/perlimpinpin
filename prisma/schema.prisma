@@ -427,6 +427,9 @@ model Adherent {
   // Commande HelloAsso qui a créé le compte. Unique : une commande ne crée
   // jamais deux comptes, même si la notification arrive plusieurs fois.
   helloassoOrderId Int?      @unique
+  // Non null = ne reçoit plus les appels à relecture (lien de désinscription
+  // des mails envoyés par scripts/relecture.js). Reste adhérent du Club.
+  desinscritMailsRelectureAt DateTime?
 
   commentaires RelectureComment[]
 }
