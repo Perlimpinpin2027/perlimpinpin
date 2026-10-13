@@ -1,0 +1,40 @@
+{
+  "contreAvisMistral": {
+    "remarques": [
+      {
+        "categorie": "chiffre",
+        "contenu": "Le chiffre de 16 milliards nets pour 2027 (base implicite de l'amendement RN) n'est pas sourcé de manière officielle et semble correspondre à une année de pic. Les sources officielles (Sénat, Assemblée nationale) évoquent plutôt 9 à 10 milliards nets en moyenne récente. Cette divergence pourrait influencer l'évaluation de l'ampleur réelle de la mesure.",
+        "severite": "majeure",
+        "confiance": "moyenne"
+      },
+      {
+        "categorie": "coherence_note",
+        "contenu": "La note `operationnalite_budgetaire` (3/10, INCERTAIN) ne discute pas explicitement une tentative d'ordre de grandeur ou de sens de l'effet à partir de sources officielles, alors que le texte mentionne des estimations disponibles (ex. : 31,2 milliards attendus en 2027). Une clarification sur ce point serait nécessaire pour éviter une notation FRAGILE par défaut.",
+        "severite": "majeure",
+        "confiance": "haute"
+      },
+      {
+        "categorie": "coherence_note",
+        "contenu": "La note `efficacite` (10/30, FRAGILE) est justifiée, mais le texte pourrait mieux distinguer l'improbabilité d'un rabais de 11 à 19,5 milliards (très faible probabilité) de la plausibilité d'un rabais partiel (quelques milliards). Cela éviterait une sous-évaluation potentielle de l'efficacité partielle.",
+        "severite": "mineure",
+        "confiance": "moyenne"
+      },
+      {
+        "categorie": "juridique_operationnel",
+        "contenu": "La RÈGLE DE PLAFOND est correctement appliquée (`plafond_applique`: false), car aucune sous-composante d'Opérationnalité & Moyens n'est qualifiée FRAGILE (<3/10). La note totale (15/30) est donc valide.",
+        "severite": "mineure",
+        "confiance": "haute"
+      }
+    ],
+    "avis_general": "a_nuancer"
+  },
+  "usage": {
+    "prompt_tokens": 8473,
+    "total_tokens": 8988,
+    "completion_tokens": 515,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "service_tier": "standard"
+  }
+}

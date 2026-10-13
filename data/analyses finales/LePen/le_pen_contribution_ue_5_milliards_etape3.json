@@ -1,0 +1,172 @@
+{
+  "auditArbitrage": [
+    {
+      "remarque": "Le chiffre de 16 milliards nets pour 2027 n'est pas sourcé officiellement et semble correspondre à une année de pic, divergence avec les 9-10 milliards des sources officielles.",
+      "statut": "rejetee",
+      "raison": "Ce point est déjà explicitement traité dans la fiche initiale (contexte_national et ce_qui_est_discutable signalent que la base de 16 milliards n'est pas documentée et correspond à une année de pic). Aucune modification de fond n'est nécessaire, le constat est déjà intégré à l'analyse et à la notation budgétaire."
+    },
+    {
+      "remarque": "La note operationnalite_budgetaire (3/10) ne discuterait pas assez d'une tentative d'ordre de grandeur à partir de sources officielles disponibles.",
+      "statut": "rejetee",
+      "raison": "L'analyse par critères initiale mentionne déjà que le sens de l'effet est clair mais que le calendrier ne tient pas et que la base de départ n'est pas expliquée. La note de 3/10 est cohérente avec une qualification INCERTAIN documentée : l'incertitude porte sur le montant exact, pas sur l'absence totale d'ordre de grandeur. Pas de changement de note justifié."
+    },
+    {
+      "remarque": "Distinguer plus nettement l'improbabilité du rabais complet (11-19,5 milliards) de la plausibilité d'un rabais partiel de quelques milliards dans le critère efficacité.",
+      "statut": "acceptee",
+      "raison": "Remarque mineure mais pertinente pour la clarté : la fiche gagne à mieux expliciter cette distinction dans le texte de la section efficacité, sans changer la note (10/30 reste cohérent avec une zone fragile haute telle que déjà justifiée)."
+    },
+    {
+      "remarque": "La règle de plafond est correctement appliquée (plafond_applique: false).",
+      "statut": "acceptee",
+      "raison": "Confirmation correcte : aucune sous-composante n'est en dessous de 3/10 au sens strict (la plus basse est juridique à 4/10 et budgétaire à 3/10, ni l'une ni l'autre n'étant qualifiée FRAGILE au sens du seuil <3). Le total de 15/30 et plafond_applique=false sont donc corrects, aucune modification requise."
+    }
+  ],
+  "fiche_complete": {
+    "mesure_reformulee": {
+      "synthese": "Ne plus verser que 5 milliards nets par an à l'Union, soit 11 milliards d'économies annoncées dès 2027.",
+      "texte": "Dans son contre-budget présenté le 6 octobre 2026, Marine Le Pen propose de **ramener la contribution nette de la France au budget de l'Union européenne à 5 milliards d'euros par an**. La contribution nette, c'est ce que la France verse à l'Union moins ce que l'Union dépense en France (aides agricoles, fonds régionaux, recherche, plan de relance).\n\nLe groupe RN a traduit cette cible dans un amendement au projet de loi de finances pour 2027, rejeté le 7 octobre 2026 en commission des affaires étrangères : il baisse de **11,1 milliards** le prélèvement sur recettes versé à l'Union (de 30,9 à 19,8 milliards) « afin que notre contribution nette se limite à 5 milliards d'euros ». D'après le dossier du RN relayé par l'Institut de l'Entreprise, l'économie affichée passe de 11,1 milliards en 2027 à 19,5 milliards en 2031.\n\nLa mesure combine deux mécanismes : obtenir une correction (un « rabais ») sur la contribution française, comme en ont aujourd'hui cinq pays, et réduire certaines dépenses européennes (fonctionnement, action extérieure, élargissement). Le RN la présente comme le fruit d'une négociation. C'est cette lecture qui est retenue ici, et non un refus unilatéral de payer."
+    },
+    "mesure_vers_objectif": {
+      "objectif_court": "Réduire le déficit public français",
+      "categorie_objectif": "Dette et finances publiques",
+      "objectif_vise": "Réduire la dépense de l'État et contribuer à ramener le déficit public sous 3 % du PIB en 2030, en diminuant ce que la France verse au budget européen.",
+      "mecanisme_propose": "Négocier avec les partenaires européens une correction de la contribution française et des baisses de dépenses européennes, pour que la France ne verse plus que 5 milliards nets par an, ce qui réduit le prélèvement sur recettes inscrit au budget de l'État.",
+      "lien_causal": "direct"
+    },
+    "nature_et_existant": "Mesure budgétaire et européenne. Le prélèvement sur recettes au profit de l'Union est voté chaque année en loi de finances, mais son montant n'est qu'une évaluation : l'obligation de payer découle du droit européen. Selon l'article 310 du traité sur le fonctionnement de l'Union, les contributions des États servent de variable d'ajustement pour équilibrer le budget européen, et leur calcul est fixé par la décision « ressources propres » de 2020, adoptée à l'unanimité et approuvée par la France. Baisser le montant inscrit dans la loi de finances française ne réduit donc pas, à lui seul, ce que la France doit.\n\nLe mécanisme du rabais n'est pas une invention. Pour 2021-2027, cinq pays bénéficient de corrections forfaitaires annuelles (aux prix de 2020) : Allemagne 3,671 milliards, Pays-Bas 1,921 milliard, Suède 1,069 milliard, Autriche 565 millions, Danemark 377 millions, soit environ 7,6 milliards au total, financés par les autres États. La France en est le premier financeur (1,5 milliard en 2024 selon la Cour des comptes). Le Royaume-Uni avait obtenu le sien au Conseil européen de Fontainebleau en 1984. La mesure du RN est donc l'extension à la France d'un outil existant ; ce qui est nouveau, c'est son ampleur.",
+    "contexte_programme": {
+      "synthese": "Une ligne clé du plan de 140 milliards d'économies, et une demande du RN toujours plus ambitieuse depuis 2022.",
+      "texte": "La mesure fait partie du plan de **140 milliards d'euros d'économies d'ici 2032** présenté par Marine Le Pen et Jordan Bardella le 6 octobre 2026, avec une dette ramenée de 121 % à 112 % du PIB. D'après la note de l'Institut de l'Entreprise (think tank issu du monde des entreprises), le poste Union européenne pèse 11,1 milliards en 2027 et 19,5 milliards en 2031, soit environ 14 % du total à cet horizon. Jordan Bardella a, lui, cité « 9 milliards d'euros sur notre contribution » lors de la présentation.\n\nLa demande est ancienne et **son ambition n'a cessé de croître**. Le programme de 2022 visait une baisse d'au moins 5 milliards. En octobre 2023, Marine Le Pen cosignait un amendement baissant le prélèvement de 5 milliards. En 2024, Jordan Bardella parlait de 2 à 3 milliards. En octobre 2025, l'amendement de Jean-Philippe Tanguy retirait 8,7 milliards pour revenir à une contribution nette « autour de 7 milliards ». En juin 2026, Jordan Bardella promettait de « réduire de moitié » une contribution nette estimée à 12 ou 15 milliards. La cible actuelle (5 milliards nets) est la plus ambitieuse.\n\nDeux éléments du programme compliquent la négociation : la volonté de « réformer l'Union de l'intérieur » affichée depuis 2022, et l'appel de Marine Le Pen à une intervention de la BCE pour alléger le poids des taux d'intérêt, qui suppose de bonnes relations avec les institutions européennes."
+    },
+    "contexte_national": {
+      "synthese": "La facture européenne grimpe fortement : 23 milliards en 2025, plus de 31 en 2027, davantage ensuite.",
+      "texte": "Le problème visé est réel. Le prélèvement sur recettes au profit de l'Union s'est élevé à **23,0 milliards d'euros en 2025** ; il est évalué à 28,8 milliards pour 2026 et à 31,2 milliards pour 2027 selon la direction du budget (30,9 milliards dans le projet de loi de finances pour 2027). S'y ajoutent environ 2 milliards de droits de douane reversés à l'Union. Cette hausse tient surtout au rattrapage des paiements en fin de cycle budgétaire européen.\n\nLa contribution nette est plus faible, car l'Union dépense aussi en France : **16,5 milliards en 2023**, ce qui fait de la France le premier bénéficiaire en volume. Le solde net était de **9,3 milliards en 2023** selon la commission des finances du Sénat (deuxième contributeur net, derrière l'Allemagne), et de 10,4 milliards en moyenne sur 2021-2023 selon un rapport de l'Assemblée nationale. **Le chiffre de 16 milliards nets implicite dans l'amendement du RN pour 2027 n'est pas expliqué** ; il correspond à une année de pic.\n\nLa suite s'annonce plus lourde. Selon le rapporteur spécial du Sénat, la proposition de budget européen 2028-2034 ferait passer la contribution annuelle moyenne de la France de 26 à 36 milliards, voire **42 milliards si les nouvelles ressources propres ne sont pas adoptées**. Le remboursement du plan de relance européen coûterait à la France environ 2,5 milliards par an dès 2028, selon la Cour des comptes. Tout cela intervient alors que la France est en procédure pour déficit excessif et doit en sortir au plus tard en 2029."
+    },
+    "contexte_international": {
+      "synthese": "Les rabais existent, mais ils se négocient à 27 et la cible du RN dépasse tous ceux obtenus jusqu'ici.",
+      "texte": "Les précédents montrent qu'un pays peut obtenir un rabais, mais aussi comment. Le rabais britannique a été accordé en 1984 par décision unanime des dix États de l'époque. Les corrections actuelles de l'Allemagne, des Pays-Bas, de la Suède, de l'Autriche et du Danemark ont été maintenues en juillet 2020 dans un accord global incluant le plan de relance, alors que la Commission proposait de les supprimer. Dans les deux cas, **la correction a été achetée par un compromis à l'unanimité**, pas imposée.\n\nL'ampleur visée par le RN est sans équivalent. Ramener la contribution nette à 5 milliards suppose une correction de 11 milliards en 2027 et de 19,5 milliards en 2031, alors que **les cinq rabais actuels réunis représentent environ 7,6 milliards** (prix de 2020, soit un peu moins de 9 milliards en euros courants de 2027 selon notre estimation). Ce surcoût serait reporté sur les 26 autres pays, dont plusieurs ont déjà leur propre rabais à défendre.\n\nLe calendrier joue contre la mesure. Le président du Conseil européen, António Costa, et le chancelier allemand Friedrich Merz cherchent à conclure le budget 2028-2034 avant la fin de 2026, notamment par crainte d'une victoire du RN. Des responsables européens ont prévenu qu'un pays qui cesserait de payer s'engagerait dans une sortie de fait de l'Union."
+    },
+    "impact_environnement": null,
+    "analyse_longevites": {
+      "synthese": "Rien avant 2028 par la négociation, une fenêtre en 2027 sur le budget 2028-2034, puis un cadre verrouillé jusqu'en 2034.",
+      "texte": "Court terme (0 à 2 ans) : **par la voie négociée, l'économie de 2027 est hors d'atteinte**. Le montant dû en 2027 découle du cadre 2021-2027 et du budget européen 2027, votés avant l'élection. Seul un refus de payer produirait un effet en 2027, au prix d'un contentieux.\n\nMoyen terme (2 à 7 ans) : tout se joue sur le budget 2028-2034. S'il est adopté avant mai 2027, comme le souhaitent António Costa et Friedrich Merz, la France sera liée jusqu'en 2034, sauf nouvel accord unanime. S'il ne l'est pas, le droit de veto français devient un vrai levier, mais il joue dans les deux sens : sans accord, le traité prévoit la reconduction des plafonds de la dernière année, et la décision « ressources propres » en vigueur continue de s'appliquer.\n\nLong terme (plus de 7 ans) : un rabais obtenu tend à durer, comme le montrent ceux de l'Allemagne ou des Pays-Bas, reconduits de cadre en cadre. Une correction modeste négociée en 2027 pourrait donc produire des effets durables, même loin de la cible."
+    },
+    "impact_temporel_et_sectoriel": {
+      "synthese": "Peu d'effet sur les prix ; le vrai risque est financier et touche les bénéficiaires des fonds européens.",
+      "texte": "Inflation et pouvoir d'achat : effet direct négligeable, car la mesure déplace de l'argent entre l'État et l'Union sans toucher les prix. Consommation des ménages : pas d'effet direct identifiable.\n\nConfiance et stabilité financière : c'est le point sensible. La France emprunte déjà plus cher que la plupart de ses voisins. Selon notre analyse, un bras de fer ouvert avec l'Union, a fortiori un non-paiement, pourrait **aggraver la défiance des marchés**, alors que le plan du RN compte sur la BCE pour alléger les taux. Ce risque n'est pas chiffrable à ce stade.\n\nEffets sectoriels : si la baisse passait par des coupes dans les dépenses européennes plutôt que par un rabais, les premiers touchés seraient les bénéficiaires français des fonds européens (agriculteurs, régions, laboratoires), puisque **la France reçoit 16,5 milliards par an de l'Union**."
+    },
+    "ce_qui_est_etabli": {
+      "synthese": "La facture monte, la France est deuxième contributeur net, et tout rabais exige l'unanimité des 27.",
+      "texte": "La contribution française au budget européen augmente : **23,0 milliards en 2025, 31,2 milliards attendus en 2027**, et en moyenne 36 milliards par an sur 2028-2034 selon la proposition de la Commission (42 milliards sans nouvelles ressources propres). La France était en 2023 le deuxième contributeur net (9,3 milliards), derrière l'Allemagne. Cinq pays bénéficient d'un rabais d'environ 7,6 milliards au total (prix de 2020), que la France finance en premier. **Toute modification des contributions passe par une décision du Conseil à l'unanimité**, approuvée par chaque État selon ses règles constitutionnelles. L'amendement RN du 7 octobre 2026 fixe la cible à 5 milliards nets et la baisse à 11,1 milliards pour 2027."
+    },
+    "ce_qui_est_probable": {
+      "synthese": "Un rabais partiel est envisageable, une correction de 11 à 19,5 milliards ne l'est pas.",
+      "texte": "La contribution nette française va probablement continuer d'augmenter sur 2028-2034, ce qui rend le sujet durablement légitime. Un président disposant du droit de veto pendant la négociation du prochain budget pourrait probablement obtenir **une correction de quelques milliards**, à l'image de celles obtenues par d'autres pays. En revanche, **une correction de 11 à 19,5 milliards par an, une fois et demie à deux fois le total des rabais actuels, a très peu de chances d'être acceptée** par les 26 pays qui devraient la financer. Il est aussi probable que le budget 2028-2034 soit, au moins politiquement, bouclé avant l'élection."
+    },
+    "ce_qui_est_discutable": {
+      "synthese": "La base de 16 milliards nets et le solde net lui-même comme mesure de ce que l'Europe coûte sont contestables.",
+      "texte": "La base de calcul du RN (environ 16 milliards nets en 2027, implicite dans son amendement) **n'est pas documentée et correspond à une année de pic** ; les chiffres officiels récents tournent autour de 9 à 10 milliards. Le solde net lui-même est un indicateur discuté : il ne compte pas les bénéfices non budgétaires de l'appartenance à l'Union. La Commission européenne estimait en 2019 à **124 milliards d'euros les gains que le marché unique procure à la France**, une estimation ancienne et produite par une partie intéressée. À l'inverse, le RN souligne à raison que la France finance les rabais de pays plus riches qu'elle par habitant. Ce débat sur le « juste retour » relève en partie d'un choix politique."
+    },
+    "ce_qui_est_inconnu": {
+      "synthese": "On ignore la méthode du RN, les dépenses visées et la date d'adoption du budget européen 2028-2034.",
+      "texte": "Le RN n'a pas publié, dans les sources consultées, le calcul de la correction demandée, la liste des dépenses européennes à réduire, ni la façon dont il obtiendrait l'accord des autres pays. On ne sait pas si le budget européen 2028-2034 et la nouvelle décision « ressources propres » seront adoptés avant mai 2027. On ignore enfin la réaction des partenaires et des marchés à une demande de cette ampleur, et ce que le RN ferait en cas de refus. **Sources insuffisantes pour trancher ici** sur la stratégie de repli."
+    },
+    "angles_morts": {
+      "synthese": "Le remboursement du plan de relance, les retours européens en France et une alternative moins coûteuse sont passés sous silence.",
+      "texte": "Premier angle mort : **la dette du plan de relance européen est déjà contractée**. Son remboursement, environ 2,5 milliards par an pour la France dès 2028 selon la Cour des comptes, pèse sur la contribution quelle que soit la négociation, sauf accord unanime pour l'étaler.\n\nDeuxième angle mort : **la France reçoit 16,5 milliards par an de l'Union**. Une négociation qui tournerait à l'affrontement pourrait fragiliser ces retours, qui bénéficient surtout aux agriculteurs et aux régions.\n\nTroisième angle mort, une alternative existe : selon le rapporteur spécial du Sénat, **les nouvelles ressources propres proposées par la Commission (taxe carbone aux frontières, marché carbone) sont plutôt favorables à la France** et éviteraient de passer de 36 à 42 milliards par an. Soutenir ces ressources réduirait la facture sans exiger un rabais record.\n\nNote de méthode : le fait que l'année 2027 soit déjà fixée est compté une seule fois, dans la faisabilité budgétaire ; la difficulté d'obtenir l'accord des 26 autres pays est comptée dans l'efficacité, pas dans la faisabilité juridique, pour éviter une double pénalité."
+    },
+    "notation_detaillee": {
+      "operationnalite_juridique": 4,
+      "qualification_juridique": "INCERTAIN",
+      "operationnalite_budgetaire": 3,
+      "qualification_budgetaire": "INCERTAIN",
+      "operationnalite_moyens_humains": 8,
+      "qualification_moyens_humains": "SOLIDE",
+      "operationnalite_moyens_total": 15,
+      "plafond_applique": false,
+      "plafond_declencheur": null,
+      "efficacite": 10,
+      "qualification_efficacite": "FRAGILE",
+      "effets_rebonds_externalites": 8,
+      "qualification_effets_rebonds": "INCERTAIN",
+      "degre_preparation": 3,
+      "qualification_preparation": "INCERTAIN",
+      "alignement_logique": 7,
+      "qualification_alignement": "INCERTAIN",
+      "score_total": 43,
+      "appreciation": "partiellement fondé"
+    },
+    "verdict_final": "Ce qui tient : la facture européenne de la France augmente fortement et le sujet est légitime, au point d'inquiéter aussi le Sénat. Un rabais négocié est juridiquement possible, et l'unanimité donne à la France un vrai levier dans la négociation du budget 2028-2034.\n\nCe qui ne tient pas : l'ampleur. Ramener la contribution nette à 5 milliards suppose un rabais jusqu'à deux fois plus gros que tous les rabais actuels réunis, financé par 26 pays qui peuvent dire non. Les 11 milliards inscrits pour 2027 sont hors d'atteinte par la négociation, et couper le fonctionnement de l'Union ne rapporterait que quelques centaines de millions.\n\nReste incertain le coût d'un bras de fer pour les retours européens et la crédibilité financière de la France. Note établie en retenant la voie négociée décrite par le RN, et non un refus de payer.",
+    "sources_utilisees": [
+      "Public Sénat, « 140 milliards d'euros d'économies d'ici 2032 : l'effort radical proposé par Marine Le Pen », 6 octobre 2026 : https://www.publicsenat.fr/actualites/politique/140-milliards-deuros-deconomies-dici-2032-leffort-radical-propose-par-marine-le-pen-pour-redresser-les-f",
+      "Assemblée nationale, amendement n° I-AE2 au projet de loi de finances pour 2027 (n° 3210), K. Pfeffer et groupe RN, rejeté le 7 octobre 2026 : https://www.assemblee-nationale.fr/dyn/17/amendements/3210A/CION_AFETR/AE2",
+      "Sénat, rapport n° 736 (2025-2026), annexe 33 Affaires européennes, J.-M. Mizzon, 17 juin 2026 : https://www.senat.fr/rap/l25-736-233/l25-736-2331.pdf",
+      "Sénat, commission des finances, L'essentiel sur la mission Affaires européennes, PLF 2026 : https://www.senat.fr/fileadmin/cru-1762483659/Commissions/Finances/2025-2026/PLF_2026/Essentiel/Mission_Affaires_europeennes_Essentiel_post-commission.pdf",
+      "Sénat, rapport n° 144 (2024-2025), participation de la France au budget de l'Union européenne (solde net 2023) : https://senat.fr/rap/l24-144-22/l24-144-221.pdf",
+      "Sénat, commission des finances, L'essentiel PLF 2025, Affaires européennes (remboursement NextGenerationEU, 2,5 milliards par an dès 2028) : https://senat.fr/fileadmin/Commissions/Finances/2024-2025/PLF_2025/Essentiel/Mission_Aff_europeennes_Essentiel_PLF_2025.pdf",
+      "Assemblée nationale, rapport spécial PLF 2025, prélèvement sur recettes au profit de l'Union européenne : https://www.assemblee-nationale.fr/dyn/17/rapports/cion_fin/l17b0468-tiii-a47_rapport-fond.pdf",
+      "Banque des Territoires, « Un rapport de l'Assemblée s'alarme de la hausse considérable de la facture européenne » : https://www.banquedesterritoires.fr/un-rapport-de-lassemblee-salarme-de-la-hausse-considerable-de-la-facture-europeenne",
+      "Commission européenne, Rebates: correction mechanisms (2021-2027) : https://commission.europa.eu/strategy-and-policy/eu-budget/long-term-eu-budget/2021-2027/revenue/rebates_en",
+      "EUR-Lex, résolution législative du Parlement européen du 9 novembre 2023 modifiant la décision (UE, Euratom) 2020/2053 : https://eur-lex.europa.eu/eli/C/2024/2857/oj/eng",
+      "Assemblée nationale, commission des affaires européennes, compte rendu sur le prélèvement sur recettes 2025 (retours de 16,5 milliards en 2023) : https://www.assemblee-nationale.fr/dyn/docs/CRCANR5L17S2025PO415287N0002.raw",
+      "Planète Grandes Écoles, « Budget de Marine Le Pen pour 2027 : les mesures du contre-budget du RN passées au crible » (note de l'Institut de l'Entreprise), 8 octobre 2026 : https://www.planetegrandesecoles.com/budget-marine-le-pen-2027-mesures-contre-budget-rn",
+      "Europe 1, « Jordan Bardella veut réduire de moitié la contribution de la France à l'Union européenne », juin 2026 : https://www.europe1.fr/node/954107",
+      "Assemblée nationale, amendement n° I-366 au PLF 2024, cosigné par Marine Le Pen, 9 octobre 2023 : https://www.assemblee-nationale.fr/dyn/16/amendements/1680A/AN/366.pdf",
+      "Assemblée nationale, amendement n° I-805 au PLF 2026, J.-P. Tanguy et groupe RN, octobre 2025 : https://www.assemblee-nationale.fr/dyn/17/amendements/1906A/AN/805",
+      "La Libre Belgique, « Pourquoi Le Pen à l'Élysée mettrait à mal l'Union européenne », 17 avril 2022 : https://www.lalibre.be/international/europe/elections-france/2022/04/17/pourquoi-le-pen-a-lelysee-mettrait-a-mal-lunion-europeenne-EW6UBENLFNFKHHH4IFPNWE73JE/",
+      "Public Sénat, « Diminuer la part française au budget de l'Union, la promesse incertaine du Rassemblement national », 2024 : https://www.publicsenat.fr/actualites/politique/diminuer-la-part-francaise-au-budget-de-lunion-la-promesse-incertaine-du-rassemblement-national",
+      "Public Sénat, « Sur l'Europe, Marine Le Pen a-t-elle vraiment changé ? », avril 2022 : https://www.publicsenat.fr/actualites/politique/sur-l-europe-marine-le-pen-a-t-elle-vraiment-change-202482",
+      "LCP, « Présidentielle 2027 : pourquoi l'élection française inquiète déjà les Européens », 12 septembre 2026 : https://lcp.fr/actualites/presidentielle-2027-pourquoi-l-election-francaise-inquiete-deja-les-europeens-441539",
+      "Business AM, « Les dirigeants de l'UE doivent s'entendre avant la date butoir sur un budget de 1 800 milliards d'euros », 2026 : https://fr.businessam.be/?p=240940"
+    ],
+    "niveau_de_confiance": "Moyen. Les chiffres sur la contribution française, le solde net et les rabais existants viennent de sources officielles (Sénat, Assemblée nationale, Commission européenne) et sont solides. Le dossier complet du contre-budget du RN n'a pas été consulté directement : la cible et les montants viennent de l'amendement du 7 octobre 2026 et de relais (presse, note de l'Institut de l'Entreprise), avec des écarts entre eux (9 ; 11,1 ; 19,5 milliards selon l'année et la source).",
+    "limites": {
+      "synthese": "Analyse fondée sur l'amendement RN et des relais, sans le dossier complet ni repère officiel par domaine pour la dette.",
+      "texte": "Le dossier chiffré complet du RN n'a pas été consulté ; ses montants sont connus par l'amendement au projet de loi de finances pour 2027 et par la note de l'Institut de l'Entreprise, think tank issu du monde des entreprises, relayée par la presse. Aucune citation mot pour mot de Marine Le Pen formulant la cible de 5 milliards nets n'a été trouvée : la formule exacte vient de l'exposé de l'amendement du groupe RN. Le repère de référence pour la catégorie Dette et finances publiques n'a pas pu être consulté pour cette fiche : l'objectif de référence retenu est celui posé par l'article 34 de la Constitution (équilibre des comptes des administrations publiques) et par la procédure européenne pour déficit excessif. **Les montants de rabais sont en prix de 2020 et les contributions en euros courants** : les comparaisons sont des ordres de grandeur. Les estimations sur les dépenses administratives et les rabais en euros de 2027 sont des calculs de l'analyse, pas des chiffres officiels."
+    },
+    "analyse_par_criteres": [
+      {
+        "critere": "operationnalite_moyens",
+        "titre": "Opérationnalité & Moyens",
+        "note": 15,
+        "note_max": 30,
+        "plafond_applique": false,
+        "plafond_declencheur": null,
+        "texte": "La voie juridique existe mais reste étroite : **un rabais exige une nouvelle décision « ressources propres » adoptée à l'unanimité des 27**, puis ratifiée par chaque Parlement national, exactement comme pour les cinq pays qui en bénéficient aujourd'hui. Budgétairement, le sens de l'effet est clair mais le calendrier ne tient pas : **les 11,1 milliards inscrits pour 2027 portent sur une année déjà verrouillée par le cadre européen en vigueur**, et la base de départ d'environ 16 milliards nets n'est pas expliquée. Les moyens administratifs, eux, ne posent pas de difficulté particulière : la négociation budgétaire européenne est un exercice rodé pour l'État français."
+      },
+      {
+        "critere": "efficacite",
+        "titre": "Efficacité",
+        "note": 10,
+        "note_max": 30,
+        "texte": "Le lien avec la réduction du déficit est direct, mais **le mécanisme ne peut pas atteindre la cible annoncée en l'état**. Le rabais visé, 11 à 19,5 milliards par an, serait une fois et demie à deux fois plus gros que le total des rabais actuels réunis, à faire financer par 26 pays disposant chacun d'un droit de veto. L'autre levier rapporte peu : réduire d'un cinquième les dépenses administratives de l'Union ferait gagner à la France environ 0,5 milliard par an selon notre estimation. **Un rabais partiel de quelques milliards reste en revanche plausible**, ce qui distingue l'objectif affiché, hors de portée, d'un gain réduit mais réel."
+      },
+      {
+        "critere": "effets_rebonds_externalites",
+        "titre": "Effets rebonds & Externalités",
+        "note": 8,
+        "note_max": 20,
+        "texte": "Par la voie négociée, l'effet indésirable principal reste contenu : le coût est simplement reporté sur les autres États membres. Mais **une cible aussi éloignée des précédents pousse vers le blocage ou le non-paiement**, avec des risques documentés comme des intérêts de retard ou un contentieux, et une tension avec une Union qui dépense 16,5 milliards par an en France. L'ampleur de ces risques n'est pas établie avec précision, d'où une note dans le bas de la zone incertaine."
+      },
+      {
+        "critere": "degre_preparation",
+        "titre": "Degré de préparation",
+        "note": 3,
+        "note_max": 10,
+        "texte": "Le RN donne une cible et des montants par année, mais **ni la méthode de calcul du rabais, ni la liste des dépenses européennes à couper, ni la base des 16 milliards nets ne sont documentées**. Ses propres chiffres varient selon les porte-parole (9 milliards selon Jordan Bardella, 11,1 dans l'amendement), et Jordan Bardella évoque une négociation avec la Commission, alors que **la décision appartient aux États membres, à l'unanimité**, non à la Commission seule."
+      },
+      {
+        "critere": "alignement_logique",
+        "titre": "Alignement & Logique globale",
+        "note": 7,
+        "note_max": 10,
+        "texte": "La mesure prolonge une position constante du RN : Marine Le Pen cosignait dès 2023 un amendement baissant la contribution de 5 milliards, et le parti en dépose un chaque année. La tension vient du reste du programme : **vouloir réformer l'Union « de l'intérieur » et compter sur la BCE pour alléger les taux, tout en exigeant un rabais sans précédent financé par les 26 autres pays**, relève d'un équilibre délicat à tenir dans une même négociation."
+      }
+    ]
+  },
+  "titre_fiche": "Baisser la facture à l'Union européenne",
+  "resume_court": "Marine Le Pen veut ramener la contribution nette de la France au budget européen à 5 milliards d'euros par an, ce qui rapporterait selon le RN 11 milliards dès 2027 et 19,5 milliards en 2031. Le problème visé est réel : la facture européenne grimpe, 23 milliards versés en 2025, plus de 31 attendus en 2027, alors que la France doit réduire son déficit.\n\nLe levier choisi est une négociation : obtenir un rabais, comme l'Allemagne ou les Pays-Bas, et couper certaines dépenses européennes. Mais un rabais se décide à l'unanimité des 27, et celui que vise le RN serait jusqu'à deux fois plus gros que tous les rabais actuels réunis ; rien ne peut changer en 2027 par cette voie. La note retient la voie négociée décrite par le RN, pas un refus de payer : le cap est défendable, l'ampleur ne tient pas (43/100, partiellement fondé).",
+  "teaser_accueil": "11 milliards d'économies promises dès 2027 sur la facture européenne... à condition que 26 autres pays disent oui.",
+  "verdict_final": "Ce qui tient : la facture européenne de la France augmente fortement et le sujet est légitime, au point d'inquiéter aussi le Sénat. Un rabais négocié est juridiquement possible, et l'unanimité donne à la France un vrai levier dans la négociation du budget 2028-2034.\n\nCe qui ne tient pas : l'ampleur. Ramener la contribution nette à 5 milliards suppose un rabais jusqu'à deux fois plus gros que tous les rabais actuels réunis, financé par 26 pays qui peuvent dire non. Les 11 milliards inscrits pour 2027 sont hors d'atteinte par la négociation, et couper le fonctionnement de l'Union ne rapporterait que quelques centaines de millions.\n\nReste incertain le coût d'un bras de fer pour les retours européens et la crédibilité financière de la France. Note établie en retenant la voie négociée décrite par le RN, et non un refus de payer.",
+  "verdict_conclusion": "Un cap politiquement défendable, mais un montant d'économies hors de portée par la seule négociation."
+}
