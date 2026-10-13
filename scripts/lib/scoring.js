@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { LONGUEUR_X_MAX, MARQUEURS, longueurX, remplirTweet, valeursReseaux } from "../../src/lib/reseaux.js";
 
 // Barème 2026 du pipeline à 3 étapes (voir data/prompt-methodologie.md) : 5
 // critères SANS malus — Opérationnalité & Moyens (30, décomposée en 3
@@ -474,19 +475,26 @@ function extraireNombres(text) {
   return [...text.matchAll(NOMBRE_REGEX)].map((match) => match[0].replace(/[   ]/g, ""));
 }
 
-export function checkChiffresVersionBasique(versionBasique, ficheFinale) {
-  const textes = [
-    versionBasique.resume,
-    versionBasique.contexte,
-    versionBasique.analyse,
-    versionBasique.faisabilite,
-    ...(versionBasique.points_forts ?? []),
-    ...(versionBasique.points_faibles ?? []),
-  ].filter((texte) => typeof texte === "string");
-
-  const nombres = new Set(textes.flatMap(extraireNombres));
+// Nombres des textes absents de la fiche finale (même règle pour la version
+// basique et les publications X).
+function nombresHorsFiche(textes, ficheFinale) {
+  const nombres = new Set(textes.filter((texte) => typeof texte === "string").flatMap(extraireNombres));
   const reference = new Set(extraireNombres(JSON.stringify(ficheFinale)));
   return [...nombres].filter((nombre) => !reference.has(nombre));
+}
+
+export function checkChiffresVersionBasique(versionBasique, ficheFinale) {
+  return nombresHorsFiche(
+    [
+      versionBasique.resume,
+      versionBasique.contexte,
+      versionBasique.analyse,
+      versionBasique.faisabilite,
+      ...(versionBasique.points_forts ?? []),
+      ...(versionBasique.points_faibles ?? []),
+    ],
+    ficheFinale,
+  );
 }
 
 // Contrôle des ancrages : chaque phrase de la version basique est justifiée
@@ -552,4 +560,137 @@ export function checkAncragesVersionBasique(ancrages, versionBasique, ficheFinal
   }
 
   return errors;
+}
+
+// --- Publications X (étape 3 ter) ------------------------------------------
+// Trois formats rédigés à partir de la fiche finale (voir
+// data/prompt-reseaux.md), enregistrés dans contenuComplet.reseaux AVEC leurs
+// marqueurs : le score, l'appréciation, le compte X du candidat et le lien
+// sont insérés par le code à l'affichage (src/lib/reseaux.js).
+const TexteReseaux = z.string().trim().min(1);
+
+export const ReseauxSchema = z.object({
+  fil: z.array(TexteReseaux).length(4),
+  chiffre: z.object({
+    valeur: TexteReseaux.max(12),
+    explication: TexteReseaux,
+    tweet: TexteReseaux,
+  }),
+  tient: z.object({
+    titre: TexteReseaux,
+    // « S'il n'y a qu'un seul point solide, n'en invente pas un second. »
+    tient: z.array(TexteReseaux).min(1).max(3),
+    tient_pas: z.array(TexteReseaux).min(2).max(3),
+    tweet: TexteReseaux,
+  }),
+});
+
+// Marqueurs obligatoires de chaque tweet. Le compte X ({CANDIDAT}) seulement
+// dans le premier tweet de chaque format ; le nom sans @ ({NOM}) dans les
+// tweets 2 à 4 du fil, pour ne pas notifier le candidat à chaque réponse.
+const MARQUEURS_TWEETS = [
+  ["fil.0", (r) => r.fil[0], ["CANDIDAT", "PASTILLE", "SCORE", "APPRECIATION"]],
+  ["fil.1", (r) => r.fil[1], ["NOM"]],
+  ["fil.2", (r) => r.fil[2], ["NOM"]],
+  ["fil.3", (r) => r.fil[3], ["NOM", "LIEN"]],
+  ["chiffre.tweet", (r) => r.chiffre.tweet, ["CANDIDAT", "PASTILLE", "SCORE", "LIEN"]],
+  ["tient.tweet", (r) => r.tient.tweet, ["CANDIDAT", "PASTILLE", "SCORE", "LIEN"]],
+];
+
+// Textes affichés sur les images : sans aucun marqueur.
+function textesCartes(r) {
+  return [
+    ["chiffre.valeur", r.chiffre.valeur],
+    ["chiffre.explication", r.chiffre.explication],
+    ["tient.titre", r.tient.titre],
+    ...r.tient.tient.map((point, i) => [`tient.tient.${i}`, point]),
+    ...r.tient.tient_pas.map((point, i) => [`tient.tient_pas.${i}`, point]),
+  ];
+}
+
+const LIMITES_MOTS = [
+  ["tient.titre", (r) => [r.tient.titre], 6],
+  ["chiffre.explication", (r) => [r.chiffre.explication], 20],
+  ["tient.tient", (r) => r.tient.tient, 15],
+  ["tient.tient_pas", (r) => r.tient.tient_pas, 15],
+];
+
+function nombreDeMots(texte) {
+  return texte.split(/\s+/).filter((mot) => /[\p{L}\p{N}]/u.test(mot)).length;
+}
+
+// Libellés repérés tels quels dans un texte. « fragile », « exemplaire » et
+// « irréaliste » sont aussi des mots courants (« un financement fragile ») :
+// seuls les libellés de plusieurs mots sont donc recherchés, {APPRECIATION}
+// restant de toute façon obligatoire dans le premier tweet.
+const APPRECIATIONS = APPRECIATION_BANDS.map((band) => band.label).filter((label) => label.includes(" "));
+
+// Contrôles du code sur la sortie de l'étape 3 ter. `candidatNom` et `score`
+// servent à mesurer les tweets une fois les marqueurs remplis.
+export function validateReseaux(raw, { ficheFinale, candidatNom, score, handles } = {}) {
+  const zodResult = ReseauxSchema.safeParse(raw);
+  if (!zodResult.success) return { valid: false, errors: zodErreurs(zodResult.error), reseaux: null };
+  const r = zodResult.data;
+  const errors = [];
+
+  const tweets = MARQUEURS_TWEETS.map(([cle, lire]) => [cle, lire(r)]);
+  const cartes = textesCartes(r);
+
+  for (const [cle, lire, obligatoires] of MARQUEURS_TWEETS) {
+    const texte = lire(r);
+    for (const marqueur of obligatoires) {
+      if (!texte.includes(`{${marqueur}}`)) errors.push(`${cle} : le marqueur {${marqueur}} manque.`);
+    }
+    if (cle !== "fil.0" && cle.startsWith("fil.") && texte.includes("{CANDIDAT}")) {
+      errors.push(`${cle} : {CANDIDAT} (le compte X) est réservé au premier tweet ; utilise {NOM}.`);
+    }
+  }
+  for (const [cle, texte] of tweets) {
+    for (const [, nom] of texte.matchAll(/\{([^}]*)\}/g)) {
+      if (!MARQUEURS.includes(nom)) errors.push(`${cle} : marqueur inconnu {${nom}}.`);
+    }
+    if (/(^|\s)@\w/.test(texte)) errors.push(`${cle} : n'écris aucun compte X (@…), utilise {CANDIDAT}.`);
+  }
+  for (const [cle, texte] of cartes) {
+    if (/\{[A-Z]+\}/.test(texte)) errors.push(`${cle} : texte d'image, aucun marqueur n'est permis.`);
+  }
+
+  // Score et appréciation : insérés par le code, jamais écrits par le modèle.
+  for (const [cle, texte] of [...tweets, ...cartes]) {
+    if (/\d+(?:[.,]\d+)?\s*\/\s*100/.test(texte)) errors.push(`${cle} : n'écris pas de note sur 100, utilise {SCORE}.`);
+    if (/[🔴🟠🟡🟢]/u.test(texte)) errors.push(`${cle} : n'écris pas de pastille, utilise {PASTILLE}.`);
+    const appreciation = APPRECIATIONS.find((label) => texte.toLowerCase().includes(label.toLowerCase()));
+    if (appreciation) errors.push(`${cle} : n'écris pas l'appréciation « ${appreciation} », utilise {APPRECIATION}.`);
+    if (texte.includes("—")) errors.push(`${cle} : tiret cadratin interdit.`);
+  }
+
+  for (const [cle, lire, max] of LIMITES_MOTS) {
+    for (const texte of lire(r)) {
+      const mots = nombreDeMots(texte);
+      if (mots > max) errors.push(`${cle} : ${mots} mots pour « ${texte} » (${max} au plus).`);
+    }
+  }
+
+  // Chaque nombre d'un tweet ou d'une image doit figurer dans la fiche finale
+  // (marqueurs, « {SCORE}/100 » et numérotation « 2/ » du fil mis à part).
+  if (ficheFinale) {
+    const textes = [...tweets, ...cartes].map(([, texte]) =>
+      texte.replace(/\{SCORE\}\s*\/\s*100/g, " ").replace(/\{[A-Z]+\}/g, " ").replace(/^\s*\d\/\s/, ""),
+    );
+    for (const nombre of nombresHorsFiche(textes, ficheFinale)) {
+      errors.push(`Le nombre « ${nombre} » n'apparaît pas dans la fiche finale : retire-le ou remplace-le par un chiffre de la fiche.`);
+    }
+  }
+
+  // Longueur X, marqueurs remplis (score, compte X ou nom, lien).
+  if (candidatNom && score !== undefined) {
+    const valeurs = valeursReseaux({ candidatNom, score, handles });
+    for (const [cle, texte] of tweets) {
+      const longueur = longueurX(remplirTweet(texte, valeurs));
+      if (longueur > LONGUEUR_X_MAX) errors.push(`${cle} : ${longueur} caractères comptés par X (${LONGUEUR_X_MAX} au plus).`);
+    }
+  }
+
+  if (errors.length > 0) return { valid: false, errors, reseaux: null };
+  return { valid: true, errors: [], reseaux: r };
 }

@@ -15,6 +15,7 @@ import {
   validateVersionBasique,
   checkChiffresVersionBasique,
   checkAncragesVersionBasique,
+  validateReseaux,
   validateAvisCommentairesEtape2,
   validateRevisionRelecture,
 } from "./lib/scoring.js";
@@ -900,6 +901,88 @@ ${errors.map((error) => `- ${error}`).join("\n")}`;
   return { versionBasique: null, ancrages: null, usage, errors };
 }
 
+// --- Étape 3 ter : publications X (Claude) ----------------------------------
+// Trois formats prêts à poster (fil de 4 tweets, « chiffre », « tient / tient
+// pas »), écrits à partir de la fiche finale avec le prompt
+// data/prompt-reseaux.md, même modèle que la 3 bis, sans recherche web. Les
+// textes gardent leurs marqueurs ({CANDIDAT}, {SCORE}, {LIEN}…), remplis par
+// le code à l'affichage (src/lib/reseaux.js). Comme la 3 bis, cette étape ne
+// bloque jamais le pipeline : après un nouvel essai raté, la fiche est
+// enregistrée sans reseaux.
+const PROMPT_RESEAUX_PATH = join(__dirname, "..", "data", "prompt-reseaux.md");
+
+async function callReseaux(userMessage) {
+  const response = await fetchWithTimeout(`${ANTHROPIC_BASE_URL}/messages`, {
+    method: "POST",
+    headers: ANTHROPIC_HEADERS,
+    body: JSON.stringify({
+      model: "claude-sonnet-5",
+      max_tokens: 4000,
+      thinking: { type: "disabled" },
+      messages: [{ role: "user", content: userMessage }],
+      stream: true,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    throw new Error(`Erreur API Anthropic, étape 3 ter (${response.status}) : ${errorBody}`);
+  }
+
+  return readStreamedMessage(response);
+}
+
+// Fiche envoyée au modèle : la fiche finale, sans les ajouts des étapes
+// suivantes (version basique, anciennes publications, révision).
+export function fichePourReseaux(ficheFinale) {
+  const { version_basique: _basique, reseaux: _reseaux, revision: _revision, ...fiche } = ficheFinale ?? {};
+  return fiche;
+}
+
+// Retourne { reseaux, usage, errors } : reseaux vaut null si les deux
+// tentatives ont échoué (errors donne alors la cause du dernier échec).
+// `candidatNom` et `score` ne sont pas envoyés au modèle : ils servent à
+// mesurer les tweets une fois les marqueurs remplis. Le prompt est envoyé tel
+// quel, suivi de la fiche.
+export async function genererReseaux(ficheFinale, { candidatNom, score }) {
+  const fiche = fichePourReseaux(ficheFinale);
+  const prompt = readFileSync(PROMPT_RESEAUX_PATH, "utf-8").replace(/\r\n/g, "\n").trim();
+  const basePrompt = `${prompt}\n\nFICHE FINALE :\n${JSON.stringify(fiche, null, 2)}`;
+
+  let usage = {};
+  let errors = [];
+
+  for (let tentative = 1; tentative <= 2; tentative++) {
+    const userMessage =
+      tentative === 1
+        ? basePrompt
+        : `${basePrompt}
+
+ATTENTION : ta réponse précédente a été refusée pour les raisons suivantes. Corrige-les.
+${errors.map((error) => `- ${error}`).join("\n")}`;
+
+    try {
+      const data = await callReseaux(userMessage);
+      usage = addUsage(usage, data.usage);
+      const raw = cleanContenu(extractJson(data));
+      const validation = validateReseaux(raw, { ficheFinale: fiche, candidatNom, score });
+      if (validation.valid) return { reseaux: validation.reseaux, usage, errors: [] };
+      errors = validation.errors;
+    } catch (error) {
+      errors = [error.message];
+    }
+
+    if (tentative === 1) {
+      console.error("  ⚠️  Étape 3 ter : publications X refusées, nouvelle tentative :");
+      for (const error of errors) console.error(`     - ${error}`);
+    }
+  }
+
+  console.error("  ⚠️  Étape 3 ter : ÉCHEC après deux tentatives, fiche conservée SANS publications X.");
+  for (const error of errors) console.error(`     - ${error}`);
+  return { reseaux: null, usage, errors };
+}
+
 // --- Estimation de coût -----------------------------------------------------
 
 // Tarifs approximatifs (USD / million de tokens), à ajuster si Anthropic ou
@@ -939,10 +1022,13 @@ function estimateMistralCost(usage) {
 // ce pipeline, donc son coût réel n'est jamais connu ici (voir loadEtape1).
 // recherchesWeb : seulement avec des commentaires du Club (recherche web de
 // l'étape 3) ; absent, le coût garde exactement sa forme habituelle.
-export function buildCoutPipeline({ usage2, usage3, usage3bis, recherchesWeb }) {
+// usage3ter (publications X) : absent, le coût garde sa forme d'avant l'étape 3 ter.
+export function buildCoutPipeline({ usage2, usage3, usage3bis, usage3ter, recherchesWeb }) {
   const coutEtape2 = estimateMistralCost(usage2);
   const coutEtape3 = estimateClaudeCost(usage3);
   const coutEtape3bis = estimateClaudeCost(usage3bis);
+  const avecReseaux = usage3ter !== undefined;
+  const coutEtape3ter = avecReseaux ? estimateClaudeCost(usage3ter) : 0;
   const avecRecherche = recherchesWeb !== undefined;
   const coutRecherches = avecRecherche ? recherchesWeb * COUT_RECHERCHE_WEB : 0;
 
@@ -951,14 +1037,16 @@ export function buildCoutPipeline({ usage2, usage3, usage3bis, recherchesWeb }) 
     tokensEtape2: usage2,
     tokensEtape3: usage3,
     tokensEtape3bis: usage3bis,
+    ...(avecReseaux ? { tokensEtape3ter: usage3ter } : {}),
     ...(avecRecherche ? { recherchesWeb } : {}),
     coutEstimeParEtape: {
       etape2: Number(coutEtape2.toFixed(4)),
       etape3: Number(coutEtape3.toFixed(4)),
       etape3bis: Number(coutEtape3bis.toFixed(4)),
+      ...(avecReseaux ? { etape3ter: Number(coutEtape3ter.toFixed(4)) } : {}),
       ...(avecRecherche ? { recherchesWeb: Number(coutRecherches.toFixed(4)) } : {}),
     },
-    coutEstimeTotal: Number((coutEtape2 + coutEtape3 + coutEtape3bis + coutRecherches).toFixed(4)),
+    coutEstimeTotal: Number((coutEtape2 + coutEtape3 + coutEtape3bis + coutEtape3ter + coutRecherches).toFixed(4)),
     note: "tokensEtape1 non disponible : étape 1 réalisée manuellement, hors pipeline automatisé.",
   };
 }
@@ -1000,7 +1088,9 @@ export function ficheCompleteAvecVerdictRacine(arbitrage3) {
 // commentaires (facultatif, option --commentaires) : commentaires du Club sur
 // la fiche relue, traités aux étapes 2 et 3 (voir construireMessageEtape2 et
 // construireRequeteEtape3). L'étape 3 doit alors produire revision_relecture.
-async function runPipeline(etape1Input, { commentaires = null } = {}) {
+//
+// candidatNom (facultatif) : nécessaire à l'étape 3 ter (publications X).
+async function runPipeline(etape1Input, { commentaires = null, candidatNom = null } = {}) {
   const etape1 = validateEtape1Local(loadEtape1(etape1Input), "Étape 1");
   console.log(
     `✓ Étape 1 chargée et validée (score initial : ${etape1.notation_detaillee.score_total}/100${etape1.notation_detaillee.plafond_applique ? `, plafond appliqué — déclencheur : ${etape1.notation_detaillee.plafond_declencheur}` : ""}).`,
@@ -1082,10 +1172,24 @@ async function runPipeline(etape1Input, { commentaires = null } = {}) {
     console.log("Étape 3 bis : version basique… ✓");
   }
 
+  // Étape 3 ter : sans nom de candidat (appel isolé de runPipeline), sautée.
+  let usage3ter;
+  let erreursReseaux = [];
+  if (candidatNom) {
+    const resultat3ter = await genererReseaux(parsed, { candidatNom, score: parsed.notation_detaillee.score_total });
+    usage3ter = resultat3ter.usage;
+    erreursReseaux = resultat3ter.errors;
+    if (resultat3ter.reseaux) {
+      parsed.reseaux = resultat3ter.reseaux;
+      console.log("Étape 3 ter : publications X… ✓");
+    }
+  }
+
   const coutPipeline = buildCoutPipeline({
     usage2: mistralResult?.usage ?? null,
     usage3: data3.usage ?? {},
     usage3bis,
+    usage3ter,
     recherchesWeb,
   });
 
@@ -1099,6 +1203,7 @@ async function runPipeline(etape1Input, { commentaires = null } = {}) {
     etape3Brut,
     revisionRelecture,
     erreursVersionBasique: versionBasique ? [] : erreursVersionBasique,
+    erreursReseaux: parsed.reseaux ? [] : erreursReseaux,
   };
 }
 
@@ -1108,7 +1213,7 @@ async function runPipeline(etape1Input, { commentaires = null } = {}) {
 // écrit en plus.
 function ecrireResultat(chemin, { ecrit, raison = null, saved = null, theme, pipelineResult }) {
   if (!chemin || chemin === true) return;
-  const { parsed, coutPipeline, erreursVersionBasique = [] } = pipelineResult;
+  const { parsed, coutPipeline, erreursVersionBasique = [], erreursReseaux = [] } = pipelineResult;
   mkdirSync(dirname(chemin), { recursive: true });
   writeFileSync(
     chemin,
@@ -1125,6 +1230,7 @@ function ecrireResultat(chemin, { ecrit, raison = null, saved = null, theme, pip
         score: parsed.notation_detaillee?.score_total ?? null,
         verdict: saved?.analyse.verdict ?? null,
         versionBasique: { ok: Boolean(parsed.version_basique), erreurs: erreursVersionBasique },
+        reseaux: { ok: Boolean(parsed.reseaux), erreurs: erreursReseaux },
         coutPipeline,
         etape2: { contreAvisMistral: pipelineResult.contreAvisMistral, usage: pipelineResult.usageMistral },
         etape3: pipelineResult.etape3Brut,
@@ -1591,7 +1697,11 @@ function printCoutPipeline(coutPipeline) {
   }
   console.log(`  Étape 3 bis (Claude, version basique) : ~$${coutPipeline.coutEstimeParEtape.etape3bis}`);
   printUsage(coutPipeline.tokensEtape3bis ?? {});
-  console.log(`  Coût total estimé (étapes 2, 3 et 3 bis) : ~$${coutPipeline.coutEstimeTotal}`);
+  if (coutPipeline.tokensEtape3ter !== undefined) {
+    console.log(`  Étape 3 ter (Claude, publications X) : ~$${coutPipeline.coutEstimeParEtape.etape3ter}`);
+    printUsage(coutPipeline.tokensEtape3ter ?? {});
+  }
+  console.log(`  Coût total estimé (toutes étapes automatisées) : ~$${coutPipeline.coutEstimeTotal}`);
   console.log(`  Note : ${coutPipeline.note}`);
 }
 
@@ -1658,7 +1768,10 @@ async function main() {
   }
 
   const item = { candidatNom, theme, source };
-  const pipelineResult = await runPipeline(etape1Input, { commentaires: commentaires?.length ? commentaires : null });
+  const pipelineResult = await runPipeline(etape1Input, {
+    commentaires: commentaires?.length ? commentaires : null,
+    candidatNom,
+  });
   if (args.revision !== undefined) {
     pipelineResult.parsed.revision = construireChampRevision(args.revision, commentaires ?? [], pipelineResult.revisionRelecture);
   }

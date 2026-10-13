@@ -32,6 +32,15 @@ export function appreciationCarte(score) {
   return { label: badge.label, ...TEINTES[TEINTE_PAR_COULEUR[badge.color] ?? "orange"] };
 }
 
+// Titre de la carte : même règle que la fiche publique (displayTitle dans
+// src/lib/queries.js). Partagé par la route et les pages qui construisent
+// l'URL versionnée, pour que l'empreinte soit la même des deux côtés.
+export function titreCarte(proposition) {
+  if (proposition.titre) return proposition.titre;
+  const texte = proposition.texteOriginal ?? "";
+  return texte.length > 80 ? `${texte.slice(0, 79).trimEnd()}…` : texte;
+}
+
 // Mots de liaison après lesquels commence la partie grise du titre : le sujet
 // (« Des robots ») reste en noir, la suite (« pour remplacer… ») passe en gris.
 const MOTS_LIAISON = new Set([

@@ -94,12 +94,16 @@ export async function publierBrouillon(analyseId) {
     revalidatePath(chemin);
   }
 
+  // Page de partage des publications X de la fiche (message de succès et lien
+  // vers la fiche publique, voir /test/reseaux/[id]).
+  resultat.lienReseaux = `/test/reseaux/${resultat.propositionId}?publiee=1`;
+
   // Fiche publiée mais PR non fusionnée : on reste sur la page pour afficher
   // l'avertissement et le bouton « Réessayer la fusion ».
   if (resultat.avertissement) return resultat;
 
   // redirect lève une exception : il doit rester hors de tout try/catch.
-  redirect(`/declarations/${resultat.propositionId}`);
+  redirect(resultat.lienReseaux);
 }
 
 // « Réessayer la fusion » de la PR de révision d'une fiche déjà publiée.

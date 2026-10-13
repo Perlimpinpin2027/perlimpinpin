@@ -6,7 +6,8 @@ import { publierBrouillon, reessayerFusion } from "./actions";
 // Bouton « Publier sur le site » avec confirmation dans la page (pas de
 // window.confirm). Affiché seulement aux personnes déverrouillées, mais c'est
 // l'action serveur qui vérifie vraiment l'accès. En cas de succès, l'action
-// redirige vers la fiche publique ; sinon elle renvoie un message à afficher ici.
+// redirige vers la page de partage des publications X (/test/reseaux/[id]), qui
+// confirme la publication ; sinon elle renvoie un message à afficher ici.
 //
 // Fiche issue d'une révision (`revision`) : la publication fusionne aussi la PR
 // « Révision <slug> ». Si la fiche est publiée mais que la fusion échoue,
@@ -105,6 +106,11 @@ export default function PublishBox({ analyseId, candidatNom, simulation, revisio
           >
             {texte}
           </p>
+          {message.lienReseaux ? (
+            <a href={message.lienReseaux} className="text-sm font-semibold underline underline-offset-2">
+              Préparer les publications X
+            </a>
+          ) : null}
           {publieeSansFusion || lienPR ? (
             <div className="flex flex-wrap items-center gap-3">
               {publieeSansFusion ? (

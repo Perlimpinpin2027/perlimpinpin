@@ -4,7 +4,7 @@ import { ImageResponse } from "next/og";
 import { prisma } from "@/lib/prisma";
 import { isEditor } from "@/lib/test-auth";
 import { formatScore } from "@/lib/score";
-import { FORMATS_CARTE, appreciationCarte, cacheControlCarte, slugCandidat, versionCarte } from "@/lib/carte";
+import { FORMATS_CARTE, appreciationCarte, cacheControlCarte, slugCandidat, titreCarte, versionCarte } from "@/lib/carte";
 import { TAILLE, elementCarte } from "./cartes";
 
 // Cartes 1200×1200 des publications X : ?format=score|chiffre|tient.
@@ -39,13 +39,6 @@ async function portrait(candidat) {
   } catch {
     return null;
   }
-}
-
-// Même titre que la fiche publique (displayTitle dans src/lib/queries.js).
-function titreProposition(proposition) {
-  if (proposition.titre) return proposition.titre;
-  const texte = proposition.texteOriginal;
-  return texte.length > 80 ? `${texte.slice(0, 79).trimEnd()}…` : texte;
 }
 
 function introuvable() {
@@ -84,7 +77,7 @@ export async function GET(request, { params }) {
   if (format === "chiffre" && !reseaux?.chiffre?.valeur) return introuvable();
   if (format === "tient" && !reseaux?.tient?.titre) return introuvable();
 
-  const titre = titreProposition(proposition);
+  const titre = titreCarte(proposition);
   const element = elementCarte({
     format,
     titre,
