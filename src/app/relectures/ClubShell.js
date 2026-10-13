@@ -24,7 +24,8 @@ export default function ClubShell({ titre, intro, children, basDePage }) {
         <h1 className="mt-10 text-[28px] font-semibold leading-tight tracking-[-0.03em] text-zinc-900 sm:text-[32px]">
           {titre}
         </h1>
-        <p className="mt-2 text-[15px] leading-relaxed text-zinc-500">{intro}</p>
+        {/* div plutôt que p : l'intro peut contenir plusieurs paragraphes */}
+        <div className="mt-2 text-[15px] leading-relaxed text-zinc-500">{intro}</div>
 
         <div className="mt-8 rounded-3xl border border-zinc-200/70 bg-white/80 p-6 shadow-[0_1px_2px_rgba(0,0,0,0.03),0_12px_40px_-12px_rgba(0,0,0,0.08)] backdrop-blur sm:p-7">
           {children}
