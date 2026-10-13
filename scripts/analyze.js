@@ -16,6 +16,7 @@ import {
   checkChiffresVersionBasique,
   checkAncragesVersionBasique,
   validateReseaux,
+  consigneBudgets,
   validateAvisCommentairesEtape2,
   validateRevisionRelecture,
 } from "./lib/scoring.js";
@@ -939,32 +940,41 @@ export function fichePourReseaux(ficheFinale) {
   return fiche;
 }
 
-// Retourne { reseaux, usage, errors } : reseaux vaut null si les deux
-// tentatives ont échoué (errors donne alors la cause du dernier échec).
+// Retourne { reseaux, usage, errors, derniere } : reseaux vaut null si les
+// deux tentatives ont échoué (errors donne alors la cause du dernier échec,
+// derniere la dernière réponse refusée, pour la relire sans nouvel appel).
 // `candidatNom` et `score` ne sont pas envoyés au modèle : ils servent à
-// mesurer les tweets une fois les marqueurs remplis. Le prompt est envoyé tel
-// quel, suivi de la fiche.
+// calculer le budget de chaque tweet (consigneBudgets) et à mesurer les
+// tweets une fois les marqueurs remplis. Le prompt est suivi de la fiche,
+// puis des budgets.
 export async function genererReseaux(ficheFinale, { candidatNom, score }) {
   const fiche = fichePourReseaux(ficheFinale);
   const prompt = readFileSync(PROMPT_RESEAUX_PATH, "utf-8").replace(/\r\n/g, "\n").trim();
-  const basePrompt = `${prompt}\n\nFICHE FINALE :\n${JSON.stringify(fiche, null, 2)}`;
+  const basePrompt = `${prompt}\n\nFICHE FINALE :\n${JSON.stringify(fiche, null, 2)}\n\n${consigneBudgets({ candidatNom, score })}`;
 
   let usage = {};
   let errors = [];
+  let derniere = null;
 
   for (let tentative = 1; tentative <= 2; tentative++) {
+    // Nouvel essai : la réponse refusée et ses erreurs, pour la corriger
+    // plutôt que tout réécrire.
     const userMessage =
-      tentative === 1
+      tentative === 1 || !derniere
         ? basePrompt
         : `${basePrompt}
 
-ATTENTION : ta réponse précédente a été refusée pour les raisons suivantes. Corrige-les.
-${errors.map((error) => `- ${error}`).join("\n")}`;
+ATTENTION : ta réponse précédente a été refusée pour les raisons suivantes. Corrige-les, en gardant ce qui était accepté.
+${errors.map((error) => `- ${error}`).join("\n")}
+
+Ta réponse précédente :
+${JSON.stringify(derniere, null, 2)}`;
 
     try {
       const data = await callReseaux(userMessage);
       usage = addUsage(usage, data.usage);
       const raw = cleanContenu(extractJson(data));
+      derniere = raw;
       const validation = validateReseaux(raw, { ficheFinale: fiche, candidatNom, score });
       if (validation.valid) return { reseaux: validation.reseaux, usage, errors: [] };
       errors = validation.errors;
@@ -980,7 +990,7 @@ ${errors.map((error) => `- ${error}`).join("\n")}`;
 
   console.error("  ⚠️  Étape 3 ter : ÉCHEC après deux tentatives, fiche conservée SANS publications X.");
   for (const error of errors) console.error(`     - ${error}`);
-  return { reseaux: null, usage, errors };
+  return { reseaux: null, usage, errors, derniere };
 }
 
 // --- Estimation de coût -----------------------------------------------------

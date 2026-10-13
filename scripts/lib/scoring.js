@@ -1,5 +1,13 @@
 import { z } from "zod";
-import { LONGUEUR_X_MAX, MARQUEURS, longueurX, remplirTweet, valeursReseaux } from "../../src/lib/reseaux.js";
+import {
+  LONGUEUR_X_MAX,
+  MARQUEURS,
+  MARQUEURS_PAR_TWEET,
+  budgetsReseaux,
+  longueurX,
+  remplirTweet,
+  valeursReseaux,
+} from "../../src/lib/reseaux.js";
 
 // Barème 2026 du pipeline à 3 étapes (voir data/prompt-methodologie.md) : 5
 // critères SANS malus — Opérationnalité & Moyens (30, décomposée en 3
@@ -585,17 +593,36 @@ export const ReseauxSchema = z.object({
   }),
 });
 
-// Marqueurs obligatoires de chaque tweet. Le compte X ({CANDIDAT}) seulement
-// dans le premier tweet de chaque format ; le nom sans @ ({NOM}) dans les
-// tweets 2 à 4 du fil, pour ne pas notifier le candidat à chaque réponse.
-const MARQUEURS_TWEETS = [
-  ["fil.0", (r) => r.fil[0], ["CANDIDAT", "PASTILLE", "SCORE", "APPRECIATION"]],
-  ["fil.1", (r) => r.fil[1], ["NOM"]],
-  ["fil.2", (r) => r.fil[2], ["NOM"]],
-  ["fil.3", (r) => r.fil[3], ["NOM", "LIEN"]],
-  ["chiffre.tweet", (r) => r.chiffre.tweet, ["CANDIDAT", "PASTILLE", "SCORE", "LIEN"]],
-  ["tient.tweet", (r) => r.tient.tweet, ["CANDIDAT", "PASTILLE", "SCORE", "LIEN"]],
-];
+// Les 6 tweets et leurs marqueurs obligatoires (MARQUEURS_PAR_TWEET, src/lib/reseaux.js).
+const LECTURE_TWEETS = {
+  "fil.0": (r) => r.fil[0],
+  "fil.1": (r) => r.fil[1],
+  "fil.2": (r) => r.fil[2],
+  "fil.3": (r) => r.fil[3],
+  "chiffre.tweet": (r) => r.chiffre.tweet,
+  "tient.tweet": (r) => r.tient.tweet,
+};
+const MARQUEURS_TWEETS = Object.entries(MARQUEURS_PAR_TWEET).map(([cle, obligatoires]) => [cle, LECTURE_TWEETS[cle], obligatoires]);
+
+// Consigne ajoutée au prompt par le code : le budget de chaque tweet en
+// caractères hors marqueurs, calculé pour cette fiche (nom ou compte X,
+// appréciation, score réels).
+export function consigneBudgets({ candidatNom, score, handles }) {
+  const budgets = budgetsReseaux(valeursReseaux({ candidatNom, score, handles }));
+  return [
+    "BUDGETS (calculés par le code pour cette fiche) : nombre de caractères permis pour chaque tweet, HORS marqueurs, comptés comme le fait X : un emoji, « € », « … » ou « ↓ » comptent 2, « Perlimpinpin.ai » compte 23. Chaque marqueur obligatoire est déjà décompté une fois ; ne le répète pas.",
+    ...Object.entries(budgets).map(([cle, budget]) => `- ${cle} : ${budget} caractères hors ${MARQUEURS_PAR_TWEET[cle].map((m) => `{${m}}`).join(", ")}`),
+  ].join("\n");
+}
+
+// Points du tweet « tient » : lignes commençant par ✅ ou ❌.
+function pointsDuTweet(texte, emoji) {
+  return texte
+    .split("\n")
+    .map((ligne) => ligne.trim())
+    .filter((ligne) => ligne.startsWith(emoji))
+    .map((ligne) => ligne.slice(emoji.length).trim());
+}
 
 // Textes affichés sur les images : sans aucun marqueur.
 function textesCartes(r) {
@@ -664,6 +691,27 @@ export function validateReseaux(raw, { ficheFinale, candidatNom, score, handles 
     if (texte.includes("—")) errors.push(`${cle} : tiret cadratin interdit.`);
   }
 
+  // Tweet 1 : la phrase de suspense (dernière ligne, terminée par « ↓ ») fait 12 mots au plus.
+  const suspense = r.fil[0].split("\n").map((ligne) => ligne.trim()).filter(Boolean).at(-1) ?? "";
+  if (!suspense.endsWith("↓")) errors.push("fil.0 : la dernière ligne doit être la phrase de suspense, terminée par « ↓ ».");
+  else if (nombreDeMots(suspense) > 12) errors.push(`fil.0 : phrase de suspense de ${nombreDeMots(suspense)} mots (12 au plus) : « ${suspense} ».`);
+
+  // Tweet 4 : « 4/ L’angle mort de la proposition de {NOM} : … ».
+  if (!/^4\/ L[’']angle mort de la proposition (de |d[’'])\{NOM\}/.test(r.fil[3])) {
+    errors.push("fil.3 : doit commencer par « 4/ L’angle mort de la proposition de {NOM} : ».");
+  }
+
+  // Tweet « tient » : 1 ou 2 points de chaque côté, 8 mots au plus chacun.
+  for (const [emoji, cote] of [["✅", "qui tiennent"], ["❌", "qui ne tiennent pas"]]) {
+    const points = pointsDuTweet(r.tient.tweet, emoji);
+    if (points.length < 1 || points.length > 2) {
+      errors.push(`tient.tweet : ${points.length} point(s) ${cote} (lignes « ${emoji} ») ; 1 ou 2 attendus.`);
+    }
+    for (const point of points) {
+      if (nombreDeMots(point) > 8) errors.push(`tient.tweet : ${nombreDeMots(point)} mots pour « ${emoji} ${point} » (8 au plus).`);
+    }
+  }
+
   for (const [cle, lire, max] of LIMITES_MOTS) {
     for (const texte of lire(r)) {
       const mots = nombreDeMots(texte);
@@ -687,7 +735,9 @@ export function validateReseaux(raw, { ficheFinale, candidatNom, score, handles 
     const valeurs = valeursReseaux({ candidatNom, score, handles });
     for (const [cle, texte] of tweets) {
       const longueur = longueurX(remplirTweet(texte, valeurs));
-      if (longueur > LONGUEUR_X_MAX) errors.push(`${cle} : ${longueur} caractères comptés par X (${LONGUEUR_X_MAX} au plus).`);
+      if (longueur > LONGUEUR_X_MAX) {
+        errors.push(`${cle} : ${longueur} caractères comptés par X (${LONGUEUR_X_MAX} au plus) : retire au moins ${longueur - LONGUEUR_X_MAX} caractères.`);
+      }
     }
   }
 

@@ -56,12 +56,13 @@ function afficher(reseaux, valeurs) {
     const alerte = tweet.longueur > LONGUEUR_X_MAX ? "  ⚠️ TROP LONG" : "";
     console.log(`\n--- ${tweet.cle} (${tweet.longueur}/${LONGUEUR_X_MAX})${alerte}\n${tweet.texte}`);
   }
+  // Tolère une réponse incomplète (dernière tentative refusée).
   console.log("\n--- Image « chiffre »");
-  console.log(`  ${reseaux.chiffre.valeur} : ${reseaux.chiffre.explication}`);
+  console.log(`  ${reseaux.chiffre?.valeur ?? "(absent)"} : ${reseaux.chiffre?.explication ?? "(absente)"}`);
   console.log("--- Image « tient / tient pas »");
-  console.log(`  ${reseaux.tient.titre}`);
-  reseaux.tient.tient.forEach((point) => console.log(`  ✅ ${point}`));
-  reseaux.tient.tient_pas.forEach((point) => console.log(`  ❌ ${point}`));
+  console.log(`  ${reseaux.tient?.titre ?? "(absent)"}`);
+  (reseaux.tient?.tient ?? []).forEach((point) => console.log(`  ✅ ${point}`));
+  (reseaux.tient?.tient_pas ?? []).forEach((point) => console.log(`  ❌ ${point}`));
 }
 
 async function main() {
@@ -86,12 +87,22 @@ async function main() {
   console.log(`  Compte X : ${handleX(candidatNom) ?? "non renseigné (src/lib/handles-x.js) : le nom sera utilisé sans @"}`);
   console.log("\nÉtape 3 ter : publications X (Claude)…");
 
-  const { reseaux, usage } = await genererReseaux(contenu, { candidatNom, score: analyse.scoreFaisabilite });
+  const { reseaux, usage, errors, derniere } = await genererReseaux(contenu, { candidatNom, score: analyse.scoreFaisabilite });
   const cout = buildCoutPipeline({ usage2: null, usage3: {}, usage3bis: {}, usage3ter: usage }).coutEstimeParEtape.etape3ter;
   console.log(`Coût estimé : ~$${cout} (${usage.input_tokens ?? 0} tokens en entrée, ${usage.output_tokens ?? 0} en sortie)`);
-  if (!reseaux) fail("publications X refusées après deux tentatives (détail ci-dessus), rien n'est modifié.");
+  const valeurs = valeursReseaux({ candidatNom, score: analyse.scoreFaisabilite, propositionId });
+  if (!reseaux) {
+    // Dernière réponse refusée, marqueurs remplis : à relire sans nouvel appel payant.
+    if (derniere) {
+      console.log("\n=== Dernière tentative REFUSÉE (rien n'est enregistré) ===");
+      afficher(derniere, valeurs);
+      console.log("\nErreurs :");
+      errors.forEach((erreur) => console.log(`  - ${erreur}`));
+    }
+    fail("publications X refusées après deux tentatives, rien n'est modifié.");
+  }
 
-  afficher(reseaux, valeursReseaux({ candidatNom, score: analyse.scoreFaisabilite, propositionId }));
+  afficher(reseaux, valeurs);
 
   if (values["dry-run"]) {
     console.log("\nSimulation (--dry-run) : rien n'a été écrit.");

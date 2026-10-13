@@ -43,8 +43,40 @@ export function valeursReseaux({ candidatNom, score, propositionId = 0, handles 
   };
 }
 
+// « de {NOM} » devient « d’Édouard Philippe » devant une voyelle ou un h (pas
+// devant un compte X : « de @… »).
 export function remplirTweet(texte, valeurs) {
-  return String(texte ?? "").replace(/\{([A-Z]+)\}/g, (marqueur, nom) => valeurs[nom] ?? marqueur);
+  return String(texte ?? "")
+    .replace(/(^|[^\p{L}])(de|que) \{(NOM|CANDIDAT)\}/gu, (tout, avant, mot, nom) => {
+      const valeur = valeurs[nom];
+      if (typeof valeur !== "string" || !/^[aeiouyh]/i.test(valeur.normalize("NFD"))) return tout;
+      return `${avant}${mot === "de" ? "d’" : "qu’"}${valeur}`;
+    })
+    .replace(/\{([A-Z]+)\}/g, (marqueur, nom) => valeurs[nom] ?? marqueur);
+}
+
+// Marqueurs obligatoires de chaque tweet. Le compte X ({CANDIDAT}) seulement
+// dans le premier tweet de chaque format ; le nom sans @ ({NOM}) dans les
+// tweets 2 à 4 du fil, pour ne pas notifier le candidat à chaque réponse.
+export const MARQUEURS_PAR_TWEET = {
+  "fil.0": ["CANDIDAT", "PASTILLE", "SCORE", "APPRECIATION"],
+  "fil.1": ["NOM"],
+  "fil.2": ["NOM"],
+  "fil.3": ["NOM", "LIEN"],
+  "chiffre.tweet": ["CANDIDAT", "PASTILLE", "SCORE", "LIEN"],
+  "tient.tweet": ["CANDIDAT", "PASTILLE", "SCORE", "LIEN"],
+};
+
+// Budget de chaque tweet en caractères « hors marqueurs », pour cette fiche :
+// 280 moins la longueur X des valeurs insérées (chaque marqueur obligatoire
+// compté une fois ; un lien compte 23).
+export function budgetsReseaux(valeurs) {
+  return Object.fromEntries(
+    Object.entries(MARQUEURS_PAR_TWEET).map(([cle, marqueurs]) => [
+      cle,
+      LONGUEUR_X_MAX - marqueurs.reduce((total, nom) => total + longueurX(valeurs[nom]), 0),
+    ]),
+  );
 }
 
 // Longueur comptée par X (règles de twitter-text) : tout lien compte 23, un

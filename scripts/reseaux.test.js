@@ -1,9 +1,9 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { validateReseaux } from "./lib/scoring.js";
+import { consigneBudgets, validateReseaux } from "./lib/scoring.js";
 import { buildCoutPipeline, fichePourReseaux } from "./analyze.js";
-import { lienIntentionX, longueurX, pastille, remplirTweet, tweetsReseaux, valeursReseaux } from "../src/lib/reseaux.js";
-import { handleX } from "../src/lib/handles-x.js";
+import { budgetsReseaux, lienIntentionX, longueurX, pastille, remplirTweet, tweetsReseaux, valeursReseaux } from "../src/lib/reseaux.js";
+import { HANDLES_X, handleX } from "../src/lib/handles-x.js";
 
 const fiche = {
   titre_fiche: "Supprimer les certificats d'économies d'énergie",
@@ -16,7 +16,7 @@ const valide = () => ({
     "🔵 Supprimer les certificats d'économies d'énergie : une baisse non chiffrée.\n\nPerlimpinpin.ai analyse la proposition de {CANDIDAT}\n\nNote : {PASTILLE} {SCORE}/100 {APPRECIATION}\n\nUn chiffre surprend ↓",
     "2/ {NOM} veut supprimer un dispositif qui coûte 141 M€ par an (Cour des comptes).",
     "3/ Selon la fiche, 2,9 millions de ménages en bénéficient depuis 2021, ce que {NOM} ne mentionne pas.",
-    "4/ L'angle mort : {NOM} ne dit pas qui financera les travaux.\n\nAnalyse complète 👇\n{LIEN}",
+    "4/ L’angle mort de la proposition de {NOM} : qui financera les travaux ?\n\nAnalyse complète 👇\n{LIEN}",
   ],
   chiffre: {
     valeur: "141 M€",
@@ -107,7 +107,7 @@ test("étape 3 ter : score, appréciation, tiret cadratin, nombres et marqueurs 
 
 test("étape 3 ter : « fragile » au sens courant n'est pas pris pour l'appréciation", () => {
   const r = valide();
-  r.fil[3] = r.fil[3].replace("ne dit pas qui financera les travaux", "laisse un financement fragile");
+  r.fil[3] = r.fil[3].replace("qui financera les travaux ?", "un financement fragile.");
   assert.deepEqual(validateReseaux(r, contexte).errors, []);
 });
 
@@ -138,4 +138,52 @@ test("coût : l'étape 3 ter s'ajoute seulement quand elle a tourné", () => {
   const avec = buildCoutPipeline({ usage2: null, usage3, usage3bis: {}, usage3ter: { input_tokens: 10_000, output_tokens: 1_000 } });
   assert.equal(avec.coutEstimeParEtape.etape3ter, 0.045);
   assert.equal(avec.coutEstimeTotal, Number((sans.coutEstimeTotal + 0.045).toFixed(4)));
+});
+
+test("tweet 1 : phrase de suspense de 12 mots au plus, terminée par ↓", () => {
+  const r = valide();
+  r.fil[0] = r.fil[0].replace("Un chiffre surprend ↓", "Un chiffre de la fiche surprend beaucoup plus que tout le reste du dossier ↓");
+  assert.ok(validateReseaux(r, contexte).errors.some((e) => e.startsWith("fil.0 : phrase de suspense de 14 mots")));
+  r.fil[0] = r.fil[0].replace(/\n\n[^\n]*↓$/, "");
+  assert.ok(validateReseaux(r, contexte).errors.some((e) => e.includes("terminée par « ↓ »")));
+});
+
+test("tweet 4 : commence par « 4/ L’angle mort de la proposition de {NOM} »", () => {
+  const r = valide();
+  r.fil[3] = "4/ L'angle mort : {NOM} ne dit pas qui financera les travaux.\n\nAnalyse complète 👇\n{LIEN}";
+  assert.ok(validateReseaux(r, contexte).errors.some((e) => e.startsWith("fil.3 : doit commencer")));
+  r.fil[3] = "4/ L'angle mort de la proposition d’{NOM} : le financement.\n\nAnalyse complète 👇\n{LIEN}";
+  assert.ok(!validateReseaux(r, contexte).errors.some((e) => e.startsWith("fil.3")));
+});
+
+test("tweet « tient » : 2 points de chaque côté au plus, 8 mots au plus, distincts de la carte", () => {
+  const r = valide();
+  r.tient.tweet = r.tient.tweet.replace("❌ Le financement des travaux reste flou.", "❌ Le financement des travaux reste flou.\n❌ Rien.");
+  assert.ok(validateReseaux(r, contexte).errors.some((e) => e.includes("3 point(s) qui ne tiennent pas")));
+  const long = valide();
+  long.tient.tweet = long.tient.tweet.replace("✅ Le dispositif existe déjà.", "✅ Le dispositif existe déjà depuis longtemps dans tout le pays.");
+  assert.ok(validateReseaux(long, contexte).errors.some((e) => e.startsWith("tient.tweet : 10 mots")));
+  // Formulation du tweet différente de celle de la carte : acceptée.
+  const court = valide();
+  court.tient.tweet = court.tient.tweet.replace("✅ Le dispositif existe déjà.", "✅ Un dispositif déjà en place.");
+  assert.deepEqual(validateReseaux(court, contexte).errors, []);
+});
+
+test("budgets hors marqueurs : 280 moins les valeurs insérées pour cette fiche", () => {
+  const budgets = budgetsReseaux(valeursReseaux({ candidatNom: "Marine Le Pen", score: 41, handles: {} }));
+  // {CANDIDAT} 13 + {PASTILLE} 2 + {SCORE} 2 + {APPRECIATION} « Partiellement fondé » 19
+  assert.equal(budgets["fil.0"], 280 - 13 - 2 - 2 - 19);
+  assert.equal(budgets["fil.3"], 280 - 13 - 23);
+  assert.match(consigneBudgets({ candidatNom: "Marine Le Pen", score: 41 }), /- tient\.tweet : \d+ caractères hors \{CANDIDAT\}/);
+});
+
+test("élision : « de {NOM} » devient « d’Édouard Philippe », pas devant un compte X", () => {
+  assert.equal(remplirTweet("la proposition de {NOM}", { NOM: "Édouard Philippe" }), "la proposition d’Édouard Philippe");
+  assert.equal(remplirTweet("la proposition de {NOM}", { NOM: "Marine Le Pen" }), "la proposition de Marine Le Pen");
+  assert.equal(remplirTweet("analyse la proposition de {CANDIDAT}", { CANDIDAT: "@EPhilippe_LH" }), "analyse la proposition de @EPhilippe_LH");
+});
+
+test("comptes X : renseignés pour les 11 candidats, au bon format", () => {
+  for (const nom of Object.keys(HANDLES_X)) assert.match(handleX(nom), /^@\w{1,15}$/);
+  assert.equal(handleX("Marine Le Pen"), "@MLP_officiel");
 });

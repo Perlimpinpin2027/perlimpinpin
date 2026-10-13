@@ -5,14 +5,15 @@ Règles communes, sans exception :
 - Ton sobre, factuel, non militant. Jamais de moquerie, de qualificatif sur la personne, ni d'ironie. La surprise vient du fait ou du chiffre, jamais du ton.
 - Même traitement pour tous les candidats, quel que soit leur bord : si l'accroche serait choquante pour un autre candidat avec la même note, elle est mauvaise.
 - Pas de tirets cadratins. Au plus 280 caractères par tweet (un emoji compte 2, un lien 23).
+- Après la fiche, le code te donne le budget de chaque tweet en caractères hors marqueurs, calculé pour cette fiche : respecte-le strictement.
 - Une phrase par idée, des mots courants, aucun sigle non expliqué.
 
 Format 1, « fil » (4 tweets) :
-- Tweet 1 : « 🔵 <la mesure en une ligne> : <premier verdict très court>. » puis une ligne vide, « Perlimpinpin.ai analyse la proposition de {CANDIDAT} », une ligne vide, « Note : {PASTILLE} {SCORE}/100 {APPRECIATION} », une ligne vide, puis une phrase de suspense vers le point le plus surprenant de la fiche, terminée par « ↓ ».
+- Tweet 1 : « 🔵 <la mesure en une ligne> : <premier verdict très court>. » puis une ligne vide, « Perlimpinpin.ai analyse la proposition de {CANDIDAT} », une ligne vide, « Note : {PASTILLE} {SCORE}/100 {APPRECIATION} », une ligne vide, puis une phrase de suspense de 12 mots au plus vers le point le plus surprenant de la fiche, terminée par « ↓ ».
 - Tweets 2, 3 et 4 : chacun cite le candidat par son nom avec le marqueur {NOM} (sans @), au moins une fois.
 - Tweet 2 : « 2/ » le mécanisme de la mesure et un chiffre sourcé.
 - Tweet 3 : « 3/ » la vérification : ce que vaut l'argument ou le chiffre du candidat face à une source indépendante.
-- Tweet 4 : « 4/ L'angle mort : … », puis, si la fiche en a un, le point le plus solide (« Point solide : … »), puis « Analyse complète 👇 » et {LIEN}.
+- Tweet 4 : « 4/ L’angle mort de la proposition de {NOM} : … », puis, si la fiche en a un, le point le plus solide (« Point solide : … »), puis « Analyse complète 👇 » et {LIEN}.
 
 Format 2, « chiffre » :
 - `valeur` : le chiffre le plus surprenant de la fiche, tel qu'il y figure, avec son unité (« 141 M€ », « 2,9 millions », « 1 sur 2 »). 12 caractères au plus.
@@ -24,7 +25,7 @@ Format 3, « tient » :
 - `tient` : 2 ou 3 points tirés de « Ce qui tient » du verdict final, 15 mots au plus chacun.
 - `tient_pas` : 2 ou 3 points tirés de « Ce qui ne tient pas », 15 mots au plus chacun.
 - S'il n'y a qu'un seul point solide dans la fiche, n'en invente pas un second : mets-en un seul.
-- `tweet` : « <titre>, la proposition de {CANDIDAT} : ce qui tient, ce qui ne tient pas. » puis une ligne vide, chaque point de `tient` précédé de « ✅ », puis chaque point de `tient_pas` précédé de « ❌ », une ligne vide, « {PASTILLE} {SCORE}/100 · Analyse complète 👇 » et {LIEN}. Si le tweet dépasse 280 caractères, garde 2 points de chaque côté et raccourcis-les.
+- `tweet` : « <titre>, la proposition de {CANDIDAT} : ce qui tient, ce qui ne tient pas. » puis une ligne vide, 1 ou 2 points qui tiennent, chacun précédé de « ✅ », puis 1 ou 2 points qui ne tiennent pas, chacun précédé de « ❌ », une ligne vide, « {PASTILLE} {SCORE}/100 · Analyse complète 👇 » et {LIEN}. Dans le tweet : 2 points de chaque côté au plus, 8 mots au plus par point. Ce sont des versions courtes des points de la carte, pas forcément les mêmes formulations : la carte peut garder jusqu'à 15 mots par point.
 
 Réponds uniquement en JSON :
 { "fil": ["…", "…", "…", "…"], "chiffre": { "valeur": "…", "explication": "…", "tweet": "…" }, "tient": { "titre": "…", "tient": ["…"], "tient_pas": ["…"], "tweet": "…" } }
