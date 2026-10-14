@@ -1,13 +1,15 @@
 /* eslint-disable @next/next/no-img-element -- image générée par /api/carte, déjà au bon format. */
 import { cheminCarte, slugCandidat, titreCarte } from "@/lib/carte";
-import { LONGUEUR_X_MAX, lienIntentionX, tweetsReseaux, valeursReseaux } from "@/lib/reseaux";
-import BoutonsTweet from "./BoutonsTweet";
+import { LONGUEUR_X_MAX, avertissementsReseaux, tweetsReseaux, valeursReseaux } from "@/lib/reseaux";
+import TweetModifiable from "./TweetModifiable";
 
 // « Publications X » d'une fiche : pour chaque format, l'image (route
 // /api/carte/[id]) et les tweets, marqueurs remplis. Composant serveur, montré
 // seulement aux personnes déverrouillées (/test/[id] et /test/reseaux/[id]).
-// Lecture seule : pour corriger un texte, on passe par le chat avec Claude.
-// `partage` : boutons Télécharger, Copier et Ouvrir dans X (page de partage).
+// Rien n'est jamais écrit en base d'ici : pour corriger durablement un texte,
+// on passe par le chat avec Claude.
+// `partage` (page de partage) : bouton Télécharger, et chaque tweet modifiable
+// sur place (compteur X en direct, Copier et Ouvrir dans X sur le texte modifié).
 
 const FORMATS = [
   { format: "score", titre: "La carte", moment: "jour J", prefixe: "fil." },
@@ -16,6 +18,7 @@ const FORMATS = [
 ];
 
 function Tweet({ tweet, numero, partage }) {
+  if (partage) return <TweetModifiable numero={numero} texteInitial={tweet.texte} />;
   const tropLong = tweet.longueur > LONGUEUR_X_MAX;
   return (
     <li className="flex flex-col gap-2 rounded-xl border border-zinc-200 bg-white p-4">
@@ -27,7 +30,6 @@ function Tweet({ tweet, numero, partage }) {
         </span>
       </div>
       <p className="whitespace-pre-wrap text-sm leading-relaxed text-zinc-900">{tweet.texte}</p>
-      {partage ? <BoutonsTweet texte={tweet.texte} lienX={lienIntentionX(tweet.texte)} /> : null}
     </li>
   );
 }
@@ -79,8 +81,25 @@ export default function PublicationsX({ proposition, analyse, brouillon = false,
     valeursReseaux({ candidatNom, score: analyse.scoreFaisabilite, propositionId: proposition.id }),
   );
 
+  // Points à relire (jamais bloquants) : titre écrit par le modèle, point
+  // retiré du tweet, version courte sans sujet, nombres côte à côte.
+  const avertissements = avertissementsReseaux(reseaux);
+
   return (
     <div className="flex flex-col gap-8">
+      {avertissements.length > 0 ? (
+        <div role="note" className="rounded-xl border border-orange-300 bg-orange-50 p-4 text-sm text-orange-900">
+          <p className="font-semibold">À relire avant de publier</p>
+          <ul className="mt-2 flex list-disc flex-col gap-1 pl-5">
+            {avertissements.map(({ cle, message }, i) => (
+              <li key={i}>
+                <span className="font-mono text-xs text-orange-700">{cle}</span> : {message}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
       {reseaux ? null : (
         <p className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
           Pas encore de textes pour cette fiche (étape 3 ter absente ou refusée). Seule la carte du score

@@ -25,7 +25,7 @@ import { neonConfig } from "@neondatabase/serverless";
 import ws from "ws";
 import { confirmerEcriture, hoteDe } from "./lib/garde-fou-base.js";
 import { buildCoutPipeline, genererReseaux } from "./analyze.js";
-import { tweetsReseaux, valeursReseaux, LONGUEUR_X_MAX } from "../src/lib/reseaux.js";
+import { avertissementsReseaux, tweetsReseaux, valeursReseaux, LONGUEUR_X_MAX } from "../src/lib/reseaux.js";
 import { handleX } from "../src/lib/handles-x.js";
 
 neonConfig.webSocketConstructor = ws;
@@ -61,6 +61,11 @@ function afficher(reseaux, valeurs) {
   console.log(`  ${reseaux.chiffre?.valeur ?? "(absent)"} : ${reseaux.chiffre?.explication ?? "(absente)"}`);
   console.log("--- Image « tient / tient pas »");
   console.log(`  ${reseaux.tient?.titre ?? "(absent)"}`);
+  const avertissements = avertissementsReseaux(reseaux);
+  if (avertissements.length > 0) {
+    console.log("\n--- À relire (avertissements, sans refus)");
+    avertissements.forEach(({ cle, message }) => console.log(`  ⚠ ${cle} : ${message}`));
+  }
   // Chaque point de l'image, et dessous sa version courte (tweet).
   for (const [emoji, textes, courts] of [
     ["✅", reseaux.tient?.tient ?? [], reseaux.tient?.tient_court ?? []],

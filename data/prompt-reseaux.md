@@ -12,6 +12,8 @@ Règles communes, sans exception :
 - Un chiffre garde exactement sa nature : un total reste un total (« 141 millions d'euros au total en 2024 », jamais « une pénalité de 141 millions »), une part d'un sous-ensemble reste une part de ce sous-ensemble (« la moitié des logements sociaux construits en 20 ans », jamais « la moitié du parc »). Cette règle vaut aussi pour les versions courtes.
 - Ne commence jamais une phrase par Il ou Elle : répète {NOM}, ou reformule.
 - Écris les nombres comme dans la fiche, sans abréviation (« 1,8 million », pas « 1,8M »).
+- Jamais deux nombres côte à côte : écris « depuis 2000, elle impose 20 à 25 %… ».
+- La phrase de suspense n'attribue à une source que ce que la fiche lui attribue. Si la fiche distingue ce qu'une source confirme et ce que d'autres données contredisent, garde cette distinction.
 - Un montant total a sa propre phrase, pour ne jamais être lu comme un montant individuel. Exemple : « En 2024, les communes en retard ont payé 141 millions d'euros au total », et non « sous peine d'une pénalité de 141 millions d'euros au total ».
 - Chaque point ✅ ou ❌, version longue et version courte, a pour sujet la proposition ou son effet (« L'abrogation… », « Le foncier promis… »). Jamais de phrase sans sujet, jamais un point qui décrit seulement la situation actuelle. Exemple : « L'abrogation supprime un levier qui a produit la moitié des logements sociaux en 20 ans », et non « A produit la moitié des logements sociaux en 20 ans ».
 - Attribuer à une source uniquement ce que la fiche lui attribue. Si deux faits viennent de sources différentes, ne pas les réunir sous la même source.

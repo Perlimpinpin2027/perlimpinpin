@@ -4,6 +4,7 @@ import {
   MARQUEURS,
   MARQUEURS_PAR_TWEET,
   PARTIES_PAR_TWEET,
+  appliquerTitreFiche,
   assemblerReseaux,
   budgetsParties,
   longueurX,
@@ -596,6 +597,10 @@ export const ReseauxSchema = z.object({
     // des sorties antérieures à leur introduction.
     tient_court: z.array(TexteReseaux).optional(),
     tient_pas_court: z.array(TexteReseaux).optional(),
+    // Titre de la fiche (« fiche ») ou du modèle (« modele ») ; points retirés
+    // du tweet par le repli (voir retirerUnPointDuTweet, src/lib/reseaux.js).
+    titre_source: z.enum(["fiche", "modele"]).optional(),
+    points_retires: z.number().int().positive().optional(),
     tweet: TexteReseaux,
   }),
 });
@@ -648,6 +653,9 @@ export const PartiesReseauxSchema = z.object({
     titre: PartieTexte,
     tient: z.array(z.object({ texte: PartieTexte, court: PartieTexte })).min(1).max(3),
     tient_pas: z.array(z.object({ texte: PartieTexte, court: PartieTexte })).min(2).max(3),
+    // Posés par le code, jamais par le modèle (conservés entre deux passes).
+    titre_source: z.enum(["fiche", "modele"]).optional(),
+    dans_le_tweet: z.object({ tient: z.number().int().min(1), tient_pas: z.number().int().min(1) }).optional(),
   }),
 });
 
@@ -661,7 +669,9 @@ export function validatePartiesReseaux(raw, contexte = {}) {
   if (!zodResult.success) {
     return { valid: false, errors: zodErreurs(zodResult.error), reseaux: null, parties: null, assemble: null, tropLongs: [], tropDeMots: [], seulementRaccourcir: false };
   }
-  const parties = normaliserParties(zodResult.data);
+  // Titre « tient » : celui de la fiche quand il convient (contexte.titreFiche).
+  const normalisees = normaliserParties(zodResult.data);
+  const parties = "titreFiche" in contexte ? appliquerTitreFiche(normalisees, contexte.titreFiche) : normalisees;
   const assemble = assemblerReseaux(parties);
   const validation = validateReseaux(assemble, contexte);
   return {
@@ -700,7 +710,8 @@ function textesCartes(r) {
 
 // [clé affichée, lecture, maximum de mots, partie variable à raccourcir]
 const LIMITES_MOTS = [
-  ["tient.titre", (r) => [r.tient.titre], 6, "tient.titre"],
+  // Titre venu de la fiche : pas de limite de mots (40 caractères au plus).
+  ["tient.titre", (r) => (r.tient.titre_source === "fiche" ? [] : [r.tient.titre]), 6, "tient.titre"],
   ["chiffre.explication", (r) => [r.chiffre.explication], 20, "chiffre.explication"],
   ["tient.tient", (r) => r.tient.tient, 15, "tient.textes_tient"],
   ["tient.tient_pas", (r) => r.tient.tient_pas, 15, "tient.textes_tient_pas"],

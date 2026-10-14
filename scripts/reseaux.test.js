@@ -1,15 +1,20 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { consigneBudgets, validatePartiesReseaux, validateReseaux } from "./lib/scoring.js";
-import { buildCoutPipeline, fichePourReseaux } from "./analyze.js";
+import { buildCoutPipeline, fichePourReseaux, reglesCommunes } from "./analyze.js";
 import {
   assemblerReseaux,
+  avertissementsReseaux,
   budgetsParties,
   ecrirePartie,
   lienIntentionX,
   lirePartie,
   longueurX,
   minusculeInitiale,
+  nombresColles,
+  normaliserParties,
+  retirerUnPointDuTweet,
+  espaceAvantPourcent,
   nombresSansAbreviation,
   pastille,
   remplirTweet,
@@ -343,4 +348,72 @@ test("raccourcissement : parties en cause (caractères et mots), écriture sans 
   assert.equal(r3.tient.tient[0].texte, "L'abrogation est simple.");
   assert.equal(r3.tient.tient[0].court, q.tient.tient[0].court);
   assert.equal(q.tient.tient_pas[0].court, "Baisse non chiffrée.");
+});
+
+test("minuscule après les deux-points : sauf sigle ou nom propre ; espace avant %", () => {
+  assert.equal(minusculeInitiale("Abroger la loi par voie ordinaire suffit."), "abroger la loi par voie ordinaire suffit.");
+  assert.equal(minusculeInitiale("Marine Le Pen ne chiffre pas."), "Marine Le Pen ne chiffre pas.");
+  assert.equal(minusculeInitiale("HLM : rien."), "HLM : rien.");
+  assert.equal(minusculeInitiale("L'abrogation suffit."), "l'abrogation suffit.");
+  assert.equal(espaceAvantPourcent("20 à 25% des logements, 30 %"), "20 à 25 % des logements, 30 %");
+});
+
+test("titre « tient » : celui de la fiche s'il fait 40 caractères au plus, sinon celui du modèle", () => {
+  const p = partiesValides();
+  const court = validatePartiesReseaux(p, { ...contexte, titreFiche: "Abroger la loi SRU" });
+  assert.equal(court.reseaux.tient.titre, "Abroger la loi SRU");
+  assert.equal(court.reseaux.tient.titre_source, "fiche");
+  assert.match(court.reseaux.tient.tweet, /^Abroger la loi SRU, la proposition de/);
+  // Titre de la fiche de plus de 6 mots mais de 40 caractères au plus : accepté.
+  const mots = validatePartiesReseaux(p, { ...contexte, titreFiche: "Un titre de fiche de sept mots" });
+  assert.deepEqual(mots.errors, []);
+  const long = validatePartiesReseaux(p, { ...contexte, titreFiche: "Abroger la loi SRU sur les logements sociaux" });
+  assert.equal(long.reseaux.tient.titre, p.tient.titre);
+  assert.equal(long.reseaux.tient.titre_source, "modele");
+  assert.ok(avertissementsReseaux(long.reseaux).some((a) => a.cle === "tient.titre"));
+});
+
+test("dernier recours : un point retiré du tweet « tient », au moins 1 de chaque côté, l'image garde tout", () => {
+  const p = normaliserParties(partiesValides()); // 1 ✅, 3 ❌ (2 dans le tweet)
+  const replie = retirerUnPointDuTweet(p);
+  assert.deepEqual(replie.tient.dans_le_tweet, { tient: 1, tient_pas: 1 });
+  assert.equal(retirerUnPointDuTweet(replie), null);
+  const assemble = assemblerReseaux(replie).tient;
+  assert.equal((assemble.tweet.match(/❌/gu) ?? []).length, 1);
+  assert.equal(assemble.tient_pas.length, 3);
+  assert.equal(assemble.points_retires, 1);
+  assert.ok(avertissementsReseaux({ tient: assemble }).some((a) => a.message.includes("1 point(s) retiré(s)")));
+  // À égalité (2 et 2), le côté dont la 2e version courte est la plus longue.
+  const egal = structuredClone(p);
+  egal.tient.tient.push({ texte: "Un second point.", court: "Un second point nettement plus long que l'autre." });
+  assert.deepEqual(retirerUnPointDuTweet(egal).tient.dans_le_tweet, { tient: 1, tient_pas: 2 });
+});
+
+test("avertissements : version courte sans sujet, nombres côte à côte (hors milliers)", () => {
+  const reseaux = {
+    fil: ["2/ La loi impose depuis 2000 20 à 25 % de logements, dans 1 100 communes."],
+    tient: {
+      titre: "x",
+      tient: [],
+      tient_pas: [],
+      tient_court: ["L'abrogation est simple.", "Marine Le Pen ne chiffre rien.", "HLM sans compensation."],
+      tient_pas_court: ["Retire un levier qui faisait construire.", "Aucune compensation prévue."],
+      tweet: "",
+    },
+  };
+  const messages = avertissementsReseaux(reseaux).map((a) => `${a.cle} ${a.message}`);
+  assert.deepEqual(messages.filter((m) => m.includes("sans sujet")), [
+    "tient.tient_pas_court.0 Version courte sans sujet apparent : « ❌ Retire un levier qui faisait construire. ».",
+  ]);
+  assert.deepEqual(nombresColles("depuis 2000 20 à 25 %, dans 1 100 communes, 2 900 000 ménages"), ["2000 20"]);
+  assert.ok(messages.some((m) => m.startsWith("fil.0 Deux nombres côte à côte : « 2000 20 »")));
+});
+
+test("règles communes du prompt, redonnées aux passes de raccourcissement", async () => {
+  const { readFileSync } = await import("node:fs");
+  const prompt = readFileSync(new URL("../data/prompt-reseaux.md", import.meta.url), "utf8").replace(/\r\n/g, "\n");
+  const regles = reglesCommunes(prompt);
+  assert.ok(regles.startsWith("Règles communes"));
+  assert.ok(regles.includes("Jamais deux nombres côte à côte") && regles.includes("Il ou Elle"));
+  assert.ok(!regles.includes("Format 1"));
 });

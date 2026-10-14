@@ -128,29 +128,33 @@ export function nombresSansAbreviation(texte) {
   });
 }
 
-// Après « L’angle mort … : » ou « Point solide : », minuscule initiale quand
-// la partie commence par un mot courant (« Aucune compensation… » → « aucune
-// compensation… ») ; un nom propre (« Marine Le Pen… ») garde sa majuscule.
-const MOTS_COURANTS = new Set(
-  ("aucun aucune le la les l un une des du de d ce cet cette ces il elle ils elles rien pas sans si en dans pour " +
-    "selon son sa ses leur leurs tout toute tous toutes faute personne plus moins quand alors mais car ni or donc " +
-    "c qu que qui une seule seul cela ceci entre avec sur sous par").split(" "),
-);
-
+// Après « L’angle mort … : » ou « Point solide : », minuscule initiale
+// (« Aucune compensation… » → « aucune compensation… », « Abroger… » →
+// « abroger… »), sauf pour un sigle (« HLM… ») ou un nom propre, repéré par
+// deux mots de suite qui commencent par une majuscule (« Marine Le Pen… »).
 export function minusculeInitiale(texte) {
   const t = String(texte ?? "");
-  const premier = t.match(/^\p{L}+/u)?.[0] ?? "";
-  if (!MOTS_COURANTS.has(premier.toLowerCase()) || premier === premier.toUpperCase() && premier.length > 1) return t;
+  const mots = t.match(/^(\p{L}+)(?:[’'\s-]+(\p{L}+))?/u);
+  if (!mots) return t;
+  const [, premier, second] = mots;
+  const majuscule = (mot) => Boolean(mot) && /^\p{Lu}/u.test(mot);
+  if (premier.length > 1 && premier === premier.toUpperCase()) return t;
+  if (majuscule(premier) && majuscule(second)) return t;
   return t.charAt(0).toLowerCase() + t.slice(1);
 }
 
+// « 25% » → « 25 % » (espace avant le signe, comme dans la fiche).
+export function espaceAvantPourcent(texte) {
+  return String(texte ?? "").replace(/(\d)\s?%/g, "$1 %");
+}
+
 // Retire ce que le code ajoute lui-même, si le modèle l'a écrit quand même,
-// et écrit les nombres sans abréviation.
+// écrit les nombres sans abréviation et met une espace avant « % ».
 function nettoyer(texte, { debut = null, fin = null } = {}) {
   let t = String(texte ?? "").trim();
   if (debut) t = t.replace(debut, "").trim();
   if (fin) t = t.replace(fin, "").trim();
-  return nombresSansAbreviation(t);
+  return espaceAvantPourcent(nombresSansAbreviation(t));
 }
 
 function nettoyerPoint(point) {
@@ -183,8 +187,45 @@ export function normaliserParties(p) {
       titre: nettoyer(p.tient.titre, { fin: /\.$/ }),
       tient: p.tient.tient.map(nettoyerPoint),
       tient_pas: p.tient.tient_pas.map(nettoyerPoint),
+      // Posés par le code (titre de la fiche, repli), conservés d'une passe à l'autre.
+      ...(p.tient.titre_source ? { titre_source: p.tient.titre_source } : {}),
+      ...(p.tient.dans_le_tweet ? { dans_le_tweet: p.tient.dans_le_tweet } : {}),
     },
   };
+}
+
+// Titre de la carte et du tweet « tient » : le titre court de la fiche
+// (titre_fiche) s'il existe et fait 40 caractères au plus ; sinon celui du
+// modèle, signalé par un avertissement sur la page de partage.
+export const TITRE_TIENT_MAX = 40;
+
+export function appliquerTitreFiche(parties, titreFiche) {
+  const titre = typeof titreFiche === "string" ? titreFiche.trim() : "";
+  const copie = structuredClone(parties);
+  if (titre && titre.length <= TITRE_TIENT_MAX) copie.tient = { ...copie.tient, titre, titre_source: "fiche" };
+  else copie.tient = { ...copie.tient, titre_source: "modele" };
+  return copie;
+}
+
+// Dernier recours, quand le tweet « tient » reste trop long après le titre de
+// la fiche et les passes de raccourcissement : le code retire du tweet le 2e
+// point du côté qui en a le plus (à égalité, celui dont la version courte est
+// la plus longue), en gardant au moins 1 point de chaque côté. L'image garde
+// tous ses points. Renvoie null si plus rien ne peut être retiré.
+export function retirerUnPointDuTweet(parties) {
+  const actuel = parties.tient.dans_le_tweet ?? {
+    tient: Math.min(POINTS_DANS_LE_TWEET, parties.tient.tient.length),
+    tient_pas: Math.min(POINTS_DANS_LE_TWEET, parties.tient.tient_pas.length),
+  };
+  const candidats = ["tient", "tient_pas"]
+    .filter((cote) => actuel[cote] > 1)
+    .map((cote) => ({ cote, n: actuel[cote], longueur: longueurX(parties.tient[cote][actuel[cote] - 1].court) }))
+    .sort((a, b) => b.n - a.n || b.longueur - a.longueur);
+  if (candidats.length === 0) return null;
+  const { cote } = candidats[0];
+  const copie = structuredClone(parties);
+  copie.tient.dans_le_tweet = { ...actuel, [cote]: actuel[cote] - 1 };
+  return copie;
 }
 
 // Tweets assemblés (avec marqueurs) à partir des parties normalisées. L'image
@@ -193,7 +234,13 @@ export function normaliserParties(p) {
 // enregistrées (tient_court, tient_pas_court) pour la relecture.
 export function assemblerReseaux(p) {
   const blocs = (...morceaux) => morceaux.filter((m) => m !== null && m !== undefined).join("\n\n");
-  const courts = (points) => points.slice(0, POINTS_DANS_LE_TWEET).map((point) => point.court);
+  const dansLeTweet = (cote) => p.tient.dans_le_tweet?.[cote] ?? POINTS_DANS_LE_TWEET;
+  const courts = (cote) => p.tient[cote].slice(0, dansLeTweet(cote)).map((point) => point.court);
+  // Points retirés du tweet par le repli (retirerUnPointDuTweet).
+  const retires = ["tient", "tient_pas"].reduce(
+    (total, cote) => total + Math.min(POINTS_DANS_LE_TWEET, p.tient[cote].length) - courts(cote).length,
+    0,
+  );
   return {
     fil: [
       blocs(
@@ -224,9 +271,11 @@ export function assemblerReseaux(p) {
       tient_pas: p.tient.tient_pas.map((point) => point.texte),
       tient_court: p.tient.tient.map((point) => point.court),
       tient_pas_court: p.tient.tient_pas.map((point) => point.court),
+      ...(p.tient.titre_source ? { titre_source: p.tient.titre_source } : {}),
+      ...(retires > 0 ? { points_retires: retires } : {}),
       tweet: blocs(
         `${p.tient.titre}, la proposition de {CANDIDAT} : ce qui tient, ce qui ne tient pas.`,
-        [...courts(p.tient.tient).map((court) => `✅ ${court}`), ...courts(p.tient.tient_pas).map((court) => `❌ ${court}`)].join("\n"),
+        [...courts("tient").map((court) => `✅ ${court}`), ...courts("tient_pas").map((court) => `❌ ${court}`)].join("\n"),
         "{PASTILLE} {SCORE}/100 · Analyse complète 👇 {LIEN}",
       ),
     },
@@ -312,6 +361,70 @@ export function tweetsReseaux(reseaux, valeurs) {
     { format: "chiffre", cle: "chiffre.tweet", texte: remplirTweet(reseaux.chiffre?.tweet, valeurs) },
     { format: "tient", cle: "tient.tweet", texte: remplirTweet(reseaux.tient?.tweet, valeurs) },
   ].map((tweet) => ({ ...tweet, longueur: longueurX(tweet.texte) }));
+}
+
+// --- Avertissements de relecture (jamais de refus) ---------------------------
+
+// Une version courte commence par un déterminant (« Le », « L’ », « Aucune »…)
+// ou par un nom propre ou un sigle (« Marine Le Pen », « HLM ») ; « Retire un
+// levier… » (verbe sans sujet) est signalé.
+const DEBUTS_ADMIS = new Set(["le", "la", "l", "les", "un", "une", "aucun", "aucune", "ce", "cette", "son", "sa", "ses"]);
+
+function commenceParUnSujet(texte) {
+  const mots = String(texte ?? "").trim().match(/^(\p{L}+)(?:[’'\s-]+(\p{L}+))?/u);
+  if (!mots) return false;
+  const [, premier, second] = mots;
+  if (DEBUTS_ADMIS.has(premier.toLowerCase())) return true;
+  if (premier.length > 1 && premier === premier.toUpperCase()) return true; // sigle
+  return /^\p{Lu}/u.test(premier) && Boolean(second) && /^\p{Lu}/u.test(second); // nom propre
+}
+
+// Deux nombres séparés seulement par une espace (« depuis 2000 20 à 25 % »),
+// hors séparateur de milliers (« 1 100 communes », « 2 900 000 »).
+export function nombresColles(texte) {
+  return [...String(texte ?? "").matchAll(/(\d+(?:,\d+)?)[  ](\d+(?:,\d+)?)/g)]
+    .filter(([, a, b]) => !(/^\d{1,3}$/.test(a) && /^\d{3}$/.test(b)))
+    .map(([tout]) => tout);
+}
+
+// Liste de { cle, message } pour la page de partage et scripts/reseaux.js.
+export function avertissementsReseaux(reseaux) {
+  if (!reseaux) return [];
+  const avertissements = [];
+  const tient = reseaux.tient ?? {};
+  if (tient.titre_source === "modele") {
+    avertissements.push({
+      cle: "tient.titre",
+      message: `Titre écrit par le modèle (le titre court de la fiche manque ou dépasse ${TITRE_TIENT_MAX} caractères) : « ${tient.titre} ».`,
+    });
+  }
+  if (tient.points_retires) {
+    avertissements.push({
+      cle: "tient.tweet",
+      message: `${tient.points_retires} point(s) retiré(s) du tweet pour tenir en ${LONGUEUR_X_MAX} caractères (l'image les garde).`,
+    });
+  }
+  for (const [cote, emoji] of [["tient_court", "✅"], ["tient_pas_court", "❌"]]) {
+    (tient[cote] ?? []).forEach((court, i) => {
+      if (!commenceParUnSujet(court)) {
+        avertissements.push({ cle: `tient.${cote}.${i}`, message: `Version courte sans sujet apparent : « ${emoji} ${court} ».` });
+      }
+    });
+  }
+  const textes = [
+    ...(reseaux.fil ?? []).map((texte, i) => [`fil.${i}`, texte]),
+    ["chiffre.tweet", reseaux.chiffre?.tweet],
+    ["chiffre.explication", reseaux.chiffre?.explication],
+    ["tient.tweet", tient.tweet],
+    ...(tient.tient ?? []).map((texte, i) => [`tient.tient.${i}`, texte]),
+    ...(tient.tient_pas ?? []).map((texte, i) => [`tient.tient_pas.${i}`, texte]),
+  ];
+  for (const [cle, texte] of textes) {
+    for (const extrait of nombresColles(texte)) {
+      avertissements.push({ cle, message: `Deux nombres côte à côte : « ${extrait} ».` });
+    }
+  }
+  return avertissements;
 }
 
 // Lien « Ouvrir dans X », texte prérempli (l'image se joint à la main).

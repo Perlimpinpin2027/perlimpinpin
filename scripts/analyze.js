@@ -7,7 +7,7 @@ import { PrismaNeon } from "@prisma/adapter-neon";
 import { neonConfig } from "@neondatabase/serverless";
 import ws from "ws";
 import { cleanContenu } from "./lib/clean-text.js";
-import { PARTIES_PAR_TWEET, ecrirePartie, lirePartie } from "../src/lib/reseaux.js";
+import { PARTIES_PAR_TWEET, ecrirePartie, lirePartie, retirerUnPointDuTweet } from "../src/lib/reseaux.js";
 import {
   validateEtape1Structure,
   validateFicheCompleteStructure,
@@ -948,11 +948,23 @@ export function fichePourReseaux(ficheFinale) {
 // parties raccourcies (les autres inchangées).
 const PASSES_RACCOURCISSEMENT = 3;
 
-async function raccourcirParties(parties, tropLongs, tropDeMots = []) {
+// Champs posés par le code dans les parties, jamais renvoyés au modèle.
+const CHAMPS_DU_CODE = new Set(["titre_source", "dans_le_tweet"]);
+
+// Bloc « Règles communes » de data/prompt-reseaux.md, redonné tel quel à
+// chaque passe de raccourcissement (règles de fond, pas seulement la longueur).
+export function reglesCommunes(prompt) {
+  const debut = prompt.indexOf("Règles communes");
+  const fin = prompt.indexOf("\nFormat 1", debut);
+  return debut >= 0 ? prompt.slice(debut, fin >= 0 ? fin : undefined).trim() : "";
+}
+
+async function raccourcirParties(parties, tropLongs, tropDeMots = [], regles = "") {
   const extrait = (cles) => JSON.stringify(Object.fromEntries(cles.map((partie) => [partie, lirePartie(parties, partie)])), null, 2);
   const message = [
     "Raccourcis ces parties de tweets de Perlimpinpin.ai, comme indiqué pour chacune. Les caractères sont comptés comme le fait X : un emoji, « € », « … » ou « ↓ » comptent 2. Vise une marge de 5 caractères ou d'un mot.",
     "Ne change pas : les marqueurs entre accolades ({NOM}…), les chiffres et leur nature (total, annuel, national, partiel…), les sources citées, le sens. Raccourcis en supprimant des mots. Chaque point ✅ ou ❌, version longue ou courte, garde son sujet (« L'abrogation… », « Le foncier promis… »). Pas de tiret cadratin. Une liste reste une liste du même nombre de points, dans le même ordre.",
+    ...(regles ? ["Les règles de fond restent toutes valables pendant le raccourcissement :", regles] : []),
     'Réponds uniquement en JSON, avec les mêmes clés : { "<clé>": "<texte>" ou ["<point>", …] }.',
     "",
     ...tropLongs.map(({ cle, excedent, parties: cles }) =>
@@ -999,36 +1011,49 @@ export async function genererReseaux(ficheFinale, { candidatNom, score }) {
   // derniereAssemblee : ses tweets assemblés (affichés en cas d'échec).
   let derniere = null;
   let derniereAssemblee = null;
-  let raccourciTente = false;
-  const contexte = { ficheFinale: fiche, candidatNom, score };
+  // Titre « tient » : celui de la fiche s'il fait 40 caractères au plus
+  // (appliquerTitreFiche, src/lib/reseaux.js), sinon celui du modèle.
+  const contexte = { ficheFinale: fiche, candidatNom, score, titreFiche: ficheFinale?.titre_fiche };
+  const regles = reglesCommunes(prompt);
+
+  const retenir = (validation) => {
+    derniere = validation.parties ?? derniere;
+    derniereAssemblee = validation.assemble ?? derniereAssemblee;
+    errors = validation.errors;
+  };
 
   // Dès que les seules erreurs sont « mécaniques » (trop de caractères ou de
-  // mots) : un raccourcissement
-  // ciblé plutôt qu'une réécriture complète, jusqu'à PASSES_RACCOURCISSEMENT
-  // passes, chacune avec l'excédent restant (une seule série par fiche).
+  // mots) : un raccourcissement ciblé plutôt qu'une réécriture complète,
+  // jusqu'à PASSES_RACCOURCISSEMENT passes (une série par essai), chacune
+  // avec l'excédent restant. En dernier recours, si seul le tweet « tient »
+  // dépasse encore, le code retire un point du tweet (l'image les garde).
   async function essayerRaccourcir(validation) {
-    if (raccourciTente || !validation.seulementRaccourcir) return null;
-    raccourciTente = true;
+    if (!validation.seulementRaccourcir) return null;
     let courante = validation;
-    for (let passe = 1; passe <= PASSES_RACCOURCISSEMENT; passe++) {
+    for (let passe = 1; passe <= PASSES_RACCOURCISSEMENT && !courante.valid && courante.seulementRaccourcir; passe++) {
       try {
         console.error(
           `  ↺  Étape 3 ter : raccourcissement ${passe}/${PASSES_RACCOURCISSEMENT} : ${[...courante.tropLongs.map((t) => `${t.cle} (−${t.excedent} car.)`), ...courante.tropDeMots.map((t) => `${t.partie} (≤ ${t.max} mots)`)].join(", ")}…`,
         );
-        const raccourci = await raccourcirParties(courante.parties, courante.tropLongs, courante.tropDeMots);
+        const raccourci = await raccourcirParties(courante.parties, courante.tropLongs, courante.tropDeMots, regles);
         usage = addUsage(usage, raccourci.usage);
         courante = validatePartiesReseaux(raccourci.parties, contexte);
-        derniere = courante.parties ?? derniere;
-        derniereAssemblee = courante.assemble ?? derniereAssemblee;
-        errors = courante.errors;
-        if (courante.valid) return courante.reseaux;
-        if (!courante.seulementRaccourcir) return null;
+        retenir(courante);
       } catch (error) {
         console.error(`     raccourcissement impossible : ${error.message}`);
         return null;
       }
     }
-    return null;
+    const seulTient = (v) =>
+      !v.valid && v.seulementRaccourcir && v.tropDeMots.length === 0 && v.tropLongs.every((t) => t.cle === "tient.tweet");
+    while (seulTient(courante)) {
+      const replie = retirerUnPointDuTweet(courante.parties);
+      if (!replie) break;
+      console.error("  ↺  Étape 3 ter : dernier recours, un point retiré du tweet « tient » (l'image le garde).");
+      courante = validatePartiesReseaux(replie, contexte);
+      retenir(courante);
+    }
+    return courante.valid ? courante.reseaux : null;
   }
 
   for (let tentative = 1; tentative <= 2; tentative++) {
@@ -1047,7 +1072,7 @@ Les erreurs désignent les tweets assemblés : ${Object.entries(PARTIES_PAR_TWEE
         .join(" ; ")}.
 
 Ta réponse précédente :
-${JSON.stringify(derniere, null, 2)}`;
+${JSON.stringify(derniere, (cle, valeur) => (CHAMPS_DU_CODE.has(cle) ? undefined : valeur), 2)}`;
 
     try {
       const data = await callReseaux(userMessage);
@@ -1056,8 +1081,8 @@ ${JSON.stringify(derniere, null, 2)}`;
       const validation = validatePartiesReseaux(raw, contexte);
       derniere = validation.parties ?? raw;
       derniereAssemblee = validation.assemble;
-      if (validation.valid) return { reseaux: validation.reseaux, usage, errors: [] };
       errors = validation.errors;
+      if (validation.valid) return { reseaux: validation.reseaux, usage, errors: [] };
       const raccourcis = await essayerRaccourcir(validation);
       if (raccourcis) {
         console.log("  ✓ Étape 3 ter : tweets raccourcis et acceptés.");
