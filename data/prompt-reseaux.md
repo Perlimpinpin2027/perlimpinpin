@@ -25,7 +25,7 @@ Format 1, « fil » (4 tweets). Le code assemble :
 - Tweet 4 : « 4/ L’angle mort de la proposition de <nom> : <angle_mort> », puis, si tu en donnes un, ligne vide et « Point solide : <point_solide> », puis ligne vide et « Analyse complète 👇 <lien> ».
 Tu écris :
 - `accroche` : « <la mesure en une ligne> : <premier verdict très court>. » L'accroche reprend la conclusion de la fiche sans la renforcer : pas d'adjectif évaluatif (efficace, réussi, désastreux…) absent du verdict final.
-- `suspense` : une phrase de 12 mots au plus vers le point le plus surprenant de la fiche, sans la flèche.
+- `suspense` : une phrase de 15 mots au plus vers le point le plus surprenant de la fiche, sans la flèche.
 - `tweet2` : le mécanisme de la mesure et un chiffre sourcé, avec {NOM} au moins une fois. Sans « 2/ ».
 - `tweet3` : la vérification : ce que vaut l'argument ou le chiffre du candidat face à une source indépendante, avec {NOM} au moins une fois. Sans « 3/ ».
 - `angle_mort` : l'effet imprévu ou le risque, en une ou deux phrases, sans « L'angle mort ».
@@ -42,7 +42,7 @@ Tu écris :
 - `titre` : la mesure en 6 mots au plus.
 - `tient` : 2 ou 3 points tirés de « Ce qui tient » du verdict final. S'il n'y a qu'un seul point solide dans la fiche, n'en invente pas un second : mets-en un seul.
 - `tient_pas` : 2 ou 3 points tirés de « Ce qui ne tient pas ».
-- Pour chaque point : `texte` (pour l'image, 15 mots au plus) et `court` (pour le tweet, 8 mots au plus, sans emoji). Le `court` dit exactement la même chose que son `texte`, en plus bref : même fait, même chiffre, même nature de chiffre. Mets en premier les points les plus importants : seuls les 2 premiers de chaque côté vont dans le tweet.
+- Pour chaque point : `texte` (pour l'image, 15 mots au plus) et `court` (pour le tweet, 10 mots au plus, sans emoji). Le `court` dit exactement la même chose que son `texte`, en plus bref : même fait, même chiffre, même nature de chiffre. Mets en premier les points les plus importants : seuls les 2 premiers de chaque côté vont dans le tweet.
 
 Réponds uniquement en JSON :
 { "fil": { "accroche": "…", "suspense": "…", "tweet2": "…", "tweet3": "…", "angle_mort": "…", "point_solide": "…" }, "chiffre": { "valeur": "…", "explication": "…", "mesure_courte": "…" }, "tient": { "titre": "…", "tient": [{ "texte": "…", "court": "…" }], "tient_pas": [{ "texte": "…", "court": "…" }] } }

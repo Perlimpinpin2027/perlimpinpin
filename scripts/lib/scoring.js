@@ -1,7 +1,6 @@
 import { z } from "zod";
 import {
   LONGUEUR_X_MAX,
-  MARQUEURS,
   MARQUEURS_PAR_TWEET,
   PARTIES_PAR_TWEET,
   appliquerTitreFiche,
@@ -10,6 +9,7 @@ import {
   longueurX,
   normaliserParties,
   remplirTweet,
+  retirerUnPointDuTweet,
   valeursReseaux,
 } from "../../src/lib/reseaux.js";
 
@@ -601,6 +601,7 @@ export const ReseauxSchema = z.object({
     // du tweet par le repli (voir retirerUnPointDuTweet, src/lib/reseaux.js).
     titre_source: z.enum(["fiche", "modele"]).optional(),
     points_retires: z.number().int().positive().optional(),
+    entete_court: z.boolean().optional(),
     tweet: TexteReseaux,
   }),
 });
@@ -648,7 +649,7 @@ export const PartiesReseauxSchema = z.object({
     mesure_courte: PartieTexte,
   }),
   // Chaque point : `texte` pour l'image (15 mots au plus), `court` pour le
-  // tweet (8 mots au plus) ; le tweet reprend les 2 premiers de chaque côté.
+  // tweet (10 mots au plus) ; le tweet reprend les 2 premiers de chaque côté.
   tient: z.object({
     titre: PartieTexte,
     tient: z.array(z.object({ texte: PartieTexte, court: PartieTexte })).min(1).max(3),
@@ -656,22 +657,25 @@ export const PartiesReseauxSchema = z.object({
     // Posés par le code, jamais par le modèle (conservés entre deux passes).
     titre_source: z.enum(["fiche", "modele"]).optional(),
     dans_le_tweet: z.object({ tient: z.number().int().min(1), tient_pas: z.number().int().min(1) }).optional(),
+    entete_court: z.boolean().optional(),
   }),
 });
 
 // Valide les parties écrites par le modèle : schéma, puis assemblage par le
-// code et tous les contrôles de validateReseaux sur les tweets assemblés.
+// code, repli du tweet « tient » s'il dépasse 280 caractères (quelles que
+// soient les autres erreurs), et contrôles bloquants de validateReseaux.
 // Renvoie aussi `parties` (normalisées) et `assemble`, même en cas de refus
 // (pour le nouvel essai, le raccourcissement et l'affichage) ; chaque tweet
 // trop long porte la liste des parties à raccourcir.
 export function validatePartiesReseaux(raw, contexte = {}) {
   const zodResult = PartiesReseauxSchema.safeParse(raw);
   if (!zodResult.success) {
-    return { valid: false, errors: zodErreurs(zodResult.error), reseaux: null, parties: null, assemble: null, tropLongs: [], tropDeMots: [], seulementRaccourcir: false };
+    return { valid: false, errors: zodErreurs(zodResult.error), reseaux: null, parties: null, assemble: null, tropLongs: [], seulementRaccourcir: false };
   }
   // Titre « tient » : celui de la fiche quand il convient (contexte.titreFiche).
   const normalisees = normaliserParties(zodResult.data);
-  const parties = "titreFiche" in contexte ? appliquerTitreFiche(normalisees, contexte.titreFiche) : normalisees;
+  const avecTitre = "titreFiche" in contexte ? appliquerTitreFiche(normalisees, contexte.titreFiche) : normalisees;
+  const parties = replierTweetTient(avecTitre, contexte);
   const assemble = assemblerReseaux(parties);
   const validation = validateReseaux(assemble, contexte);
   return {
@@ -686,131 +690,51 @@ export function validatePartiesReseaux(raw, contexte = {}) {
   };
 }
 
-// Points du tweet « tient » : lignes commençant par ✅ ou ❌.
-function pointsDuTweet(texte, emoji) {
-  return texte
-    .split("\n")
-    .map((ligne) => ligne.trim())
-    .filter((ligne) => ligne.startsWith(emoji))
-    .map((ligne) => ligne.slice(emoji.length).trim());
+// Repli du tweet « tient » tant qu'il dépasse 280 caractères : retirer un point
+// du tweet (au moins 1 de chaque côté, l'image les garde), puis, si cela ne
+// suffit pas, l'en-tête court (sans « la proposition de »). Sans nom de
+// candidat ni score, la longueur ne peut pas être mesurée : rien n'est fait.
+function replierTweetTient(parties, { candidatNom, score, handles } = {}) {
+  if (!candidatNom || score === undefined) return parties;
+  const valeurs = valeursReseaux({ candidatNom, score, handles });
+  const longueur = (p) => longueurX(remplirTweet(assemblerReseaux(p).tient.tweet, valeurs));
+  let courantes = parties;
+  while (longueur(courantes) > LONGUEUR_X_MAX) {
+    const replie = retirerUnPointDuTweet(courantes);
+    if (!replie) break;
+    courantes = replie;
+  }
+  if (longueur(courantes) > LONGUEUR_X_MAX) courantes = { ...courantes, tient: { ...courantes.tient, entete_court: true } };
+  return courantes;
 }
 
-// Textes des images et versions courtes des points : sans aucun marqueur.
-function textesCartes(r) {
-  return [
-    ["chiffre.valeur", r.chiffre.valeur],
-    ["chiffre.explication", r.chiffre.explication],
-    ["tient.titre", r.tient.titre],
-    ...r.tient.tient.map((point, i) => [`tient.tient.${i}`, point]),
-    ...r.tient.tient_pas.map((point, i) => [`tient.tient_pas.${i}`, point]),
-    ...(r.tient.tient_court ?? []).map((point, i) => [`tient.tient.${i}.court`, point]),
-    ...(r.tient.tient_pas_court ?? []).map((point, i) => [`tient.tient_pas.${i}.court`, point]),
-  ];
-}
-
-// [clé affichée, lecture, maximum de mots, partie variable à raccourcir]
-const LIMITES_MOTS = [
-  // Titre venu de la fiche : pas de limite de mots (40 caractères au plus).
-  ["tient.titre", (r) => (r.tient.titre_source === "fiche" ? [] : [r.tient.titre]), 6, "tient.titre"],
-  ["chiffre.explication", (r) => [r.chiffre.explication], 20, "chiffre.explication"],
-  ["tient.tient", (r) => r.tient.tient, 15, "tient.textes_tient"],
-  ["tient.tient_pas", (r) => r.tient.tient_pas, 15, "tient.textes_tient_pas"],
-  ["tient.tient (court)", (r) => r.tient.tient_court ?? [], 8, "tient.courts_tient"],
-  ["tient.tient_pas (court)", (r) => r.tient.tient_pas_court ?? [], 8, "tient.courts_tient_pas"],
-];
-
-function nombreDeMots(texte) {
-  return texte.split(/\s+/).filter((mot) => /[\p{L}\p{N}]/u.test(mot)).length;
-}
-
-// Libellés repérés tels quels dans un texte. « fragile », « exemplaire » et
-// « irréaliste » sont aussi des mots courants (« un financement fragile ») :
-// seuls les libellés de plusieurs mots sont donc recherchés, {APPRECIATION}
-// restant de toute façon obligatoire dans le premier tweet.
-const APPRECIATIONS = APPRECIATION_BANDS.map((band) => band.label).filter((label) => label.includes(" "));
-
-// Contrôles du code sur la sortie de l'étape 3 ter. `candidatNom` et `score`
-// servent à mesurer les tweets une fois les marqueurs remplis.
+// Contrôles BLOQUANTS sur la sortie assemblée de l'étape 3 ter : tweet de plus
+// de 280 caractères, nombre absent de la fiche, marqueur obligatoire manquant,
+// tiret cadratin. Tout le reste (limites de mots, compte X écrit à la main,
+// note ou appréciation écrite par le modèle…) n'est qu'un avertissement de
+// relecture (avertissementsReseaux, src/lib/reseaux.js), sans refus.
+// `candidatNom` et `score` servent à mesurer les tweets une fois les marqueurs
+// remplis.
 export function validateReseaux(raw, { ficheFinale, candidatNom, score, handles } = {}) {
   const zodResult = ReseauxSchema.safeParse(raw);
-  if (!zodResult.success) return { valid: false, errors: zodErreurs(zodResult.error), reseaux: null };
+  if (!zodResult.success) return { valid: false, errors: zodErreurs(zodResult.error), reseaux: null, tropLongs: [], seulementRaccourcir: false };
   const r = zodResult.data;
   const errors = [];
-  // Erreurs « mécaniques » (trop de caractères ou de mots) : corrigeables par
-  // un simple raccourcissement des parties en cause (raccourcirParties dans
-  // scripts/analyze.js). tropDeMots : partie variable -> maximum de mots.
-  let mecaniques = 0;
-  const tropDeMots = new Map();
-  const motsEnTrop = (partie, max, message) => {
-    errors.push(message);
-    mecaniques += 1;
-    tropDeMots.set(partie, max);
-  };
 
   const tweets = MARQUEURS_TWEETS.map(([cle, lire]) => [cle, lire(r)]);
   const cartes = textesCartes(r);
 
+  // Marqueurs obligatoires.
   for (const [cle, lire, obligatoires] of MARQUEURS_TWEETS) {
     const texte = lire(r);
     for (const marqueur of obligatoires) {
       if (!texte.includes(`{${marqueur}}`)) errors.push(`${cle} : le marqueur {${marqueur}} manque.`);
     }
-    if (cle !== "fil.0" && cle.startsWith("fil.") && texte.includes("{CANDIDAT}")) {
-      errors.push(`${cle} : {CANDIDAT} (le compte X) est réservé au premier tweet ; utilise {NOM}.`);
-    }
-  }
-  for (const [cle, texte] of tweets) {
-    for (const [, nom] of texte.matchAll(/\{([^}]*)\}/g)) {
-      if (!MARQUEURS.includes(nom)) errors.push(`${cle} : marqueur inconnu {${nom}}.`);
-    }
-    if (/(^|\s)@\w/.test(texte)) errors.push(`${cle} : n'écris aucun compte X (@…), utilise {CANDIDAT}.`);
-  }
-  for (const [cle, texte] of cartes) {
-    if (/\{[A-Z]+\}/.test(texte)) errors.push(`${cle} : texte d'image, aucun marqueur n'est permis.`);
   }
 
-  // Score et appréciation : insérés par le code, jamais écrits par le modèle.
+  // Tiret cadratin.
   for (const [cle, texte] of [...tweets, ...cartes]) {
-    if (/\d+(?:[.,]\d+)?\s*\/\s*100/.test(texte)) errors.push(`${cle} : n'écris pas de note sur 100, utilise {SCORE}.`);
-    if (/[🔴🟠🟡🟢]/u.test(texte)) errors.push(`${cle} : n'écris pas de pastille, utilise {PASTILLE}.`);
-    const appreciation = APPRECIATIONS.find((label) => texte.toLowerCase().includes(label.toLowerCase()));
-    if (appreciation) errors.push(`${cle} : n'écris pas l'appréciation « ${appreciation} », utilise {APPRECIATION}.`);
     if (texte.includes("—")) errors.push(`${cle} : tiret cadratin interdit.`);
-  }
-
-  // Tweet 1 : la phrase de suspense (dernière ligne, terminée par « ↓ ») fait 12 mots au plus.
-  const suspense = r.fil[0].split("\n").map((ligne) => ligne.trim()).filter(Boolean).at(-1) ?? "";
-  if (!suspense.endsWith("↓")) errors.push("fil.0 : la dernière ligne doit être la phrase de suspense, terminée par « ↓ ».");
-  else if (nombreDeMots(suspense) > 12) {
-    motsEnTrop("fil.suspense", 12, `fil.0 : phrase de suspense de ${nombreDeMots(suspense)} mots (12 au plus) : « ${suspense} ».`);
-  }
-
-  // Tweet 4 : « 4/ L’angle mort de la proposition de {NOM} : … ».
-  if (!/^4\/ L[’']angle mort de la proposition (de |d[’'])\{NOM\}/.test(r.fil[3])) {
-    errors.push("fil.3 : doit commencer par « 4/ L’angle mort de la proposition de {NOM} : ».");
-  }
-
-  // Formule de fin, telle quelle, avant le lien.
-  for (const cle of ["fil.3", "tient.tweet"]) {
-    if (!LECTURE_TWEETS[cle](r).includes("Analyse complète 👇")) errors.push(`${cle} : la formule « Analyse complète 👇 » manque.`);
-  }
-
-  // Tweet « tient » : 1 ou 2 points de chaque côté, 8 mots au plus chacun.
-  for (const [emoji, cote, partie] of [["✅", "qui tiennent", "tient.courts_tient"], ["❌", "qui ne tiennent pas", "tient.courts_tient_pas"]]) {
-    const points = pointsDuTweet(r.tient.tweet, emoji);
-    if (points.length < 1 || points.length > 2) {
-      errors.push(`tient.tweet : ${points.length} point(s) ${cote} (lignes « ${emoji} ») ; 1 ou 2 attendus.`);
-    }
-    for (const point of points) {
-      if (nombreDeMots(point) > 8) motsEnTrop(partie, 8, `tient.tweet : ${nombreDeMots(point)} mots pour « ${emoji} ${point} » (8 au plus).`);
-    }
-  }
-
-  for (const [cle, lire, max, partie] of LIMITES_MOTS) {
-    for (const texte of lire(r)) {
-      const mots = nombreDeMots(texte);
-      if (mots > max) motsEnTrop(partie, max, `${cle} : ${mots} mots pour « ${texte} » (${max} au plus).`);
-    }
   }
 
   // Chaque nombre d'un tweet ou d'une image doit figurer dans la fiche finale
@@ -826,8 +750,8 @@ export function validateReseaux(raw, { ficheFinale, candidatNom, score, handles 
 
   // Longueur X, marqueurs remplis (score, compte X ou nom, lien).
   // tropLongs : { cle, texte, excedent } de chaque tweet trop long ; quand ce
-  // sont les seules erreurs, le pipeline peut demander un simple
-  // raccourcissement (raccourcirParties dans scripts/analyze.js).
+  // sont les seules erreurs, le pipeline demande un raccourcissement ciblé
+  // (raccourcirParties dans scripts/analyze.js).
   const tropLongs = [];
   if (candidatNom && score !== undefined) {
     const valeurs = valeursReseaux({ candidatNom, score, handles });
@@ -835,21 +759,26 @@ export function validateReseaux(raw, { ficheFinale, candidatNom, score, handles 
       const longueur = longueurX(remplirTweet(texte, valeurs));
       if (longueur > LONGUEUR_X_MAX) {
         tropLongs.push({ cle, texte, excedent: longueur - LONGUEUR_X_MAX });
-        mecaniques += 1;
         errors.push(`${cle} : ${longueur} caractères comptés par X (${LONGUEUR_X_MAX} au plus) : retire au moins ${longueur - LONGUEUR_X_MAX} caractères.`);
       }
     }
   }
 
   if (errors.length > 0) {
-    return {
-      valid: false,
-      errors,
-      reseaux: null,
-      tropLongs,
-      tropDeMots: [...tropDeMots].map(([partie, max]) => ({ partie, max })),
-      seulementRaccourcir: errors.length === mecaniques,
-    };
+    return { valid: false, errors, reseaux: null, tropLongs, seulementRaccourcir: errors.length === tropLongs.length };
   }
-  return { valid: true, errors: [], reseaux: r, tropLongs: [], tropDeMots: [], seulementRaccourcir: false };
+  return { valid: true, errors: [], reseaux: r, tropLongs: [], seulementRaccourcir: false };
+}
+
+// Textes des images et versions courtes des points.
+function textesCartes(r) {
+  return [
+    ["chiffre.valeur", r.chiffre.valeur],
+    ["chiffre.explication", r.chiffre.explication],
+    ["tient.titre", r.tient.titre],
+    ...r.tient.tient.map((point, i) => [`tient.tient.${i}`, point]),
+    ...r.tient.tient_pas.map((point, i) => [`tient.tient_pas.${i}`, point]),
+    ...(r.tient.tient_court ?? []).map((point, i) => [`tient.tient.${i}.court`, point]),
+    ...(r.tient.tient_pas_court ?? []).map((point, i) => [`tient.tient_pas.${i}.court`, point]),
+  ];
 }

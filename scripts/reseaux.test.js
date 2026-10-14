@@ -100,48 +100,10 @@ test("étape 3 ter : chaque tweet doit mentionner le candidat", () => {
   assert.ok(errors.some((e) => e.startsWith("tient.tweet : le marqueur {CANDIDAT} manque")));
 });
 
-test("étape 3 ter : pas de compte X dans les réponses du fil, ni de @ écrit à la main", () => {
-  const r = valide();
-  r.fil[1] = r.fil[1].replace("{NOM}", "{CANDIDAT} {NOM}");
-  r.chiffre.tweet = r.chiffre.tweet.replace("{CANDIDAT}", "{CANDIDAT} @davidlisnard");
-  const { errors } = validateReseaux(r, contexte);
-  assert.ok(errors.some((e) => e.startsWith("fil.1 : {CANDIDAT}")));
-  assert.ok(errors.some((e) => e.startsWith("chiffre.tweet : n'écris aucun compte X")));
-});
-
-test("étape 3 ter : score, appréciation, tiret cadratin, nombres et marqueurs sur les images", () => {
-  const r = valide();
-  r.fil[1] = "2/ {NOM} : une mesure à 31/100 — Partiellement fondé, pour 500 M€.";
-  r.tient.tient[0] = "{NOM} s'appuie sur un dispositif existant.";
-  const { errors } = validateReseaux(r, contexte);
-  assert.ok(errors.some((e) => e.includes("note sur 100")));
-  assert.ok(errors.some((e) => e.includes("« partiellement fondé »")));
-  assert.ok(errors.some((e) => e.includes("tiret cadratin")));
-  assert.ok(errors.some((e) => e.includes("« 500 »")));
-  assert.ok(errors.some((e) => e.startsWith("tient.tient.0 : texte d'image")));
-  // La numérotation « 2/ » du fil n'est pas un chiffre à vérifier.
-  assert.ok(!errors.some((e) => e.includes("« 2 »")));
-});
-
 test("étape 3 ter : « fragile » au sens courant n'est pas pris pour l'appréciation", () => {
   const r = valide();
   r.fil[3] = r.fil[3].replace("qui financera les travaux ?", "un financement fragile.");
   assert.deepEqual(validateReseaux(r, contexte).errors, []);
-});
-
-test("étape 3 ter : longueur X et limites de mots", () => {
-  const r = valide();
-  r.fil[1] = `2/ {NOM} ${"mot ".repeat(80)}`;
-  r.tient.titre = "Un titre beaucoup trop long pour la carte";
-  r.chiffre.valeur = "141 millions d'euros";
-  assert.equal(validateReseaux(r, contexte).valid, false);
-  const sansValeur = { ...valide(), chiffre: { ...valide().chiffre } };
-  delete sansValeur.chiffre.valeur;
-  assert.ok(validateReseaux(sansValeur, contexte).errors.some((e) => e.startsWith("chiffre.valeur")));
-  r.chiffre.valeur = "141 M€";
-  const { errors } = validateReseaux(r, contexte);
-  assert.ok(errors.some((e) => e.startsWith("fil.1 :") && e.includes("comptés par X")));
-  assert.ok(errors.some((e) => e.startsWith("tient.titre : 8 mots")));
 });
 
 test("fiche envoyée au modèle : sans version basique, anciennes publications ni révision", () => {
@@ -156,35 +118,6 @@ test("coût : l'étape 3 ter s'ajoute seulement quand elle a tourné", () => {
   const avec = buildCoutPipeline({ usage2: null, usage3, usage3bis: {}, usage3ter: { input_tokens: 10_000, output_tokens: 1_000 } });
   assert.equal(avec.coutEstimeParEtape.etape3ter, 0.045);
   assert.equal(avec.coutEstimeTotal, Number((sans.coutEstimeTotal + 0.045).toFixed(4)));
-});
-
-test("tweet 1 : phrase de suspense de 12 mots au plus, terminée par ↓", () => {
-  const r = valide();
-  r.fil[0] = r.fil[0].replace("Un chiffre surprend ↓", "Un chiffre de la fiche surprend beaucoup plus que tout le reste du dossier ↓");
-  assert.ok(validateReseaux(r, contexte).errors.some((e) => e.startsWith("fil.0 : phrase de suspense de 14 mots")));
-  r.fil[0] = r.fil[0].replace(/\n\n[^\n]*↓$/, "");
-  assert.ok(validateReseaux(r, contexte).errors.some((e) => e.includes("terminée par « ↓ »")));
-});
-
-test("tweet 4 : commence par « 4/ L’angle mort de la proposition de {NOM} »", () => {
-  const r = valide();
-  r.fil[3] = "4/ L'angle mort : {NOM} ne dit pas qui financera les travaux.\n\nAnalyse complète 👇\n{LIEN}";
-  assert.ok(validateReseaux(r, contexte).errors.some((e) => e.startsWith("fil.3 : doit commencer")));
-  r.fil[3] = "4/ L'angle mort de la proposition d’{NOM} : le financement.\n\nAnalyse complète 👇\n{LIEN}";
-  assert.ok(!validateReseaux(r, contexte).errors.some((e) => e.startsWith("fil.3")));
-});
-
-test("tweet « tient » : 2 points de chaque côté au plus, 8 mots au plus, distincts de la carte", () => {
-  const r = valide();
-  r.tient.tweet = r.tient.tweet.replace("❌ Le financement des travaux reste flou.", "❌ Le financement des travaux reste flou.\n❌ Rien.");
-  assert.ok(validateReseaux(r, contexte).errors.some((e) => e.includes("3 point(s) qui ne tiennent pas")));
-  const long = valide();
-  long.tient.tweet = long.tient.tweet.replace("✅ Le dispositif existe déjà.", "✅ Le dispositif existe déjà depuis longtemps dans tout le pays.");
-  assert.ok(validateReseaux(long, contexte).errors.some((e) => e.startsWith("tient.tweet : 10 mots")));
-  // Formulation du tweet différente de celle de la carte : acceptée.
-  const court = valide();
-  court.tient.tweet = court.tient.tweet.replace("✅ Le dispositif existe déjà.", "✅ Un dispositif déjà en place.");
-  assert.deepEqual(validateReseaux(court, contexte).errors, []);
 });
 
 // Parties variables conformes (ce que le modèle écrit désormais).
@@ -298,58 +231,6 @@ test("comptes X : renseignés pour les 11 candidats, au bon format", () => {
   assert.equal(handleX("Marine Le Pen"), "@MLP_officiel");
 });
 
-test("formule « Analyse complète 👇 » exigée dans le tweet 4 et le tweet « tient »", () => {
-  const r = valide();
-  r.tient.tweet = r.tient.tweet.replace("Analyse complète 👇", "Analyse 👇");
-  assert.ok(validateReseaux(r, contexte).errors.some((e) => e.startsWith("tient.tweet : la formule « Analyse complète 👇 » manque")));
-});
-
-test("raccourcissement : proposé quand les seules erreurs sont des longueurs ou des nombres de mots", () => {
-  const r = valide();
-  r.fil[1] = `2/ {NOM} ${"mot ".repeat(80)}`.trim();
-  const seul = validateReseaux(r, contexte);
-  assert.equal(seul.seulementRaccourcir, true);
-  assert.deepEqual(seul.tropLongs.map((t) => t.cle), ["fil.1"]);
-  assert.ok(seul.tropLongs[0].excedent > 0 && seul.tropLongs[0].texte.startsWith("2/ {NOM}"));
-  // Trop de mots : encore mécanique, avec la partie et le maximum à respecter.
-  r.tient.titre = "Un titre beaucoup trop long pour la carte";
-  const mots = validateReseaux(r, contexte);
-  assert.equal(mots.seulementRaccourcir, true);
-  assert.deepEqual(mots.tropDeMots, [{ partie: "tient.titre", max: 6 }]);
-  // Un marqueur manquant n'est pas mécanique : nouvel essai complet.
-  r.fil[2] = r.fil[2].replace("{NOM}", "la candidate");
-  assert.equal(validateReseaux(r, contexte).seulementRaccourcir, false);
-});
-
-test("raccourcissement : parties en cause (caractères et mots), écriture sans effet de bord", () => {
-  const p = partiesValides();
-  p.fil.tweet2 = `{NOM} ${"mot ".repeat(80)}`.trim();
-  p.fil.suspense = "Un chiffre de la fiche surprend beaucoup plus que tout le reste du dossier";
-  p.tient.tient_pas[1].court = "Le financement des travaux de rénovation reste encore très flou.";
-  p.tient.tient_pas[2].texte = `Aucune étude ne mesure ${"vraiment ".repeat(15)}l'effet.`;
-  const resultat = validatePartiesReseaux(p, contexte);
-  const parTweet = Object.fromEntries(resultat.tropLongs.map((t) => [t.cle, t.parties]));
-  assert.deepEqual(parTweet["fil.1"], ["fil.tweet2"]);
-  assert.equal(resultat.seulementRaccourcir, true);
-  assert.deepEqual(
-    resultat.tropDeMots.map((t) => `${t.partie}≤${t.max}`).sort(),
-    ["fil.suspense≤12", "tient.courts_tient_pas≤8", "tient.textes_tient_pas≤15"],
-  );
-  const copie = ecrirePartie(p, "fil.tweet2", "{NOM} court.");
-  assert.equal(lirePartie(copie, "fil.tweet2"), "{NOM} court.");
-  assert.notEqual(lirePartie(p, "fil.tweet2"), "{NOM} court.");
-  // Versions courtes et textes des points : lus et réécrits en liste, l'un sans toucher à l'autre.
-  const q = partiesValides();
-  assert.deepEqual(lirePartie(q, "tient.courts_tient_pas"), ["Baisse non chiffrée.", "Financement des travaux flou.", "Effet non mesuré."]);
-  const r2 = ecrirePartie(q, "tient.courts_tient_pas", ["Baisse floue.", "Travaux flous.", "Effet inconnu."]);
-  assert.deepEqual(r2.tient.tient_pas.map((x) => x.court), ["Baisse floue.", "Travaux flous.", "Effet inconnu."]);
-  assert.equal(r2.tient.tient_pas[0].texte, q.tient.tient_pas[0].texte);
-  const r3 = ecrirePartie(q, "tient.textes_tient", ["L'abrogation est simple."]);
-  assert.equal(r3.tient.tient[0].texte, "L'abrogation est simple.");
-  assert.equal(r3.tient.tient[0].court, q.tient.tient[0].court);
-  assert.equal(q.tient.tient_pas[0].court, "Baisse non chiffrée.");
-});
-
 test("minuscule après les deux-points : sauf sigle ou nom propre ; espace avant %", () => {
   assert.equal(minusculeInitiale("Abroger la loi par voie ordinaire suffit."), "abroger la loi par voie ordinaire suffit.");
   assert.equal(minusculeInitiale("Marine Le Pen ne chiffre pas."), "Marine Le Pen ne chiffre pas.");
@@ -416,4 +297,91 @@ test("règles communes du prompt, redonnées aux passes de raccourcissement", as
   assert.ok(regles.startsWith("Règles communes"));
   assert.ok(regles.includes("Jamais deux nombres côte à côte") && regles.includes("Il ou Elle"));
   assert.ok(!regles.includes("Format 1"));
+});
+
+test("refus : seulement marqueur manquant, tiret cadratin, nombre absent de la fiche, plus de 280 caractères", () => {
+  const manque = valide();
+  manque.fil[2] = "3/ Selon la fiche, 2,9 millions de ménages en bénéficient depuis 2021.";
+  assert.ok(validateReseaux(manque, contexte).errors.some((e) => e.startsWith("fil.2 : le marqueur {NOM} manque")));
+  const tiret = valide();
+  tiret.tient.tient[0] = "Le dispositif existe — déjà.";
+  assert.ok(validateReseaux(tiret, contexte).errors.some((e) => e.includes("tiret cadratin")));
+  const nombre = valide();
+  nombre.fil[1] = "2/ {NOM} veut supprimer un dispositif qui coûte 500 M€ par an.";
+  assert.ok(validateReseaux(nombre, contexte).errors.some((e) => e.includes("« 500 »")));
+  const long = valide();
+  long.fil[1] = `2/ {NOM} ${"mot ".repeat(80)}`.trim();
+  const v = validateReseaux(long, contexte);
+  assert.ok(v.errors.some((e) => e.startsWith("fil.1 :") && e.includes("comptés par X")));
+  assert.equal(v.seulementRaccourcir, true);
+  assert.deepEqual(v.tropLongs.map((t) => t.cle), ["fil.1"]);
+  // Avec une autre erreur bloquante : pas de raccourcissement seul, nouvel essai complet.
+  long.fil[2] = manque.fil[2];
+  assert.equal(validateReseaux(long, contexte).seulementRaccourcir, false);
+});
+
+test("avertissements sans refus : mots, compte X, note, pastille ou appréciation écrits à la main", () => {
+  const r = valide();
+  r.fil[0] = r.fil[0].replace("Un chiffre surprend ↓", "Un chiffre de la fiche surprend beaucoup plus que tout le reste du dossier présenté ici ↓");
+  r.fil[1] = "2/ {NOM} et {CANDIDAT} : une mesure à 31/100, Partiellement fondé 🟠, selon @quelquun.";
+  r.tient.titre = "Un titre beaucoup trop long pour la carte";
+  r.chiffre.explication = `Le coût ${"annuel ".repeat(20)}du dispositif.`;
+  r.tient.tient_court = ["Le dispositif existe déjà depuis longtemps dans tout le pays entier."];
+  // Seul refus : les nombres de « 31/100 », absents de la fiche. Ni les mots, ni
+  // le compte X, ni la pastille, ni l'appréciation ne bloquent.
+  assert.deepEqual(
+    validateReseaux(r, contexte).errors.map((e) => e.match(/« (\d+) »/)?.[1]),
+    ["31", "100"],
+  );
+  const messages = avertissementsReseaux(r).map((a) => `${a.cle} | ${a.message}`);
+  for (const attendu of [
+    "fil.0 (suspense) | 16 mots (15 conseillés)",
+    "tient.titre | 8 mots (6 conseillés)",
+    "chiffre.explication | 24 mots (20 conseillés)",
+    "tient.tient (court) | 11 mots (10 conseillés)",
+    "fil.1 | Compte X écrit à la main",
+    "fil.1 | Compte X dans une réponse du fil",
+    "fil.1 | Note sur 100 écrite à la main",
+    "fil.1 | Pastille écrite à la main",
+    "fil.1 | Appréciation « Partiellement fondé » écrite à la main",
+  ]) {
+    assert.ok(messages.some((m) => m.startsWith(attendu)), `manque : ${attendu}\n${messages.join("\n")}`);
+  }
+  // Titre venu de la fiche : pas d'avertissement de mots.
+  assert.ok(!avertissementsReseaux({ tient: { titre: "Un titre de fiche de sept mots", titre_source: "fiche" } }).some((a) => a.cle === "tient.titre"));
+});
+
+test("repli du tweet « tient » avant le contrôle final : point retiré, puis en-tête court", () => {
+  // Un nom très long fait déborder le tweet « tient » même avec 1 point de chaque côté.
+  const p = partiesValides();
+  p.tient.tient.push({ texte: "Un second point.", court: "Un second point qui tient, assez long pour compter." });
+  p.tient.tient_pas = p.tient.tient_pas.map((x) => ({ ...x, court: `${x.court} ${"Encore des précisions utiles. ".repeat(2)}`.trim() }));
+  const resultat = validatePartiesReseaux(p, { ...contexte, candidatNom: "David Lisnard", score: 31 });
+  const tient = resultat.assemble.tient;
+  assert.ok(tient.points_retires >= 1);
+  assert.ok(!resultat.errors.some((e) => e.startsWith("tient.tweet")), resultat.errors.join("\n"));
+  // Toujours trop long avec 1 point de chaque côté : en-tête sans « la proposition de ».
+  const q = partiesValides();
+  q.tient.tient[0].court = `Le dispositif ${"existe ".repeat(18)}`.trim();
+  const court = validatePartiesReseaux(q, { ...contexte, candidatNom: "David Lisnard", score: 31 });
+  assert.equal(court.assemble.tient.entete_court, true);
+  assert.match(court.assemble.tient.tweet, /^Supprimer les certificats d'énergie, \{CANDIDAT\} : ce qui tient/);
+  assert.ok(avertissementsReseaux(court.assemble).some((a) => a.message.startsWith("En-tête raccourci")));
+  // Assez court : ni point retiré, ni en-tête court.
+  const normal = validatePartiesReseaux(partiesValides(), contexte).assemble.tient;
+  assert.ok(!normal.points_retires && !normal.entete_court);
+});
+
+test("raccourcissement : parties du tweet trop long, écriture des points sans effet de bord", () => {
+  const p = partiesValides();
+  p.fil.tweet2 = `{NOM} ${"mot ".repeat(80)}`.trim();
+  const resultat = validatePartiesReseaux(p, contexte);
+  assert.deepEqual(resultat.tropLongs.map((t) => [t.cle, t.parties]), [["fil.1", ["fil.tweet2"]]]);
+  assert.equal(resultat.seulementRaccourcir, true);
+  const q = partiesValides();
+  assert.deepEqual(lirePartie(q, "tient.courts_tient_pas"), ["Baisse non chiffrée.", "Financement des travaux flou.", "Effet non mesuré."]);
+  const r2 = ecrirePartie(q, "tient.courts_tient_pas", ["Baisse floue.", "Travaux flous.", "Effet inconnu."]);
+  assert.deepEqual(r2.tient.tient_pas.map((x) => x.court), ["Baisse floue.", "Travaux flous.", "Effet inconnu."]);
+  assert.equal(r2.tient.tient_pas[0].texte, q.tient.tient_pas[0].texte);
+  assert.equal(q.tient.tient_pas[0].court, "Baisse non chiffrée.");
 });

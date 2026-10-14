@@ -190,6 +190,7 @@ export function normaliserParties(p) {
       // Posés par le code (titre de la fiche, repli), conservés d'une passe à l'autre.
       ...(p.tient.titre_source ? { titre_source: p.tient.titre_source } : {}),
       ...(p.tient.dans_le_tweet ? { dans_le_tweet: p.tient.dans_le_tweet } : {}),
+      ...(p.tient.entete_court ? { entete_court: true } : {}),
     },
   };
 }
@@ -207,11 +208,12 @@ export function appliquerTitreFiche(parties, titreFiche) {
   return copie;
 }
 
-// Dernier recours, quand le tweet « tient » reste trop long après le titre de
-// la fiche et les passes de raccourcissement : le code retire du tweet le 2e
-// point du côté qui en a le plus (à égalité, celui dont la version courte est
-// la plus longue), en gardant au moins 1 point de chaque côté. L'image garde
-// tous ses points. Renvoie null si plus rien ne peut être retiré.
+// Repli du tweet « tient » quand il dépasse 280 caractères, appliqué avant le
+// contrôle final (replierTweetTient, scripts/lib/scoring.js) : le code retire
+// du tweet le 2e point du côté qui en a le plus (à égalité, celui dont la
+// version courte est la plus longue), en gardant au moins 1 point de chaque
+// côté. L'image garde tous ses points. Renvoie null si plus rien ne peut être
+// retiré (l'en-tête court prend alors le relais).
 export function retirerUnPointDuTweet(parties) {
   const actuel = parties.tient.dans_le_tweet ?? {
     tient: Math.min(POINTS_DANS_LE_TWEET, parties.tient.tient.length),
@@ -273,8 +275,12 @@ export function assemblerReseaux(p) {
       tient_pas_court: p.tient.tient_pas.map((point) => point.court),
       ...(p.tient.titre_source ? { titre_source: p.tient.titre_source } : {}),
       ...(retires > 0 ? { points_retires: retires } : {}),
+      ...(p.tient.entete_court ? { entete_court: true } : {}),
       tweet: blocs(
-        `${p.tient.titre}, la proposition de {CANDIDAT} : ce qui tient, ce qui ne tient pas.`,
+        // En-tête court (repli) : sans « la proposition de ».
+        p.tient.entete_court
+          ? `${p.tient.titre}, {CANDIDAT} : ce qui tient, ce qui ne tient pas.`
+          : `${p.tient.titre}, la proposition de {CANDIDAT} : ce qui tient, ce qui ne tient pas.`,
         [...courts("tient").map((court) => `✅ ${court}`), ...courts("tient_pas").map((court) => `❌ ${court}`)].join("\n"),
         "{PASTILLE} {SCORE}/100 · Analyse complète 👇 {LIEN}",
       ),
@@ -387,11 +393,24 @@ export function nombresColles(texte) {
     .map(([tout]) => tout);
 }
 
+// Limites de mots : des avertissements, jamais des refus (les tenir à tout prix
+// poussait le modèle à déformer le sens).
+export const LIMITES_MOTS = { suspense: 15, titre: 6, explication: 20, texte: 15, court: 10 };
+
+export function nombreDeMots(texte) {
+  return String(texte ?? "").split(/\s+/).filter((mot) => /[\p{L}\p{N}]/u.test(mot)).length;
+}
+
+// Libellés d'appréciation de plusieurs mots, repérés tels quels (« fragile »,
+// « exemplaire »… sont aussi des mots courants).
+const APPRECIATIONS = ["Solide et chiffré", "Plausible sous condition", "Partiellement fondé"];
+
 // Liste de { cle, message } pour la page de partage et scripts/reseaux.js.
 export function avertissementsReseaux(reseaux) {
   if (!reseaux) return [];
   const avertissements = [];
   const tient = reseaux.tient ?? {};
+  const fil = reseaux.fil ?? [];
   if (tient.titre_source === "modele") {
     avertissements.push({
       cle: "tient.titre",
@@ -403,6 +422,48 @@ export function avertissementsReseaux(reseaux) {
       cle: "tient.tweet",
       message: `${tient.points_retires} point(s) retiré(s) du tweet pour tenir en ${LONGUEUR_X_MAX} caractères (l'image les garde).`,
     });
+  }
+  if (tient.entete_court) {
+    avertissements.push({ cle: "tient.tweet", message: "En-tête raccourci (« la proposition de » retiré) pour tenir en 280 caractères." });
+  }
+
+  // Limites de mots.
+  const suspense = String(fil[0] ?? "").split("\n").map((ligne) => ligne.trim()).filter(Boolean).at(-1) ?? "";
+  const limites = [
+    ["fil.0 (suspense)", fil[0] ? [suspense.replace(/\s*↓$/u, "")] : [], LIMITES_MOTS.suspense],
+    ["tient.titre", tient.titre_source === "fiche" || !tient.titre ? [] : [tient.titre], LIMITES_MOTS.titre],
+    ["chiffre.explication", reseaux.chiffre?.explication ? [reseaux.chiffre.explication] : [], LIMITES_MOTS.explication],
+    ["tient.tient", tient.tient ?? [], LIMITES_MOTS.texte],
+    ["tient.tient_pas", tient.tient_pas ?? [], LIMITES_MOTS.texte],
+    ["tient.tient (court)", tient.tient_court ?? [], LIMITES_MOTS.court],
+    ["tient.tient_pas (court)", tient.tient_pas_court ?? [], LIMITES_MOTS.court],
+  ];
+  for (const [cle, textes, max] of limites) {
+    for (const texte of textes) {
+      const mots = nombreDeMots(texte);
+      if (mots > max) avertissements.push({ cle, message: `${mots} mots (${max} conseillés) : « ${texte} ».` });
+    }
+  }
+
+  // Compte X, note, pastille ou appréciation écrits à la main au lieu des
+  // marqueurs ; compte X ({CANDIDAT}) dans les réponses du fil.
+  const tweets = [
+    ...fil.map((texte, i) => [`fil.${i}`, texte]),
+    ["chiffre.tweet", reseaux.chiffre?.tweet],
+    ["tient.tweet", tient.tweet],
+  ].filter(([, texte]) => typeof texte === "string");
+  for (const [cle, texte] of tweets) {
+    for (const [, nom] of texte.matchAll(/\{([^}]*)\}/g)) {
+      if (!MARQUEURS.includes(nom)) avertissements.push({ cle, message: `Marqueur inconnu {${nom}}, laissé tel quel.` });
+    }
+    if (/(^|\s)@\w/.test(texte)) avertissements.push({ cle, message: "Compte X écrit à la main (@…) au lieu de {CANDIDAT}." });
+    if (["fil.1", "fil.2", "fil.3"].includes(cle) && texte.includes("{CANDIDAT}")) {
+      avertissements.push({ cle, message: "Compte X dans une réponse du fil : le candidat sera notifié plusieurs fois." });
+    }
+    if (/\d+(?:[.,]\d+)?\s*\/\s*100/.test(texte)) avertissements.push({ cle, message: "Note sur 100 écrite à la main, hors {SCORE}." });
+    if (/[🔴🟠🟡🟢]/u.test(texte)) avertissements.push({ cle, message: "Pastille écrite à la main, hors {PASTILLE}." });
+    const appreciation = APPRECIATIONS.find((label) => texte.toLowerCase().includes(label.toLowerCase()));
+    if (appreciation) avertissements.push({ cle, message: `Appréciation « ${appreciation} » écrite à la main, hors {APPRECIATION}.` });
   }
   for (const [cote, emoji] of [["tient_court", "✅"], ["tient_pas_court", "❌"]]) {
     (tient[cote] ?? []).forEach((court, i) => {
