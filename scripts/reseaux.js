@@ -89,7 +89,7 @@ function afficher(reseaux, valeurs) {
   console.log(`  ${reseaux.chiffre?.valeur ?? "(absent)"} : ${reseaux.chiffre?.explication ?? "(absente)"}`);
   console.log("--- Image « tient / tient pas »");
   console.log(`  ${reseaux.tient?.titre ?? "(absent)"}`);
-  const avertissements = avertissementsReseaux(reseaux);
+  const avertissements = avertissementsReseaux(reseaux, { valeurs });
   if (avertissements.length > 0) {
     console.log("\n--- À relire (avertissements, sans refus)");
     avertissements.forEach(({ cle, message }) => console.log(`  ⚠ ${cle} : ${message}`));
@@ -280,8 +280,11 @@ async function mainLot(host) {
       resultat.cout = coutDe(usage);
       if (!reseaux) throw new Error(`refusée après deux tentatives : ${errors[0] ?? "raison inconnue"}${errors.length > 1 ? ` (+${errors.length - 1} autre(s))` : ""}`);
 
-      afficher(reseaux, valeursReseaux({ candidatNom, score: analyse.scoreFaisabilite, propositionId: id }));
-      resultat.avertissements = avertissementsReseaux(reseaux).length;
+      const valeurs = valeursReseaux({ candidatNom, score: analyse.scoreFaisabilite, propositionId: id });
+      afficher(reseaux, valeurs);
+      const avertissements = avertissementsReseaux(reseaux, { valeurs });
+      resultat.avertissements = avertissements.length;
+      resultat.aRaccourcir = avertissements.filter((a) => a.fort).length;
 
       if (dryRun) {
         resultat.statut = "simulee";

@@ -26,7 +26,7 @@ export default function TweetModifiable({ numero, texteInitial }) {
   }
 
   return (
-    <li className="flex flex-col gap-2 rounded-xl border border-zinc-200 bg-white p-4">
+    <li className={`flex flex-col gap-2 rounded-xl border bg-white p-4 ${tropLong ? "border-red-300" : "border-zinc-200"}`}>
       <div className="flex items-center justify-between gap-2 text-xs text-zinc-500">
         <span className="font-semibold uppercase tracking-wide">
           {numero}
@@ -34,7 +34,7 @@ export default function TweetModifiable({ numero, texteInitial }) {
         </span>
         <span aria-live="polite" className={tropLong ? "font-semibold text-red-700" : ""}>
           {longueur} / {LONGUEUR_X_MAX}
-          {tropLong ? " : trop long" : ""}
+          {tropLong ? " · À raccourcir avant de poster" : ""}
         </span>
       </div>
       <textarea
@@ -52,14 +52,26 @@ export default function TweetModifiable({ numero, texteInitial }) {
         >
           Copier
         </button>
-        <a
-          href={lienIntentionX(texte)}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="rounded-full border border-zinc-300 px-3 py-1 text-xs font-semibold text-zinc-800 transition-colors hover:bg-zinc-100"
-        >
-          Ouvrir dans X
-        </a>
+        {/* Désactivé tant que le texte dépasse 280 caractères comptés par X. */}
+        {tropLong ? (
+          <button
+            type="button"
+            disabled
+            title="Raccourcissez le tweet à 280 caractères au plus"
+            className="cursor-not-allowed rounded-full border border-zinc-200 px-3 py-1 text-xs font-semibold text-zinc-400"
+          >
+            Ouvrir dans X
+          </button>
+        ) : (
+          <a
+            href={lienIntentionX(texte)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-full border border-zinc-300 px-3 py-1 text-xs font-semibold text-zinc-800 transition-colors hover:bg-zinc-100"
+          >
+            Ouvrir dans X
+          </a>
+        )}
         {modifie ? (
           <button
             type="button"

@@ -120,7 +120,7 @@ export function slugCandidat({ nom, photoUrl } = {}) {
   if (depuisPhoto) return depuisPhoto[1];
   return String(nom ?? "")
     .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
+    .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");

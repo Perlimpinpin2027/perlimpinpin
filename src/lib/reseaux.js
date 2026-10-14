@@ -405,12 +405,66 @@ export function nombreDeMots(texte) {
 // « exemplaire »… sont aussi des mots courants).
 const APPRECIATIONS = ["Solide et chiffré", "Plausible sous condition", "Partiellement fondé"];
 
+// Le tweet nomme-t-il le candidat ? Le marqueur ({NOM} ou {CANDIDAT}), son nom
+// complet, ou son nom de famille écrit en toutes lettres (« Le Pen »,
+// « de Villepin » ou « Villepin »), sans tenir compte des accents ni de la casse.
+function sansAccents(texte) {
+  return String(texte ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+}
+
+export function mentionneCandidat(texte, candidatNom) {
+  if (/\{(NOM|CANDIDAT)\}/.test(texte ?? "")) return true;
+  if (!candidatNom) return false;
+  const t = sansAccents(texte);
+  const mots = String(candidatNom).trim().split(/\s+/);
+  const formes = [candidatNom, mots.slice(1).join(" "), mots.at(-1)]
+    .map(sansAccents)
+    .filter((forme) => forme.length >= 3);
+  return formes.some((forme) => t.includes(forme));
+}
+
 // Liste de { cle, message } pour la page de partage et scripts/reseaux.js.
-export function avertissementsReseaux(reseaux) {
+// `valeurs` (valeursReseaux) : nom du candidat et valeurs des marqueurs, pour
+// mesurer les tweets et vérifier que chacun nomme le candidat.
+export function avertissementsReseaux(reseaux, { valeurs } = {}) {
   if (!reseaux) return [];
   const avertissements = [];
   const tient = reseaux.tient ?? {};
   const fil = reseaux.fil ?? [];
+
+  // Avertissement fort : tweet encore trop long après le repli et les passes.
+  if (valeurs) {
+    for (const tweet of tweetsReseaux(reseaux, valeurs)) {
+      if (tweet.longueur > LONGUEUR_X_MAX) {
+        avertissements.push({
+          cle: tweet.cle,
+          fort: true,
+          message: `${tweet.longueur} caractères comptés par X (${LONGUEUR_X_MAX} au plus) : à raccourcir avant de poster.`,
+        });
+      }
+    }
+  }
+
+  // Chaque tweet nomme le candidat, et les autres marqueurs obligatoires sont là.
+  const tweetsAssembles = {
+    "fil.0": fil[0],
+    "fil.1": fil[1],
+    "fil.2": fil[2],
+    "fil.3": fil[3],
+    "chiffre.tweet": reseaux.chiffre?.tweet,
+    "tient.tweet": tient.tweet,
+  };
+  for (const [cle, marqueurs] of Object.entries(MARQUEURS_PAR_TWEET)) {
+    const texte = tweetsAssembles[cle];
+    if (typeof texte !== "string") continue;
+    if (!mentionneCandidat(texte, valeurs?.NOM)) {
+      avertissements.push({ cle, message: "Le candidat n'est pas nommé (ni marqueur, ni nom complet, ni nom de famille)." });
+    }
+    for (const marqueur of marqueurs.filter((m) => m !== "NOM" && m !== "CANDIDAT")) {
+      if (!texte.includes(`{${marqueur}}`)) avertissements.push({ cle, message: `Le marqueur {${marqueur}} manque.` });
+    }
+  }
+
   if (tient.titre_source === "modele") {
     avertissements.push({
       cle: "tient.titre",

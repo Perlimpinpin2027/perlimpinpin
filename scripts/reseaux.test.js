@@ -10,6 +10,7 @@ import {
   lienIntentionX,
   lirePartie,
   longueurX,
+  mentionneCandidat,
   minusculeInitiale,
   nombresColles,
   normaliserParties,
@@ -89,15 +90,6 @@ test("étape 3 ter : une sortie conforme est acceptée", () => {
   const resultat = validateReseaux(valide(), contexte);
   assert.deepEqual(resultat.errors, []);
   assert.equal(resultat.valid, true);
-});
-
-test("étape 3 ter : chaque tweet doit mentionner le candidat", () => {
-  const r = valide();
-  r.fil[2] = "3/ Selon la fiche, 2,9 millions de ménages en bénéficient depuis 2021.";
-  r.tient.tweet = r.tient.tweet.replace("{CANDIDAT}", "le candidat");
-  const { errors } = validateReseaux(r, contexte);
-  assert.ok(errors.some((e) => e.startsWith("fil.2 : le marqueur {NOM} manque")));
-  assert.ok(errors.some((e) => e.startsWith("tient.tweet : le marqueur {CANDIDAT} manque")));
 });
 
 test("étape 3 ter : « fragile » au sens courant n'est pas pris pour l'appréciation", () => {
@@ -299,27 +291,6 @@ test("règles communes du prompt, redonnées aux passes de raccourcissement", as
   assert.ok(!regles.includes("Format 1"));
 });
 
-test("refus : seulement marqueur manquant, tiret cadratin, nombre absent de la fiche, plus de 280 caractères", () => {
-  const manque = valide();
-  manque.fil[2] = "3/ Selon la fiche, 2,9 millions de ménages en bénéficient depuis 2021.";
-  assert.ok(validateReseaux(manque, contexte).errors.some((e) => e.startsWith("fil.2 : le marqueur {NOM} manque")));
-  const tiret = valide();
-  tiret.tient.tient[0] = "Le dispositif existe — déjà.";
-  assert.ok(validateReseaux(tiret, contexte).errors.some((e) => e.includes("tiret cadratin")));
-  const nombre = valide();
-  nombre.fil[1] = "2/ {NOM} veut supprimer un dispositif qui coûte 500 M€ par an.";
-  assert.ok(validateReseaux(nombre, contexte).errors.some((e) => e.includes("« 500 »")));
-  const long = valide();
-  long.fil[1] = `2/ {NOM} ${"mot ".repeat(80)}`.trim();
-  const v = validateReseaux(long, contexte);
-  assert.ok(v.errors.some((e) => e.startsWith("fil.1 :") && e.includes("comptés par X")));
-  assert.equal(v.seulementRaccourcir, true);
-  assert.deepEqual(v.tropLongs.map((t) => t.cle), ["fil.1"]);
-  // Avec une autre erreur bloquante : pas de raccourcissement seul, nouvel essai complet.
-  long.fil[2] = manque.fil[2];
-  assert.equal(validateReseaux(long, contexte).seulementRaccourcir, false);
-});
-
 test("avertissements sans refus : mots, compte X, note, pastille ou appréciation écrits à la main", () => {
   const r = valide();
   r.fil[0] = r.fil[0].replace("Un chiffre surprend ↓", "Un chiffre de la fiche surprend beaucoup plus que tout le reste du dossier présenté ici ↓");
@@ -372,12 +343,53 @@ test("repli du tweet « tient » avant le contrôle final : point retiré, puis 
   assert.ok(!normal.points_retires && !normal.entete_court);
 });
 
+
+test("refus : seulement nombre absent de la fiche et tiret cadratin (le JSON invalide est refusé par le schéma)", () => {
+  const tiret = valide();
+  tiret.tient.tient[0] = "Le dispositif existe — déjà.";
+  assert.ok(validateReseaux(tiret, contexte).errors.some((e) => e.includes("tiret cadratin")));
+  const nombre = valide();
+  nombre.fil[1] = "2/ {NOM} veut supprimer un dispositif qui coûte 500 M€ par an.";
+  assert.ok(validateReseaux(nombre, contexte).errors.some((e) => e.includes("« 500 »")));
+  assert.equal(validatePartiesReseaux({ fil: "pas du bon format" }, contexte).valid, false);
+  // Tweet trop long : accepté, mais signalé (tropLongs) pour le raccourcissement.
+  const long = valide();
+  long.fil[1] = `2/ {NOM} ${"mot ".repeat(80)}`.trim();
+  const v = validateReseaux(long, contexte);
+  assert.equal(v.valid, true);
+  assert.deepEqual(v.tropLongs.map((t) => t.cle), ["fil.1"]);
+  // Candidat non nommé : accepté aussi.
+  const sansNom = valide();
+  sansNom.fil[2] = "3/ Selon la fiche, 2,9 millions de ménages en bénéficient depuis 2021.";
+  assert.equal(validateReseaux(sansNom, contexte).valid, true);
+});
+
+test("avertissements : tweet trop long (fort), candidat non nommé ; nom complet ou nom de famille acceptés", () => {
+  const valeurs = valeursReseaux({ candidatNom: "Marine Le Pen", score: 41, propositionId: 38 });
+  const r = valide();
+  r.fil[1] = `2/ {NOM} ${"mot ".repeat(80)}`.trim();
+  r.fil[2] = "3/ Selon la fiche, 2,9 millions de ménages en bénéficient depuis 2021.";
+  const avertissements = avertissementsReseaux(r, { valeurs });
+  const fort = avertissements.find((a) => a.cle === "fil.1" && a.fort);
+  assert.match(fort.message, /caractères comptés par X \(280 au plus\) : à raccourcir avant de poster/);
+  assert.ok(avertissements.some((a) => a.cle === "fil.2" && a.message.startsWith("Le candidat n'est pas nommé")));
+  // Nom complet, nom de famille (avec ou sans particule, sans accents) : pas d'avertissement.
+  assert.equal(mentionneCandidat("3/ Pour Marine Le Pen, la loi…", "Marine Le Pen"), true);
+  assert.equal(mentionneCandidat("3/ Pour Le Pen, la loi…", "Marine Le Pen"), true);
+  assert.equal(mentionneCandidat("3/ Selon Melenchon…", "Jean-Luc Mélenchon"), true);
+  assert.equal(mentionneCandidat("3/ Pour Villepin…", "Dominique de Villepin"), true);
+  assert.equal(mentionneCandidat("3/ {NOM} affirme…", "Marine Le Pen"), true);
+  assert.equal(mentionneCandidat("3/ La candidate affirme…", "Marine Le Pen"), false);
+  r.fil[2] = "3/ Selon Le Pen, 2,9 millions de ménages en bénéficient depuis 2021.";
+  assert.ok(!avertissementsReseaux(r, { valeurs }).some((a) => a.cle === "fil.2"));
+});
+
 test("raccourcissement : parties du tweet trop long, écriture des points sans effet de bord", () => {
   const p = partiesValides();
   p.fil.tweet2 = `{NOM} ${"mot ".repeat(80)}`.trim();
   const resultat = validatePartiesReseaux(p, contexte);
+  assert.equal(resultat.valid, true);
   assert.deepEqual(resultat.tropLongs.map((t) => [t.cle, t.parties]), [["fil.1", ["fil.tweet2"]]]);
-  assert.equal(resultat.seulementRaccourcir, true);
   const q = partiesValides();
   assert.deepEqual(lirePartie(q, "tient.courts_tient_pas"), ["Baisse non chiffrée.", "Financement des travaux flou.", "Effet non mesuré."]);
   const r2 = ecrirePartie(q, "tient.courts_tient_pas", ["Baisse floue.", "Travaux flous.", "Effet inconnu."]);

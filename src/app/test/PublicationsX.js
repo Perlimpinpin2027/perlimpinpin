@@ -81,9 +81,12 @@ export default function PublicationsX({ proposition, analyse, brouillon = false,
     valeursReseaux({ candidatNom, score: analyse.scoreFaisabilite, propositionId: proposition.id }),
   );
 
-  // Points à relire (jamais bloquants) : titre écrit par le modèle, point
-  // retiré du tweet, version courte sans sujet, nombres côte à côte.
-  const avertissements = avertissementsReseaux(reseaux);
+  // Points à relire (jamais bloquants) : tweet trop long (avertissement fort,
+  // en premier), candidat non nommé, titre écrit par le modèle, point retiré
+  // du tweet, version courte sans sujet, nombres côte à côte…
+  const avertissements = avertissementsReseaux(reseaux, {
+    valeurs: valeursReseaux({ candidatNom, score: analyse.scoreFaisabilite, propositionId: proposition.id }),
+  }).sort((a, b) => Number(Boolean(b.fort)) - Number(Boolean(a.fort)));
 
   return (
     <div className="flex flex-col gap-8">
@@ -91,9 +94,9 @@ export default function PublicationsX({ proposition, analyse, brouillon = false,
         <div role="note" className="rounded-xl border border-orange-300 bg-orange-50 p-4 text-sm text-orange-900">
           <p className="font-semibold">À relire avant de publier</p>
           <ul className="mt-2 flex list-disc flex-col gap-1 pl-5">
-            {avertissements.map(({ cle, message }, i) => (
-              <li key={i}>
-                <span className="font-mono text-xs text-orange-700">{cle}</span> : {message}
+            {avertissements.map(({ cle, message, fort }, i) => (
+              <li key={i} className={fort ? "font-semibold text-red-700" : undefined}>
+                <span className={`font-mono text-xs ${fort ? "text-red-700" : "text-orange-700"}`}>{cle}</span> : {message}
               </li>
             ))}
           </ul>
