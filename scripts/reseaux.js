@@ -1,5 +1,6 @@
-// Génère les publications X (étape 3 ter) d'une fiche DÉJÀ PUBLIÉE et les
-// ajoute à son contenuComplet, sous la clé reseaux.
+// Génère les publications X (étape 3 ter) d'une fiche DÉJÀ PUBLIÉE (ou, avec
+// --brouillon, de son dernier brouillon) et les ajoute à son contenuComplet,
+// sous la clé reseaux.
 //
 //   node scripts/reseaux.js <id> --dry-run
 //       → appelle Claude (étape 3 ter, mêmes contrôles que le pipeline),
@@ -7,6 +8,8 @@
 //   node scripts/reseaux.js <id>
 //       → idem, puis sauvegarde la ligne actuelle dans logs/sauvegardes/,
 //         demande « oui », et écrit.
+//   … --brouillon
+//       → même chose sur le dernier brouillon de la fiche (pas encore publié).
 //
 // <id> : le numéro de la fiche, celui de l'adresse /declarations/<id>.
 // Écriture ciblée : seule la clé contenuComplet.reseaux est ajoutée (ou
@@ -34,7 +37,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
 const SAUVEGARDES_PATH = join(ROOT, "logs", "sauvegardes");
 const INSERTIONS_LOG_PATH = join(ROOT, "logs", "insertions.jsonl");
-const USAGE = "Usage : node scripts/reseaux.js <id de la fiche (/declarations/<id>)> [--dry-run]";
+const USAGE = "Usage : node scripts/reseaux.js <id de la fiche (/declarations/<id>)> [--dry-run] [--brouillon]";
 
 function fail(message) {
   console.error(`Erreur : ${message}`);
@@ -43,10 +46,12 @@ function fail(message) {
 
 const { values, positionals } = parseArgs({
   allowPositionals: true,
-  options: { "dry-run": { type: "boolean", default: false } },
+  options: { "dry-run": { type: "boolean", default: false }, brouillon: { type: "boolean", default: false } },
 });
 const propositionId = Number(positionals[0]);
 if (!Number.isInteger(propositionId)) fail(USAGE);
+// Analyse visée : la dernière publiée, ou le dernier brouillon avec --brouillon.
+const STATUT = values.brouillon ? "brouillon" : "publie";
 if (!process.env.ANTHROPIC_API_KEY) fail("ANTHROPIC_API_KEY n'est pas défini (voir votre fichier .env).");
 
 const prisma = new PrismaClient({ adapter: new PrismaNeon({ connectionString: process.env.DATABASE_URL }) });
@@ -86,11 +91,11 @@ async function main() {
     where: { id: propositionId },
     include: {
       candidat: true,
-      analyses: { where: { statut: "publie" }, orderBy: { createdAt: "desc" }, take: 1 },
+      analyses: { where: { statut: STATUT }, orderBy: { createdAt: "desc" }, take: 1 },
     },
   });
   const analyse = proposition?.analyses[0];
-  if (!analyse) fail(`aucune analyse publiée pour la fiche ${propositionId}.`);
+  if (!analyse) fail(`aucune analyse ${values.brouillon ? "en brouillon" : "publiée"} pour la fiche ${propositionId}.`);
 
   const contenu = analyse.contenuComplet ?? {};
   const candidatNom = proposition.candidat.nom;
@@ -135,7 +140,7 @@ async function main() {
 
   const ok = await confirmerEcriture({
     host,
-    question: `Ajouter les publications X à l'analyse publiée #${analyse.id} (fiche ${propositionId}) ?`,
+    question: `Ajouter les publications X à l'analyse ${values.brouillon ? "en brouillon" : "publiée"} #${analyse.id} (fiche ${propositionId}) ?`,
   });
   if (!ok) {
     console.log("Annulé, rien n'a été modifié.");
@@ -154,7 +159,7 @@ async function main() {
     INSERTIONS_LOG_PATH,
     `${JSON.stringify({ date: new Date().toISOString(), base: host, script: "reseaux", analyseId: analyse.id, propositionId, sauvegarde: cible })}\n`,
   );
-  console.log(`\n✓ Publications X ajoutées à l'analyse #${analyse.id}. Page de partage : /test/reseaux/${propositionId}`);
+  console.log(`\n✓ Publications X ajoutées à l'analyse #${analyse.id}. Page de partage : /test/reseaux/${propositionId}${values.brouillon ? "?brouillon=1" : ""}`);
 }
 
 main()

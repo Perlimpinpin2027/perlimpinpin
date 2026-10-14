@@ -103,7 +103,12 @@ export default function PublicationsX({ proposition, analyse, brouillon = false,
       {reseaux ? null : (
         <p className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
           Pas encore de textes pour cette fiche (étape 3 ter absente ou refusée). Seule la carte du score
-          est disponible. Pour une fiche publiée : <code>node scripts/reseaux.js {proposition.id} --dry-run</code>.
+          est disponible. Pour les générer :{" "}
+          <code>
+            node scripts/reseaux.js {proposition.id}
+            {brouillon ? " --brouillon" : ""} --dry-run
+          </code>
+          .
         </p>
       )}
 

@@ -60,109 +60,10 @@ async function getBrouillons() {
   });
 }
 
-// Rubrique « Publications X » (mode édition) : chaque fiche publiée, avec un
-// lien vers sa page de partage si ses tweets existent, sinon la commande à
-// lancer. Lecture seule. Il n'y a pas de date de publication en base : la date
-// affichée est celle de l'analyse (createdAt), comme sur la fiche publique.
-function RubriquePubliees({ publiees, avecReseaux }) {
-  return (
-    <section aria-labelledby="rubrique-publications-x" className="mt-8 flex flex-col gap-4">
-      <div>
-        <MonoTag>Publications X</MonoTag>
-        <h2 id="rubrique-publications-x" className="mt-2 text-2xl font-extrabold tracking-tight text-zinc-900">
-          Fiches publiées
-        </h2>
-        <p className="mt-1 text-sm text-zinc-500">
-          {publiees.length} fiche{publiees.length > 1 ? "s" : ""}, de la plus récente à la plus ancienne.
-        </p>
-      </div>
-      {publiees.length === 0 ? (
-        <p className="rounded-xl border border-zinc-200 bg-white/60 p-6 text-sm text-zinc-500">Aucune fiche publiée.</p>
-      ) : (
-        <ul className="flex flex-col gap-2">
-          {publiees.map((analyse) => {
-            const { proposition } = analyse;
-            const badge = getScoreBadge(analyse.scoreFaisabilite);
-            return (
-              <li
-                key={analyse.id}
-                className="flex flex-col gap-2 rounded-xl border border-zinc-200 bg-white/70 p-4 sm:flex-row sm:items-center sm:justify-between"
-              >
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs text-zinc-400">
-                    {proposition.candidat.nom} · analyse du {formatDate(analyse.createdAt)} · Mesure #{proposition.id}
-                  </p>
-                  <Link
-                    href={`/declarations/${proposition.id}`}
-                    className="mt-0.5 block text-sm font-semibold text-zinc-900 hover:underline"
-                  >
-                    {displayTitle(proposition)}
-                  </Link>
-                </div>
-                <div className="flex shrink-0 items-center gap-4 sm:text-right">
-                  <span className={`text-lg font-extrabold ${badge.scoreClass}`}>
-                    {formatScore(analyse.scoreFaisabilite)}
-                    <span className="text-xs font-semibold text-zinc-400">/100</span>
-                  </span>
-                  {avecReseaux.has(analyse.id) ? (
-                    <Link
-                      href={`/test/reseaux/${proposition.id}`}
-                      className="text-sm font-semibold text-zinc-800 underline underline-offset-2 hover:opacity-70"
-                    >
-                      Tweets prêts →
-                    </Link>
-                  ) : (
-                    <span className="flex flex-col text-xs text-zinc-400 sm:items-end">
-                      Pas encore de tweets
-                      <code className="font-mono text-zinc-500">node scripts/reseaux.js {proposition.id}</code>
-                    </span>
-                  )}
-                </div>
-              </li>
-            );
-          })}
-        </ul>
-      )}
-    </section>
-  );
-}
-
-// Fiches publiées (mode édition seulement) : la dernière analyse publiée de
-// chaque mesure, de la plus récente à la plus ancienne. Sans le gros JSON.
-async function getPubliees() {
-  const analyses = await prisma.analyse.findMany({
-    where: { statut: "publie" },
-    orderBy: { createdAt: "desc" },
-    select: {
-      id: true,
-      scoreFaisabilite: true,
-      createdAt: true,
-      proposition: {
-        select: { id: true, titre: true, texteOriginal: true, candidat: { select: { nom: true } } },
-      },
-    },
-  });
-  const vues = new Set();
-  return analyses.filter(({ proposition }) => !vues.has(proposition.id) && vues.add(proposition.id));
-}
-
-// Analyses qui ont des publications X (clé reseaux de contenuComplet),
-// calculé par Postgres sans charger le JSON. Lecture seule.
-async function getAnalysesAvecReseaux() {
-  const lignes = await prisma.$queryRaw`
-    SELECT id FROM "Analyse"
-    WHERE jsonb_exists("contenuComplet", 'reseaux')
-  `;
-  return new Set(lignes.map((ligne) => Number(ligne.id)));
-}
-
 export default async function TestPage() {
   const brouillons = await getBrouillons();
-  // Liens vers les publications X : seulement pour les personnes déverrouillées.
-  const editeur = editionConfiguree() && (await isEditor());
-  const [publiees, avecReseaux] = editeur
-    ? await Promise.all([getPubliees(), getAnalysesAvecReseaux()])
-    : [[], new Set()];
+  const configuree = editionConfiguree();
+  const editeur = configuree && (await isEditor());
 
   return (
     <div className="flex min-h-screen flex-col bg-page-gradient font-sans">
@@ -182,9 +83,18 @@ export default async function TestPage() {
             </p>
             {/* Mode édition : n'apparaît que si le code d'édition est configuré
                 sur ce serveur. */}
-            {editionConfiguree() ? (
-              <div className="mt-4 text-zinc-700">
+            {configuree ? (
+              <div className="mt-4 flex flex-wrap items-center gap-3 text-zinc-700">
                 <EditorBar editeur={editeur} />
+                {/* Publications X des fiches : pour les personnes déverrouillées. */}
+                {editeur ? (
+                  <Link
+                    href="/test/reseaux"
+                    className="rounded-full border border-zinc-300 bg-white px-3 py-1 text-xs font-semibold text-zinc-800 transition-colors hover:bg-zinc-100"
+                  >
+                    Publications réseaux sociaux →
+                  </Link>
+                ) : null}
               </div>
             ) : null}
           </div>
@@ -242,29 +152,12 @@ export default async function TestPage() {
                           </p>
                         </div>
                       </Link>
-                      {/* Hors de la carte-lien : pas de lien dans un lien. */}
-                      {editeur ? (
-                        <p className="mt-1 px-5 text-xs">
-                          {avecReseaux.has(analyse.id) ? (
-                            <Link
-                              href={`/test/reseaux/${proposition.id}?brouillon=1`}
-                              className="font-semibold text-zinc-700 underline underline-offset-2 hover:opacity-70"
-                            >
-                              Publications X →
-                            </Link>
-                          ) : (
-                            <span className="text-zinc-400">Pas de publications X</span>
-                          )}
-                        </p>
-                      ) : null}
                     </li>
                   );
                 })}
               </ul>
             </>
           )}
-
-          {editeur ? <RubriquePubliees publiees={publiees} avecReseaux={avecReseaux} /> : null}
         </div>
       </main>
     </div>

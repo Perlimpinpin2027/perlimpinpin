@@ -53,8 +53,8 @@ export default async function PartageReseauxPage({ params, searchParams }) {
     <main className="min-h-screen bg-zinc-50 px-6 py-8 text-zinc-900 sm:px-8">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
         <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
-          <Link href="/test" className="font-semibold underline underline-offset-2 hover:opacity-70">
-            ← Tous les brouillons
+          <Link href="/test/reseaux" className="font-semibold underline underline-offset-2 hover:opacity-70">
+            ← Toutes les publications
           </Link>
           {configuree ? <EditorBar editeur={editeur} /> : null}
         </div>
