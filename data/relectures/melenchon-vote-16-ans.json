@@ -141,6 +141,29 @@
         "titre": "Titre et teasing provisoires",
         "texte": "Titre court proposé pour l'accueil : « Le droit de vote dès 16 ans ». Teasing : « En Autriche, les 16-17 ans votent plus que leurs aînés de 18 à 20 ans. Mais l'élan survit-il au premier vote ? ». Faut-il les formuler autrement ?"
       }
-    ]
+    ],
+    "archive": {
+      "date": "2026-10-14",
+      "version_suivante": "data/analyses finales/Melenchon/melenchon_vote_16_ans_etape3.json",
+      "synthese": "Aucune note ne change (score global toujours 80/100) ; la fiche intègre des sondages 2026 chiffrant l'avance de Mélenchon chez les 18-24 ans et précise l'absence de données françaises sur la maturité politique des 16-17 ans.",
+      "reponses": [
+        {
+          "commentaire_id": "cmv6r93l4000006jkwmq91vjb",
+          "auteur": "Arno F.",
+          "section": "Verdict final",
+          "commentaire": "Peut-on considérer que les jeunes de moins de 18 ans n'ont pas de connaissance suffisante sur le système politique et la réalité économique, et vont avoir tendance à voter n'importe quoi ?",
+          "reponse": "C'est une vraie question, et elle mérite d'être posée. Les seules données comparables, en Autriche, ne montrent pas de différence nette de maturité ou d'intérêt pour la politique entre les 16-17 ans et les 18-20 ans qui votent juste après eux.\n\nIl existe un léger écart : les 16-17 ans votaient un peu moins souvent pour le parti correspondant précisément à leurs idées, mais les chercheurs eux-mêmes jugent ce résultat fragile.\n\nEn France, on ne dispose d'aucune donnée directe sur ce point précis, faute d'expérience du vote à 16 ans. On a ajouté cette précision dans la fiche pour que ce manque soit explicite, sans que cela change la note.",
+          "retenu": true
+        },
+        {
+          "commentaire_id": "cmv880dls000006if1h9hppoe",
+          "auteur": "Arno F.",
+          "section": "Le résumé de Perlimpinpin IA",
+          "commentaire": "Intéressant. Tu penses que c’est pertinent que l’IA précise que 80% des 16-18 ans déclarent vouloir voter pour JLM ou un truc du genre\n\nComme il s’agit d’une mesure électoraliste il y a sûrement des chiffres dessus16:42",
+          "reponse": "On n'a pas trouvé de chiffre à 80 % précisément sur les 16-17 ans, mais des données récentes vont dans ce sens plus largement. Des sondages d'août et septembre 2026 créditent Jean-Luc Mélenchon de 41 à 45 % des intentions de vote chez les 18-24 ans au premier tour, et d'environ 60 % face à Marine Le Pen au second tour.\n\nCe sont des chiffres sur les 18-24 ans, pas directement sur les 16-17 ans visés par la mesure, donc on ne pouvait pas les transposer tels quels. On les a ajoutés dans la fiche, notamment dans la partie sur les angles morts et dans le critère sur les effets de la mesure, pour documenter plus précisément le soupçon d'avantage partisan.",
+          "retenu": true
+        }
+      ]
+    }
   }
 }
