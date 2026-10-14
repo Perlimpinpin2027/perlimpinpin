@@ -9,7 +9,20 @@ import { handleX } from "./handles-x.js";
 // (scripts/lib/scoring.js) et les pages /test.
 
 export const MARQUEURS = ["CANDIDAT", "NOM", "PASTILLE", "SCORE", "APPRECIATION", "LIEN"];
-export const LONGUEUR_X_MAX = 280;
+// Abonnement X : un post peut dépasser 280 caractères. 280 reste l'objectif
+// conseillé (au-delà, X affiche « Afficher plus ») ; la limite absolue d'un
+// post est 4 000 caractères (au-delà, la sortie est refusée).
+export const LONGUEUR_X_CONSEILLEE = 280;
+export const LONGUEUR_X_LIMITE = 4000;
+
+// Niveau d'un tweet pour l'affichage du compteur : « ok » (280 au plus),
+// « long » (au-delà de 280 : X affichera « Afficher plus », en orange),
+// « limite » (au-delà de 4 000 : impossible à poster, en rouge).
+export function niveauLongueur(longueur) {
+  if (longueur > LONGUEUR_X_LIMITE) return { niveau: "limite", note: "Au-delà de la limite de X (4 000)" };
+  if (longueur > LONGUEUR_X_CONSEILLEE) return { niveau: "long", note: "X affichera « Afficher plus »" };
+  return { niveau: "ok", note: "" };
+}
 export const URL_SITE = "https://perlimpinpin.ai";
 
 const PASTILLES = {
@@ -73,50 +86,20 @@ export const MARQUEURS_PAR_TWEET = {
 // Ce qui est enregistré dans contenuComplet.reseaux est le résultat assemblé,
 // toujours avec ses marqueurs.
 
-// Parties variables de chaque tweet (clé « format.partie »). Pour le tweet
-// « tient », « courts_tient » et « courts_tient_pas » désignent les versions
-// courtes des points (seules les 2 premières de chaque côté vont dans le tweet).
+// Parties variables de chaque tweet (clé « format.partie »), pour dire au
+// modèle à quelles parties correspondent les erreurs d'un nouvel essai. Le
+// tweet « tient » reprend la version courte (`court`) des 2 premiers points de
+// chaque côté.
 export const PARTIES_PAR_TWEET = {
   "fil.0": ["fil.accroche", "fil.suspense"],
   "fil.1": ["fil.tweet2"],
   "fil.2": ["fil.tweet3"],
   "fil.3": ["fil.angle_mort", "fil.point_solide"],
   "chiffre.tweet": ["chiffre.valeur", "chiffre.explication", "chiffre.mesure_courte"],
-  "tient.tweet": ["tient.titre", "tient.courts_tient", "tient.courts_tient_pas"],
+  "tient.tweet": ["tient.titre", "tient.tient", "tient.tient_pas"],
 };
 
 const POINTS_DANS_LE_TWEET = 2;
-
-// Parties « virtuelles » des points : « tient.courts_tient » (toutes les
-// versions courtes d'un côté) et « tient.textes_tient » (tous les textes de
-// l'image), lues et réécrites comme des listes de chaînes.
-function champDesPoints(cle) {
-  const [format, champ] = cle.split(".");
-  const virtuel = format === "tient" ? champ.match(/^(courts|textes)_(tient|tient_pas)$/) : null;
-  return virtuel ? { cote: virtuel[2], propriete: virtuel[1] === "courts" ? "court" : "texte" } : null;
-}
-
-export function lirePartie(parties, cle) {
-  const points = champDesPoints(cle);
-  if (points) return (parties?.tient?.[points.cote] ?? []).map((point) => point[points.propriete]);
-  const [format, champ] = cle.split(".");
-  return parties?.[format]?.[champ];
-}
-
-export function ecrirePartie(parties, cle, valeur) {
-  const copie = structuredClone(parties);
-  const points = champDesPoints(cle);
-  if (points) {
-    valeur.forEach((texte, index) => {
-      const point = copie.tient[points.cote][index];
-      if (point) copie.tient[points.cote][index] = { ...point, [points.propriete]: texte };
-    });
-    return copie;
-  }
-  const [format, champ] = cle.split(".");
-  copie[format] = { ...copie[format], [champ]: valeur };
-  return copie;
-}
 
 // --- Nettoyage par le code -----------------------------------------------------
 
@@ -187,10 +170,8 @@ export function normaliserParties(p) {
       titre: nettoyer(p.tient.titre, { fin: /\.$/ }),
       tient: p.tient.tient.map(nettoyerPoint),
       tient_pas: p.tient.tient_pas.map(nettoyerPoint),
-      // Posés par le code (titre de la fiche, repli), conservés d'une passe à l'autre.
+      // Posé par le code (titre de la fiche ou du modèle).
       ...(p.tient.titre_source ? { titre_source: p.tient.titre_source } : {}),
-      ...(p.tient.dans_le_tweet ? { dans_le_tweet: p.tient.dans_le_tweet } : {}),
-      ...(p.tient.entete_court ? { entete_court: true } : {}),
     },
   };
 }
@@ -208,41 +189,14 @@ export function appliquerTitreFiche(parties, titreFiche) {
   return copie;
 }
 
-// Repli du tweet « tient » quand il dépasse 280 caractères, appliqué avant le
-// contrôle final (replierTweetTient, scripts/lib/scoring.js) : le code retire
-// du tweet le 2e point du côté qui en a le plus (à égalité, celui dont la
-// version courte est la plus longue), en gardant au moins 1 point de chaque
-// côté. L'image garde tous ses points. Renvoie null si plus rien ne peut être
-// retiré (l'en-tête court prend alors le relais).
-export function retirerUnPointDuTweet(parties) {
-  const actuel = parties.tient.dans_le_tweet ?? {
-    tient: Math.min(POINTS_DANS_LE_TWEET, parties.tient.tient.length),
-    tient_pas: Math.min(POINTS_DANS_LE_TWEET, parties.tient.tient_pas.length),
-  };
-  const candidats = ["tient", "tient_pas"]
-    .filter((cote) => actuel[cote] > 1)
-    .map((cote) => ({ cote, n: actuel[cote], longueur: longueurX(parties.tient[cote][actuel[cote] - 1].court) }))
-    .sort((a, b) => b.n - a.n || b.longueur - a.longueur);
-  if (candidats.length === 0) return null;
-  const { cote } = candidats[0];
-  const copie = structuredClone(parties);
-  copie.tient.dans_le_tweet = { ...actuel, [cote]: actuel[cote] - 1 };
-  return copie;
-}
-
 // Tweets assemblés (avec marqueurs) à partir des parties normalisées. L'image
 // « tient » garde les `texte` (15 mots au plus) ; le tweet reprend les `court`
-// des 2 premiers points de chaque côté. Les versions courtes sont aussi
-// enregistrées (tient_court, tient_pas_court) pour la relecture.
+// des 2 premiers points de chaque côté, avec l'en-tête complet. Les versions
+// courtes sont aussi enregistrées (tient_court, tient_pas_court) pour la
+// relecture.
 export function assemblerReseaux(p) {
   const blocs = (...morceaux) => morceaux.filter((m) => m !== null && m !== undefined).join("\n\n");
-  const dansLeTweet = (cote) => p.tient.dans_le_tweet?.[cote] ?? POINTS_DANS_LE_TWEET;
-  const courts = (cote) => p.tient[cote].slice(0, dansLeTweet(cote)).map((point) => point.court);
-  // Points retirés du tweet par le repli (retirerUnPointDuTweet).
-  const retires = ["tient", "tient_pas"].reduce(
-    (total, cote) => total + Math.min(POINTS_DANS_LE_TWEET, p.tient[cote].length) - courts(cote).length,
-    0,
-  );
+  const courts = (cote) => p.tient[cote].slice(0, POINTS_DANS_LE_TWEET).map((point) => point.court);
   return {
     fil: [
       blocs(
@@ -274,13 +228,8 @@ export function assemblerReseaux(p) {
       tient_court: p.tient.tient.map((point) => point.court),
       tient_pas_court: p.tient.tient_pas.map((point) => point.court),
       ...(p.tient.titre_source ? { titre_source: p.tient.titre_source } : {}),
-      ...(retires > 0 ? { points_retires: retires } : {}),
-      ...(p.tient.entete_court ? { entete_court: true } : {}),
       tweet: blocs(
-        // En-tête court (repli) : sans « la proposition de ».
-        p.tient.entete_court
-          ? `${p.tient.titre}, {CANDIDAT} : ce qui tient, ce qui ne tient pas.`
-          : `${p.tient.titre}, la proposition de {CANDIDAT} : ce qui tient, ce qui ne tient pas.`,
+        `${p.tient.titre}, la proposition de {CANDIDAT} : ce qui tient, ce qui ne tient pas.`,
         [...courts("tient").map((court) => `✅ ${court}`), ...courts("tient_pas").map((court) => `❌ ${court}`)].join("\n"),
         "{PASTILLE} {SCORE}/100 · Analyse complète 👇 {LIEN}",
       ),
@@ -288,11 +237,12 @@ export function assemblerReseaux(p) {
   };
 }
 
-// Budget en caractères de chaque partie variable, pour cette fiche : 280 moins
-// les parties fixes remplies (nom ou compte X, appréciation, score, lien
-// compté 23), puis réparti entre les parties du tweet. Pour le tweet
+// Budget CONSEILLÉ en caractères de chaque partie variable, pour cette fiche :
+// 280 moins les parties fixes remplies (nom ou compte X, appréciation, score,
+// lien compté 23), puis réparti entre les parties du tweet. Pour le tweet
 // « tient », un budget total pour les versions courtes reprises (2 de chaque
-// côté au plus).
+// côté au plus). Un objectif, pas une limite : le modèle peut dépasser pour
+// rester exact.
 const PART_FIXE = { suspense: 80, point_solide: 60, valeur: 12, mesure_courte: 50, titre: 40 };
 
 export function budgetsParties(valeurs) {
@@ -303,7 +253,7 @@ export function budgetsParties(valeurs) {
     tient: { titre: "", tient: [pointVide, pointVide], tient_pas: [pointVide, pointVide] },
   };
   const tweets = assemblerReseaux(vides);
-  const reste = (texte, retrait = 0) => LONGUEUR_X_MAX - longueurX(remplirTweet(texte, valeurs)) + retrait;
+  const reste = (texte, retrait = 0) => LONGUEUR_X_CONSEILLEE - longueurX(remplirTweet(texte, valeurs)) + retrait;
   const fil0 = reste(tweets.fil[0]);
   const fil3 = reste(tweets.fil[3], 1); // le « x » du point solide vide
   const chiffre = reste(tweets.chiffre.tweet);
@@ -432,14 +382,14 @@ export function avertissementsReseaux(reseaux, { valeurs } = {}) {
   const tient = reseaux.tient ?? {};
   const fil = reseaux.fil ?? [];
 
-  // Avertissement fort : tweet encore trop long après le repli et les passes.
+  // Au-delà de 280 caractères (objectif conseillé) : X affichera « Afficher
+  // plus ». Simple avertissement : l'abonnement X permet de dépasser.
   if (valeurs) {
     for (const tweet of tweetsReseaux(reseaux, valeurs)) {
-      if (tweet.longueur > LONGUEUR_X_MAX) {
+      if (tweet.longueur > LONGUEUR_X_CONSEILLEE) {
         avertissements.push({
           cle: tweet.cle,
-          fort: true,
-          message: `${tweet.longueur} caractères comptés par X (${LONGUEUR_X_MAX} au plus) : à raccourcir avant de poster.`,
+          message: `${tweet.longueur} caractères comptés par X (${LONGUEUR_X_CONSEILLEE} conseillés) : X affichera « Afficher plus ».`,
         });
       }
     }
@@ -471,14 +421,16 @@ export function avertissementsReseaux(reseaux, { valeurs } = {}) {
       message: `Titre écrit par le modèle (le titre court de la fiche manque ou dépasse ${TITRE_TIENT_MAX} caractères) : « ${tient.titre} ».`,
     });
   }
+  // Fiches générées avant la suppression du repli (octobre 2026) : leur tweet
+  // « tient » enregistré peut avoir perdu un point ou « la proposition de ».
   if (tient.points_retires) {
     avertissements.push({
       cle: "tient.tweet",
-      message: `${tient.points_retires} point(s) retiré(s) du tweet pour tenir en ${LONGUEUR_X_MAX} caractères (l'image les garde).`,
+      message: `${tient.points_retires} point(s) retiré(s) du tweet par l'ancien repli (l'image les garde) : régénérer pour les retrouver.`,
     });
   }
   if (tient.entete_court) {
-    avertissements.push({ cle: "tient.tweet", message: "En-tête raccourci (« la proposition de » retiré) pour tenir en 280 caractères." });
+    avertissements.push({ cle: "tient.tweet", message: "En-tête raccourci par l'ancien repli (« la proposition de » retiré)." });
   }
 
   // Limites de mots.

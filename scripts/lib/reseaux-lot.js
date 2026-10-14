@@ -48,7 +48,7 @@ export function recapitulatif(resultats, { dryRun = false } = {}) {
     ...reussies.map(
       (r) =>
         `  ✓ fiche ${r.propositionId} (${r.candidat}) : ${r.avertissements ?? 0} avertissement(s)` +
-        `${r.aRaccourcir ? `, dont ${r.aRaccourcir} tweet(s) à raccourcir avant de poster` : ""}, ~$${(r.cout ?? 0).toFixed(4)}`,
+        `${r.auDela280 ? `, dont ${r.auDela280} tweet(s) au-delà de 280 (« Afficher plus »)` : ""}, ~$${(r.cout ?? 0).toFixed(4)}`,
     ),
     `Fiches en échec : ${echecs.length}`,
     ...echecs.map((r) => `  ✗ fiche ${r.propositionId} (${r.candidat}) : ${r.raison}`),

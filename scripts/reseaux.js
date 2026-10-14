@@ -38,7 +38,7 @@ import ws from "ws";
 import { avertissementBase, confirmerEcriture, hoteDe } from "./lib/garde-fou-base.js";
 import { LOT_MAX, alertesFiche, choisirFiches, estimationCout, recapitulatif } from "./lib/reseaux-lot.js";
 import { buildCoutPipeline, genererReseaux } from "./analyze.js";
-import { avertissementsReseaux, tweetsReseaux, valeursReseaux, LONGUEUR_X_MAX } from "../src/lib/reseaux.js";
+import { avertissementsReseaux, tweetsReseaux, valeursReseaux, LONGUEUR_X_CONSEILLEE } from "../src/lib/reseaux.js";
 import { handleX } from "../src/lib/handles-x.js";
 import { slugCandidat } from "../src/lib/carte.js";
 
@@ -81,8 +81,8 @@ const coutDe = (usage) => buildCoutPipeline({ usage2: null, usage3: {}, usage3bi
 
 function afficher(reseaux, valeurs) {
   for (const tweet of tweetsReseaux(reseaux, valeurs)) {
-    const alerte = tweet.longueur > LONGUEUR_X_MAX ? "  ⚠️ TROP LONG" : "";
-    console.log(`\n--- ${tweet.cle} (${tweet.longueur}/${LONGUEUR_X_MAX})${alerte}\n${tweet.texte}`);
+    const alerte = tweet.longueur > LONGUEUR_X_CONSEILLEE ? "  (« Afficher plus » sur X)" : "";
+    console.log(`\n--- ${tweet.cle} (${tweet.longueur}/${LONGUEUR_X_CONSEILLEE} conseillés)${alerte}\n${tweet.texte}`);
   }
   // Tolère une réponse incomplète (dernière tentative refusée).
   console.log("\n--- Image « chiffre »");
@@ -284,7 +284,7 @@ async function mainLot(host) {
       afficher(reseaux, valeurs);
       const avertissements = avertissementsReseaux(reseaux, { valeurs });
       resultat.avertissements = avertissements.length;
-      resultat.aRaccourcir = avertissements.filter((a) => a.fort).length;
+      resultat.auDela280 = tweetsReseaux(reseaux, valeurs).filter((t) => t.longueur > LONGUEUR_X_CONSEILLEE).length;
 
       if (dryRun) {
         resultat.statut = "simulee";

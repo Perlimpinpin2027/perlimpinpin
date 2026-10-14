@@ -5,7 +5,8 @@ Règles communes, sans exception :
 - Ton sobre, factuel, non militant. Jamais de moquerie, de qualificatif sur la personne, ni d'ironie. La surprise vient du fait ou du chiffre, jamais du ton.
 - Même traitement pour tous les candidats, quel que soit leur bord : si l'accroche serait choquante pour un autre candidat avec la même note, elle est mauvaise.
 - Pas de tirets cadratins.
-- Après la fiche, le code te donne le budget en caractères de chaque partie, calculé pour cette fiche (un emoji, « € », « … » ou « ↓ » comptent 2) : respecte-le strictement.
+- Vise 280 caractères par tweet. Tu peux dépasser si c'est nécessaire pour rester exact : ne raccourcis jamais au point de déformer un fait.
+- Après la fiche, le code te donne le budget conseillé en caractères de chaque partie, calculé pour cette fiche pour viser 280 par tweet (un emoji, « € », « … » ou « ↓ » comptent 2).
 - Une phrase par idée, des mots courants, aucun sigle non expliqué.
 - Ne jamais changer la nature d'un chiffre : un total reste un total, un montant annuel reste annuel, un chiffre national n'est jamais présenté comme individuel (par commune, par ménage…). Reprendre la formulation de la fiche.
 - Un chiffre partiel ne devient jamais un chiffre global : « la moitié des logements construits en 20 ans » n'est pas « la moitié des logements sociaux ».

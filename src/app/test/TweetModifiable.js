@@ -1,18 +1,24 @@
 "use client";
 
 import { useState } from "react";
-import { LONGUEUR_X_MAX, lienIntentionX, longueurX } from "@/lib/reseaux";
+import { LONGUEUR_X_CONSEILLEE, lienIntentionX, longueurX, niveauLongueur } from "@/lib/reseaux";
 
 // Tweet modifiable de la page de partage (/test/reseaux/[id]) : zone de texte
-// préremplie, compteur de caractères X mis à jour en direct, boutons
-// « Copier » et « Ouvrir dans X » sur le texte modifié. Rien n'est écrit en
-// base ni publié : la modification ne vit que dans cette page (perdue au
-// rechargement).
+// préremplie, compteur de caractères X mis à jour en direct (orange au-delà de
+// 280, rouge au-delà de 4 000), boutons « Copier » et « Ouvrir dans X » sur le
+// texte modifié. Rien n'est écrit en base ni publié : la modification ne vit
+// que dans cette page (perdue au rechargement).
+const COULEURS = {
+  ok: { compteur: "", cadre: "border-zinc-200" },
+  long: { compteur: "font-semibold text-orange-700", cadre: "border-orange-300" },
+  limite: { compteur: "font-semibold text-red-700", cadre: "border-red-300" },
+};
+
 export default function TweetModifiable({ numero, texteInitial }) {
   const [texte, setTexte] = useState(texteInitial);
   const [copie, setCopie] = useState(null);
   const longueur = longueurX(texte);
-  const tropLong = longueur > LONGUEUR_X_MAX;
+  const { niveau, note } = niveauLongueur(longueur);
   const modifie = texte !== texteInitial;
 
   async function copier() {
@@ -26,15 +32,15 @@ export default function TweetModifiable({ numero, texteInitial }) {
   }
 
   return (
-    <li className={`flex flex-col gap-2 rounded-xl border bg-white p-4 ${tropLong ? "border-red-300" : "border-zinc-200"}`}>
+    <li className={`flex flex-col gap-2 rounded-xl border bg-white p-4 ${COULEURS[niveau].cadre}`}>
       <div className="flex items-center justify-between gap-2 text-xs text-zinc-500">
         <span className="font-semibold uppercase tracking-wide">
           {numero}
           {modifie ? <span className="ml-2 normal-case text-amber-700">modifié</span> : null}
         </span>
-        <span aria-live="polite" className={tropLong ? "font-semibold text-red-700" : ""}>
-          {longueur} / {LONGUEUR_X_MAX}
-          {tropLong ? " · À raccourcir avant de poster" : ""}
+        <span aria-live="polite" className={COULEURS[niveau].compteur}>
+          {longueur} / {LONGUEUR_X_CONSEILLEE}
+          {note ? ` · ${note}` : ""}
         </span>
       </div>
       <textarea
@@ -52,26 +58,14 @@ export default function TweetModifiable({ numero, texteInitial }) {
         >
           Copier
         </button>
-        {/* Désactivé tant que le texte dépasse 280 caractères comptés par X. */}
-        {tropLong ? (
-          <button
-            type="button"
-            disabled
-            title="Raccourcissez le tweet à 280 caractères au plus"
-            className="cursor-not-allowed rounded-full border border-zinc-200 px-3 py-1 text-xs font-semibold text-zinc-400"
-          >
-            Ouvrir dans X
-          </button>
-        ) : (
-          <a
-            href={lienIntentionX(texte)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-full border border-zinc-300 px-3 py-1 text-xs font-semibold text-zinc-800 transition-colors hover:bg-zinc-100"
-          >
-            Ouvrir dans X
-          </a>
-        )}
+        <a
+          href={lienIntentionX(texte)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="rounded-full border border-zinc-300 px-3 py-1 text-xs font-semibold text-zinc-800 transition-colors hover:bg-zinc-100"
+        >
+          Ouvrir dans X
+        </a>
         {modifie ? (
           <button
             type="button"

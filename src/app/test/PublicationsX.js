@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element -- image générée par /api/carte, déjà au bon format. */
 import { cheminCarte, slugCandidat, titreCarte } from "@/lib/carte";
-import { LONGUEUR_X_MAX, avertissementsReseaux, tweetsReseaux, valeursReseaux } from "@/lib/reseaux";
+import { LONGUEUR_X_CONSEILLEE, avertissementsReseaux, niveauLongueur, tweetsReseaux, valeursReseaux } from "@/lib/reseaux";
 import TweetModifiable from "./TweetModifiable";
 
 // « Publications X » d'une fiche : pour chaque format, l'image (route
@@ -19,14 +19,16 @@ const FORMATS = [
 
 function Tweet({ tweet, numero, partage }) {
   if (partage) return <TweetModifiable numero={numero} texteInitial={tweet.texte} />;
-  const tropLong = tweet.longueur > LONGUEUR_X_MAX;
+  // Orange au-delà de 280 (« Afficher plus »), rouge au-delà de 4 000.
+  const { niveau, note } = niveauLongueur(tweet.longueur);
+  const couleur = { ok: "", long: "font-semibold text-orange-700", limite: "font-semibold text-red-700" }[niveau];
   return (
     <li className="flex flex-col gap-2 rounded-xl border border-zinc-200 bg-white p-4">
       <div className="flex items-center justify-between gap-2 text-xs text-zinc-500">
         <span className="font-semibold uppercase tracking-wide">{numero}</span>
-        <span className={tropLong ? "font-semibold text-red-700" : ""}>
-          {tweet.longueur} / {LONGUEUR_X_MAX}
-          {tropLong ? " : trop long" : ""}
+        <span className={couleur}>
+          {tweet.longueur} / {LONGUEUR_X_CONSEILLEE}
+          {note ? ` · ${note}` : ""}
         </span>
       </div>
       <p className="whitespace-pre-wrap text-sm leading-relaxed text-zinc-900">{tweet.texte}</p>
@@ -81,12 +83,12 @@ export default function PublicationsX({ proposition, analyse, brouillon = false,
     valeursReseaux({ candidatNom, score: analyse.scoreFaisabilite, propositionId: proposition.id }),
   );
 
-  // Points à relire (jamais bloquants) : tweet trop long (avertissement fort,
-  // en premier), candidat non nommé, titre écrit par le modèle, point retiré
-  // du tweet, version courte sans sujet, nombres côte à côte…
+  // Points à relire (jamais bloquants) : tweet au-delà de 280 (« Afficher
+  // plus »), candidat non nommé, titre écrit par le modèle, version courte sans
+  // sujet, nombres côte à côte…
   const avertissements = avertissementsReseaux(reseaux, {
     valeurs: valeursReseaux({ candidatNom, score: analyse.scoreFaisabilite, propositionId: proposition.id }),
-  }).sort((a, b) => Number(Boolean(b.fort)) - Number(Boolean(a.fort)));
+  });
 
   return (
     <div className="flex flex-col gap-8">
@@ -94,9 +96,9 @@ export default function PublicationsX({ proposition, analyse, brouillon = false,
         <div role="note" className="rounded-xl border border-orange-300 bg-orange-50 p-4 text-sm text-orange-900">
           <p className="font-semibold">À relire avant de publier</p>
           <ul className="mt-2 flex list-disc flex-col gap-1 pl-5">
-            {avertissements.map(({ cle, message, fort }, i) => (
-              <li key={i} className={fort ? "font-semibold text-red-700" : undefined}>
-                <span className={`font-mono text-xs ${fort ? "text-red-700" : "text-orange-700"}`}>{cle}</span> : {message}
+            {avertissements.map(({ cle, message }, i) => (
+              <li key={i}>
+                <span className="font-mono text-xs text-orange-700">{cle}</span> : {message}
               </li>
             ))}
           </ul>

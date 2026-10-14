@@ -1,15 +1,13 @@
 import { z } from "zod";
 import {
-  LONGUEUR_X_MAX,
+  LONGUEUR_X_LIMITE,
   MARQUEURS_PAR_TWEET,
-  PARTIES_PAR_TWEET,
   appliquerTitreFiche,
   assemblerReseaux,
   budgetsParties,
   longueurX,
   normaliserParties,
   remplirTweet,
-  retirerUnPointDuTweet,
   valeursReseaux,
 } from "../../src/lib/reseaux.js";
 
@@ -597,11 +595,8 @@ export const ReseauxSchema = z.object({
     // des sorties antérieures à leur introduction.
     tient_court: z.array(TexteReseaux).optional(),
     tient_pas_court: z.array(TexteReseaux).optional(),
-    // Titre de la fiche (« fiche ») ou du modèle (« modele ») ; points retirés
-    // du tweet par le repli (voir retirerUnPointDuTweet, src/lib/reseaux.js).
+    // Titre de la fiche (« fiche ») ou du modèle (« modele »).
     titre_source: z.enum(["fiche", "modele"]).optional(),
-    points_retires: z.number().int().positive().optional(),
-    entete_court: z.boolean().optional(),
     tweet: TexteReseaux,
   }),
 });
@@ -624,7 +619,7 @@ export function consigneBudgets({ candidatNom, score, handles }) {
   const valeurs = valeursReseaux({ candidatNom, score, handles });
   const { "tient.court": courts, ...budgets } = budgetsParties(valeurs);
   return [
-    "BUDGETS (calculés par le code pour cette fiche) : nombre maximal de caractères de chaque partie que tu écris, comptés comme le fait X : un emoji, « € », « … » ou « ↓ » comptent 2. Les parties fixes (formules, compte X, note, lien) sont déjà décomptées.",
+    "BUDGETS (calculés par le code pour cette fiche) : nombre de caractères conseillé pour chaque partie que tu écris, pour que chaque tweet tienne en 280, comptés comme le fait X : un emoji, « € », « … » ou « ↓ » comptent 2. Les parties fixes (formules, compte X, note, lien) sont déjà décomptées. Tu peux dépasser si c'est nécessaire pour rester exact.",
     `Chaque {NOM} que tu écris compte pour ${longueurX(valeurs.NOM)} caractères (le nom inséré à sa place).`,
     ...Object.entries(budgets).map(([cle, budget]) => `- ${cle} : ${budget} caractères`),
     `- tient : ${courts} caractères au total pour les \`court\` des 2 premiers points de chaque côté (repris dans le tweet)`,
@@ -654,72 +649,39 @@ export const PartiesReseauxSchema = z.object({
     titre: PartieTexte,
     tient: z.array(z.object({ texte: PartieTexte, court: PartieTexte })).min(1).max(3),
     tient_pas: z.array(z.object({ texte: PartieTexte, court: PartieTexte })).min(2).max(3),
-    // Posés par le code, jamais par le modèle (conservés entre deux passes).
+    // Posé par le code, jamais par le modèle.
     titre_source: z.enum(["fiche", "modele"]).optional(),
-    dans_le_tweet: z.object({ tient: z.number().int().min(1), tient_pas: z.number().int().min(1) }).optional(),
-    entete_court: z.boolean().optional(),
   }),
 });
 
 // Valide les parties écrites par le modèle : schéma, puis assemblage par le
-// code, repli du tweet « tient » s'il dépasse 280 caractères (quelles que
-// soient les autres erreurs), et contrôles bloquants de validateReseaux.
-// Renvoie aussi `parties` (normalisées) et `assemble`, même en cas de refus
-// (pour le nouvel essai, le raccourcissement et l'affichage) ; chaque tweet
-// trop long porte la liste des parties à raccourcir.
+// code (tous les points, en-tête complet) et contrôles bloquants de
+// validateReseaux. Renvoie aussi `parties` (normalisées) et `assemble`, même
+// en cas de refus (pour le nouvel essai et l'affichage).
 export function validatePartiesReseaux(raw, contexte = {}) {
   const zodResult = PartiesReseauxSchema.safeParse(raw);
   if (!zodResult.success) {
-    return { valid: false, errors: zodErreurs(zodResult.error), reseaux: null, parties: null, assemble: null, tropLongs: [] };
+    return { valid: false, errors: zodErreurs(zodResult.error), reseaux: null, parties: null, assemble: null };
   }
   // Titre « tient » : celui de la fiche quand il convient (contexte.titreFiche).
   const normalisees = normaliserParties(zodResult.data);
-  const avecTitre = "titreFiche" in contexte ? appliquerTitreFiche(normalisees, contexte.titreFiche) : normalisees;
-  const parties = replierTweetTient(avecTitre, contexte);
+  const parties = "titreFiche" in contexte ? appliquerTitreFiche(normalisees, contexte.titreFiche) : normalisees;
   const assemble = assemblerReseaux(parties);
-  const validation = validateReseaux(assemble, contexte);
-  return {
-    ...validation,
-    parties,
-    assemble,
-    // Valeur du chiffre et titre : aussi sur les images, jamais raccourcis ici.
-    tropLongs: validation.tropLongs.map((t) => ({
-      ...t,
-      parties: PARTIES_PAR_TWEET[t.cle].filter((cle) => !["chiffre.valeur", "tient.titre"].includes(cle)),
-    })),
-  };
-}
-
-// Repli du tweet « tient » tant qu'il dépasse 280 caractères : retirer un point
-// du tweet (au moins 1 de chaque côté, l'image les garde), puis, si cela ne
-// suffit pas, l'en-tête court (sans « la proposition de »). Sans nom de
-// candidat ni score, la longueur ne peut pas être mesurée : rien n'est fait.
-function replierTweetTient(parties, { candidatNom, score, handles } = {}) {
-  if (!candidatNom || score === undefined) return parties;
-  const valeurs = valeursReseaux({ candidatNom, score, handles });
-  const longueur = (p) => longueurX(remplirTweet(assemblerReseaux(p).tient.tweet, valeurs));
-  let courantes = parties;
-  while (longueur(courantes) > LONGUEUR_X_MAX) {
-    const replie = retirerUnPointDuTweet(courantes);
-    if (!replie) break;
-    courantes = replie;
-  }
-  if (longueur(courantes) > LONGUEUR_X_MAX) courantes = { ...courantes, tient: { ...courantes.tient, entete_court: true } };
-  return courantes;
+  return { ...validateReseaux(assemble, contexte), parties, assemble };
 }
 
 // Contrôles BLOQUANTS sur la sortie assemblée de l'étape 3 ter : nombre absent
-// de la fiche, tiret cadratin (le JSON invalide est refusé avant, par le
-// schéma). Tout le reste n'est qu'un avertissement de relecture
-// (avertissementsReseaux, src/lib/reseaux.js), sans refus : tweet de plus de
-// 280 caractères (« à raccourcir avant de poster »), candidat non mentionné,
-// limites de mots, compte X ou note écrits à la main…
+// de la fiche, tiret cadratin, tweet de plus de 4 000 caractères (limite d'un
+// post X) ; le JSON invalide est refusé avant, par le schéma. Tout le reste
+// n'est qu'un avertissement de relecture (avertissementsReseaux,
+// src/lib/reseaux.js), sans refus : plus de 280 caractères (« X affichera
+// Afficher plus »), candidat non mentionné, limites de mots, compte X ou note
+// écrits à la main…
 // `candidatNom` et `score` servent à mesurer les tweets une fois les marqueurs
-// remplis : les tweets trop longs (tropLongs) déclenchent les passes de
-// raccourcissement du pipeline, sans jamais faire refuser la sortie.
+// remplis.
 export function validateReseaux(raw, { ficheFinale, candidatNom, score, handles } = {}) {
   const zodResult = ReseauxSchema.safeParse(raw);
-  if (!zodResult.success) return { valid: false, errors: zodErreurs(zodResult.error), reseaux: null, tropLongs: [] };
+  if (!zodResult.success) return { valid: false, errors: zodErreurs(zodResult.error), reseaux: null };
   const r = zodResult.data;
   const errors = [];
 
@@ -742,22 +704,20 @@ export function validateReseaux(raw, { ficheFinale, candidatNom, score, handles 
     }
   }
 
-  // Longueur X, marqueurs remplis (score, compte X ou nom, lien).
-  // tropLongs : { cle, texte, excedent } de chaque tweet trop long, pour le
-  // raccourcissement ciblé (raccourcirParties dans scripts/analyze.js).
-  const tropLongs = [];
+  // Limite d'un post X (4 000 caractères), marqueurs remplis (score, compte X
+  // ou nom, lien). Au-delà de 280, simple avertissement à l'affichage.
   if (candidatNom && score !== undefined) {
     const valeurs = valeursReseaux({ candidatNom, score, handles });
     for (const [cle, texte] of tweets) {
       const longueur = longueurX(remplirTweet(texte, valeurs));
-      if (longueur > LONGUEUR_X_MAX) {
-        tropLongs.push({ cle, texte, excedent: longueur - LONGUEUR_X_MAX });
+      if (longueur > LONGUEUR_X_LIMITE) {
+        errors.push(`${cle} : ${longueur} caractères comptés par X, au-delà de la limite d'un post (${LONGUEUR_X_LIMITE}).`);
       }
     }
   }
 
-  if (errors.length > 0) return { valid: false, errors, reseaux: null, tropLongs };
-  return { valid: true, errors: [], reseaux: r, tropLongs };
+  if (errors.length > 0) return { valid: false, errors, reseaux: null };
+  return { valid: true, errors: [], reseaux: r };
 }
 
 // Textes des images et versions courtes des points.

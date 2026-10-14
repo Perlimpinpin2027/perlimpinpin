@@ -1,20 +1,18 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { consigneBudgets, validatePartiesReseaux, validateReseaux } from "./lib/scoring.js";
-import { buildCoutPipeline, fichePourReseaux, reglesCommunes } from "./analyze.js";
+import { buildCoutPipeline, fichePourReseaux } from "./analyze.js";
 import {
   assemblerReseaux,
   avertissementsReseaux,
   budgetsParties,
-  ecrirePartie,
   lienIntentionX,
-  lirePartie,
   longueurX,
   mentionneCandidat,
   minusculeInitiale,
+  niveauLongueur,
   nombresColles,
   normaliserParties,
-  retirerUnPointDuTweet,
   espaceAvantPourcent,
   nombresSansAbreviation,
   pastille,
@@ -246,22 +244,6 @@ test("titre « tient » : celui de la fiche s'il fait 40 caractères au plus, si
   assert.ok(avertissementsReseaux(long.reseaux).some((a) => a.cle === "tient.titre"));
 });
 
-test("dernier recours : un point retiré du tweet « tient », au moins 1 de chaque côté, l'image garde tout", () => {
-  const p = normaliserParties(partiesValides()); // 1 ✅, 3 ❌ (2 dans le tweet)
-  const replie = retirerUnPointDuTweet(p);
-  assert.deepEqual(replie.tient.dans_le_tweet, { tient: 1, tient_pas: 1 });
-  assert.equal(retirerUnPointDuTweet(replie), null);
-  const assemble = assemblerReseaux(replie).tient;
-  assert.equal((assemble.tweet.match(/❌/gu) ?? []).length, 1);
-  assert.equal(assemble.tient_pas.length, 3);
-  assert.equal(assemble.points_retires, 1);
-  assert.ok(avertissementsReseaux({ tient: assemble }).some((a) => a.message.includes("1 point(s) retiré(s)")));
-  // À égalité (2 et 2), le côté dont la 2e version courte est la plus longue.
-  const egal = structuredClone(p);
-  egal.tient.tient.push({ texte: "Un second point.", court: "Un second point nettement plus long que l'autre." });
-  assert.deepEqual(retirerUnPointDuTweet(egal).tient.dans_le_tweet, { tient: 1, tient_pas: 2 });
-});
-
 test("avertissements : version courte sans sujet, nombres côte à côte (hors milliers)", () => {
   const reseaux = {
     fil: ["2/ La loi impose depuis 2000 20 à 25 % de logements, dans 1 100 communes."],
@@ -280,15 +262,6 @@ test("avertissements : version courte sans sujet, nombres côte à côte (hors m
   ]);
   assert.deepEqual(nombresColles("depuis 2000 20 à 25 %, dans 1 100 communes, 2 900 000 ménages"), ["2000 20"]);
   assert.ok(messages.some((m) => m.startsWith("fil.0 Deux nombres côte à côte : « 2000 20 »")));
-});
-
-test("règles communes du prompt, redonnées aux passes de raccourcissement", async () => {
-  const { readFileSync } = await import("node:fs");
-  const prompt = readFileSync(new URL("../data/prompt-reseaux.md", import.meta.url), "utf8").replace(/\r\n/g, "\n");
-  const regles = reglesCommunes(prompt);
-  assert.ok(regles.startsWith("Règles communes"));
-  assert.ok(regles.includes("Jamais deux nombres côte à côte") && regles.includes("Il ou Elle"));
-  assert.ok(!regles.includes("Format 1"));
 });
 
 test("avertissements sans refus : mots, compte X, note, pastille ou appréciation écrits à la main", () => {
@@ -322,29 +295,8 @@ test("avertissements sans refus : mots, compte X, note, pastille ou appréciatio
   assert.ok(!avertissementsReseaux({ tient: { titre: "Un titre de fiche de sept mots", titre_source: "fiche" } }).some((a) => a.cle === "tient.titre"));
 });
 
-test("repli du tweet « tient » avant le contrôle final : point retiré, puis en-tête court", () => {
-  // Un nom très long fait déborder le tweet « tient » même avec 1 point de chaque côté.
-  const p = partiesValides();
-  p.tient.tient.push({ texte: "Un second point.", court: "Un second point qui tient, assez long pour compter." });
-  p.tient.tient_pas = p.tient.tient_pas.map((x) => ({ ...x, court: `${x.court} ${"Encore des précisions utiles. ".repeat(2)}`.trim() }));
-  const resultat = validatePartiesReseaux(p, { ...contexte, candidatNom: "David Lisnard", score: 31 });
-  const tient = resultat.assemble.tient;
-  assert.ok(tient.points_retires >= 1);
-  assert.ok(!resultat.errors.some((e) => e.startsWith("tient.tweet")), resultat.errors.join("\n"));
-  // Toujours trop long avec 1 point de chaque côté : en-tête sans « la proposition de ».
-  const q = partiesValides();
-  q.tient.tient[0].court = `Le dispositif ${"existe ".repeat(18)}`.trim();
-  const court = validatePartiesReseaux(q, { ...contexte, candidatNom: "David Lisnard", score: 31 });
-  assert.equal(court.assemble.tient.entete_court, true);
-  assert.match(court.assemble.tient.tweet, /^Supprimer les certificats d'énergie, \{CANDIDAT\} : ce qui tient/);
-  assert.ok(avertissementsReseaux(court.assemble).some((a) => a.message.startsWith("En-tête raccourci")));
-  // Assez court : ni point retiré, ni en-tête court.
-  const normal = validatePartiesReseaux(partiesValides(), contexte).assemble.tient;
-  assert.ok(!normal.points_retires && !normal.entete_court);
-});
 
-
-test("refus : seulement nombre absent de la fiche et tiret cadratin (le JSON invalide est refusé par le schéma)", () => {
+test("refus : nombre absent de la fiche, tiret cadratin, JSON invalide, plus de 4 000 caractères ; au-delà de 280 accepté", () => {
   const tiret = valide();
   tiret.tient.tient[0] = "Le dispositif existe — déjà.";
   assert.ok(validateReseaux(tiret, contexte).errors.some((e) => e.includes("tiret cadratin")));
@@ -352,28 +304,38 @@ test("refus : seulement nombre absent de la fiche et tiret cadratin (le JSON inv
   nombre.fil[1] = "2/ {NOM} veut supprimer un dispositif qui coûte 500 M€ par an.";
   assert.ok(validateReseaux(nombre, contexte).errors.some((e) => e.includes("« 500 »")));
   assert.equal(validatePartiesReseaux({ fil: "pas du bon format" }, contexte).valid, false);
-  // Tweet trop long : accepté, mais signalé (tropLongs) pour le raccourcissement.
+  // Au-delà de 280 (objectif conseillé) : accepté.
   const long = valide();
   long.fil[1] = `2/ {NOM} ${"mot ".repeat(80)}`.trim();
-  const v = validateReseaux(long, contexte);
-  assert.equal(v.valid, true);
-  assert.deepEqual(v.tropLongs.map((t) => t.cle), ["fil.1"]);
-  // Candidat non nommé : accepté aussi.
+  assert.equal(validateReseaux(long, contexte).valid, true);
+  // Au-delà de 4 000 (limite d'un post X) : refusé.
+  const geant = valide();
+  geant.fil[1] = `2/ {NOM} ${"mot ".repeat(1100)}`.trim();
+  assert.ok(validateReseaux(geant, contexte).errors.some((e) => e.startsWith("fil.1 :") && e.includes("limite d'un post (4000)")));
+  // Candidat non nommé : accepté.
   const sansNom = valide();
   sansNom.fil[2] = "3/ Selon la fiche, 2,9 millions de ménages en bénéficient depuis 2021.";
   assert.equal(validateReseaux(sansNom, contexte).valid, true);
 });
 
-test("avertissements : tweet trop long (fort), candidat non nommé ; nom complet ou nom de famille acceptés", () => {
+test("longueur : 280 conseillé (« Afficher plus »), 4 000 limite ; avertissements et niveaux d'affichage", () => {
+  assert.deepEqual(niveauLongueur(280), { niveau: "ok", note: "" });
+  assert.equal(niveauLongueur(281).niveau, "long");
+  assert.match(niveauLongueur(281).note, /Afficher plus/);
+  assert.equal(niveauLongueur(4001).niveau, "limite");
   const valeurs = valeursReseaux({ candidatNom: "Marine Le Pen", score: 41, propositionId: 38 });
   const r = valide();
   r.fil[1] = `2/ {NOM} ${"mot ".repeat(80)}`.trim();
+  const avertissement = avertissementsReseaux(r, { valeurs }).find((a) => a.cle === "fil.1");
+  assert.match(avertissement.message, /caractères comptés par X \(280 conseillés\) : X affichera « Afficher plus »/);
+  assert.ok(!("fort" in avertissement));
+});
+
+test("candidat : marqueur, nom complet ou nom de famille acceptés ; sinon avertissement", () => {
+  const valeurs = valeursReseaux({ candidatNom: "Marine Le Pen", score: 41, propositionId: 38 });
+  const r = valide();
   r.fil[2] = "3/ Selon la fiche, 2,9 millions de ménages en bénéficient depuis 2021.";
-  const avertissements = avertissementsReseaux(r, { valeurs });
-  const fort = avertissements.find((a) => a.cle === "fil.1" && a.fort);
-  assert.match(fort.message, /caractères comptés par X \(280 au plus\) : à raccourcir avant de poster/);
-  assert.ok(avertissements.some((a) => a.cle === "fil.2" && a.message.startsWith("Le candidat n'est pas nommé")));
-  // Nom complet, nom de famille (avec ou sans particule, sans accents) : pas d'avertissement.
+  assert.ok(avertissementsReseaux(r, { valeurs }).some((a) => a.cle === "fil.2" && a.message.startsWith("Le candidat n'est pas nommé")));
   assert.equal(mentionneCandidat("3/ Pour Marine Le Pen, la loi…", "Marine Le Pen"), true);
   assert.equal(mentionneCandidat("3/ Pour Le Pen, la loi…", "Marine Le Pen"), true);
   assert.equal(mentionneCandidat("3/ Selon Melenchon…", "Jean-Luc Mélenchon"), true);
@@ -384,16 +346,16 @@ test("avertissements : tweet trop long (fort), candidat non nommé ; nom complet
   assert.ok(!avertissementsReseaux(r, { valeurs }).some((a) => a.cle === "fil.2"));
 });
 
-test("raccourcissement : parties du tweet trop long, écriture des points sans effet de bord", () => {
+test("tweet « tient » : plus de repli, en-tête complet et 2 points de chaque côté même au-delà de 280", () => {
   const p = partiesValides();
-  p.fil.tweet2 = `{NOM} ${"mot ".repeat(80)}`.trim();
-  const resultat = validatePartiesReseaux(p, contexte);
-  assert.equal(resultat.valid, true);
-  assert.deepEqual(resultat.tropLongs.map((t) => [t.cle, t.parties]), [["fil.1", ["fil.tweet2"]]]);
-  const q = partiesValides();
-  assert.deepEqual(lirePartie(q, "tient.courts_tient_pas"), ["Baisse non chiffrée.", "Financement des travaux flou.", "Effet non mesuré."]);
-  const r2 = ecrirePartie(q, "tient.courts_tient_pas", ["Baisse floue.", "Travaux flous.", "Effet inconnu."]);
-  assert.deepEqual(r2.tient.tient_pas.map((x) => x.court), ["Baisse floue.", "Travaux flous.", "Effet inconnu."]);
-  assert.equal(r2.tient.tient_pas[0].texte, q.tient.tient_pas[0].texte);
-  assert.equal(q.tient.tient_pas[0].court, "Baisse non chiffrée.");
+  p.tient.tient.push({ texte: "Un second point.", court: `Un second point qui tient ${"vraiment ".repeat(20)}`.trim() });
+  const { valid, assemble } = validatePartiesReseaux(p, { ...contexte, candidatNom: "David Lisnard", score: 31 });
+  assert.equal(valid, true);
+  assert.match(assemble.tient.tweet, /, la proposition de \{CANDIDAT\} : ce qui tient, ce qui ne tient pas\./);
+  assert.equal((assemble.tient.tweet.match(/✅/gu) ?? []).length, 2);
+  assert.equal((assemble.tient.tweet.match(/❌/gu) ?? []).length, 2);
+  assert.ok(!("points_retires" in assemble.tient) && !("entete_court" in assemble.tient));
+  // Fiches générées avec l'ancien repli : toujours signalées.
+  const ancien = avertissementsReseaux({ tient: { points_retires: 1, entete_court: true } }).map((a) => a.message);
+  assert.ok(ancien.some((m) => m.includes("ancien repli")));
 });

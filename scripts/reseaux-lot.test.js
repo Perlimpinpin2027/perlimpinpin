@@ -27,6 +27,6 @@ test("lot : coût estimé, alertes avant appel, récapitulatif", () => {
   assert.ok(lignes.some((l) => l.includes("✗ fiche 12 (Éric Zemmour) : fil.3 : 300 caractères")));
   assert.ok(lignes.includes("Coût total estimé : ~$0.1600"));
   assert.ok(recapitulatif([], { dryRun: true }).includes("Fiches simulées (rien d'écrit) : 0"));
-  const aRaccourcir = recapitulatif([{ propositionId: 56, candidat: "X", statut: "ecrite", avertissements: 2, aRaccourcir: 1, cout: 0.1 }]);
-  assert.ok(aRaccourcir.some((l) => l.includes("dont 1 tweet(s) à raccourcir avant de poster")));
+  const longs = recapitulatif([{ propositionId: 56, candidat: "X", statut: "ecrite", avertissements: 2, auDela280: 1, cout: 0.1 }]);
+  assert.ok(longs.some((l) => l.includes("dont 1 tweet(s) au-delà de 280 (« Afficher plus »)")));
 });
