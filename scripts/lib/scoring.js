@@ -670,7 +670,7 @@ export const PartiesReseauxSchema = z.object({
 export function validatePartiesReseaux(raw, contexte = {}) {
   const zodResult = PartiesReseauxSchema.safeParse(raw);
   if (!zodResult.success) {
-    return { valid: false, errors: zodErreurs(zodResult.error), reseaux: null, parties: null, assemble: null, tropLongs: [], seulementRaccourcir: false };
+    return { valid: false, errors: zodErreurs(zodResult.error), reseaux: null, parties: null, assemble: null, tropLongs: [] };
   }
   // Titre « tient » : celui de la fiche quand il convient (contexte.titreFiche).
   const normalisees = normaliserParties(zodResult.data);
@@ -708,29 +708,23 @@ function replierTweetTient(parties, { candidatNom, score, handles } = {}) {
   return courantes;
 }
 
-// Contrôles BLOQUANTS sur la sortie assemblée de l'étape 3 ter : tweet de plus
-// de 280 caractères, nombre absent de la fiche, marqueur obligatoire manquant,
-// tiret cadratin. Tout le reste (limites de mots, compte X écrit à la main,
-// note ou appréciation écrite par le modèle…) n'est qu'un avertissement de
-// relecture (avertissementsReseaux, src/lib/reseaux.js), sans refus.
+// Contrôles BLOQUANTS sur la sortie assemblée de l'étape 3 ter : nombre absent
+// de la fiche, tiret cadratin (le JSON invalide est refusé avant, par le
+// schéma). Tout le reste n'est qu'un avertissement de relecture
+// (avertissementsReseaux, src/lib/reseaux.js), sans refus : tweet de plus de
+// 280 caractères (« à raccourcir avant de poster »), candidat non mentionné,
+// limites de mots, compte X ou note écrits à la main…
 // `candidatNom` et `score` servent à mesurer les tweets une fois les marqueurs
-// remplis.
+// remplis : les tweets trop longs (tropLongs) déclenchent les passes de
+// raccourcissement du pipeline, sans jamais faire refuser la sortie.
 export function validateReseaux(raw, { ficheFinale, candidatNom, score, handles } = {}) {
   const zodResult = ReseauxSchema.safeParse(raw);
-  if (!zodResult.success) return { valid: false, errors: zodErreurs(zodResult.error), reseaux: null, tropLongs: [], seulementRaccourcir: false };
+  if (!zodResult.success) return { valid: false, errors: zodErreurs(zodResult.error), reseaux: null, tropLongs: [] };
   const r = zodResult.data;
   const errors = [];
 
   const tweets = MARQUEURS_TWEETS.map(([cle, lire]) => [cle, lire(r)]);
   const cartes = textesCartes(r);
-
-  // Marqueurs obligatoires.
-  for (const [cle, lire, obligatoires] of MARQUEURS_TWEETS) {
-    const texte = lire(r);
-    for (const marqueur of obligatoires) {
-      if (!texte.includes(`{${marqueur}}`)) errors.push(`${cle} : le marqueur {${marqueur}} manque.`);
-    }
-  }
 
   // Tiret cadratin.
   for (const [cle, texte] of [...tweets, ...cartes]) {
@@ -749,9 +743,8 @@ export function validateReseaux(raw, { ficheFinale, candidatNom, score, handles 
   }
 
   // Longueur X, marqueurs remplis (score, compte X ou nom, lien).
-  // tropLongs : { cle, texte, excedent } de chaque tweet trop long ; quand ce
-  // sont les seules erreurs, le pipeline demande un raccourcissement ciblé
-  // (raccourcirParties dans scripts/analyze.js).
+  // tropLongs : { cle, texte, excedent } de chaque tweet trop long, pour le
+  // raccourcissement ciblé (raccourcirParties dans scripts/analyze.js).
   const tropLongs = [];
   if (candidatNom && score !== undefined) {
     const valeurs = valeursReseaux({ candidatNom, score, handles });
@@ -759,15 +752,12 @@ export function validateReseaux(raw, { ficheFinale, candidatNom, score, handles 
       const longueur = longueurX(remplirTweet(texte, valeurs));
       if (longueur > LONGUEUR_X_MAX) {
         tropLongs.push({ cle, texte, excedent: longueur - LONGUEUR_X_MAX });
-        errors.push(`${cle} : ${longueur} caractères comptés par X (${LONGUEUR_X_MAX} au plus) : retire au moins ${longueur - LONGUEUR_X_MAX} caractères.`);
       }
     }
   }
 
-  if (errors.length > 0) {
-    return { valid: false, errors, reseaux: null, tropLongs, seulementRaccourcir: errors.length === tropLongs.length };
-  }
-  return { valid: true, errors: [], reseaux: r, tropLongs: [], seulementRaccourcir: false };
+  if (errors.length > 0) return { valid: false, errors, reseaux: null, tropLongs };
+  return { valid: true, errors: [], reseaux: r, tropLongs };
 }
 
 // Textes des images et versions courtes des points.

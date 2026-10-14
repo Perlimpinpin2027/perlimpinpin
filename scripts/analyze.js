@@ -1013,35 +1013,38 @@ export async function genererReseaux(ficheFinale, { candidatNom, score }) {
   const contexte = { ficheFinale: fiche, candidatNom, score, titreFiche: ficheFinale?.titre_fiche };
   const regles = reglesCommunes(prompt);
 
-  const retenir = (validation) => {
-    derniere = validation.parties ?? derniere;
-    derniereAssemblee = validation.assemble ?? derniereAssemblee;
-    errors = validation.errors;
-  };
-
-  // Dès que les seules erreurs sont des tweets de plus de 280 caractères : un
-  // raccourcissement ciblé plutôt qu'une réécriture complète, jusqu'à
-  // PASSES_RACCOURCISSEMENT passes (une série par essai), chacune avec
-  // l'excédent restant. Le repli du tweet « tient » (point retiré, en-tête
-  // court) est déjà appliqué à chaque contrôle (validatePartiesReseaux).
-  async function essayerRaccourcir(validation) {
-    if (!validation.seulementRaccourcir) return null;
-    let courante = validation;
-    for (let passe = 1; passe <= PASSES_RACCOURCISSEMENT && !courante.valid && courante.seulementRaccourcir; passe++) {
+  // Sortie acceptée mais avec des tweets de plus de 280 caractères (le repli
+  // du tweet « tient » est déjà appliqué par validatePartiesReseaux) : jusqu'à
+  // PASSES_RACCOURCISSEMENT passes ciblées, chacune avec l'excédent restant.
+  // Une passe qui introduit une erreur bloquante (nombre absent de la fiche,
+  // tiret cadratin) est écartée : on garde la meilleure version acceptée.
+  // Un tweet encore trop long après les passes reste un avertissement fort
+  // (« à raccourcir avant de poster »), jamais un refus.
+  async function raccourcirSiBesoin(validation) {
+    let meilleure = validation;
+    for (let passe = 1; passe <= PASSES_RACCOURCISSEMENT && meilleure.tropLongs.length > 0; passe++) {
       try {
         console.error(
-          `  ↺  Étape 3 ter : raccourcissement ${passe}/${PASSES_RACCOURCISSEMENT} : ${courante.tropLongs.map((t) => `${t.cle} (−${t.excedent} car.)`).join(", ")}…`,
+          `  ↺  Étape 3 ter : raccourcissement ${passe}/${PASSES_RACCOURCISSEMENT} : ${meilleure.tropLongs.map((t) => `${t.cle} (−${t.excedent} car.)`).join(", ")}…`,
         );
-        const raccourci = await raccourcirParties(courante.parties, courante.tropLongs, regles);
+        const raccourci = await raccourcirParties(meilleure.parties, meilleure.tropLongs, regles);
         usage = addUsage(usage, raccourci.usage);
-        courante = validatePartiesReseaux(raccourci.parties, contexte);
-        retenir(courante);
+        const nouvelle = validatePartiesReseaux(raccourci.parties, contexte);
+        if (!nouvelle.valid) {
+          console.error(`     passe écartée : ${nouvelle.errors.join(" ; ")}`);
+          continue;
+        }
+        meilleure = nouvelle;
       } catch (error) {
         console.error(`     raccourcissement impossible : ${error.message}`);
-        return null;
+        break;
       }
     }
-    return courante.valid ? courante.reseaux : null;
+    if (meilleure.tropLongs.length > 0) {
+      const restes = meilleure.tropLongs.map((t) => `${t.cle} (+${t.excedent})`).join(", ");
+      console.error(`  ⚠️  Étape 3 ter : encore trop long, à raccourcir avant de poster : ${restes}.`);
+    }
+    return meilleure.reseaux;
   }
 
   for (let tentative = 1; tentative <= 2; tentative++) {
@@ -1070,12 +1073,7 @@ ${JSON.stringify(derniere, (cle, valeur) => (CHAMPS_DU_CODE.has(cle) ? undefined
       derniere = validation.parties ?? raw;
       derniereAssemblee = validation.assemble;
       errors = validation.errors;
-      if (validation.valid) return { reseaux: validation.reseaux, usage, errors: [] };
-      const raccourcis = await essayerRaccourcir(validation);
-      if (raccourcis) {
-        console.log("  ✓ Étape 3 ter : tweets raccourcis et acceptés.");
-        return { reseaux: raccourcis, usage, errors: [] };
-      }
+      if (validation.valid) return { reseaux: await raccourcirSiBesoin(validation), usage, errors: [] };
     } catch (error) {
       errors = [error.message];
     }
