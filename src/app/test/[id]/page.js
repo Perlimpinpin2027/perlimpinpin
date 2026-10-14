@@ -6,6 +6,7 @@ import DeclarationDetailPage from "@/app/declarations/[id]/page";
 import EditorBar from "../EditorBar";
 import PublishBox from "../PublishBox";
 import ReponsesRevision from "../ReponsesRevision";
+import PublicationsX from "../PublicationsX";
 
 // Toujours recalculée à chaque visite (même choix que la liste /test).
 export const dynamic = "force-dynamic";
@@ -37,8 +38,11 @@ export default async function TestDetailPage({ params }) {
       id: true,
       statut: true,
       updatedAt: true,
+      scoreFaisabilite: true,
       contenuComplet: true,
-      proposition: { select: { candidat: { select: { nom: true } } } },
+      proposition: {
+        select: { id: true, titre: true, texteOriginal: true, candidat: { select: { nom: true, photoUrl: true } } },
+      },
     },
   });
 
@@ -91,6 +95,16 @@ export default async function TestDetailPage({ params }) {
       </div>
 
       {editeur && revision ? <ReponsesRevision revision={revision} /> : null}
+
+      {/* Publications X préparées par l'étape 3 ter (images et tweets), lecture seule. */}
+      {editeur ? (
+        <details className="border-b border-amber-300 bg-amber-50 px-6 py-4 text-zinc-900 sm:px-8">
+          <summary className="mx-auto w-full max-w-6xl cursor-pointer text-lg font-semibold">Publications X</summary>
+          <div className="mx-auto mt-4 w-full max-w-6xl">
+            <PublicationsX proposition={derniere.proposition} analyse={derniere} brouillon />
+          </div>
+        </details>
+      ) : null}
 
       {/* Pour un éditeur seulement : le crayon de modification (titre, résumé, mesure
           initiale…). La version sert à détecter une modification faite entre-temps par

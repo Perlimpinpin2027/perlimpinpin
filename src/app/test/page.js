@@ -63,6 +63,8 @@ async function getBrouillons() {
 
 export default async function TestPage() {
   const brouillons = await getBrouillons();
+  const configuree = editionConfiguree();
+  const editeur = configuree && (await isEditor());
 
   return (
     <div className="flex min-h-screen flex-col bg-page-gradient font-sans">
@@ -82,9 +84,18 @@ export default async function TestPage() {
             </p>
             {/* Mode édition : n'apparaît que si le code d'édition est configuré
                 sur ce serveur. */}
-            {editionConfiguree() ? (
-              <div className="mt-4 text-zinc-700">
-                <EditorBar editeur={await isEditor()} />
+            {configuree ? (
+              <div className="mt-4 flex flex-wrap items-center gap-3 text-zinc-700">
+                <EditorBar editeur={editeur} />
+                {/* Publications X des fiches : pour les personnes déverrouillées. */}
+                {editeur ? (
+                  <Link
+                    href="/test/reseaux"
+                    className="rounded-full border border-zinc-300 bg-white px-3 py-1 text-xs font-semibold text-zinc-800 transition-colors hover:bg-zinc-100"
+                  >
+                    Publications réseaux sociaux →
+                  </Link>
+                ) : null}
               </div>
             ) : null}
           </div>

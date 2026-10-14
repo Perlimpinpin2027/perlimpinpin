@@ -1,4 +1,17 @@
 import { z } from "zod";
+import {
+  LONGUEUR_X_MAX,
+  MARQUEURS_PAR_TWEET,
+  PARTIES_PAR_TWEET,
+  appliquerTitreFiche,
+  assemblerReseaux,
+  budgetsParties,
+  longueurX,
+  normaliserParties,
+  remplirTweet,
+  retirerUnPointDuTweet,
+  valeursReseaux,
+} from "../../src/lib/reseaux.js";
 
 // Barème 2026 du pipeline à 3 étapes (voir data/prompt-methodologie.md) : 5
 // critères SANS malus — Opérationnalité & Moyens (30, décomposée en 3
@@ -474,19 +487,26 @@ function extraireNombres(text) {
   return [...text.matchAll(NOMBRE_REGEX)].map((match) => match[0].replace(/[   ]/g, ""));
 }
 
-export function checkChiffresVersionBasique(versionBasique, ficheFinale) {
-  const textes = [
-    versionBasique.resume,
-    versionBasique.contexte,
-    versionBasique.analyse,
-    versionBasique.faisabilite,
-    ...(versionBasique.points_forts ?? []),
-    ...(versionBasique.points_faibles ?? []),
-  ].filter((texte) => typeof texte === "string");
-
-  const nombres = new Set(textes.flatMap(extraireNombres));
+// Nombres des textes absents de la fiche finale (même règle pour la version
+// basique et les publications X).
+function nombresHorsFiche(textes, ficheFinale) {
+  const nombres = new Set(textes.filter((texte) => typeof texte === "string").flatMap(extraireNombres));
   const reference = new Set(extraireNombres(JSON.stringify(ficheFinale)));
   return [...nombres].filter((nombre) => !reference.has(nombre));
+}
+
+export function checkChiffresVersionBasique(versionBasique, ficheFinale) {
+  return nombresHorsFiche(
+    [
+      versionBasique.resume,
+      versionBasique.contexte,
+      versionBasique.analyse,
+      versionBasique.faisabilite,
+      ...(versionBasique.points_forts ?? []),
+      ...(versionBasique.points_faibles ?? []),
+    ],
+    ficheFinale,
+  );
 }
 
 // Contrôle des ancrages : chaque phrase de la version basique est justifiée
@@ -552,4 +572,213 @@ export function checkAncragesVersionBasique(ancrages, versionBasique, ficheFinal
   }
 
   return errors;
+}
+
+// --- Publications X (étape 3 ter) ------------------------------------------
+// Trois formats rédigés à partir de la fiche finale (voir
+// data/prompt-reseaux.md), enregistrés dans contenuComplet.reseaux AVEC leurs
+// marqueurs : le score, l'appréciation, le compte X du candidat et le lien
+// sont insérés par le code à l'affichage (src/lib/reseaux.js).
+const TexteReseaux = z.string().trim().min(1);
+
+export const ReseauxSchema = z.object({
+  fil: z.array(TexteReseaux).length(4),
+  chiffre: z.object({
+    valeur: TexteReseaux.max(12),
+    explication: TexteReseaux,
+    tweet: TexteReseaux,
+  }),
+  tient: z.object({
+    titre: TexteReseaux,
+    // « S'il n'y a qu'un seul point solide, n'en invente pas un second. »
+    tient: z.array(TexteReseaux).min(1).max(3),
+    tient_pas: z.array(TexteReseaux).min(2).max(3),
+    // Versions courtes de chaque point (tweet), dans le même ordre ; absentes
+    // des sorties antérieures à leur introduction.
+    tient_court: z.array(TexteReseaux).optional(),
+    tient_pas_court: z.array(TexteReseaux).optional(),
+    // Titre de la fiche (« fiche ») ou du modèle (« modele ») ; points retirés
+    // du tweet par le repli (voir retirerUnPointDuTweet, src/lib/reseaux.js).
+    titre_source: z.enum(["fiche", "modele"]).optional(),
+    points_retires: z.number().int().positive().optional(),
+    entete_court: z.boolean().optional(),
+    tweet: TexteReseaux,
+  }),
+});
+
+// Les 6 tweets et leurs marqueurs obligatoires (MARQUEURS_PAR_TWEET, src/lib/reseaux.js).
+const LECTURE_TWEETS = {
+  "fil.0": (r) => r.fil[0],
+  "fil.1": (r) => r.fil[1],
+  "fil.2": (r) => r.fil[2],
+  "fil.3": (r) => r.fil[3],
+  "chiffre.tweet": (r) => r.chiffre.tweet,
+  "tient.tweet": (r) => r.tient.tweet,
+};
+const MARQUEURS_TWEETS = Object.entries(MARQUEURS_PAR_TWEET).map(([cle, obligatoires]) => [cle, LECTURE_TWEETS[cle], obligatoires]);
+
+// Consigne ajoutée au prompt par le code : le budget de chaque partie
+// variable, calculé pour cette fiche (parties fixes remplies avec le nom ou le
+// compte X, l'appréciation et le score réels).
+export function consigneBudgets({ candidatNom, score, handles }) {
+  const valeurs = valeursReseaux({ candidatNom, score, handles });
+  const { "tient.court": courts, ...budgets } = budgetsParties(valeurs);
+  return [
+    "BUDGETS (calculés par le code pour cette fiche) : nombre maximal de caractères de chaque partie que tu écris, comptés comme le fait X : un emoji, « € », « … » ou « ↓ » comptent 2. Les parties fixes (formules, compte X, note, lien) sont déjà décomptées.",
+    `Chaque {NOM} que tu écris compte pour ${longueurX(valeurs.NOM)} caractères (le nom inséré à sa place).`,
+    ...Object.entries(budgets).map(([cle, budget]) => `- ${cle} : ${budget} caractères`),
+    `- tient : ${courts} caractères au total pour les \`court\` des 2 premiers points de chaque côté (repris dans le tweet)`,
+  ].join("\n");
+}
+
+// --- Sortie du modèle : parties variables seulement ---------------------------
+const PartieTexte = z.string().trim().min(1);
+
+export const PartiesReseauxSchema = z.object({
+  fil: z.object({
+    accroche: PartieTexte,
+    suspense: PartieTexte,
+    tweet2: PartieTexte,
+    tweet3: PartieTexte,
+    angle_mort: PartieTexte,
+    point_solide: z.string().trim().nullable().optional(),
+  }),
+  chiffre: z.object({
+    valeur: PartieTexte.max(12),
+    explication: PartieTexte,
+    mesure_courte: PartieTexte,
+  }),
+  // Chaque point : `texte` pour l'image (15 mots au plus), `court` pour le
+  // tweet (10 mots au plus) ; le tweet reprend les 2 premiers de chaque côté.
+  tient: z.object({
+    titre: PartieTexte,
+    tient: z.array(z.object({ texte: PartieTexte, court: PartieTexte })).min(1).max(3),
+    tient_pas: z.array(z.object({ texte: PartieTexte, court: PartieTexte })).min(2).max(3),
+    // Posés par le code, jamais par le modèle (conservés entre deux passes).
+    titre_source: z.enum(["fiche", "modele"]).optional(),
+    dans_le_tweet: z.object({ tient: z.number().int().min(1), tient_pas: z.number().int().min(1) }).optional(),
+    entete_court: z.boolean().optional(),
+  }),
+});
+
+// Valide les parties écrites par le modèle : schéma, puis assemblage par le
+// code, repli du tweet « tient » s'il dépasse 280 caractères (quelles que
+// soient les autres erreurs), et contrôles bloquants de validateReseaux.
+// Renvoie aussi `parties` (normalisées) et `assemble`, même en cas de refus
+// (pour le nouvel essai, le raccourcissement et l'affichage) ; chaque tweet
+// trop long porte la liste des parties à raccourcir.
+export function validatePartiesReseaux(raw, contexte = {}) {
+  const zodResult = PartiesReseauxSchema.safeParse(raw);
+  if (!zodResult.success) {
+    return { valid: false, errors: zodErreurs(zodResult.error), reseaux: null, parties: null, assemble: null, tropLongs: [], seulementRaccourcir: false };
+  }
+  // Titre « tient » : celui de la fiche quand il convient (contexte.titreFiche).
+  const normalisees = normaliserParties(zodResult.data);
+  const avecTitre = "titreFiche" in contexte ? appliquerTitreFiche(normalisees, contexte.titreFiche) : normalisees;
+  const parties = replierTweetTient(avecTitre, contexte);
+  const assemble = assemblerReseaux(parties);
+  const validation = validateReseaux(assemble, contexte);
+  return {
+    ...validation,
+    parties,
+    assemble,
+    // Valeur du chiffre et titre : aussi sur les images, jamais raccourcis ici.
+    tropLongs: validation.tropLongs.map((t) => ({
+      ...t,
+      parties: PARTIES_PAR_TWEET[t.cle].filter((cle) => !["chiffre.valeur", "tient.titre"].includes(cle)),
+    })),
+  };
+}
+
+// Repli du tweet « tient » tant qu'il dépasse 280 caractères : retirer un point
+// du tweet (au moins 1 de chaque côté, l'image les garde), puis, si cela ne
+// suffit pas, l'en-tête court (sans « la proposition de »). Sans nom de
+// candidat ni score, la longueur ne peut pas être mesurée : rien n'est fait.
+function replierTweetTient(parties, { candidatNom, score, handles } = {}) {
+  if (!candidatNom || score === undefined) return parties;
+  const valeurs = valeursReseaux({ candidatNom, score, handles });
+  const longueur = (p) => longueurX(remplirTweet(assemblerReseaux(p).tient.tweet, valeurs));
+  let courantes = parties;
+  while (longueur(courantes) > LONGUEUR_X_MAX) {
+    const replie = retirerUnPointDuTweet(courantes);
+    if (!replie) break;
+    courantes = replie;
+  }
+  if (longueur(courantes) > LONGUEUR_X_MAX) courantes = { ...courantes, tient: { ...courantes.tient, entete_court: true } };
+  return courantes;
+}
+
+// Contrôles BLOQUANTS sur la sortie assemblée de l'étape 3 ter : tweet de plus
+// de 280 caractères, nombre absent de la fiche, marqueur obligatoire manquant,
+// tiret cadratin. Tout le reste (limites de mots, compte X écrit à la main,
+// note ou appréciation écrite par le modèle…) n'est qu'un avertissement de
+// relecture (avertissementsReseaux, src/lib/reseaux.js), sans refus.
+// `candidatNom` et `score` servent à mesurer les tweets une fois les marqueurs
+// remplis.
+export function validateReseaux(raw, { ficheFinale, candidatNom, score, handles } = {}) {
+  const zodResult = ReseauxSchema.safeParse(raw);
+  if (!zodResult.success) return { valid: false, errors: zodErreurs(zodResult.error), reseaux: null, tropLongs: [], seulementRaccourcir: false };
+  const r = zodResult.data;
+  const errors = [];
+
+  const tweets = MARQUEURS_TWEETS.map(([cle, lire]) => [cle, lire(r)]);
+  const cartes = textesCartes(r);
+
+  // Marqueurs obligatoires.
+  for (const [cle, lire, obligatoires] of MARQUEURS_TWEETS) {
+    const texte = lire(r);
+    for (const marqueur of obligatoires) {
+      if (!texte.includes(`{${marqueur}}`)) errors.push(`${cle} : le marqueur {${marqueur}} manque.`);
+    }
+  }
+
+  // Tiret cadratin.
+  for (const [cle, texte] of [...tweets, ...cartes]) {
+    if (texte.includes("—")) errors.push(`${cle} : tiret cadratin interdit.`);
+  }
+
+  // Chaque nombre d'un tweet ou d'une image doit figurer dans la fiche finale
+  // (marqueurs, « {SCORE}/100 » et numérotation « 2/ » du fil mis à part).
+  if (ficheFinale) {
+    const textes = [...tweets, ...cartes].map(([, texte]) =>
+      texte.replace(/\{SCORE\}\s*\/\s*100/g, " ").replace(/\{[A-Z]+\}/g, " ").replace(/^\s*\d\/\s/, ""),
+    );
+    for (const nombre of nombresHorsFiche(textes, ficheFinale)) {
+      errors.push(`Le nombre « ${nombre} » n'apparaît pas dans la fiche finale : retire-le ou remplace-le par un chiffre de la fiche.`);
+    }
+  }
+
+  // Longueur X, marqueurs remplis (score, compte X ou nom, lien).
+  // tropLongs : { cle, texte, excedent } de chaque tweet trop long ; quand ce
+  // sont les seules erreurs, le pipeline demande un raccourcissement ciblé
+  // (raccourcirParties dans scripts/analyze.js).
+  const tropLongs = [];
+  if (candidatNom && score !== undefined) {
+    const valeurs = valeursReseaux({ candidatNom, score, handles });
+    for (const [cle, texte] of tweets) {
+      const longueur = longueurX(remplirTweet(texte, valeurs));
+      if (longueur > LONGUEUR_X_MAX) {
+        tropLongs.push({ cle, texte, excedent: longueur - LONGUEUR_X_MAX });
+        errors.push(`${cle} : ${longueur} caractères comptés par X (${LONGUEUR_X_MAX} au plus) : retire au moins ${longueur - LONGUEUR_X_MAX} caractères.`);
+      }
+    }
+  }
+
+  if (errors.length > 0) {
+    return { valid: false, errors, reseaux: null, tropLongs, seulementRaccourcir: errors.length === tropLongs.length };
+  }
+  return { valid: true, errors: [], reseaux: r, tropLongs: [], seulementRaccourcir: false };
+}
+
+// Textes des images et versions courtes des points.
+function textesCartes(r) {
+  return [
+    ["chiffre.valeur", r.chiffre.valeur],
+    ["chiffre.explication", r.chiffre.explication],
+    ["tient.titre", r.tient.titre],
+    ...r.tient.tient.map((point, i) => [`tient.tient.${i}`, point]),
+    ...r.tient.tient_pas.map((point, i) => [`tient.tient_pas.${i}`, point]),
+    ...(r.tient.tient_court ?? []).map((point, i) => [`tient.tient.${i}.court`, point]),
+    ...(r.tient.tient_pas_court ?? []).map((point, i) => [`tient.tient_pas.${i}.court`, point]),
+  ];
 }

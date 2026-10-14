@@ -7,6 +7,7 @@ import { PrismaNeon } from "@prisma/adapter-neon";
 import { neonConfig } from "@neondatabase/serverless";
 import ws from "ws";
 import { cleanContenu } from "./lib/clean-text.js";
+import { PARTIES_PAR_TWEET, ecrirePartie, lirePartie } from "../src/lib/reseaux.js";
 import {
   validateEtape1Structure,
   validateFicheCompleteStructure,
@@ -15,6 +16,8 @@ import {
   validateVersionBasique,
   checkChiffresVersionBasique,
   checkAncragesVersionBasique,
+  validatePartiesReseaux,
+  consigneBudgets,
   validateAvisCommentairesEtape2,
   validateRevisionRelecture,
 } from "./lib/scoring.js";
@@ -900,6 +903,194 @@ ${errors.map((error) => `- ${error}`).join("\n")}`;
   return { versionBasique: null, ancrages: null, usage, errors };
 }
 
+// --- Étape 3 ter : publications X (Claude) ----------------------------------
+// Trois formats prêts à poster (fil de 4 tweets, « chiffre », « tient / tient
+// pas »), écrits à partir de la fiche finale avec le prompt
+// data/prompt-reseaux.md, même modèle que la 3 bis, sans recherche web. Les
+// textes gardent leurs marqueurs ({CANDIDAT}, {SCORE}, {LIEN}…), remplis par
+// le code à l'affichage (src/lib/reseaux.js). Comme la 3 bis, cette étape ne
+// bloque jamais le pipeline : après un nouvel essai raté, la fiche est
+// enregistrée sans reseaux.
+const PROMPT_RESEAUX_PATH = join(__dirname, "..", "data", "prompt-reseaux.md");
+
+async function callReseaux(userMessage) {
+  const response = await fetchWithTimeout(`${ANTHROPIC_BASE_URL}/messages`, {
+    method: "POST",
+    headers: ANTHROPIC_HEADERS,
+    body: JSON.stringify({
+      model: "claude-sonnet-5",
+      max_tokens: 4000,
+      thinking: { type: "disabled" },
+      messages: [{ role: "user", content: userMessage }],
+      stream: true,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    throw new Error(`Erreur API Anthropic, étape 3 ter (${response.status}) : ${errorBody}`);
+  }
+
+  return readStreamedMessage(response);
+}
+
+// Fiche envoyée au modèle : la fiche finale, sans les ajouts des étapes
+// suivantes (version basique, anciennes publications, révision).
+export function fichePourReseaux(ficheFinale) {
+  const { version_basique: _basique, reseaux: _reseaux, revision: _revision, ...fiche } = ficheFinale ?? {};
+  return fiche;
+}
+
+// Raccourcissement ciblé des tweets de plus de 280 caractères : leurs parties
+// variables, avec le nombre de caractères à retirer. Les limites de mots ne
+// sont que des avertissements et ne passent jamais par ici. Sans la fiche
+// (appel de quelques centaines de tokens). Renvoie { parties, usage } : les
+// parties raccourcies (les autres inchangées).
+const PASSES_RACCOURCISSEMENT = 3;
+
+// Champs posés par le code dans les parties, jamais renvoyés au modèle.
+const CHAMPS_DU_CODE = new Set(["titre_source", "dans_le_tweet"]);
+
+// Bloc « Règles communes » de data/prompt-reseaux.md, redonné tel quel à
+// chaque passe de raccourcissement (règles de fond, pas seulement la longueur).
+export function reglesCommunes(prompt) {
+  const debut = prompt.indexOf("Règles communes");
+  const fin = prompt.indexOf("\nFormat 1", debut);
+  return debut >= 0 ? prompt.slice(debut, fin >= 0 ? fin : undefined).trim() : "";
+}
+
+async function raccourcirParties(parties, tropLongs, regles = "") {
+  const extrait = (cles) => JSON.stringify(Object.fromEntries(cles.map((partie) => [partie, lirePartie(parties, partie)])), null, 2);
+  const message = [
+    "Raccourcis ces parties de tweets de Perlimpinpin.ai, comme indiqué pour chacune. Les caractères sont comptés comme le fait X : un emoji, « € », « … » ou « ↓ » comptent 2. Vise une marge de 5 caractères. Si raccourcir oblige à déformer un fait ou un chiffre, retire plutôt une idée secondaire.",
+    "Ne change pas : les marqueurs entre accolades ({NOM}…), les chiffres et leur nature (total, annuel, national, partiel…), les sources citées, le sens. Raccourcis en supprimant des mots. Chaque point ✅ ou ❌, version longue ou courte, garde son sujet (« L'abrogation… », « Le foncier promis… »). Pas de tiret cadratin. Une liste reste une liste du même nombre de points, dans le même ordre.",
+    ...(regles ? ["Les règles de fond restent toutes valables pendant le raccourcissement :", regles] : []),
+    'Réponds uniquement en JSON, avec les mêmes clés : { "<clé>": "<texte>" ou ["<point>", …] }.',
+    "",
+    ...tropLongs.map(({ cle, excedent, parties: cles }) =>
+      [`Tweet ${cle} : retirer au moins ${excedent} caractères au total, sur ces parties :`, extrait(cles), ""].join("\n"),
+    ),
+  ].join("\n");
+
+  const data = await callReseaux(message);
+  const reponse = cleanContenu(extractJson(data));
+  const cles = new Set(tropLongs.flatMap((t) => t.parties));
+  let corrigees = parties;
+  for (const partie of cles) {
+    const avant = lirePartie(parties, partie);
+    const apres = reponse?.[partie];
+    const valide = Array.isArray(avant)
+      ? Array.isArray(apres) && apres.length === avant.length && apres.every((p) => typeof p === "string" && p.trim())
+      : typeof apres === "string" && (apres.trim() || avant === null);
+    if (valide) corrigees = ecrirePartie(corrigees, partie, apres);
+  }
+  return { parties: corrigees, usage: data.usage };
+}
+
+// Le modèle n'écrit que les parties variables ; le code assemble les tweets
+// (src/lib/reseaux.js, assemblerReseaux) et les contrôle.
+// Retourne { reseaux, usage, errors, derniere } : reseaux (tweets assemblés,
+// avec marqueurs) vaut null si les deux tentatives ont échoué ; errors donne
+// alors la cause du dernier échec, derniere les tweets assemblés de la
+// dernière réponse refusée, pour la relire sans nouvel appel.
+// `candidatNom` et `score` ne sont pas envoyés au modèle : ils servent à
+// calculer le budget de chaque partie (consigneBudgets) et à mesurer les
+// tweets une fois les marqueurs remplis. Le prompt est suivi de la fiche,
+// puis des budgets.
+export async function genererReseaux(ficheFinale, { candidatNom, score }) {
+  const fiche = fichePourReseaux(ficheFinale);
+  const prompt = readFileSync(PROMPT_RESEAUX_PATH, "utf-8").replace(/\r\n/g, "\n").trim();
+  const basePrompt = `${prompt}\n\nFICHE FINALE :\n${JSON.stringify(fiche, null, 2)}\n\n${consigneBudgets({ candidatNom, score })}`;
+
+  let usage = {};
+  let errors = [];
+  // derniere : parties de la dernière réponse (renvoyées au nouvel essai) ;
+  // derniereAssemblee : ses tweets assemblés (affichés en cas d'échec).
+  let derniere = null;
+  let derniereAssemblee = null;
+  // Titre « tient » : celui de la fiche s'il fait 40 caractères au plus
+  // (appliquerTitreFiche, src/lib/reseaux.js), sinon celui du modèle.
+  const contexte = { ficheFinale: fiche, candidatNom, score, titreFiche: ficheFinale?.titre_fiche };
+  const regles = reglesCommunes(prompt);
+
+  const retenir = (validation) => {
+    derniere = validation.parties ?? derniere;
+    derniereAssemblee = validation.assemble ?? derniereAssemblee;
+    errors = validation.errors;
+  };
+
+  // Dès que les seules erreurs sont des tweets de plus de 280 caractères : un
+  // raccourcissement ciblé plutôt qu'une réécriture complète, jusqu'à
+  // PASSES_RACCOURCISSEMENT passes (une série par essai), chacune avec
+  // l'excédent restant. Le repli du tweet « tient » (point retiré, en-tête
+  // court) est déjà appliqué à chaque contrôle (validatePartiesReseaux).
+  async function essayerRaccourcir(validation) {
+    if (!validation.seulementRaccourcir) return null;
+    let courante = validation;
+    for (let passe = 1; passe <= PASSES_RACCOURCISSEMENT && !courante.valid && courante.seulementRaccourcir; passe++) {
+      try {
+        console.error(
+          `  ↺  Étape 3 ter : raccourcissement ${passe}/${PASSES_RACCOURCISSEMENT} : ${courante.tropLongs.map((t) => `${t.cle} (−${t.excedent} car.)`).join(", ")}…`,
+        );
+        const raccourci = await raccourcirParties(courante.parties, courante.tropLongs, regles);
+        usage = addUsage(usage, raccourci.usage);
+        courante = validatePartiesReseaux(raccourci.parties, contexte);
+        retenir(courante);
+      } catch (error) {
+        console.error(`     raccourcissement impossible : ${error.message}`);
+        return null;
+      }
+    }
+    return courante.valid ? courante.reseaux : null;
+  }
+
+  for (let tentative = 1; tentative <= 2; tentative++) {
+    // Nouvel essai : la réponse refusée et ses erreurs, pour la corriger
+    // plutôt que tout réécrire.
+    const userMessage =
+      tentative === 1 || !derniere
+        ? basePrompt
+        : `${basePrompt}
+
+ATTENTION : ta réponse précédente a été refusée pour les raisons suivantes. Corrige-les, en gardant ce qui était accepté.
+${errors.map((error) => `- ${error}`).join("\n")}
+
+Les erreurs désignent les tweets assemblés : ${Object.entries(PARTIES_PAR_TWEET)
+        .map(([tweet, parties]) => `${tweet} = ${parties.join(" + ")}`)
+        .join(" ; ")}.
+
+Ta réponse précédente :
+${JSON.stringify(derniere, (cle, valeur) => (CHAMPS_DU_CODE.has(cle) ? undefined : valeur), 2)}`;
+
+    try {
+      const data = await callReseaux(userMessage);
+      usage = addUsage(usage, data.usage);
+      const raw = cleanContenu(extractJson(data));
+      const validation = validatePartiesReseaux(raw, contexte);
+      derniere = validation.parties ?? raw;
+      derniereAssemblee = validation.assemble;
+      errors = validation.errors;
+      if (validation.valid) return { reseaux: validation.reseaux, usage, errors: [] };
+      const raccourcis = await essayerRaccourcir(validation);
+      if (raccourcis) {
+        console.log("  ✓ Étape 3 ter : tweets raccourcis et acceptés.");
+        return { reseaux: raccourcis, usage, errors: [] };
+      }
+    } catch (error) {
+      errors = [error.message];
+    }
+
+    if (tentative === 1) {
+      console.error("  ⚠️  Étape 3 ter : publications X refusées, nouvelle tentative :");
+      for (const error of errors) console.error(`     - ${error}`);
+    }
+  }
+
+  console.error("  ⚠️  Étape 3 ter : ÉCHEC après deux tentatives, fiche conservée SANS publications X.");
+  for (const error of errors) console.error(`     - ${error}`);
+  return { reseaux: null, usage, errors, derniere: derniereAssemblee };
+}
+
 // --- Estimation de coût -----------------------------------------------------
 
 // Tarifs approximatifs (USD / million de tokens), à ajuster si Anthropic ou
@@ -939,10 +1130,13 @@ function estimateMistralCost(usage) {
 // ce pipeline, donc son coût réel n'est jamais connu ici (voir loadEtape1).
 // recherchesWeb : seulement avec des commentaires du Club (recherche web de
 // l'étape 3) ; absent, le coût garde exactement sa forme habituelle.
-export function buildCoutPipeline({ usage2, usage3, usage3bis, recherchesWeb }) {
+// usage3ter (publications X) : absent, le coût garde sa forme d'avant l'étape 3 ter.
+export function buildCoutPipeline({ usage2, usage3, usage3bis, usage3ter, recherchesWeb }) {
   const coutEtape2 = estimateMistralCost(usage2);
   const coutEtape3 = estimateClaudeCost(usage3);
   const coutEtape3bis = estimateClaudeCost(usage3bis);
+  const avecReseaux = usage3ter !== undefined;
+  const coutEtape3ter = avecReseaux ? estimateClaudeCost(usage3ter) : 0;
   const avecRecherche = recherchesWeb !== undefined;
   const coutRecherches = avecRecherche ? recherchesWeb * COUT_RECHERCHE_WEB : 0;
 
@@ -951,14 +1145,16 @@ export function buildCoutPipeline({ usage2, usage3, usage3bis, recherchesWeb }) 
     tokensEtape2: usage2,
     tokensEtape3: usage3,
     tokensEtape3bis: usage3bis,
+    ...(avecReseaux ? { tokensEtape3ter: usage3ter } : {}),
     ...(avecRecherche ? { recherchesWeb } : {}),
     coutEstimeParEtape: {
       etape2: Number(coutEtape2.toFixed(4)),
       etape3: Number(coutEtape3.toFixed(4)),
       etape3bis: Number(coutEtape3bis.toFixed(4)),
+      ...(avecReseaux ? { etape3ter: Number(coutEtape3ter.toFixed(4)) } : {}),
       ...(avecRecherche ? { recherchesWeb: Number(coutRecherches.toFixed(4)) } : {}),
     },
-    coutEstimeTotal: Number((coutEtape2 + coutEtape3 + coutEtape3bis + coutRecherches).toFixed(4)),
+    coutEstimeTotal: Number((coutEtape2 + coutEtape3 + coutEtape3bis + coutEtape3ter + coutRecherches).toFixed(4)),
     note: "tokensEtape1 non disponible : étape 1 réalisée manuellement, hors pipeline automatisé.",
   };
 }
@@ -1000,7 +1196,9 @@ export function ficheCompleteAvecVerdictRacine(arbitrage3) {
 // commentaires (facultatif, option --commentaires) : commentaires du Club sur
 // la fiche relue, traités aux étapes 2 et 3 (voir construireMessageEtape2 et
 // construireRequeteEtape3). L'étape 3 doit alors produire revision_relecture.
-async function runPipeline(etape1Input, { commentaires = null } = {}) {
+//
+// candidatNom (facultatif) : nécessaire à l'étape 3 ter (publications X).
+async function runPipeline(etape1Input, { commentaires = null, candidatNom = null } = {}) {
   const etape1 = validateEtape1Local(loadEtape1(etape1Input), "Étape 1");
   console.log(
     `✓ Étape 1 chargée et validée (score initial : ${etape1.notation_detaillee.score_total}/100${etape1.notation_detaillee.plafond_applique ? `, plafond appliqué — déclencheur : ${etape1.notation_detaillee.plafond_declencheur}` : ""}).`,
@@ -1082,10 +1280,24 @@ async function runPipeline(etape1Input, { commentaires = null } = {}) {
     console.log("Étape 3 bis : version basique… ✓");
   }
 
+  // Étape 3 ter : sans nom de candidat (appel isolé de runPipeline), sautée.
+  let usage3ter;
+  let erreursReseaux = [];
+  if (candidatNom) {
+    const resultat3ter = await genererReseaux(parsed, { candidatNom, score: parsed.notation_detaillee.score_total });
+    usage3ter = resultat3ter.usage;
+    erreursReseaux = resultat3ter.errors;
+    if (resultat3ter.reseaux) {
+      parsed.reseaux = resultat3ter.reseaux;
+      console.log("Étape 3 ter : publications X… ✓");
+    }
+  }
+
   const coutPipeline = buildCoutPipeline({
     usage2: mistralResult?.usage ?? null,
     usage3: data3.usage ?? {},
     usage3bis,
+    usage3ter,
     recherchesWeb,
   });
 
@@ -1099,6 +1311,7 @@ async function runPipeline(etape1Input, { commentaires = null } = {}) {
     etape3Brut,
     revisionRelecture,
     erreursVersionBasique: versionBasique ? [] : erreursVersionBasique,
+    erreursReseaux: parsed.reseaux ? [] : erreursReseaux,
   };
 }
 
@@ -1108,7 +1321,7 @@ async function runPipeline(etape1Input, { commentaires = null } = {}) {
 // écrit en plus.
 function ecrireResultat(chemin, { ecrit, raison = null, saved = null, theme, pipelineResult }) {
   if (!chemin || chemin === true) return;
-  const { parsed, coutPipeline, erreursVersionBasique = [] } = pipelineResult;
+  const { parsed, coutPipeline, erreursVersionBasique = [], erreursReseaux = [] } = pipelineResult;
   mkdirSync(dirname(chemin), { recursive: true });
   writeFileSync(
     chemin,
@@ -1125,6 +1338,7 @@ function ecrireResultat(chemin, { ecrit, raison = null, saved = null, theme, pip
         score: parsed.notation_detaillee?.score_total ?? null,
         verdict: saved?.analyse.verdict ?? null,
         versionBasique: { ok: Boolean(parsed.version_basique), erreurs: erreursVersionBasique },
+        reseaux: { ok: Boolean(parsed.reseaux), erreurs: erreursReseaux },
         coutPipeline,
         etape2: { contreAvisMistral: pipelineResult.contreAvisMistral, usage: pipelineResult.usageMistral },
         etape3: pipelineResult.etape3Brut,
@@ -1591,7 +1805,11 @@ function printCoutPipeline(coutPipeline) {
   }
   console.log(`  Étape 3 bis (Claude, version basique) : ~$${coutPipeline.coutEstimeParEtape.etape3bis}`);
   printUsage(coutPipeline.tokensEtape3bis ?? {});
-  console.log(`  Coût total estimé (étapes 2, 3 et 3 bis) : ~$${coutPipeline.coutEstimeTotal}`);
+  if (coutPipeline.tokensEtape3ter !== undefined) {
+    console.log(`  Étape 3 ter (Claude, publications X) : ~$${coutPipeline.coutEstimeParEtape.etape3ter}`);
+    printUsage(coutPipeline.tokensEtape3ter ?? {});
+  }
+  console.log(`  Coût total estimé (toutes étapes automatisées) : ~$${coutPipeline.coutEstimeTotal}`);
   console.log(`  Note : ${coutPipeline.note}`);
 }
 
@@ -1658,7 +1876,10 @@ async function main() {
   }
 
   const item = { candidatNom, theme, source };
-  const pipelineResult = await runPipeline(etape1Input, { commentaires: commentaires?.length ? commentaires : null });
+  const pipelineResult = await runPipeline(etape1Input, {
+    commentaires: commentaires?.length ? commentaires : null,
+    candidatNom,
+  });
   if (args.revision !== undefined) {
     pipelineResult.parsed.revision = construireChampRevision(args.revision, commentaires ?? [], pipelineResult.revisionRelecture);
   }
