@@ -1,8 +1,20 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { consigneBudgets, remplacerTweet, validateReseaux } from "./lib/scoring.js";
+import { consigneBudgets, validatePartiesReseaux, validateReseaux } from "./lib/scoring.js";
 import { buildCoutPipeline, fichePourReseaux } from "./analyze.js";
-import { budgetsReseaux, lienIntentionX, longueurX, pastille, remplirTweet, tweetsReseaux, valeursReseaux } from "../src/lib/reseaux.js";
+import {
+  PARTIES_PAR_TWEET,
+  assemblerReseaux,
+  budgetsParties,
+  ecrirePartie,
+  lienIntentionX,
+  lirePartie,
+  longueurX,
+  pastille,
+  remplirTweet,
+  tweetsReseaux,
+  valeursReseaux,
+} from "../src/lib/reseaux.js";
 import { HANDLES_X, handleX } from "../src/lib/handles-x.js";
 
 const fiche = {
@@ -169,12 +181,82 @@ test("tweet « tient » : 2 points de chaque côté au plus, 8 mots au plus, dis
   assert.deepEqual(validateReseaux(court, contexte).errors, []);
 });
 
-test("budgets hors marqueurs : 280 moins les valeurs insérées pour cette fiche", () => {
-  const budgets = budgetsReseaux(valeursReseaux({ candidatNom: "Marine Le Pen", score: 41, handles: {} }));
-  // {CANDIDAT} 13 + {PASTILLE} 2 + {SCORE} 2 + {APPRECIATION} « Partiellement fondé » 19
-  assert.equal(budgets["fil.0"], 280 - 13 - 2 - 2 - 19);
-  assert.equal(budgets["fil.3"], 280 - 13 - 23);
-  assert.match(consigneBudgets({ candidatNom: "Marine Le Pen", score: 41 }), /- tient\.tweet : \d+ caractères hors \{CANDIDAT\}/);
+// Parties variables conformes (ce que le modèle écrit désormais).
+const partiesValides = () => ({
+  fil: {
+    accroche: "Supprimer les certificats d'économies d'énergie : une baisse non chiffrée.",
+    suspense: "Un chiffre surprend",
+    tweet2: "{NOM} veut supprimer un dispositif qui coûte 141 M€ par an (Cour des comptes).",
+    tweet3: "Selon la fiche, 2,9 millions de ménages en bénéficient depuis 2021, ce que {NOM} ne mentionne pas.",
+    angle_mort: "qui financera les travaux ?",
+    point_solide: null,
+  },
+  chiffre: { valeur: "141 M€", explication: "Le coût annuel du dispositif que la mesure supprime.", mesure_courte: "de le supprimer" },
+  tient: {
+    titre: "Supprimer les certificats d'énergie",
+    tient: ["Le dispositif existe déjà."],
+    tient_pas: ["La baisse annoncée n'est pas chiffrée.", "Le financement des travaux reste flou."],
+    tweet_tient: ["Le dispositif existe déjà."],
+    tweet_tient_pas: ["Baisse non chiffrée.", "Financement des travaux flou."],
+  },
+});
+
+test("parties : le code assemble les parties fixes, la sortie assemblée est acceptée", () => {
+  const resultat = validatePartiesReseaux(partiesValides(), contexte);
+  assert.deepEqual(resultat.errors, []);
+  const { fil, chiffre, tient } = resultat.reseaux;
+  assert.equal(
+    fil[0],
+    "🔵 Supprimer les certificats d'économies d'énergie : une baisse non chiffrée.\n\nPerlimpinpin.ai analyse la proposition de {CANDIDAT}\n\nNote : {PASTILLE} {SCORE}/100 {APPRECIATION}\n\nUn chiffre surprend ↓",
+  );
+  assert.ok(fil[1].startsWith("2/ {NOM}") && fil[2].startsWith("3/ "));
+  assert.equal(fil[3], "4/ L’angle mort de la proposition de {NOM} : qui financera les travaux ?\n\nAnalyse complète 👇 {LIEN}");
+  assert.equal(chiffre.tweet, "141 M€. Le coût annuel du dispositif que la mesure supprime.\n\n{CANDIDAT} propose de le supprimer. Notre analyse : {PASTILLE} {SCORE}/100 👇 {LIEN}");
+  assert.match(tient.tweet, /^Supprimer les certificats d'énergie, la proposition de \{CANDIDAT\} : ce qui tient, ce qui ne tient pas\.\n\n✅ Le dispositif existe déjà\.\n❌ Baisse non chiffrée\.\n❌ Financement des travaux flou\.\n\n\{PASTILLE\} \{SCORE\}\/100 · Analyse complète 👇 \{LIEN\}$/u);
+  // L'image garde ses propres points (15 mots au plus), distincts de ceux du tweet.
+  assert.deepEqual(tient.tient_pas, partiesValides().tient.tient_pas);
+});
+
+test("parties : ce que le code ajoute est retiré si le modèle l'écrit quand même", () => {
+  const p = partiesValides();
+  p.fil.accroche = `🔵 ${p.fil.accroche}`;
+  p.fil.suspense = "Un chiffre surprend ↓";
+  p.fil.tweet2 = `2/ ${p.fil.tweet2}`;
+  p.fil.angle_mort = "4/ L'angle mort de la proposition de {NOM} : qui financera les travaux ?";
+  p.fil.point_solide = "Point solide : le dispositif existe.";
+  p.chiffre.mesure_courte = "de le supprimer.";
+  p.tient.tweet_tient = ["✅ Le dispositif existe déjà."];
+  const { reseaux, errors } = validatePartiesReseaux(p, contexte);
+  assert.deepEqual(errors, []);
+  assert.equal(reseaux.fil[3], "4/ L’angle mort de la proposition de {NOM} : qui financera les travaux ?\n\nPoint solide : le dispositif existe.\n\nAnalyse complète 👇 {LIEN}");
+  assert.ok(!reseaux.fil[0].includes("🔵 🔵") && !reseaux.fil[0].includes("↓ ↓") && !reseaux.fil[1].startsWith("2/ 2/"));
+  assert.ok(reseaux.chiffre.tweet.includes("propose de le supprimer. Notre"));
+});
+
+test("budgets par partie : des parties remplies à leur budget tiennent en 280", () => {
+  const valeurs = valeursReseaux({ candidatNom: "Marine Le Pen", score: 41 });
+  const budgets = budgetsParties(valeurs);
+  assert.ok(Object.values(budgets).every((b) => Number.isInteger(b) && b > 10));
+  const plein = (n) => "a".repeat(n);
+  const p = {
+    fil: {
+      accroche: plein(budgets["fil.accroche"]), suspense: plein(budgets["fil.suspense"]), tweet2: plein(budgets["fil.tweet2"]),
+      tweet3: plein(budgets["fil.tweet3"]), angle_mort: plein(budgets["fil.angle_mort"]), point_solide: plein(budgets["fil.point_solide"]),
+    },
+    chiffre: { valeur: plein(12), explication: plein(budgets["chiffre.explication"]), mesure_courte: plein(budgets["chiffre.mesure_courte"]) },
+    tient: {
+      titre: plein(budgets["tient.titre"]), tient: ["a"], tient_pas: ["a", "a"],
+      tweet_tient: [plein(budgets["tient.tweet_tient"]), plein(budgets["tient.tweet_tient"])],
+      tweet_tient_pas: [plein(budgets["tient.tweet_tient_pas"]), plein(budgets["tient.tweet_tient_pas"])],
+    },
+  };
+  for (const tweet of tweetsReseaux(assemblerReseaux(p), { ...valeurs, LIEN: "https://perlimpinpin.ai/declarations/38" })) {
+    assert.ok(tweet.longueur <= 280, `${tweet.cle} : ${tweet.longueur}`);
+    assert.ok(tweet.longueur >= 270, `${tweet.cle} : budget trop prudent (${tweet.longueur})`);
+  }
+  const consigne = consigneBudgets({ candidatNom: "Marine Le Pen", score: 41 });
+  assert.match(consigne, /- tient\.tweet_tient \+ tient\.tweet_tient_pas : \d+ caractères au total/);
+  assert.match(consigne, /Chaque \{NOM\} que tu écris compte pour 13 caractères/);
 });
 
 test("élision : « de {NOM} » devient « d’Édouard Philippe », pas devant un compte X", () => {
@@ -203,9 +285,19 @@ test("raccourcissement : proposé seulement quand les seules erreurs sont des lo
   assert.ok(seul.tropLongs[0].excedent > 0 && seul.tropLongs[0].texte.startsWith("2/ {NOM}"));
   r.tient.titre = "Un titre beaucoup trop long pour la carte";
   assert.equal(validateReseaux(r, contexte).seulementLongueur, false);
-  // remplacerTweet : copie modifiée, original intact.
-  const corrige = remplacerTweet(r, "fil.1", "2/ {NOM} court.");
-  assert.equal(corrige.fil[1], "2/ {NOM} court.");
-  assert.notEqual(r.fil[1], corrige.fil[1]);
-  assert.equal(remplacerTweet(r, "tient.tweet", "x").tient.tweet, "x");
+});
+
+test("raccourcissement : parties du tweet trop long (ni valeur du chiffre ni titre), écriture sans effet de bord", () => {
+  const p = partiesValides();
+  p.fil.tweet2 = `{NOM} ${"mot ".repeat(80)}`.trim();
+  p.tient.tweet_tient = [`Le dispositif ${"long ".repeat(70)}`.trim()];
+  const resultat = validatePartiesReseaux(p, contexte);
+  const parTweet = Object.fromEntries(resultat.tropLongs.map((t) => [t.cle, t.parties]));
+  assert.deepEqual(parTweet["fil.1"], ["fil.tweet2"]);
+  // 8 mots dépassés aussi : pas seulement de la longueur.
+  assert.equal(resultat.seulementLongueur, false);
+  assert.deepEqual(PARTIES_PAR_TWEET["tient.tweet"], ["tient.titre", "tient.tweet_tient", "tient.tweet_tient_pas"]);
+  const copie = ecrirePartie(p, "fil.tweet2", "{NOM} court.");
+  assert.equal(lirePartie(copie, "fil.tweet2"), "{NOM} court.");
+  assert.notEqual(lirePartie(p, "fil.tweet2"), "{NOM} court.");
 });

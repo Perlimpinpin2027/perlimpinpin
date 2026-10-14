@@ -7,6 +7,7 @@ import { PrismaNeon } from "@prisma/adapter-neon";
 import { neonConfig } from "@neondatabase/serverless";
 import ws from "ws";
 import { cleanContenu } from "./lib/clean-text.js";
+import { PARTIES_PAR_TWEET, ecrirePartie, lirePartie } from "../src/lib/reseaux.js";
 import {
   validateEtape1Structure,
   validateFicheCompleteStructure,
@@ -15,9 +16,8 @@ import {
   validateVersionBasique,
   checkChiffresVersionBasique,
   checkAncragesVersionBasique,
-  validateReseaux,
+  validatePartiesReseaux,
   consigneBudgets,
-  remplacerTweet,
   validateAvisCommentairesEtape2,
   validateRevisionRelecture,
 } from "./lib/scoring.js";
@@ -941,33 +941,49 @@ export function fichePourReseaux(ficheFinale) {
   return fiche;
 }
 
-// Raccourcissement ciblé : seuls les tweets trop longs sont renvoyés au
-// modèle, sans la fiche (appel de quelques centaines de tokens), avec le
-// nombre de caractères à retirer. Renvoie { raw, usage } : la sortie avec les
-// tweets raccourcis (les autres inchangés).
-async function raccourcirTweets(raw, tropLongs) {
+// Raccourcissement ciblé : pour chaque tweet trop long, seules ses parties
+// variables sont renvoyées au modèle, sans la fiche (appel de quelques
+// centaines de tokens), avec le nombre de caractères à retirer en tout.
+// Renvoie { parties, usage } : les parties raccourcies (les autres inchangées).
+async function raccourcirParties(parties, tropLongs) {
   const message = [
-    "Raccourcis ces tweets de Perlimpinpin.ai. Pour chacun, retire AU MOINS le nombre de caractères indiqué, plus une marge de 5, comptés comme le fait X : un emoji, « € », « … » ou « ↓ » comptent 2.",
-    "Ne change pas : les marqueurs entre accolades ({CANDIDAT}, {NOM}, {PASTILLE}, {SCORE}, {APPRECIATION}, {LIEN}), les chiffres et leur nature (total, annuel, national…), les sources citées, la structure (lignes vides, lignes ✅ et ❌, « Analyse complète 👇 », début « 2/ », « 3/ », « 4/ »). Raccourcis en supprimant des mots, jamais en changeant le sens. Pas de tiret cadratin.",
-    'Réponds uniquement en JSON : { "<clé>": "<tweet raccourci>" }.',
+    "Raccourcis ces parties de tweets de Perlimpinpin.ai. Pour chaque tweet, retire AU MOINS le nombre de caractères indiqué, plus une marge de 5, au total sur ses parties, comptés comme le fait X : un emoji, « € », « … » ou « ↓ » comptent 2.",
+    "Ne change pas : les marqueurs entre accolades ({NOM}…), les chiffres et leur nature (total, annuel, national, partiel…), les sources citées, le sens. Raccourcis en supprimant des mots. Un point de tweet garde 8 mots au plus, l'explication du chiffre 20 mots au plus. Pas de tiret cadratin. Une liste reste une liste du même nombre de points.",
+    'Réponds uniquement en JSON, avec les mêmes clés : { "<clé>": "<texte>" ou ["<point>", …] }.',
     "",
-    ...tropLongs.map(({ cle, texte, excedent }) => `- ${cle} (retirer au moins ${excedent} caractères) :\n${texte}\n`),
+    ...tropLongs.map(({ cle, excedent, parties: cles }) =>
+      [
+        `Tweet ${cle} : retirer au moins ${excedent} caractères, sur ces parties :`,
+        JSON.stringify(Object.fromEntries(cles.map((partie) => [partie, lirePartie(parties, partie)])), null, 2),
+        "",
+      ].join("\n"),
+    ),
   ].join("\n");
 
   const data = await callReseaux(message);
   const reponse = cleanContenu(extractJson(data));
-  let corrige = raw;
-  for (const { cle } of tropLongs) {
-    if (typeof reponse?.[cle] === "string" && reponse[cle].trim()) corrige = remplacerTweet(corrige, cle, reponse[cle].trim());
+  let corrigees = parties;
+  for (const { parties: cles } of tropLongs) {
+    for (const partie of cles) {
+      const avant = lirePartie(parties, partie);
+      const apres = reponse?.[partie];
+      const valide = Array.isArray(avant)
+        ? Array.isArray(apres) && apres.length === avant.length && apres.every((p) => typeof p === "string" && p.trim())
+        : typeof apres === "string" && (apres.trim() || avant === null);
+      if (valide) corrigees = ecrirePartie(corrigees, partie, apres);
+    }
   }
-  return { raw: corrige, usage: data.usage };
+  return { parties: corrigees, usage: data.usage };
 }
 
-// Retourne { reseaux, usage, errors, derniere } : reseaux vaut null si les
-// deux tentatives ont échoué (errors donne alors la cause du dernier échec,
-// derniere la dernière réponse refusée, pour la relire sans nouvel appel).
+// Le modèle n'écrit que les parties variables ; le code assemble les tweets
+// (src/lib/reseaux.js, assemblerReseaux) et les contrôle.
+// Retourne { reseaux, usage, errors, derniere } : reseaux (tweets assemblés,
+// avec marqueurs) vaut null si les deux tentatives ont échoué ; errors donne
+// alors la cause du dernier échec, derniere les tweets assemblés de la
+// dernière réponse refusée, pour la relire sans nouvel appel.
 // `candidatNom` et `score` ne sont pas envoyés au modèle : ils servent à
-// calculer le budget de chaque tweet (consigneBudgets) et à mesurer les
+// calculer le budget de chaque partie (consigneBudgets) et à mesurer les
 // tweets une fois les marqueurs remplis. Le prompt est suivi de la fiche,
 // puis des budgets.
 export async function genererReseaux(ficheFinale, { candidatNom, score }) {
@@ -977,7 +993,10 @@ export async function genererReseaux(ficheFinale, { candidatNom, score }) {
 
   let usage = {};
   let errors = [];
+  // derniere : parties de la dernière réponse (renvoyées au nouvel essai) ;
+  // derniereAssemblee : ses tweets assemblés (affichés en cas d'échec).
   let derniere = null;
+  let derniereAssemblee = null;
   let raccourciTente = false;
   const contexte = { ficheFinale: fiche, candidatNom, score };
 
@@ -988,10 +1007,11 @@ export async function genererReseaux(ficheFinale, { candidatNom, score }) {
     raccourciTente = true;
     try {
       console.error(`  ↺  Étape 3 ter : raccourcissement de ${validation.tropLongs.map((t) => t.cle).join(", ")}…`);
-      const raccourci = await raccourcirTweets(derniere, validation.tropLongs);
+      const raccourci = await raccourcirParties(validation.parties, validation.tropLongs);
       usage = addUsage(usage, raccourci.usage);
-      derniere = raccourci.raw;
-      const nouvelle = validateReseaux(derniere, contexte);
+      const nouvelle = validatePartiesReseaux(raccourci.parties, contexte);
+      derniere = nouvelle.parties ?? derniere;
+      derniereAssemblee = nouvelle.assemble ?? derniereAssemblee;
       errors = nouvelle.errors;
       return nouvelle.valid ? nouvelle.reseaux : null;
     } catch (error) {
@@ -1011,6 +1031,10 @@ export async function genererReseaux(ficheFinale, { candidatNom, score }) {
 ATTENTION : ta réponse précédente a été refusée pour les raisons suivantes. Corrige-les, en gardant ce qui était accepté.
 ${errors.map((error) => `- ${error}`).join("\n")}
 
+Les erreurs désignent les tweets assemblés : ${Object.entries(PARTIES_PAR_TWEET)
+        .map(([tweet, parties]) => `${tweet} = ${parties.join(" + ")}`)
+        .join(" ; ")}.
+
 Ta réponse précédente :
 ${JSON.stringify(derniere, null, 2)}`;
 
@@ -1018,8 +1042,9 @@ ${JSON.stringify(derniere, null, 2)}`;
       const data = await callReseaux(userMessage);
       usage = addUsage(usage, data.usage);
       const raw = cleanContenu(extractJson(data));
-      derniere = raw;
-      const validation = validateReseaux(raw, contexte);
+      const validation = validatePartiesReseaux(raw, contexte);
+      derniere = validation.parties ?? raw;
+      derniereAssemblee = validation.assemble;
       if (validation.valid) return { reseaux: validation.reseaux, usage, errors: [] };
       errors = validation.errors;
       const raccourcis = await essayerRaccourcir(validation);
@@ -1039,7 +1064,7 @@ ${JSON.stringify(derniere, null, 2)}`;
 
   console.error("  ⚠️  Étape 3 ter : ÉCHEC après deux tentatives, fiche conservée SANS publications X.");
   for (const error of errors) console.error(`     - ${error}`);
-  return { reseaux: null, usage, errors, derniere };
+  return { reseaux: null, usage, errors, derniere: derniereAssemblee };
 }
 
 // --- Estimation de coût -----------------------------------------------------

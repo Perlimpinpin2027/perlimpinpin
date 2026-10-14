@@ -3,8 +3,11 @@ import {
   LONGUEUR_X_MAX,
   MARQUEURS,
   MARQUEURS_PAR_TWEET,
-  budgetsReseaux,
+  PARTIES_PAR_TWEET,
+  assemblerReseaux,
+  budgetsParties,
   longueurX,
+  normaliserParties,
   remplirTweet,
   valeursReseaux,
 } from "../../src/lib/reseaux.js";
@@ -604,15 +607,69 @@ const LECTURE_TWEETS = {
 };
 const MARQUEURS_TWEETS = Object.entries(MARQUEURS_PAR_TWEET).map(([cle, obligatoires]) => [cle, LECTURE_TWEETS[cle], obligatoires]);
 
-// Consigne ajoutée au prompt par le code : le budget de chaque tweet en
-// caractères hors marqueurs, calculé pour cette fiche (nom ou compte X,
-// appréciation, score réels).
+// Consigne ajoutée au prompt par le code : le budget de chaque partie
+// variable, calculé pour cette fiche (parties fixes remplies avec le nom ou le
+// compte X, l'appréciation et le score réels).
 export function consigneBudgets({ candidatNom, score, handles }) {
-  const budgets = budgetsReseaux(valeursReseaux({ candidatNom, score, handles }));
+  const valeurs = valeursReseaux({ candidatNom, score, handles });
+  const { "tient.tweet_tient": parPoint, "tient.tweet_tient_pas": _parPoint, ...budgets } = budgetsParties(valeurs);
   return [
-    "BUDGETS (calculés par le code pour cette fiche) : nombre de caractères permis pour chaque tweet, HORS marqueurs, comptés comme le fait X : un emoji, « € », « … » ou « ↓ » comptent 2, « Perlimpinpin.ai » compte 23. Chaque marqueur obligatoire est déjà décompté une fois ; ne le répète pas.",
-    ...Object.entries(budgets).map(([cle, budget]) => `- ${cle} : ${budget} caractères hors ${MARQUEURS_PAR_TWEET[cle].map((m) => `{${m}}`).join(", ")}`),
+    "BUDGETS (calculés par le code pour cette fiche) : nombre maximal de caractères de chaque partie que tu écris, comptés comme le fait X : un emoji, « € », « … » ou « ↓ » comptent 2. Les parties fixes (formules, compte X, note, lien) sont déjà décomptées.",
+    `Chaque {NOM} que tu écris compte pour ${longueurX(valeurs.NOM)} caractères (le nom inséré à sa place).`,
+    ...Object.entries(budgets).map(([cle, budget]) => `- ${cle} : ${budget} caractères`),
+    `- tient.tweet_tient + tient.tweet_tient_pas : ${parPoint * 4} caractères au total pour tous les points du tweet`,
   ].join("\n");
+}
+
+// --- Sortie du modèle : parties variables seulement ---------------------------
+const PartieTexte = z.string().trim().min(1);
+
+export const PartiesReseauxSchema = z.object({
+  fil: z.object({
+    accroche: PartieTexte,
+    suspense: PartieTexte,
+    tweet2: PartieTexte,
+    tweet3: PartieTexte,
+    angle_mort: PartieTexte,
+    point_solide: z.string().trim().nullable().optional(),
+  }),
+  chiffre: z.object({
+    valeur: PartieTexte.max(12),
+    explication: PartieTexte,
+    mesure_courte: PartieTexte,
+  }),
+  tient: z.object({
+    titre: PartieTexte,
+    tient: z.array(PartieTexte).min(1).max(3),
+    tient_pas: z.array(PartieTexte).min(2).max(3),
+    tweet_tient: z.array(PartieTexte).min(1).max(2),
+    tweet_tient_pas: z.array(PartieTexte).min(1).max(2),
+  }),
+});
+
+// Valide les parties écrites par le modèle : schéma, puis assemblage par le
+// code et tous les contrôles de validateReseaux sur les tweets assemblés.
+// Renvoie aussi `parties` (normalisées) et `assemble`, même en cas de refus
+// (pour le nouvel essai, le raccourcissement et l'affichage) ; chaque tweet
+// trop long porte la liste des parties à raccourcir.
+export function validatePartiesReseaux(raw, contexte = {}) {
+  const zodResult = PartiesReseauxSchema.safeParse(raw);
+  if (!zodResult.success) {
+    return { valid: false, errors: zodErreurs(zodResult.error), reseaux: null, parties: null, assemble: null, tropLongs: [], seulementLongueur: false };
+  }
+  const parties = normaliserParties(zodResult.data);
+  const assemble = assemblerReseaux(parties);
+  const validation = validateReseaux(assemble, contexte);
+  return {
+    ...validation,
+    parties,
+    assemble,
+    // Valeur du chiffre et titre : aussi sur les images, jamais raccourcis ici.
+    tropLongs: validation.tropLongs.map((t) => ({
+      ...t,
+      parties: PARTIES_PAR_TWEET[t.cle].filter((cle) => !["chiffre.valeur", "tient.titre"].includes(cle)),
+    })),
+  };
 }
 
 // Points du tweet « tient » : lignes commençant par ✅ ou ❌.
@@ -738,7 +795,7 @@ export function validateReseaux(raw, { ficheFinale, candidatNom, score, handles 
   // Longueur X, marqueurs remplis (score, compte X ou nom, lien).
   // tropLongs : { cle, texte, excedent } de chaque tweet trop long ; quand ce
   // sont les seules erreurs, le pipeline peut demander un simple
-  // raccourcissement (raccourcirTweets dans scripts/analyze.js).
+  // raccourcissement (raccourcirParties dans scripts/analyze.js).
   const tropLongs = [];
   if (candidatNom && score !== undefined) {
     const valeurs = valeursReseaux({ candidatNom, score, handles });
@@ -755,13 +812,4 @@ export function validateReseaux(raw, { ficheFinale, candidatNom, score, handles 
     return { valid: false, errors, reseaux: null, tropLongs, seulementLongueur: errors.length === tropLongs.length };
   }
   return { valid: true, errors: [], reseaux: r, tropLongs: [], seulementLongueur: false };
-}
-
-// Remplace un tweet (clé « fil.0 »…« tient.tweet ») dans une copie de la sortie.
-export function remplacerTweet(raw, cle, texte) {
-  const copie = structuredClone(raw);
-  const [format, champ] = cle.split(".");
-  if (format === "fil") copie.fil[Number(champ)] = texte;
-  else copie[format][champ] = texte;
-  return copie;
 }
