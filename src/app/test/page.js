@@ -3,6 +3,7 @@ import Header from "@/components/Header";
 import MonoTag from "@/components/MonoTag";
 import { prisma } from "@/lib/prisma";
 import { formatScore, getScoreBadge } from "@/lib/score";
+import { themeLabel } from "@/lib/themes";
 import { editionConfiguree, isEditor } from "@/lib/test-auth";
 import EditorBar from "./EditorBar";
 
@@ -113,7 +114,7 @@ export default async function TestPage() {
                       >
                         <div className="min-w-0 flex-1">
                           <p className="text-xs text-zinc-400">
-                            {proposition.candidat.nom} · {proposition.theme}
+                            {proposition.candidat.nom} · {themeLabel(proposition.theme)}
                           </p>
                           <p className="mt-1 text-base font-semibold text-zinc-900">
                             {displayTitle(proposition)}

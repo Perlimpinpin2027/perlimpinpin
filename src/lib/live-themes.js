@@ -4,14 +4,10 @@ import { THEMES } from "./themes.js";
 // même slugs que /themes/[slug]) + "autre". Le slug est ce qui est stocké
 // en base (LiveAnalyse.theme) ; le libellé sert à l'affichage.
 
-// Le nom éditorial du thème « economie » est une longue liste : libellé court
-// pour les dossiers.
-const SHORT_LABELS = { economie: "Économie & pouvoir d'achat" };
-
 export const LIVE_THEMES = [
   ...THEMES.map((theme) => ({
     slug: theme.slug,
-    label: SHORT_LABELS[theme.slug] ?? theme.name,
+    label: theme.shortName ?? theme.name,
     description: theme.description,
   })),
   { slug: "autre", label: "Autre", description: "Sujet ne relevant d'aucun des thèmes ci-dessus." },
