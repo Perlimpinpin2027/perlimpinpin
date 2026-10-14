@@ -941,39 +941,39 @@ export function fichePourReseaux(ficheFinale) {
   return fiche;
 }
 
-// Raccourcissement ciblé : pour chaque tweet trop long, seules ses parties
-// variables sont renvoyées au modèle, sans la fiche (appel de quelques
-// centaines de tokens), avec le nombre de caractères à retirer en tout.
-// Renvoie { parties, usage } : les parties raccourcies (les autres inchangées).
+// Raccourcissement ciblé des erreurs « mécaniques » : pour chaque tweet trop
+// long, ses parties variables avec le nombre de caractères à retirer ; pour
+// chaque partie qui a trop de mots, le maximum à respecter. Sans la fiche
+// (appel de quelques centaines de tokens). Renvoie { parties, usage } : les
+// parties raccourcies (les autres inchangées).
 const PASSES_RACCOURCISSEMENT = 3;
 
-async function raccourcirParties(parties, tropLongs) {
+async function raccourcirParties(parties, tropLongs, tropDeMots = []) {
+  const extrait = (cles) => JSON.stringify(Object.fromEntries(cles.map((partie) => [partie, lirePartie(parties, partie)])), null, 2);
   const message = [
-    "Raccourcis ces parties de tweets de Perlimpinpin.ai. Pour chaque tweet, retire AU MOINS le nombre de caractères indiqué, plus une marge de 5, au total sur ses parties, comptés comme le fait X : un emoji, « € », « … » ou « ↓ » comptent 2.",
-    "Ne change pas : les marqueurs entre accolades ({NOM}…), les chiffres et leur nature (total, annuel, national, partiel…), les sources citées, le sens. Raccourcis en supprimant des mots. Un point de tweet garde 8 mots au plus, l'explication du chiffre 20 mots au plus. Pas de tiret cadratin. Une liste reste une liste du même nombre de points.",
+    "Raccourcis ces parties de tweets de Perlimpinpin.ai, comme indiqué pour chacune. Les caractères sont comptés comme le fait X : un emoji, « € », « … » ou « ↓ » comptent 2. Vise une marge de 5 caractères ou d'un mot.",
+    "Ne change pas : les marqueurs entre accolades ({NOM}…), les chiffres et leur nature (total, annuel, national, partiel…), les sources citées, le sens. Raccourcis en supprimant des mots. Chaque point ✅ ou ❌, version longue ou courte, garde son sujet (« L'abrogation… », « Le foncier promis… »). Pas de tiret cadratin. Une liste reste une liste du même nombre de points, dans le même ordre.",
     'Réponds uniquement en JSON, avec les mêmes clés : { "<clé>": "<texte>" ou ["<point>", …] }.',
     "",
     ...tropLongs.map(({ cle, excedent, parties: cles }) =>
-      [
-        `Tweet ${cle} : retirer au moins ${excedent} caractères, sur ces parties :`,
-        JSON.stringify(Object.fromEntries(cles.map((partie) => [partie, lirePartie(parties, partie)])), null, 2),
-        "",
-      ].join("\n"),
+      [`Tweet ${cle} : retirer au moins ${excedent} caractères au total, sur ces parties :`, extrait(cles), ""].join("\n"),
+    ),
+    ...tropDeMots.map(({ partie, max }) =>
+      [`Partie ${partie} : ${max} mots au plus${Array.isArray(lirePartie(parties, partie)) ? " pour chaque point" : ""} :`, extrait([partie]), ""].join("\n"),
     ),
   ].join("\n");
 
   const data = await callReseaux(message);
   const reponse = cleanContenu(extractJson(data));
+  const cles = new Set([...tropLongs.flatMap((t) => t.parties), ...tropDeMots.map((t) => t.partie)]);
   let corrigees = parties;
-  for (const { parties: cles } of tropLongs) {
-    for (const partie of cles) {
-      const avant = lirePartie(parties, partie);
-      const apres = reponse?.[partie];
-      const valide = Array.isArray(avant)
-        ? Array.isArray(apres) && apres.length === avant.length && apres.every((p) => typeof p === "string" && p.trim())
-        : typeof apres === "string" && (apres.trim() || avant === null);
-      if (valide) corrigees = ecrirePartie(corrigees, partie, apres);
-    }
+  for (const partie of cles) {
+    const avant = lirePartie(parties, partie);
+    const apres = reponse?.[partie];
+    const valide = Array.isArray(avant)
+      ? Array.isArray(apres) && apres.length === avant.length && apres.every((p) => typeof p === "string" && p.trim())
+      : typeof apres === "string" && (apres.trim() || avant === null);
+    if (valide) corrigees = ecrirePartie(corrigees, partie, apres);
   }
   return { parties: corrigees, usage: data.usage };
 }
@@ -1002,26 +1002,27 @@ export async function genererReseaux(ficheFinale, { candidatNom, score }) {
   let raccourciTente = false;
   const contexte = { ficheFinale: fiche, candidatNom, score };
 
-  // Dès que les seules erreurs sont des tweets trop longs : un raccourcissement
+  // Dès que les seules erreurs sont « mécaniques » (trop de caractères ou de
+  // mots) : un raccourcissement
   // ciblé plutôt qu'une réécriture complète, jusqu'à PASSES_RACCOURCISSEMENT
   // passes, chacune avec l'excédent restant (une seule série par fiche).
   async function essayerRaccourcir(validation) {
-    if (raccourciTente || !validation.seulementLongueur) return null;
+    if (raccourciTente || !validation.seulementRaccourcir) return null;
     raccourciTente = true;
     let courante = validation;
     for (let passe = 1; passe <= PASSES_RACCOURCISSEMENT; passe++) {
       try {
         console.error(
-          `  ↺  Étape 3 ter : raccourcissement ${passe}/${PASSES_RACCOURCISSEMENT} de ${courante.tropLongs.map((t) => `${t.cle} (−${t.excedent})`).join(", ")}…`,
+          `  ↺  Étape 3 ter : raccourcissement ${passe}/${PASSES_RACCOURCISSEMENT} : ${[...courante.tropLongs.map((t) => `${t.cle} (−${t.excedent} car.)`), ...courante.tropDeMots.map((t) => `${t.partie} (≤ ${t.max} mots)`)].join(", ")}…`,
         );
-        const raccourci = await raccourcirParties(courante.parties, courante.tropLongs);
+        const raccourci = await raccourcirParties(courante.parties, courante.tropLongs, courante.tropDeMots);
         usage = addUsage(usage, raccourci.usage);
         courante = validatePartiesReseaux(raccourci.parties, contexte);
         derniere = courante.parties ?? derniere;
         derniereAssemblee = courante.assemble ?? derniereAssemblee;
         errors = courante.errors;
         if (courante.valid) return courante.reseaux;
-        if (!courante.seulementLongueur) return null;
+        if (!courante.seulementRaccourcir) return null;
       } catch (error) {
         console.error(`     raccourcissement impossible : ${error.message}`);
         return null;

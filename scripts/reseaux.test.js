@@ -299,35 +299,48 @@ test("formule « Analyse complète 👇 » exigée dans le tweet 4 et le tweet �
   assert.ok(validateReseaux(r, contexte).errors.some((e) => e.startsWith("tient.tweet : la formule « Analyse complète 👇 » manque")));
 });
 
-test("raccourcissement : proposé seulement quand les seules erreurs sont des longueurs", () => {
+test("raccourcissement : proposé quand les seules erreurs sont des longueurs ou des nombres de mots", () => {
   const r = valide();
   r.fil[1] = `2/ {NOM} ${"mot ".repeat(80)}`.trim();
   const seul = validateReseaux(r, contexte);
-  assert.equal(seul.seulementLongueur, true);
+  assert.equal(seul.seulementRaccourcir, true);
   assert.deepEqual(seul.tropLongs.map((t) => t.cle), ["fil.1"]);
   assert.ok(seul.tropLongs[0].excedent > 0 && seul.tropLongs[0].texte.startsWith("2/ {NOM}"));
+  // Trop de mots : encore mécanique, avec la partie et le maximum à respecter.
   r.tient.titre = "Un titre beaucoup trop long pour la carte";
-  assert.equal(validateReseaux(r, contexte).seulementLongueur, false);
+  const mots = validateReseaux(r, contexte);
+  assert.equal(mots.seulementRaccourcir, true);
+  assert.deepEqual(mots.tropDeMots, [{ partie: "tient.titre", max: 6 }]);
+  // Un marqueur manquant n'est pas mécanique : nouvel essai complet.
+  r.fil[2] = r.fil[2].replace("{NOM}", "la candidate");
+  assert.equal(validateReseaux(r, contexte).seulementRaccourcir, false);
 });
 
-test("raccourcissement : parties du tweet trop long (ni valeur du chiffre ni titre), écriture sans effet de bord", () => {
+test("raccourcissement : parties en cause (caractères et mots), écriture sans effet de bord", () => {
   const p = partiesValides();
   p.fil.tweet2 = `{NOM} ${"mot ".repeat(80)}`.trim();
-  p.tient.tient[0].court = `Le dispositif ${"long ".repeat(70)}`.trim();
+  p.fil.suspense = "Un chiffre de la fiche surprend beaucoup plus que tout le reste du dossier";
+  p.tient.tient_pas[1].court = "Le financement des travaux de rénovation reste encore très flou.";
+  p.tient.tient_pas[2].texte = `Aucune étude ne mesure ${"vraiment ".repeat(15)}l'effet.`;
   const resultat = validatePartiesReseaux(p, contexte);
   const parTweet = Object.fromEntries(resultat.tropLongs.map((t) => [t.cle, t.parties]));
   assert.deepEqual(parTweet["fil.1"], ["fil.tweet2"]);
-  assert.deepEqual(parTweet["tient.tweet"], ["tient.courts_tient", "tient.courts_tient_pas"]);
-  // 8 mots dépassés aussi : pas seulement de la longueur.
-  assert.equal(resultat.seulementLongueur, false);
+  assert.equal(resultat.seulementRaccourcir, true);
+  assert.deepEqual(
+    resultat.tropDeMots.map((t) => `${t.partie}≤${t.max}`).sort(),
+    ["fil.suspense≤12", "tient.courts_tient_pas≤8", "tient.textes_tient_pas≤15"],
+  );
   const copie = ecrirePartie(p, "fil.tweet2", "{NOM} court.");
   assert.equal(lirePartie(copie, "fil.tweet2"), "{NOM} court.");
   assert.notEqual(lirePartie(p, "fil.tweet2"), "{NOM} court.");
-  // Versions courtes des 2 premiers points : lues et réécrites sans toucher aux `texte`.
+  // Versions courtes et textes des points : lus et réécrits en liste, l'un sans toucher à l'autre.
   const q = partiesValides();
-  assert.deepEqual(lirePartie(q, "tient.courts_tient_pas"), ["Baisse non chiffrée.", "Financement des travaux flou."]);
-  const r2 = ecrirePartie(q, "tient.courts_tient_pas", ["Baisse floue.", "Travaux flous."]);
-  assert.deepEqual(r2.tient.tient_pas.map((p) => p.court), ["Baisse floue.", "Travaux flous.", "Effet non mesuré."]);
+  assert.deepEqual(lirePartie(q, "tient.courts_tient_pas"), ["Baisse non chiffrée.", "Financement des travaux flou.", "Effet non mesuré."]);
+  const r2 = ecrirePartie(q, "tient.courts_tient_pas", ["Baisse floue.", "Travaux flous.", "Effet inconnu."]);
+  assert.deepEqual(r2.tient.tient_pas.map((x) => x.court), ["Baisse floue.", "Travaux flous.", "Effet inconnu."]);
   assert.equal(r2.tient.tient_pas[0].texte, q.tient.tient_pas[0].texte);
+  const r3 = ecrirePartie(q, "tient.textes_tient", ["L'abrogation est simple."]);
+  assert.equal(r3.tient.tient[0].texte, "L'abrogation est simple.");
+  assert.equal(r3.tient.tient[0].court, q.tient.tient[0].court);
   assert.equal(q.tient.tient_pas[0].court, "Baisse non chiffrée.");
 });

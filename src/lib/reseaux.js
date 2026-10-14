@@ -75,7 +75,7 @@ export const MARQUEURS_PAR_TWEET = {
 
 // Parties variables de chaque tweet (clé « format.partie »). Pour le tweet
 // « tient », « courts_tient » et « courts_tient_pas » désignent les versions
-// courtes des 2 premiers points de chaque côté (seules reprises dans le tweet).
+// courtes des points (seules les 2 premières de chaque côté vont dans le tweet).
 export const PARTIES_PAR_TWEET = {
   "fil.0": ["fil.accroche", "fil.suspense"],
   "fil.1": ["fil.tweet2"],
@@ -87,25 +87,33 @@ export const PARTIES_PAR_TWEET = {
 
 const POINTS_DANS_LE_TWEET = 2;
 
-export function lirePartie(parties, cle) {
+// Parties « virtuelles » des points : « tient.courts_tient » (toutes les
+// versions courtes d'un côté) et « tient.textes_tient » (tous les textes de
+// l'image), lues et réécrites comme des listes de chaînes.
+function champDesPoints(cle) {
   const [format, champ] = cle.split(".");
-  if (format === "tient" && champ.startsWith("courts_")) {
-    const cote = champ.slice("courts_".length);
-    return (parties?.tient?.[cote] ?? []).slice(0, POINTS_DANS_LE_TWEET).map((point) => point.court);
-  }
+  const virtuel = format === "tient" ? champ.match(/^(courts|textes)_(tient|tient_pas)$/) : null;
+  return virtuel ? { cote: virtuel[2], propriete: virtuel[1] === "courts" ? "court" : "texte" } : null;
+}
+
+export function lirePartie(parties, cle) {
+  const points = champDesPoints(cle);
+  if (points) return (parties?.tient?.[points.cote] ?? []).map((point) => point[points.propriete]);
+  const [format, champ] = cle.split(".");
   return parties?.[format]?.[champ];
 }
 
 export function ecrirePartie(parties, cle, valeur) {
   const copie = structuredClone(parties);
-  const [format, champ] = cle.split(".");
-  if (format === "tient" && champ.startsWith("courts_")) {
-    const cote = champ.slice("courts_".length);
-    valeur.forEach((court, index) => {
-      if (copie.tient[cote][index]) copie.tient[cote][index] = { ...copie.tient[cote][index], court };
+  const points = champDesPoints(cle);
+  if (points) {
+    valeur.forEach((texte, index) => {
+      const point = copie.tient[points.cote][index];
+      if (point) copie.tient[points.cote][index] = { ...point, [points.propriete]: texte };
     });
     return copie;
   }
+  const [format, champ] = cle.split(".");
   copie[format] = { ...copie[format], [champ]: valeur };
   return copie;
 }

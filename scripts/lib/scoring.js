@@ -659,7 +659,7 @@ export const PartiesReseauxSchema = z.object({
 export function validatePartiesReseaux(raw, contexte = {}) {
   const zodResult = PartiesReseauxSchema.safeParse(raw);
   if (!zodResult.success) {
-    return { valid: false, errors: zodErreurs(zodResult.error), reseaux: null, parties: null, assemble: null, tropLongs: [], seulementLongueur: false };
+    return { valid: false, errors: zodErreurs(zodResult.error), reseaux: null, parties: null, assemble: null, tropLongs: [], tropDeMots: [], seulementRaccourcir: false };
   }
   const parties = normaliserParties(zodResult.data);
   const assemble = assemblerReseaux(parties);
@@ -698,13 +698,14 @@ function textesCartes(r) {
   ];
 }
 
+// [clé affichée, lecture, maximum de mots, partie variable à raccourcir]
 const LIMITES_MOTS = [
-  ["tient.titre", (r) => [r.tient.titre], 6],
-  ["chiffre.explication", (r) => [r.chiffre.explication], 20],
-  ["tient.tient", (r) => r.tient.tient, 15],
-  ["tient.tient_pas", (r) => r.tient.tient_pas, 15],
-  ["tient.tient (court)", (r) => r.tient.tient_court ?? [], 8],
-  ["tient.tient_pas (court)", (r) => r.tient.tient_pas_court ?? [], 8],
+  ["tient.titre", (r) => [r.tient.titre], 6, "tient.titre"],
+  ["chiffre.explication", (r) => [r.chiffre.explication], 20, "chiffre.explication"],
+  ["tient.tient", (r) => r.tient.tient, 15, "tient.textes_tient"],
+  ["tient.tient_pas", (r) => r.tient.tient_pas, 15, "tient.textes_tient_pas"],
+  ["tient.tient (court)", (r) => r.tient.tient_court ?? [], 8, "tient.courts_tient"],
+  ["tient.tient_pas (court)", (r) => r.tient.tient_pas_court ?? [], 8, "tient.courts_tient_pas"],
 ];
 
 function nombreDeMots(texte) {
@@ -724,6 +725,16 @@ export function validateReseaux(raw, { ficheFinale, candidatNom, score, handles 
   if (!zodResult.success) return { valid: false, errors: zodErreurs(zodResult.error), reseaux: null };
   const r = zodResult.data;
   const errors = [];
+  // Erreurs « mécaniques » (trop de caractères ou de mots) : corrigeables par
+  // un simple raccourcissement des parties en cause (raccourcirParties dans
+  // scripts/analyze.js). tropDeMots : partie variable -> maximum de mots.
+  let mecaniques = 0;
+  const tropDeMots = new Map();
+  const motsEnTrop = (partie, max, message) => {
+    errors.push(message);
+    mecaniques += 1;
+    tropDeMots.set(partie, max);
+  };
 
   const tweets = MARQUEURS_TWEETS.map(([cle, lire]) => [cle, lire(r)]);
   const cartes = textesCartes(r);
@@ -759,7 +770,9 @@ export function validateReseaux(raw, { ficheFinale, candidatNom, score, handles 
   // Tweet 1 : la phrase de suspense (dernière ligne, terminée par « ↓ ») fait 12 mots au plus.
   const suspense = r.fil[0].split("\n").map((ligne) => ligne.trim()).filter(Boolean).at(-1) ?? "";
   if (!suspense.endsWith("↓")) errors.push("fil.0 : la dernière ligne doit être la phrase de suspense, terminée par « ↓ ».");
-  else if (nombreDeMots(suspense) > 12) errors.push(`fil.0 : phrase de suspense de ${nombreDeMots(suspense)} mots (12 au plus) : « ${suspense} ».`);
+  else if (nombreDeMots(suspense) > 12) {
+    motsEnTrop("fil.suspense", 12, `fil.0 : phrase de suspense de ${nombreDeMots(suspense)} mots (12 au plus) : « ${suspense} ».`);
+  }
 
   // Tweet 4 : « 4/ L’angle mort de la proposition de {NOM} : … ».
   if (!/^4\/ L[’']angle mort de la proposition (de |d[’'])\{NOM\}/.test(r.fil[3])) {
@@ -772,20 +785,20 @@ export function validateReseaux(raw, { ficheFinale, candidatNom, score, handles 
   }
 
   // Tweet « tient » : 1 ou 2 points de chaque côté, 8 mots au plus chacun.
-  for (const [emoji, cote] of [["✅", "qui tiennent"], ["❌", "qui ne tiennent pas"]]) {
+  for (const [emoji, cote, partie] of [["✅", "qui tiennent", "tient.courts_tient"], ["❌", "qui ne tiennent pas", "tient.courts_tient_pas"]]) {
     const points = pointsDuTweet(r.tient.tweet, emoji);
     if (points.length < 1 || points.length > 2) {
       errors.push(`tient.tweet : ${points.length} point(s) ${cote} (lignes « ${emoji} ») ; 1 ou 2 attendus.`);
     }
     for (const point of points) {
-      if (nombreDeMots(point) > 8) errors.push(`tient.tweet : ${nombreDeMots(point)} mots pour « ${emoji} ${point} » (8 au plus).`);
+      if (nombreDeMots(point) > 8) motsEnTrop(partie, 8, `tient.tweet : ${nombreDeMots(point)} mots pour « ${emoji} ${point} » (8 au plus).`);
     }
   }
 
-  for (const [cle, lire, max] of LIMITES_MOTS) {
+  for (const [cle, lire, max, partie] of LIMITES_MOTS) {
     for (const texte of lire(r)) {
       const mots = nombreDeMots(texte);
-      if (mots > max) errors.push(`${cle} : ${mots} mots pour « ${texte} » (${max} au plus).`);
+      if (mots > max) motsEnTrop(partie, max, `${cle} : ${mots} mots pour « ${texte} » (${max} au plus).`);
     }
   }
 
@@ -811,13 +824,21 @@ export function validateReseaux(raw, { ficheFinale, candidatNom, score, handles 
       const longueur = longueurX(remplirTweet(texte, valeurs));
       if (longueur > LONGUEUR_X_MAX) {
         tropLongs.push({ cle, texte, excedent: longueur - LONGUEUR_X_MAX });
+        mecaniques += 1;
         errors.push(`${cle} : ${longueur} caractères comptés par X (${LONGUEUR_X_MAX} au plus) : retire au moins ${longueur - LONGUEUR_X_MAX} caractères.`);
       }
     }
   }
 
   if (errors.length > 0) {
-    return { valid: false, errors, reseaux: null, tropLongs, seulementLongueur: errors.length === tropLongs.length };
+    return {
+      valid: false,
+      errors,
+      reseaux: null,
+      tropLongs,
+      tropDeMots: [...tropDeMots].map(([partie, max]) => ({ partie, max })),
+      seulementRaccourcir: errors.length === mecaniques,
+    };
   }
-  return { valid: true, errors: [], reseaux: r, tropLongs: [], seulementLongueur: false };
+  return { valid: true, errors: [], reseaux: r, tropLongs: [], tropDeMots: [], seulementRaccourcir: false };
 }
