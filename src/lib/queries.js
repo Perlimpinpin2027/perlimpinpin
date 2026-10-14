@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { creerMoteur } from "@/lib/recherche";
+import { resolveTheme, themeLabel } from "@/lib/themes";
 
 const dateFormatter = new Intl.DateTimeFormat("fr-FR", {
   day: "numeric",
@@ -40,7 +41,7 @@ function documentRecherche(analyse) {
     propositionId: analyse.proposition.id,
     titre: displayTitle(analyse.proposition),
     candidat: analyse.proposition.candidat.nom,
-    theme: analyse.proposition.theme,
+    theme: themeLabel(analyse.proposition.theme),
     resume: analyse.resumeAccueil ?? analyse.verdict?.slice(0, 400) ?? "",
     texte: analyse.proposition.texteOriginal.slice(0, 600),
   };
@@ -72,16 +73,13 @@ export async function getIndexRecherche() {
   return analyses.map(documentRecherche);
 }
 
-// Le champ `theme` des propositions est un texte libre saisi lors de
-// l'analyse (ex: "Retraites", "Économie"), pas un slug. On le normalise
-// pour le comparer au slug de /themes/[slug].
-function slugifyTheme(theme) {
-  return theme
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
+// Le champ `theme` des propositions contient le slug d'un des 12 thèmes de
+// src/lib/themes.js (harmonisation d'octobre 2026, voir
+// scripts/harmoniser-themes.js). cleTheme() ramène aussi une ancienne
+// écriture libre ("Emploi et chômage"...) au même identifiant ; les libellés
+// affichés passent par themeLabel().
+function cleTheme(valeur) {
+  return resolveTheme(valeur) ?? valeur;
 }
 
 // Réordonne une liste déjà triée par récence décroissante (plus récent en
@@ -158,7 +156,7 @@ export async function getFeaturedRotation(dossiers = []) {
     quoteText: displayTitle(analyse.proposition),
     personName: analyse.proposition.candidat.nom,
     personPhotoUrl: analyse.proposition.candidat.photoUrl,
-    personRole: `Déclaration • ${analyse.proposition.theme}`,
+    personRole: `Déclaration • ${themeLabel(analyse.proposition.theme)}`,
     dateLabel: dateFormatter.format(analyse.proposition.dateDeclaration),
     score: analyse.scoreFaisabilite,
     verdictDescription: analyse.resumeAccueil ?? analyse.verdict,
@@ -197,7 +195,7 @@ export async function getTopDeclarations(limit = 3) {
     photoUrl: analyse.proposition.candidat.photoUrl,
     quote: displayTitle(analyse.proposition),
     date: dateCourteFormatter.format(analyse.proposition.dateDeclaration),
-    theme: analyse.proposition.theme,
+    theme: themeLabel(analyse.proposition.theme),
     score: analyse.scoreFaisabilite,
   }));
 }
@@ -233,6 +231,7 @@ export async function getCandidateRanking(limit) {
 // fautes et aux accents, voir src/lib/recherche.js). sort = "pertinence"
 // classe les résultats de la recherche du plus au moins pertinent.
 export async function getPublishedDeclarations({ candidat, theme, sort, q } = {}) {
+  const themeCible = theme ? cleTheme(theme) : null;
   const orderBy =
     sort === "score_asc"
       ? [{ scoreFaisabilite: "asc" }]
@@ -240,12 +239,13 @@ export async function getPublishedDeclarations({ candidat, theme, sort, q } = {}
         ? [{ scoreFaisabilite: "desc" }]
         : [{ createdAt: "desc" }];
 
-  const [analyses, allPublished, rankRows, allCandidats] = await Promise.all([
+  const [analysesCandidat, allPublished, rankRows, allCandidats] = await Promise.all([
+    // Filtre thème appliqué après coup (voir cleTheme), pour accepter aussi
+    // un libellé ou une ancienne écriture dans l'URL.
     prisma.analyse.findMany({
       where: {
         statut: "publie",
         ...(candidat ? { proposition: { candidat: { nom: candidat } } } : {}),
-        ...(theme ? { proposition: { theme } } : {}),
       },
       orderBy,
       include: {
@@ -278,13 +278,15 @@ export async function getPublishedDeclarations({ candidat, theme, sort, q } = {}
     prisma.candidat.findMany({ select: { nom: true, parti: true } }),
   ]);
 
+  const analyses = themeCible
+    ? analysesCandidat.filter((a) => cleTheme(a.proposition.theme) === themeCible)
+    : analysesCandidat;
+
   const rankById = new Map(rankRows.map((row) => [Number(row.id), Number(row.rang)]));
 
   const candidats = [...allCandidats].sort((a, b) => a.nom.localeCompare(b.nom, "fr"));
 
-  const themes = [...new Set(allPublished.map((a) => a.proposition.theme))].sort(
-    (a, b) => a.localeCompare(b, "fr"),
-  );
+  const themes = themeOptions(allPublished);
 
   // Recherche (même moteur que la barre de la page d'accueil, sans limite
   // de nombre) : on garde les analyses trouvées, dans l'ordre de pertinence
@@ -307,7 +309,7 @@ export async function getPublishedDeclarations({ candidat, theme, sort, q } = {}
     candidatNom: analyse.proposition.candidat.nom,
     candidatParti: analyse.proposition.candidat.parti,
     candidatPhotoUrl: analyse.proposition.candidat.photoUrl,
-    theme: analyse.proposition.theme,
+    theme: themeLabel(analyse.proposition.theme),
     dateLabel: dateFormatter.format(analyse.proposition.dateDeclaration),
     score: analyse.scoreFaisabilite,
   }));
@@ -315,17 +317,33 @@ export async function getPublishedDeclarations({ candidat, theme, sort, q } = {}
   return { declarations, candidats, themes };
 }
 
-// Thèmes distincts utilisés par les analyses publiées, pour les tags
-// cliquables du Hero de la page d'accueil.
+// Thèmes distincts d'une liste d'analyses, dédoublonnés :
+// [{ value: slug, label, nombre }], triés par libellé.
+function themeOptions(analyses) {
+  const parCle = new Map();
+  for (const analyse of analyses) {
+    const cle = cleTheme(analyse.proposition.theme);
+    const option = parCle.get(cle) ?? {
+      value: cle,
+      label: themeLabel(analyse.proposition.theme),
+      nombre: 0,
+    };
+    option.nombre += 1;
+    parCle.set(cle, option);
+  }
+  return [...parCle.values()].sort((a, b) => a.label.localeCompare(b.label, "fr"));
+}
+
+// Thèmes des analyses publiées, pour les pastilles « Thèmes populaires » de
+// la page d'accueil : du plus au moins fourni (une seule ligne est affichée,
+// les premiers doivent être les plus utiles), puis par libellé.
 export async function getPublishedThemes() {
   const analyses = await prisma.analyse.findMany({
     where: { statut: "publie" },
     select: { proposition: { select: { theme: true } } },
   });
 
-  return [...new Set(analyses.map((a) => a.proposition.theme))].sort((a, b) =>
-    a.localeCompare(b, "fr"),
-  );
+  return themeOptions(analyses).sort((a, b) => b.nombre - a.nombre);
 }
 
 // Propositions publiées pour un thème éditorial donné (page /themes/[slug]),
@@ -337,7 +355,7 @@ export async function getPublishedPropositionsByThemeSlug(slug) {
   });
 
   return analyses
-    .filter((analyse) => slugifyTheme(analyse.proposition.theme) === slug)
+    .filter((analyse) => resolveTheme(analyse.proposition.theme) === slug)
     .map((analyse) => ({
       propositionId: analyse.proposition.id,
       candidatNom: analyse.proposition.candidat.nom,
@@ -362,7 +380,8 @@ export async function getPublishedCountsByThemeSlug() {
 
   const counts = new Map();
   for (const analyse of analyses) {
-    const slug = slugifyTheme(analyse.proposition.theme);
+    const slug = resolveTheme(analyse.proposition.theme);
+    if (!slug) continue;
     counts.set(slug, (counts.get(slug) ?? 0) + 1);
   }
   return counts;
@@ -494,7 +513,7 @@ export async function getCandidatAvecDeclarations(id) {
         candidatNom: candidat.nom,
         candidatParti: candidat.parti,
         candidatPhotoUrl: candidat.photoUrl,
-        theme: proposition.theme,
+        theme: themeLabel(proposition.theme),
         dateLabel: dateFormatter.format(proposition.dateDeclaration),
         score: analyse.scoreFaisabilite,
       })),
@@ -778,7 +797,7 @@ export async function getDeclarationDetail(propositionId, inclureBrouillons = fa
     id: proposition.id,
     titre: displayTitle(proposition),
     texteOriginal: proposition.texteOriginal,
-    theme: proposition.theme,
+    theme: themeLabel(proposition.theme),
     dateLabel: dateFormatter.format(proposition.dateDeclaration),
     // Date brute (ISO via Date), pour le JSON-LD ClaimReview de la fiche —
     // dateLabel ci-dessus est déjà formatée pour l'affichage, pas exploitable

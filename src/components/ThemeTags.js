@@ -32,12 +32,12 @@ export default async function ThemeTags() {
       <div className="flex h-8 min-w-0 flex-1 flex-wrap items-center gap-2 overflow-hidden">
         {themes.map((theme) => (
           <Link
-            key={theme}
-            href={`/declarations?theme=${encodeURIComponent(theme)}`}
+            key={theme.value}
+            href={`/declarations?theme=${encodeURIComponent(theme.value)}`}
             prefetch={false}
             className="whitespace-nowrap rounded-full bg-zinc-100 px-4 py-1.5 text-zinc-700 transition-colors hover:bg-zinc-200"
           >
-            {theme}
+            {theme.label}
           </Link>
         ))}
       </div>

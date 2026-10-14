@@ -5,6 +5,7 @@ import MonoTag from "@/components/MonoTag";
 import DeclarationCarte from "@/components/DeclarationCarte";
 import SearchBar from "@/components/SearchBar";
 import { getPublishedDeclarations } from "@/lib/queries";
+import { resolveTheme, themeLabel } from "@/lib/themes";
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +19,7 @@ function lireRecherche(valeur) {
 export async function generateMetadata({ searchParams }) {
   const resolvedParams = await searchParams;
   const candidat = resolvedParams?.candidat || undefined;
-  const theme = resolvedParams?.theme || undefined;
+  const theme = resolvedParams?.theme ? themeLabel(resolvedParams.theme) : undefined;
   const q = lireRecherche(resolvedParams?.q);
 
   let title = "Déclarations analysées | Perlimpinpin";
@@ -70,7 +71,12 @@ function buildHrefSansRecherche(currentParams) {
 export default async function DeclarationsPage({ searchParams }) {
   const resolvedParams = await searchParams;
   const candidat = resolvedParams?.candidat || undefined;
-  const theme = resolvedParams?.theme || undefined;
+  // Slug du thème ; une ancienne URL (?theme=Emploi%20et%20chômage) ou un
+  // raccourci de recherche (libellé) est ramené au slug pour que la bonne
+  // pastille reste active.
+  const theme = resolvedParams?.theme
+    ? (resolveTheme(resolvedParams.theme) ?? resolvedParams.theme)
+    : undefined;
   // Mots-clés de la barre de recherche (page d'accueil ou ci-dessous).
   const q = lireRecherche(resolvedParams?.q);
   // Avec une recherche, les résultats sont classés par pertinence par défaut.
@@ -139,7 +145,7 @@ export default async function DeclarationsPage({ searchParams }) {
 
             <FilterPillGroup
               label="Thème"
-              options={themes.map((t) => ({ value: t, label: t }))}
+              options={themes}
               activeValue={theme}
               paramKey="theme"
               currentParams={currentParams}
