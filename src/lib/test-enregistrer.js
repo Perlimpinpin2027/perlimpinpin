@@ -51,8 +51,9 @@ export async function enregistrerTexteCore(entree, { isEditor, prisma, dryRun })
     return refus("Cette analyse n'est pas un brouillon : elle ne peut pas être modifiée.");
   }
 
+  // Les analyses à la corbeille ne comptent pas (comme sur /test/[id]).
   const plusRecente = await prisma.analyse.findFirst({
-    where: { propositionId: analyse.propositionId },
+    where: { propositionId: analyse.propositionId, statut: { not: "corbeille" } },
     orderBy: { createdAt: "desc" },
     select: { id: true },
   });

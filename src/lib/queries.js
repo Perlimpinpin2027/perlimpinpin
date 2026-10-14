@@ -752,14 +752,15 @@ export async function getScoresPublies(propositionIds) {
 // brouillon n'est jamais renvoyé au site public : pas d'analyse publiée =>
 // analyse null => 404 sur /declarations/[id]. Seule la prévisualisation
 // /test/[id] (rendu dynamique, jamais mis en cache) passe inclureBrouillons
-// pour relire la dernière analyse, brouillon compris.
+// pour relire la dernière analyse, brouillon compris (mais jamais une analyse à
+// la corbeille : même règle que l'en-tête de /test/[id]).
 export async function getDeclarationDetail(propositionId, inclureBrouillons = false) {
   const proposition = await prisma.proposition.findUnique({
     where: { id: propositionId },
     include: {
       candidat: true,
       analyses: {
-        ...(inclureBrouillons ? {} : { where: { statut: "publie" } }),
+        where: inclureBrouillons ? { statut: { not: "corbeille" } } : { statut: "publie" },
         orderBy: { createdAt: "desc" },
         take: 1,
       },

@@ -30,9 +30,10 @@ export default async function TestDetailPage({ params }) {
 
   // On ne regarde que l'analyse la plus récente de la mesure, comme la fiche
   // publique. Pas d'analyse, ou analyse déjà publiée : 404 (les fiches
-  // publiées se voient sur /declarations/[id]).
+  // publiées se voient sur /declarations/[id]). Les analyses à la corbeille
+  // sont ignorées : c'est alors l'analyse précédente qui compte.
   const derniere = await prisma.analyse.findFirst({
-    where: { propositionId },
+    where: { propositionId, statut: { not: "corbeille" } },
     orderBy: { createdAt: "desc" },
     select: {
       id: true,

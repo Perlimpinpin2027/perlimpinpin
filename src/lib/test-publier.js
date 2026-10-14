@@ -80,8 +80,9 @@ export async function publierBrouillonCore(analyseId, { isEditor, prisma, dryRun
   }
 
   // 3. C'est bien la plus récente de sa mesure (celle que montre la fiche publique).
+  // Les analyses à la corbeille ne comptent pas (comme sur /test/[id]).
   const plusRecente = await prisma.analyse.findFirst({
-    where: { propositionId: analyse.propositionId },
+    where: { propositionId: analyse.propositionId, statut: { not: "corbeille" } },
     orderBy: { createdAt: "desc" },
     select: { id: true },
   });

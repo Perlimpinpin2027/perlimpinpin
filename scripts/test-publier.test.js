@@ -112,6 +112,34 @@ test("analyse inexistante, déjà publiée, pas la plus récente, doublon publi�
   }
 });
 
+test("une analyse plus récente à la corbeille ne bloque pas la publication du brouillon précédent", async () => {
+  // Analyses de la mesure, de la plus récente à la plus ancienne. Le faux findFirst
+  // applique vraiment le filtre de statut reçu (égalité ou { not }).
+  const lignes = [
+    { id: 99, statut: "corbeille" },
+    { id: 7, statut: "brouillon" },
+  ];
+  const correspond = (statut, filtre) =>
+    filtre === undefined ? true : typeof filtre === "string" ? statut === filtre : statut !== filtre.not;
+  const premiere = (where) =>
+    lignes.find((ligne) => correspond(ligne.statut, where.statut) && (where.id?.not === undefined || ligne.id !== where.id.not)) ?? null;
+
+  for (const [lignesTest, attendu] of [
+    [lignes, true],
+    // Contre-épreuve : un brouillon plus récent, lui, bloque toujours.
+    [[{ id: 99, statut: "brouillon" }, { id: 7, statut: "brouillon" }], false],
+  ]) {
+    lignes.splice(0, lignes.length, ...lignesTest);
+    const { prisma } = fausseBase();
+    const filtres = [];
+    prisma.analyse.findFirst = async (args) => (filtres.push(args.where), premiere(args.where));
+    const resultat = await publierBrouillonCore(7, { isEditor: editeur, prisma, dryRun: true });
+    assert.equal(resultat.ok, attendu, JSON.stringify(lignesTest));
+    if (!attendu) assert.match(resultat.message, /pas l'analyse la plus récente/i);
+    assert.deepEqual(filtres[0], { propositionId: 70, statut: { not: "corbeille" } });
+  }
+});
+
 test("simulation : annonce la nouvelle moyenne et n'écrit RIEN", async () => {
   // (80 + 60 + 51) / 3 = 63,666… → 63,7
   const { prisma, journal } = fausseBase({ ecrituresAutorisees: false });

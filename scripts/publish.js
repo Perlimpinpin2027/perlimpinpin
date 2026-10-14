@@ -46,6 +46,14 @@ async function main() {
     return;
   }
 
+  if (analyse.statut !== "brouillon") {
+    console.error(
+      `L'analyse ${analyseId} n'est pas un brouillon (statut : ${analyse.statut}) : publication refusée.`,
+    );
+    process.exitCode = 1;
+    return;
+  }
+
   const candidatId = analyse.proposition.candidatId;
 
   await prisma.analyse.update({

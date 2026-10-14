@@ -15,6 +15,7 @@ import {
 } from "@/lib/test-auth-core";
 import { enregistrerTexteCore } from "@/lib/test-enregistrer";
 import { fusionnerRevisionCore, publierBrouillonCore } from "@/lib/test-publier";
+import { mettreALaCorbeilleCore, restaurerDepuisCorbeilleCore } from "@/lib/test-corbeille";
 import { fusionnerRevision, verifierRevisionFusionnable } from "@/lib/github";
 
 // Actions serveur de /test. Rappel : un fichier "use server" n'exporte que des
@@ -155,4 +156,59 @@ export async function enregistrerTexte(entree) {
   revalidatePath(`/test/${resultat.propositionId}`);
 
   return { ok: true, versionSuivante: resultat.versionSuivante };
+}
+
+// Met un brouillon à la corbeille (statut "corbeille", rien n'est supprimé). Les
+// règles sont dans src/lib/test-corbeille.js.
+export async function mettreALaCorbeille(analyseId) {
+  const resultat = await mettreALaCorbeilleCore(analyseId, {
+    isEditor,
+    prisma,
+    dryRun: process.env.TEST_DRY_RUN === "1",
+  });
+
+  if (!resultat.ok) {
+    if (resultat.message === "Non autorisé.") {
+      console.warn(`[test] mise à la corbeille refusée (non autorisé) : analyse ${analyseId}`);
+    }
+    return resultat;
+  }
+  if (resultat.simulation) return resultat;
+
+  // Ligne d'audit pour les logs Vercel.
+  console.log(
+    `[test] analyse #${resultat.analyseId} mise à la corbeille (mesure #${resultat.propositionId}) le ${new Date().toISOString()}`,
+  );
+
+  revalidatePath("/test");
+  revalidatePath(`/test/${resultat.propositionId}`);
+
+  return { ok: true };
+}
+
+// Remet un brouillon de la corbeille dans la liste (voir src/lib/test-corbeille.js).
+export async function restaurerDepuisCorbeille(analyseId) {
+  const resultat = await restaurerDepuisCorbeilleCore(analyseId, {
+    isEditor,
+    prisma,
+    dryRun: process.env.TEST_DRY_RUN === "1",
+  });
+
+  if (!resultat.ok) {
+    if (resultat.message === "Non autorisé.") {
+      console.warn(`[test] restauration refusée (non autorisé) : analyse ${analyseId}`);
+    }
+    return resultat;
+  }
+  if (resultat.simulation) return resultat;
+
+  // Ligne d'audit pour les logs Vercel.
+  console.log(
+    `[test] analyse #${resultat.analyseId} restaurée depuis la corbeille (mesure #${resultat.propositionId}) le ${new Date().toISOString()}`,
+  );
+
+  revalidatePath("/test");
+  revalidatePath(`/test/${resultat.propositionId}`);
+
+  return { ok: true };
 }
