@@ -7,6 +7,9 @@ Règles communes, sans exception :
 - Pas de tirets cadratins. Au plus 280 caractères par tweet (un emoji compte 2, un lien 23).
 - Après la fiche, le code te donne le budget de chaque tweet en caractères hors marqueurs, calculé pour cette fiche : respecte-le strictement.
 - Une phrase par idée, des mots courants, aucun sigle non expliqué.
+- Ne jamais changer la nature d'un chiffre : un total reste un total, un montant annuel reste annuel, un chiffre national n'est jamais présenté comme individuel (par commune, par ménage…). Reprendre la formulation de la fiche.
+- Attribuer à une source uniquement ce que la fiche lui attribue. Si deux faits viennent de sources différentes, ne pas les réunir sous la même source.
+- Jamais de pronom ambigu en début de phrase : nommer le sujet (« La loi », « La mesure », « Marine Le Pen »), surtout juste après la mention du candidat.
 
 Format 1, « fil » (4 tweets) :
 - Tweet 1 : « 🔵 <la mesure en une ligne> : <premier verdict très court>. » puis une ligne vide, « Perlimpinpin.ai analyse la proposition de {CANDIDAT} », une ligne vide, « Note : {PASTILLE} {SCORE}/100 {APPRECIATION} », une ligne vide, puis une phrase de suspense de 12 mots au plus vers le point le plus surprenant de la fiche, terminée par « ↓ ».

@@ -17,6 +17,7 @@ import {
   checkAncragesVersionBasique,
   validateReseaux,
   consigneBudgets,
+  remplacerTweet,
   validateAvisCommentairesEtape2,
   validateRevisionRelecture,
 } from "./lib/scoring.js";
@@ -940,6 +941,28 @@ export function fichePourReseaux(ficheFinale) {
   return fiche;
 }
 
+// Raccourcissement ciblé : seuls les tweets trop longs sont renvoyés au
+// modèle, sans la fiche (appel de quelques centaines de tokens), avec le
+// nombre de caractères à retirer. Renvoie { raw, usage } : la sortie avec les
+// tweets raccourcis (les autres inchangés).
+async function raccourcirTweets(raw, tropLongs) {
+  const message = [
+    "Raccourcis ces tweets de Perlimpinpin.ai. Pour chacun, retire AU MOINS le nombre de caractères indiqué, plus une marge de 5, comptés comme le fait X : un emoji, « € », « … » ou « ↓ » comptent 2.",
+    "Ne change pas : les marqueurs entre accolades ({CANDIDAT}, {NOM}, {PASTILLE}, {SCORE}, {APPRECIATION}, {LIEN}), les chiffres et leur nature (total, annuel, national…), les sources citées, la structure (lignes vides, lignes ✅ et ❌, « Analyse complète 👇 », début « 2/ », « 3/ », « 4/ »). Raccourcis en supprimant des mots, jamais en changeant le sens. Pas de tiret cadratin.",
+    'Réponds uniquement en JSON : { "<clé>": "<tweet raccourci>" }.',
+    "",
+    ...tropLongs.map(({ cle, texte, excedent }) => `- ${cle} (retirer au moins ${excedent} caractères) :\n${texte}\n`),
+  ].join("\n");
+
+  const data = await callReseaux(message);
+  const reponse = cleanContenu(extractJson(data));
+  let corrige = raw;
+  for (const { cle } of tropLongs) {
+    if (typeof reponse?.[cle] === "string" && reponse[cle].trim()) corrige = remplacerTweet(corrige, cle, reponse[cle].trim());
+  }
+  return { raw: corrige, usage: data.usage };
+}
+
 // Retourne { reseaux, usage, errors, derniere } : reseaux vaut null si les
 // deux tentatives ont échoué (errors donne alors la cause du dernier échec,
 // derniere la dernière réponse refusée, pour la relire sans nouvel appel).
@@ -955,6 +978,27 @@ export async function genererReseaux(ficheFinale, { candidatNom, score }) {
   let usage = {};
   let errors = [];
   let derniere = null;
+  let raccourciTente = false;
+  const contexte = { ficheFinale: fiche, candidatNom, score };
+
+  // Dès que les seules erreurs sont des tweets trop longs : un raccourcissement
+  // ciblé (une seule fois), plutôt qu'une réécriture complète.
+  async function essayerRaccourcir(validation) {
+    if (raccourciTente || !validation.seulementLongueur) return null;
+    raccourciTente = true;
+    try {
+      console.error(`  ↺  Étape 3 ter : raccourcissement de ${validation.tropLongs.map((t) => t.cle).join(", ")}…`);
+      const raccourci = await raccourcirTweets(derniere, validation.tropLongs);
+      usage = addUsage(usage, raccourci.usage);
+      derniere = raccourci.raw;
+      const nouvelle = validateReseaux(derniere, contexte);
+      errors = nouvelle.errors;
+      return nouvelle.valid ? nouvelle.reseaux : null;
+    } catch (error) {
+      console.error(`     raccourcissement impossible : ${error.message}`);
+      return null;
+    }
+  }
 
   for (let tentative = 1; tentative <= 2; tentative++) {
     // Nouvel essai : la réponse refusée et ses erreurs, pour la corriger
@@ -975,9 +1019,14 @@ ${JSON.stringify(derniere, null, 2)}`;
       usage = addUsage(usage, data.usage);
       const raw = cleanContenu(extractJson(data));
       derniere = raw;
-      const validation = validateReseaux(raw, { ficheFinale: fiche, candidatNom, score });
+      const validation = validateReseaux(raw, contexte);
       if (validation.valid) return { reseaux: validation.reseaux, usage, errors: [] };
       errors = validation.errors;
+      const raccourcis = await essayerRaccourcir(validation);
+      if (raccourcis) {
+        console.log("  ✓ Étape 3 ter : tweets raccourcis et acceptés.");
+        return { reseaux: raccourcis, usage, errors: [] };
+      }
     } catch (error) {
       errors = [error.message];
     }

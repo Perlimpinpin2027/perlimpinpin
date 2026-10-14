@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { consigneBudgets, validateReseaux } from "./lib/scoring.js";
+import { consigneBudgets, remplacerTweet, validateReseaux } from "./lib/scoring.js";
 import { buildCoutPipeline, fichePourReseaux } from "./analyze.js";
 import { budgetsReseaux, lienIntentionX, longueurX, pastille, remplirTweet, tweetsReseaux, valeursReseaux } from "../src/lib/reseaux.js";
 import { HANDLES_X, handleX } from "../src/lib/handles-x.js";
@@ -186,4 +186,26 @@ test("élision : « de {NOM} » devient « d’Édouard Philippe », pas devant 
 test("comptes X : renseignés pour les 11 candidats, au bon format", () => {
   for (const nom of Object.keys(HANDLES_X)) assert.match(handleX(nom), /^@\w{1,15}$/);
   assert.equal(handleX("Marine Le Pen"), "@MLP_officiel");
+});
+
+test("formule « Analyse complète 👇 » exigée dans le tweet 4 et le tweet « tient »", () => {
+  const r = valide();
+  r.tient.tweet = r.tient.tweet.replace("Analyse complète 👇", "Analyse 👇");
+  assert.ok(validateReseaux(r, contexte).errors.some((e) => e.startsWith("tient.tweet : la formule « Analyse complète 👇 » manque")));
+});
+
+test("raccourcissement : proposé seulement quand les seules erreurs sont des longueurs", () => {
+  const r = valide();
+  r.fil[1] = `2/ {NOM} ${"mot ".repeat(80)}`.trim();
+  const seul = validateReseaux(r, contexte);
+  assert.equal(seul.seulementLongueur, true);
+  assert.deepEqual(seul.tropLongs.map((t) => t.cle), ["fil.1"]);
+  assert.ok(seul.tropLongs[0].excedent > 0 && seul.tropLongs[0].texte.startsWith("2/ {NOM}"));
+  r.tient.titre = "Un titre beaucoup trop long pour la carte";
+  assert.equal(validateReseaux(r, contexte).seulementLongueur, false);
+  // remplacerTweet : copie modifiée, original intact.
+  const corrige = remplacerTweet(r, "fil.1", "2/ {NOM} court.");
+  assert.equal(corrige.fil[1], "2/ {NOM} court.");
+  assert.notEqual(r.fil[1], corrige.fil[1]);
+  assert.equal(remplacerTweet(r, "tient.tweet", "x").tient.tweet, "x");
 });

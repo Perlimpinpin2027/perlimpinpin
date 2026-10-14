@@ -701,6 +701,11 @@ export function validateReseaux(raw, { ficheFinale, candidatNom, score, handles 
     errors.push("fil.3 : doit commencer par « 4/ L’angle mort de la proposition de {NOM} : ».");
   }
 
+  // Formule de fin, telle quelle, avant le lien.
+  for (const cle of ["fil.3", "tient.tweet"]) {
+    if (!LECTURE_TWEETS[cle](r).includes("Analyse complète 👇")) errors.push(`${cle} : la formule « Analyse complète 👇 » manque.`);
+  }
+
   // Tweet « tient » : 1 ou 2 points de chaque côté, 8 mots au plus chacun.
   for (const [emoji, cote] of [["✅", "qui tiennent"], ["❌", "qui ne tiennent pas"]]) {
     const points = pointsDuTweet(r.tient.tweet, emoji);
@@ -731,16 +736,32 @@ export function validateReseaux(raw, { ficheFinale, candidatNom, score, handles 
   }
 
   // Longueur X, marqueurs remplis (score, compte X ou nom, lien).
+  // tropLongs : { cle, texte, excedent } de chaque tweet trop long ; quand ce
+  // sont les seules erreurs, le pipeline peut demander un simple
+  // raccourcissement (raccourcirTweets dans scripts/analyze.js).
+  const tropLongs = [];
   if (candidatNom && score !== undefined) {
     const valeurs = valeursReseaux({ candidatNom, score, handles });
     for (const [cle, texte] of tweets) {
       const longueur = longueurX(remplirTweet(texte, valeurs));
       if (longueur > LONGUEUR_X_MAX) {
+        tropLongs.push({ cle, texte, excedent: longueur - LONGUEUR_X_MAX });
         errors.push(`${cle} : ${longueur} caractères comptés par X (${LONGUEUR_X_MAX} au plus) : retire au moins ${longueur - LONGUEUR_X_MAX} caractères.`);
       }
     }
   }
 
-  if (errors.length > 0) return { valid: false, errors, reseaux: null };
-  return { valid: true, errors: [], reseaux: r };
+  if (errors.length > 0) {
+    return { valid: false, errors, reseaux: null, tropLongs, seulementLongueur: errors.length === tropLongs.length };
+  }
+  return { valid: true, errors: [], reseaux: r, tropLongs: [], seulementLongueur: false };
+}
+
+// Remplace un tweet (clé « fil.0 »…« tient.tweet ») dans une copie de la sortie.
+export function remplacerTweet(raw, cle, texte) {
+  const copie = structuredClone(raw);
+  const [format, champ] = cle.split(".");
+  if (format === "fil") copie.fil[Number(champ)] = texte;
+  else copie[format][champ] = texte;
+  return copie;
 }
