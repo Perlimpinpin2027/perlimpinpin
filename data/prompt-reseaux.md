@@ -9,6 +9,9 @@ Règles communes, sans exception :
 - Une phrase par idée, des mots courants, aucun sigle non expliqué.
 - Ne jamais changer la nature d'un chiffre : un total reste un total, un montant annuel reste annuel, un chiffre national n'est jamais présenté comme individuel (par commune, par ménage…). Reprendre la formulation de la fiche.
 - Un chiffre partiel ne devient jamais un chiffre global : « la moitié des logements construits en 20 ans » n'est pas « la moitié des logements sociaux ».
+- Un chiffre garde exactement sa nature : un total reste un total (« 141 millions d'euros au total en 2024 », jamais « une pénalité de 141 millions »), une part d'un sous-ensemble reste une part de ce sous-ensemble (« la moitié des logements sociaux construits en 20 ans », jamais « la moitié du parc »). Cette règle vaut aussi pour les versions courtes.
+- Ne commence jamais une phrase par Il ou Elle : répète {NOM}, ou reformule.
+- Écris les nombres comme dans la fiche, sans abréviation (« 1,8 million », pas « 1,8M »).
 - Attribuer à une source uniquement ce que la fiche lui attribue. Si deux faits viennent de sources différentes, ne pas les réunir sous la même source.
 - Jamais de pronom ambigu en début de phrase : nommer le sujet (« La loi », « La mesure », « Marine Le Pen »), surtout juste après la mention du candidat.
 
@@ -30,13 +33,12 @@ Tu écris :
 - `explication` : une phrase de 20 mots au plus, qui dit ce que représente ce chiffre pour la mesure, sans conclure à la place du lecteur. Elle figure aussi sur l'image.
 - `mesure_courte` : la mesure en quelques mots, à la suite de « propose » (par exemple « d'abroger la loi SRU »), sans point final.
 
-Format 3, « tient ». Le code assemble le tweet : « <titre>, la proposition de <compte X> : ce qui tient, ce qui ne tient pas. », ligne vide, chaque point de `tweet_tient` précédé de « ✅ », chaque point de `tweet_tient_pas` précédé de « ❌ », ligne vide, « <pastille> <score>/100 · Analyse complète 👇 <lien> ».
+Format 3, « tient ». L'image montre le `texte` de chaque point. Le code assemble le tweet : « <titre>, la proposition de <compte X> : ce qui tient, ce qui ne tient pas. », ligne vide, le `court` des 2 premiers points de `tient` précédé de « ✅ », le `court` des 2 premiers points de `tient_pas` précédé de « ❌ », ligne vide, « <pastille> <score>/100 · Analyse complète 👇 <lien> ».
 Tu écris :
 - `titre` : la mesure en 6 mots au plus.
-- `tient` : 2 ou 3 points tirés de « Ce qui tient » du verdict final, 15 mots au plus chacun (pour l'image).
-- `tient_pas` : 2 ou 3 points tirés de « Ce qui ne tient pas », 15 mots au plus chacun (pour l'image).
-- S'il n'y a qu'un seul point solide dans la fiche, n'en invente pas un second : mets-en un seul.
-- `tweet_tient` et `tweet_tient_pas` : pour le tweet, 1 ou 2 points de chaque côté, 8 mots au plus par point, sans emoji. Ce sont des versions courtes des points de l'image, pas forcément les mêmes formulations.
+- `tient` : 2 ou 3 points tirés de « Ce qui tient » du verdict final. S'il n'y a qu'un seul point solide dans la fiche, n'en invente pas un second : mets-en un seul.
+- `tient_pas` : 2 ou 3 points tirés de « Ce qui ne tient pas ».
+- Pour chaque point : `texte` (pour l'image, 15 mots au plus) et `court` (pour le tweet, 8 mots au plus, sans emoji). Le `court` dit exactement la même chose que son `texte`, en plus bref : même fait, même chiffre, même nature de chiffre. Mets en premier les points les plus importants : seuls les 2 premiers de chaque côté vont dans le tweet.
 
 Réponds uniquement en JSON :
-{ "fil": { "accroche": "…", "suspense": "…", "tweet2": "…", "tweet3": "…", "angle_mort": "…", "point_solide": "…" }, "chiffre": { "valeur": "…", "explication": "…", "mesure_courte": "…" }, "tient": { "titre": "…", "tient": ["…"], "tient_pas": ["…"], "tweet_tient": ["…"], "tweet_tient_pas": ["…"] } }
+{ "fil": { "accroche": "…", "suspense": "…", "tweet2": "…", "tweet3": "…", "angle_mort": "…", "point_solide": "…" }, "chiffre": { "valeur": "…", "explication": "…", "mesure_courte": "…" }, "tient": { "titre": "…", "tient": [{ "texte": "…", "court": "…" }], "tient_pas": [{ "texte": "…", "court": "…" }] } }

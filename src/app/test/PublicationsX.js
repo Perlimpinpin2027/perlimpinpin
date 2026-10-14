@@ -32,6 +32,36 @@ function Tweet({ tweet, numero, partage }) {
   );
 }
 
+// Points « tient / tient pas » : le texte de l'image, et dessous la version
+// courte reprise dans le tweet, pour vérifier qu'ils disent la même chose.
+function PointsTient({ tient }) {
+  const cotes = [
+    ["✅ Ce qui tient", tient.tient, tient.tient_court],
+    ["❌ Ce qui ne tient pas", tient.tient_pas, tient.tient_pas_court],
+  ];
+  return (
+    <div className="flex flex-col gap-3 rounded-xl border border-zinc-200 bg-white p-4 text-sm">
+      {cotes.map(([titre, textes, courts]) => (
+        <div key={titre} className="flex flex-col gap-2">
+          <p className="font-semibold text-zinc-900">{titre}</p>
+          <ul className="flex flex-col gap-2">
+            {textes.map((texte, i) => (
+              <li key={i} className="flex flex-col">
+                <span className="text-zinc-900">{texte}</span>
+                {courts?.[i] ? (
+                  <span className="text-zinc-500">
+                    Tweet{i >= 2 ? " (non repris)" : ""} : {courts[i]}
+                  </span>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function PublicationsX({ proposition, analyse, brouillon = false, partage = false }) {
   const candidatNom = proposition.candidat.nom;
   const reseaux = analyse.contenuComplet?.reseaux ?? null;
@@ -89,6 +119,11 @@ export default function PublicationsX({ proposition, analyse, brouillon = false,
             </div>
             {duFormat.length > 0 ? (
               <ol className="flex flex-col gap-3">
+                {format === "tient" ? (
+                  <li>
+                    <PointsTient tient={reseaux.tient} />
+                  </li>
+                ) : null}
                 {duFormat.map((tweet, i) => (
                   <Tweet
                     key={tweet.cle}

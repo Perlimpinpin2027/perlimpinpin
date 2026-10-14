@@ -945,6 +945,8 @@ export function fichePourReseaux(ficheFinale) {
 // variables sont renvoyées au modèle, sans la fiche (appel de quelques
 // centaines de tokens), avec le nombre de caractères à retirer en tout.
 // Renvoie { parties, usage } : les parties raccourcies (les autres inchangées).
+const PASSES_RACCOURCISSEMENT = 3;
+
 async function raccourcirParties(parties, tropLongs) {
   const message = [
     "Raccourcis ces parties de tweets de Perlimpinpin.ai. Pour chaque tweet, retire AU MOINS le nombre de caractères indiqué, plus une marge de 5, au total sur ses parties, comptés comme le fait X : un emoji, « € », « … » ou « ↓ » comptent 2.",
@@ -1001,23 +1003,31 @@ export async function genererReseaux(ficheFinale, { candidatNom, score }) {
   const contexte = { ficheFinale: fiche, candidatNom, score };
 
   // Dès que les seules erreurs sont des tweets trop longs : un raccourcissement
-  // ciblé (une seule fois), plutôt qu'une réécriture complète.
+  // ciblé plutôt qu'une réécriture complète, jusqu'à PASSES_RACCOURCISSEMENT
+  // passes, chacune avec l'excédent restant (une seule série par fiche).
   async function essayerRaccourcir(validation) {
     if (raccourciTente || !validation.seulementLongueur) return null;
     raccourciTente = true;
-    try {
-      console.error(`  ↺  Étape 3 ter : raccourcissement de ${validation.tropLongs.map((t) => t.cle).join(", ")}…`);
-      const raccourci = await raccourcirParties(validation.parties, validation.tropLongs);
-      usage = addUsage(usage, raccourci.usage);
-      const nouvelle = validatePartiesReseaux(raccourci.parties, contexte);
-      derniere = nouvelle.parties ?? derniere;
-      derniereAssemblee = nouvelle.assemble ?? derniereAssemblee;
-      errors = nouvelle.errors;
-      return nouvelle.valid ? nouvelle.reseaux : null;
-    } catch (error) {
-      console.error(`     raccourcissement impossible : ${error.message}`);
-      return null;
+    let courante = validation;
+    for (let passe = 1; passe <= PASSES_RACCOURCISSEMENT; passe++) {
+      try {
+        console.error(
+          `  ↺  Étape 3 ter : raccourcissement ${passe}/${PASSES_RACCOURCISSEMENT} de ${courante.tropLongs.map((t) => `${t.cle} (−${t.excedent})`).join(", ")}…`,
+        );
+        const raccourci = await raccourcirParties(courante.parties, courante.tropLongs);
+        usage = addUsage(usage, raccourci.usage);
+        courante = validatePartiesReseaux(raccourci.parties, contexte);
+        derniere = courante.parties ?? derniere;
+        derniereAssemblee = courante.assemble ?? derniereAssemblee;
+        errors = courante.errors;
+        if (courante.valid) return courante.reseaux;
+        if (!courante.seulementLongueur) return null;
+      } catch (error) {
+        console.error(`     raccourcissement impossible : ${error.message}`);
+        return null;
+      }
     }
+    return null;
   }
 
   for (let tentative = 1; tentative <= 2; tentative++) {

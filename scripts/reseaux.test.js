@@ -3,13 +3,14 @@ import assert from "node:assert/strict";
 import { consigneBudgets, validatePartiesReseaux, validateReseaux } from "./lib/scoring.js";
 import { buildCoutPipeline, fichePourReseaux } from "./analyze.js";
 import {
-  PARTIES_PAR_TWEET,
   assemblerReseaux,
   budgetsParties,
   ecrirePartie,
   lienIntentionX,
   lirePartie,
   longueurX,
+  minusculeInitiale,
+  nombresSansAbreviation,
   pastille,
   remplirTweet,
   tweetsReseaux,
@@ -194,10 +195,12 @@ const partiesValides = () => ({
   chiffre: { valeur: "141 M€", explication: "Le coût annuel du dispositif que la mesure supprime.", mesure_courte: "de le supprimer" },
   tient: {
     titre: "Supprimer les certificats d'énergie",
-    tient: ["Le dispositif existe déjà."],
-    tient_pas: ["La baisse annoncée n'est pas chiffrée.", "Le financement des travaux reste flou."],
-    tweet_tient: ["Le dispositif existe déjà."],
-    tweet_tient_pas: ["Baisse non chiffrée.", "Financement des travaux flou."],
+    tient: [{ texte: "Le dispositif existe déjà et finance des travaux.", court: "Le dispositif existe déjà." }],
+    tient_pas: [
+      { texte: "La baisse annoncée n'est pas chiffrée.", court: "Baisse non chiffrée." },
+      { texte: "Le financement des travaux reste flou.", court: "Financement des travaux flou." },
+      { texte: "Aucune étude ne mesure l'effet sur la consommation.", court: "Effet non mesuré." },
+    ],
   },
 });
 
@@ -213,8 +216,28 @@ test("parties : le code assemble les parties fixes, la sortie assemblée est acc
   assert.equal(fil[3], "4/ L’angle mort de la proposition de {NOM} : qui financera les travaux ?\n\nAnalyse complète 👇 {LIEN}");
   assert.equal(chiffre.tweet, "141 M€. Le coût annuel du dispositif que la mesure supprime.\n\n{CANDIDAT} propose de le supprimer. Notre analyse : {PASTILLE} {SCORE}/100 👇 {LIEN}");
   assert.match(tient.tweet, /^Supprimer les certificats d'énergie, la proposition de \{CANDIDAT\} : ce qui tient, ce qui ne tient pas\.\n\n✅ Le dispositif existe déjà\.\n❌ Baisse non chiffrée\.\n❌ Financement des travaux flou\.\n\n\{PASTILLE\} \{SCORE\}\/100 · Analyse complète 👇 \{LIEN\}$/u);
-  // L'image garde ses propres points (15 mots au plus), distincts de ceux du tweet.
-  assert.deepEqual(tient.tient_pas, partiesValides().tient.tient_pas);
+  // L'image garde les `texte` (les 3) ; le tweet les `court` des 2 premiers ;
+  // toutes les versions courtes sont enregistrées pour la relecture.
+  assert.deepEqual(tient.tient_pas, partiesValides().tient.tient_pas.map((p) => p.texte));
+  assert.deepEqual(tient.tient_pas_court, ["Baisse non chiffrée.", "Financement des travaux flou.", "Effet non mesuré."]);
+  assert.ok(!tient.tweet.includes("Effet non mesuré"));
+});
+
+test("nettoyage : nombres abrégés, point avant ↓, minuscule après les deux-points", () => {
+  assert.equal(nombresSansAbreviation("la moitié des 1,8M logements"), "la moitié des 1,8 million logements");
+  assert.equal(nombresSansAbreviation("2,9M de ménages, 3 Md d'euros, 1Md"), "2,9 millions de ménages, 3 milliards d'euros, 1 milliard");
+  assert.equal(nombresSansAbreviation("141 M€ et 2 Md€"), "141 M€ et 2 Md€");
+  assert.equal(minusculeInitiale("Aucune compensation prévue."), "aucune compensation prévue.");
+  assert.equal(minusculeInitiale("L'abrogation suffit."), "l'abrogation suffit.");
+  assert.equal(minusculeInitiale("Marine Le Pen ne dit pas…"), "Marine Le Pen ne dit pas…");
+  assert.equal(minusculeInitiale("HLM : rien."), "HLM : rien.");
+  const p = partiesValides();
+  p.fil.suspense = "La moitié a été bâtie sous contrainte. ↓";
+  p.fil.angle_mort = "Aucune compensation pour les 1,8M logements.";
+  p.fil.point_solide = "L'abrogation est simple.";
+  const { reseaux } = validatePartiesReseaux(p, { candidatNom: "David Lisnard", score: 31 });
+  assert.match(reseaux.fil[0], /sous contrainte ↓$/);
+  assert.match(reseaux.fil[3], /: aucune compensation pour les 1,8 million logements\.\n\nPoint solide : l'abrogation est simple\./);
 });
 
 test("parties : ce que le code ajoute est retiré si le modèle l'écrit quand même", () => {
@@ -225,7 +248,7 @@ test("parties : ce que le code ajoute est retiré si le modèle l'écrit quand m
   p.fil.angle_mort = "4/ L'angle mort de la proposition de {NOM} : qui financera les travaux ?";
   p.fil.point_solide = "Point solide : le dispositif existe.";
   p.chiffre.mesure_courte = "de le supprimer.";
-  p.tient.tweet_tient = ["✅ Le dispositif existe déjà."];
+  p.tient.tient[0].court = "✅ Le dispositif existe déjà.";
   const { reseaux, errors } = validatePartiesReseaux(p, contexte);
   assert.deepEqual(errors, []);
   assert.equal(reseaux.fil[3], "4/ L’angle mort de la proposition de {NOM} : qui financera les travaux ?\n\nPoint solide : le dispositif existe.\n\nAnalyse complète 👇 {LIEN}");
@@ -245,9 +268,9 @@ test("budgets par partie : des parties remplies à leur budget tiennent en 280",
     },
     chiffre: { valeur: plein(12), explication: plein(budgets["chiffre.explication"]), mesure_courte: plein(budgets["chiffre.mesure_courte"]) },
     tient: {
-      titre: plein(budgets["tient.titre"]), tient: ["a"], tient_pas: ["a", "a"],
-      tweet_tient: [plein(budgets["tient.tweet_tient"]), plein(budgets["tient.tweet_tient"])],
-      tweet_tient_pas: [plein(budgets["tient.tweet_tient_pas"]), plein(budgets["tient.tweet_tient_pas"])],
+      titre: plein(budgets["tient.titre"]),
+      tient: [0, 1].map(() => ({ texte: "a", court: plein(Math.floor(budgets["tient.court"] / 4)) })),
+      tient_pas: [0, 1].map(() => ({ texte: "a", court: plein(Math.floor(budgets["tient.court"] / 4)) })),
     },
   };
   for (const tweet of tweetsReseaux(assemblerReseaux(p), { ...valeurs, LIEN: "https://perlimpinpin.ai/declarations/38" })) {
@@ -255,7 +278,7 @@ test("budgets par partie : des parties remplies à leur budget tiennent en 280",
     assert.ok(tweet.longueur >= 270, `${tweet.cle} : budget trop prudent (${tweet.longueur})`);
   }
   const consigne = consigneBudgets({ candidatNom: "Marine Le Pen", score: 41 });
-  assert.match(consigne, /- tient\.tweet_tient \+ tient\.tweet_tient_pas : \d+ caractères au total/);
+  assert.match(consigne, /- tient : \d+ caractères au total pour les `court`/);
   assert.match(consigne, /Chaque \{NOM\} que tu écris compte pour 13 caractères/);
 });
 
@@ -290,14 +313,21 @@ test("raccourcissement : proposé seulement quand les seules erreurs sont des lo
 test("raccourcissement : parties du tweet trop long (ni valeur du chiffre ni titre), écriture sans effet de bord", () => {
   const p = partiesValides();
   p.fil.tweet2 = `{NOM} ${"mot ".repeat(80)}`.trim();
-  p.tient.tweet_tient = [`Le dispositif ${"long ".repeat(70)}`.trim()];
+  p.tient.tient[0].court = `Le dispositif ${"long ".repeat(70)}`.trim();
   const resultat = validatePartiesReseaux(p, contexte);
   const parTweet = Object.fromEntries(resultat.tropLongs.map((t) => [t.cle, t.parties]));
   assert.deepEqual(parTweet["fil.1"], ["fil.tweet2"]);
+  assert.deepEqual(parTweet["tient.tweet"], ["tient.courts_tient", "tient.courts_tient_pas"]);
   // 8 mots dépassés aussi : pas seulement de la longueur.
   assert.equal(resultat.seulementLongueur, false);
-  assert.deepEqual(PARTIES_PAR_TWEET["tient.tweet"], ["tient.titre", "tient.tweet_tient", "tient.tweet_tient_pas"]);
   const copie = ecrirePartie(p, "fil.tweet2", "{NOM} court.");
   assert.equal(lirePartie(copie, "fil.tweet2"), "{NOM} court.");
   assert.notEqual(lirePartie(p, "fil.tweet2"), "{NOM} court.");
+  // Versions courtes des 2 premiers points : lues et réécrites sans toucher aux `texte`.
+  const q = partiesValides();
+  assert.deepEqual(lirePartie(q, "tient.courts_tient_pas"), ["Baisse non chiffrée.", "Financement des travaux flou."]);
+  const r2 = ecrirePartie(q, "tient.courts_tient_pas", ["Baisse floue.", "Travaux flous."]);
+  assert.deepEqual(r2.tient.tient_pas.map((p) => p.court), ["Baisse floue.", "Travaux flous.", "Effet non mesuré."]);
+  assert.equal(r2.tient.tient_pas[0].texte, q.tient.tient_pas[0].texte);
+  assert.equal(q.tient.tient_pas[0].court, "Baisse non chiffrée.");
 });

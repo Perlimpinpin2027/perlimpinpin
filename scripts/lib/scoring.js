@@ -592,6 +592,10 @@ export const ReseauxSchema = z.object({
     // « S'il n'y a qu'un seul point solide, n'en invente pas un second. »
     tient: z.array(TexteReseaux).min(1).max(3),
     tient_pas: z.array(TexteReseaux).min(2).max(3),
+    // Versions courtes de chaque point (tweet), dans le même ordre ; absentes
+    // des sorties antérieures à leur introduction.
+    tient_court: z.array(TexteReseaux).optional(),
+    tient_pas_court: z.array(TexteReseaux).optional(),
     tweet: TexteReseaux,
   }),
 });
@@ -612,12 +616,12 @@ const MARQUEURS_TWEETS = Object.entries(MARQUEURS_PAR_TWEET).map(([cle, obligato
 // compte X, l'appréciation et le score réels).
 export function consigneBudgets({ candidatNom, score, handles }) {
   const valeurs = valeursReseaux({ candidatNom, score, handles });
-  const { "tient.tweet_tient": parPoint, "tient.tweet_tient_pas": _parPoint, ...budgets } = budgetsParties(valeurs);
+  const { "tient.court": courts, ...budgets } = budgetsParties(valeurs);
   return [
     "BUDGETS (calculés par le code pour cette fiche) : nombre maximal de caractères de chaque partie que tu écris, comptés comme le fait X : un emoji, « € », « … » ou « ↓ » comptent 2. Les parties fixes (formules, compte X, note, lien) sont déjà décomptées.",
     `Chaque {NOM} que tu écris compte pour ${longueurX(valeurs.NOM)} caractères (le nom inséré à sa place).`,
     ...Object.entries(budgets).map(([cle, budget]) => `- ${cle} : ${budget} caractères`),
-    `- tient.tweet_tient + tient.tweet_tient_pas : ${parPoint * 4} caractères au total pour tous les points du tweet`,
+    `- tient : ${courts} caractères au total pour les \`court\` des 2 premiers points de chaque côté (repris dans le tweet)`,
   ].join("\n");
 }
 
@@ -638,12 +642,12 @@ export const PartiesReseauxSchema = z.object({
     explication: PartieTexte,
     mesure_courte: PartieTexte,
   }),
+  // Chaque point : `texte` pour l'image (15 mots au plus), `court` pour le
+  // tweet (8 mots au plus) ; le tweet reprend les 2 premiers de chaque côté.
   tient: z.object({
     titre: PartieTexte,
-    tient: z.array(PartieTexte).min(1).max(3),
-    tient_pas: z.array(PartieTexte).min(2).max(3),
-    tweet_tient: z.array(PartieTexte).min(1).max(2),
-    tweet_tient_pas: z.array(PartieTexte).min(1).max(2),
+    tient: z.array(z.object({ texte: PartieTexte, court: PartieTexte })).min(1).max(3),
+    tient_pas: z.array(z.object({ texte: PartieTexte, court: PartieTexte })).min(2).max(3),
   }),
 });
 
@@ -681,7 +685,7 @@ function pointsDuTweet(texte, emoji) {
     .map((ligne) => ligne.slice(emoji.length).trim());
 }
 
-// Textes affichés sur les images : sans aucun marqueur.
+// Textes des images et versions courtes des points : sans aucun marqueur.
 function textesCartes(r) {
   return [
     ["chiffre.valeur", r.chiffre.valeur],
@@ -689,6 +693,8 @@ function textesCartes(r) {
     ["tient.titre", r.tient.titre],
     ...r.tient.tient.map((point, i) => [`tient.tient.${i}`, point]),
     ...r.tient.tient_pas.map((point, i) => [`tient.tient_pas.${i}`, point]),
+    ...(r.tient.tient_court ?? []).map((point, i) => [`tient.tient.${i}.court`, point]),
+    ...(r.tient.tient_pas_court ?? []).map((point, i) => [`tient.tient_pas.${i}.court`, point]),
   ];
 }
 
@@ -697,6 +703,8 @@ const LIMITES_MOTS = [
   ["chiffre.explication", (r) => [r.chiffre.explication], 20],
   ["tient.tient", (r) => r.tient.tient, 15],
   ["tient.tient_pas", (r) => r.tient.tient_pas, 15],
+  ["tient.tient (court)", (r) => r.tient.tient_court ?? [], 8],
+  ["tient.tient_pas (court)", (r) => r.tient.tient_pas_court ?? [], 8],
 ];
 
 function nombreDeMots(texte) {

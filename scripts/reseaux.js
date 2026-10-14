@@ -61,8 +61,16 @@ function afficher(reseaux, valeurs) {
   console.log(`  ${reseaux.chiffre?.valeur ?? "(absent)"} : ${reseaux.chiffre?.explication ?? "(absente)"}`);
   console.log("--- Image « tient / tient pas »");
   console.log(`  ${reseaux.tient?.titre ?? "(absent)"}`);
-  (reseaux.tient?.tient ?? []).forEach((point) => console.log(`  ✅ ${point}`));
-  (reseaux.tient?.tient_pas ?? []).forEach((point) => console.log(`  ❌ ${point}`));
+  // Chaque point de l'image, et dessous sa version courte (tweet).
+  for (const [emoji, textes, courts] of [
+    ["✅", reseaux.tient?.tient ?? [], reseaux.tient?.tient_court ?? []],
+    ["❌", reseaux.tient?.tient_pas ?? [], reseaux.tient?.tient_pas_court ?? []],
+  ]) {
+    textes.forEach((texte, i) => {
+      console.log(`  ${emoji} ${texte}`);
+      if (courts[i]) console.log(`     ↳ court${i >= 2 ? " (non repris dans le tweet)" : ""} : ${courts[i]}`);
+    });
+  }
 }
 
 async function main() {
