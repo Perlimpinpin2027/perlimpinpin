@@ -1,0 +1,37 @@
+{
+  "contreAvisMistral": {
+    "remarques": [
+      {
+        "categorie": "coherence_note",
+        "contenu": "La note 'operationnalite_budgetaire' (6/10, INCERTAIN) est cohérente avec le texte, mais l'absence de chiffrage précis par le candidat et l'estimation de l'analyste (2 milliards d'euros/an) auraient pu justifier une discussion plus approfondie sur la faisabilité budgétaire immédiate, notamment en l'absence de compensation financière explicitée. Cela n'invalide pas la note mais mérite une mention.",
+        "severite": "mineure",
+        "confiance": "haute"
+      },
+      {
+        "categorie": "coherence_note",
+        "contenu": "La note 'efficacite' (13/30, INCERTAIN) est justifiée par les limites identifiées (redistribution des places sans augmentation réelle, réussite faible des bacheliers professionnels). Cependant, le texte souligne que les 150 000 places supplémentaires agissent directement sur l'accès, ce qui aurait pu éviter une qualification trop proche de FRAGILE.",
+        "severite": "mineure",
+        "confiance": "moyenne"
+      },
+      {
+        "categorie": "angle_mort",
+        "contenu": "L'analyse omet de discuter explicitement l'impact potentiel de la suppression de Parcoursup sur les formations sélectives (BTS, BUT, etc.), qui représentent une part significative des vœux des bacheliers professionnels. Cela pourrait modifier la perception de l'efficacité globale de la mesure.",
+        "severite": "majeure",
+        "confiance": "moyenne"
+      }
+    ],
+    "avis_general": "a_nuancer"
+  },
+  "usage": {
+    "prompt_tokens": 9639,
+    "total_tokens": 10023,
+    "completion_tokens": 384,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "service_tier": "standard"
+  }
+}
