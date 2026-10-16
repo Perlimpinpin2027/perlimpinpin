@@ -150,6 +150,11 @@
         "titre": "Titre court et phrase de teasing provisoires",
         "texte": "Titre court proposé : « Abolir Parcoursup ». Phrase de teasing : « Chaque été, des dizaines de milliers de bacheliers attendent une place. Supprimer la plateforme suffirait-il à leur en ouvrir une ? » Conviennent-ils, ou faut-il les reformuler ?"
       }
-    ]
+    ],
+    "archive": {
+      "date": "2026-10-16",
+      "version_suivante": "data/analyses finales/Melenchon/melenchon_suppression_parcoursup_etape3.json",
+      "reponses": []
+    }
   }
 }

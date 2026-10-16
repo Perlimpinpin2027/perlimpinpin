@@ -1,0 +1,173 @@
+{
+  "auditArbitrage": [
+    {
+      "remarque": "La note operationnalite_budgetaire (6/10, INCERTAIN) mériterait une discussion plus approfondie sur l'absence de compensation financière explicitée.",
+      "statut": "rejetee",
+      "raison": "Le texte initial mentionne déjà explicitement qu'aucun financement n'est prévu et que la promesse d'une place pour chacun a un coût non borné. La note 6/10 INCERTAIN reflète déjà cette réalité ; il ne s'agit pas d'une erreur mais d'une remarque qui n'ajoute rien de nouveau au fond."
+    },
+    {
+      "remarque": "La note efficacite (13/30, INCERTAIN) aurait pu éviter une qualification trop proche de FRAGILE compte tenu du volet places.",
+      "statut": "rejetee",
+      "raison": "Remarque non étayée par un élément factuel nouveau : le texte explique déjà pourquoi la note est en bas de la fourchette INCERTAIN tout en restant au-dessus de FRAGILE grâce au volet places. Il s'agit d'une appréciation déjà intégrée, pas d'une erreur de notation."
+    },
+    {
+      "remarque": "L'analyse omettrait de discuter l'impact de la suppression de Parcoursup sur les formations sélectives (BTS, BUT), qui concernent une part importante des bacheliers professionnels.",
+      "statut": "rejetee",
+      "raison": "Le point est en réalité déjà traité à plusieurs endroits de l'analyse initiale : nature_et_existant précise qu'une plateforme resterait nécessaire pour les formations sélectives, ce_qui_est_probable le répète, et angles_morts consacre un point entier (« quatrième angle mort ») aux bacheliers professionnels visant des BTS déjà sélectifs avant 2018. La remarque ne révèle donc pas une lacune réelle de l'analyse."
+    }
+  ],
+  "fiche_complete": {
+    "mesure_reformulee": {
+      "synthese": "Abolir Parcoursup pour garantir à chaque bachelier la formation de son choix, avec 150 000 places en plus.",
+      "texte": "Jean-Luc Mélenchon promet d'**abolir Parcoursup**, la plateforme nationale d'admission dans l'enseignement supérieur créée en 2018 par la loi Orientation et réussite des étudiants (loi ORE). Il l'a redit dans un entretien à la presse régionale du groupe EBRA (9 octobre 2026) puis lors d'un meeting à Clermont-Ferrand (11 octobre 2026), en dénonçant un système devenu « discriminant » et « une angoisse existentielle pour les jeunes ». Le candidat ne décrit pas, dans ces déclarations, ce qui remplacerait la plateforme. Son groupe parlementaire précise l'objectif (communiqué du 25 septembre 2026) : **permettre à tout bachelier de s'inscrire dans la formation de son choix, et ouvrir 150 000 places supplémentaires** dans l'enseignement supérieur public. En 2022, il proposait déjà de rétablir l'accès aux études supérieures « sur la seule base du baccalauréat ».\n\nLa mesure combine donc deux mécanismes distincts : (1) supprimer la procédure actuelle, qui permet aux licences saturées de classer les candidats sur dossier ; (2) augmenter le nombre de places. **Hypothèse de l'analyste** : faute de précision du candidat, la fiche retient un retour au régime d'avant 2018, tel que le décrivait une proposition de loi déposée en juin 2023 par des députés de la NUPES (n° 1425) : libre inscription en licence, et, quand une formation est pleine, affectation par le recteur selon le domicile, la situation de famille et les préférences du candidat."
+    },
+    "mesure_vers_objectif": {
+      "objectif_court": "Garantir à chaque bachelier une place choisie",
+      "categorie_objectif": "Éducation",
+      "objectif_vise": "Permettre à chaque bachelier d'entrer dans la formation supérieure de son choix, sans sélection sur dossier, et mettre fin à l'angoisse et aux inégalités attribuées à la procédure actuelle.",
+      "mecanisme_propose": "Supprimer la procédure Parcoursup et la possibilité de classer les candidats en licence, revenir à un droit d'accès fondé sur le seul baccalauréat, et créer 150 000 places supplémentaires dans l'enseignement supérieur public.",
+      "lien_causal": "indirect"
+    },
+    "nature_et_existant": "Mesure législative et budgétaire, de compétence nationale. L'accès au premier cycle est régi par l'article L612-3 du code de l'éducation, réécrit par la loi ORE du 8 mars 2018 ; le législateur est compétent pour le modifier (article 34 de la Constitution). Ce n'est pas une innovation mais un retour en arrière partiel : avant 2018, la loi Savary de 1984 disposait que « tout candidat est libre de s'inscrire dans l'établissement de son choix » et excluait toute sélection en licence ; quand une licence était pleine, le recteur affectait les candidats selon le domicile, la situation de famille et l'ordre des vœux, puis par tirage au sort en dernier recours (plateforme APB). Il faut distinguer trois choses que le mot « Parcoursup » recouvre : la plateforme informatique (qui gère aussi les formations sélectives, BTS, BUT, classes préparatoires, écoles, déjà sélectives avant 2018) ; la règle qui autorise les licences saturées à classer les candidats sur dossier ; et le nombre de places, qui ne dépend pas de la plateforme. La mesure agit directement sur la deuxième et, via les 150 000 places, sur la troisième. Une plateforme nationale resterait de toute façon nécessaire pour les formations sélectives. Le droit actuel n'est pas isolé : en février 2026, des députés UDR (Éric Ciotti) ont aussi déposé une proposition de loi pour supprimer Parcoursup, mais avec un classement fondé sur les notes du baccalauréat, ce qui montre que la suppression de la plateforme peut servir des logiques opposées.",
+    "contexte_programme": {
+      "synthese": "Position constante du candidat depuis 2017, cohérente avec la gratuité des études et la fin de la sélection en master.",
+      "texte": "La mesure s'inscrit dans **une ligne tenue sans interruption par le candidat depuis la création de Parcoursup**. Le 19 décembre 2017, Jean-Luc Mélenchon a voté contre le projet de loi ORE, comme les 16 députés insoumis présents (scrutin public n° 351 de l'Assemblée nationale). En mars 2022, il promettait de « démanteler Parcoursup », de rétablir l'accès au supérieur sur la seule base du baccalauréat et de supprimer la sélection à l'entrée du master, tout en reconnaissant qu'il faudrait créer des places « en fonction des besoins » en BTS, en IUT et à l'université. En 2023, des députés de la NUPES ont déposé une proposition de loi (n° 1425) pour abroger la sélection en premier cycle, financée par une hausse de la taxe sur le tabac ; en 2024, le programme du Nouveau Front populaire reprenait l'abrogation de Parcoursup. En septembre 2026, le groupe LFI chiffre pour la première fois un besoin de **150 000 places supplémentaires**, sans montant en euros. La mesure est cohérente avec le reste du programme (gratuité de l'enseignement supérieur public, revenu d'autonomie des jeunes, critique de l'essor du privé lucratif). Une tension interne demeure : **la promesse d'une place « dans la formation de son choix » pour chacun va au-delà de ce que 150 000 places permettent de garantir** dans les filières les plus demandées."
+    },
+    "contexte_national": {
+      "synthese": "Le blocage vient surtout du manque de places dans quelques filières et régions, pas de la plateforme elle-même.",
+      "texte": "**Le chiffre cité par le candidat mesure une étape, pas une exclusion définitive.** À la fin de la phase principale de 2026 (11 juillet), environ 126 600 candidats n'avaient reçu aucune proposition, contre environ 103 000 en 2025 : une hausse réelle et forte. Mais ce total mélange lycéens, étudiants en réorientation et candidats scolarisés à l'étranger, et il précède la phase complémentaire (plus de 83 000 places encore ouvertes cet été-là). Les données de fin de procédure vont dans un autre sens : en 2023, **95,2 % des bacheliers avaient reçu au moins une proposition au 12 septembre** (97,8 % des bacheliers généraux, 87,8 % des professionnels) ; en 2025, seuls 38 lycéens étaient encore suivis par une commission d'accès à l'enseignement supérieur (CAES) à la fin de la procédure. Le ministère n'a pas publié le bilan final de 2026.\n\n**Le vrai goulot est la capacité d'accueil, concentrée sur quelques filières et territoires.** En 2025, 11,1 % des néo-bacheliers franciliens n'avaient aucune proposition, contre 5,8 % ailleurs ; les licences non sélectives ont perdu 7 300 places entre 2020 et 2025 (Comité éthique et scientifique de Parcoursup, avril 2026). Les bacheliers professionnels sont les plus touchés (80 % reçoivent une proposition, contre 96 % des généraux en 2025), mais ils visent surtout des BTS, qui étaient déjà sélectifs avant 2018. La dépense par étudiant baisse depuis 2009, les effectifs progressant plus vite que les moyens (DEPP, septembre 2026), et certaines universités ferment des formations faute de budget. Le rapport parlementaire flash de février 2026 (Pierrick Courbon, PS, et Frantz Gumbs, Les Démocrates) juge Parcoursup « un échec sur le plan politique » mais recommande de le réformer, pas de le supprimer : il y voit un **bouc émissaire du sous-financement chronique** du supérieur public. Enfin, la réussite en licence reste faible et très inégale : 40,3 % des bacheliers 2020 obtiennent leur licence en trois ou quatre ans, mais seulement 14,0 % des bacheliers technologiques et 6,5 % des bacheliers professionnels (SIES, novembre 2025)."
+    },
+    "contexte_international": {
+      "synthese": "Les systèmes à accès ouvert existent, mais ils affichent souvent des abandons élevés en première année.",
+      "texte": "Plusieurs pays européens pratiquent un accès largement ouvert à l'université. **La Communauté française de Belgique, cas le plus proche, compte parmi les pays où moins de 25 % des étudiants obtiennent leur licence dans la durée prévue, et où 20 % ou plus abandonnent dès la première année** (OCDE, Regards sur l'éducation 2025 ; moyenne OCDE : 43 % dans la durée prévue, 70 % trois ans plus tard). L'OCDE cite les conditions d'entrée parmi les facteurs qui pèsent sur la réussite, à côté de l'origine sociale et de la préparation des étudiants. Ces comparaisons sont à manier avec prudence : les durées d'études, l'orientation au lycée et l'accompagnement en première année diffèrent d'un pays à l'autre, et aucune étude ne mesure ce que donnerait précisément un retour à l'accès libre en France. Elles montrent surtout qu'**ouvrir l'accès ne suffit pas à faire réussir** : sans accompagnement, une partie de l'échec se déplace simplement de l'admission vers la première année."
+    },
+    "impact_environnement": null,
+    "analyse_longevites": {
+      "synthese": "Effet immédiat sur la procédure, effet sur l'accès seulement quand les places existent, avant la baisse démographique de 2033.",
+      "texte": "**Court terme (0-2 ans)** : la suppression de la procédure peut être rapide, mais les places, elles, ne se créent pas en une rentrée. Pendant cette transition, **les licences saturées devraient départager les candidats par le domicile ou par le hasard**, avec le risque de revivre les tensions de 2017. Une plateforme pour les formations sélectives devrait être maintenue ou reconstruite. Moyen terme (2-7 ans) : si les 150 000 places sont financées et ouvertes, l'accès s'améliorerait réellement là où il bloque (Île-de-France, filières demandées). La question décisive devient alors la réussite en première année, qui dépend de l'accompagnement. Long terme (plus de 7 ans) : **les effectifs étudiants devraient plafonner vers 3,15 millions au début des années 2030 puis baisser à partir de 2033**, en raison du recul des naissances depuis 2015 (SIES, mai 2026). Une partie des places créées pourrait alors servir à améliorer l'encadrement plutôt qu'à accueillir plus d'étudiants."
+    },
+    "impact_temporel_et_sectoriel": {
+      "synthese": "Effets macroéconomiques négligeables ; effets sectoriels réels sur les universités, le privé lucratif et l'apprentissage.",
+      "texte": "**Inflation, consommation et stabilité bancaire** : aucun effet notable. Une dépense d'environ 2 milliards d'euros par an (estimation de l'analyste) pèse moins de 0,1 % du PIB. **Universités** : elles recevraient davantage d'étudiants ; l'effet dépend entièrement du financement, sans lequel le taux d'encadrement se dégraderait encore. **Enseignement supérieur privé lucratif** : le groupe LFI attribue une partie de sa croissance au manque de places dans le public ; un accès élargi pourrait la freiner, effet plausible mais non mesuré. **Apprentissage** : plus de 10 000 formations en alternance figurent aujourd'hui sur la plateforme ; la mesure ne dit pas comment elles seraient proposées aux candidats sans Parcoursup."
+    },
+    "ce_qui_est_etabli": {
+      "synthese": "Le nombre de candidats sans proposition en juillet augmente, et le manque de places est concentré en Île-de-France.",
+      "texte": "Le nombre de candidats sans proposition à la fin de la phase principale est passé d'environ 103 000 en 2025 à environ 126 600 en 2026. **Un néo-bachelier francilien a deux fois plus de risque de n'avoir aucune proposition qu'ailleurs** (11,1 % contre 5,8 % en 2025), et les licences non sélectives ont perdu 7 300 places entre 2020 et 2025 (Comité éthique et scientifique de Parcoursup). La dépense par étudiant baisse depuis 2009 (DEPP). La réussite en licence est faible pour les bacheliers technologiques et professionnels (14,0 % et 6,5 % en trois ou quatre ans). Le législateur peut modifier les conditions d'accès au supérieur, sous réserve de critères objectifs (avis du Conseil d'État du 22 novembre 2017). **Le candidat a voté contre la loi ORE en décembre 2017** et défend sa suppression depuis."
+    },
+    "ce_qui_est_probable": {
+      "synthese": "Sans nouvelles places, supprimer le classement changerait qui entre en licence, pas combien.",
+      "texte": "Dans les licences saturées, **la suppression du classement sur dossier redistribuerait les places sans en ajouter** : selon le domicile, la famille ou le hasard au lieu des résultats scolaires. Une plateforme nationale resterait nécessaire pour les BTS, BUT, classes préparatoires et écoles, déjà sélectifs avant 2018 ; le stress des candidats à ces filières ne disparaîtrait donc pas. L'ouverture de 150 000 places, si elle était financée, réduirait réellement le nombre de bacheliers sans proposition, surtout en Île-de-France."
+    },
+    "ce_qui_est_discutable": {
+      "synthese": "Le lien entre Parcoursup et les inégalités sociales d'accès est plus faible que ne le dit le candidat.",
+      "texte": "Le candidat présente l'avant-2018 comme « un système égalitaire ». **Les travaux de l'Insee montrent que la ségrégation sociale à l'entrée du supérieur est restée globalement stable avec Parcoursup**, et qu'elle vient surtout des vœux formulés par les élèves eux-mêmes plutôt que des classements des formations. Le système antérieur reposait par ailleurs, en dernier recours, sur le tirage au sort, lui aussi critiqué. À l'inverse, **Parcoursup a nettement changé le profil des admis dans les licences saturées, au profit des meilleurs dossiers**, et les quotas de boursiers ont eu un effet limité. Juger lequel des deux modes de départage (dossier ou domicile et hasard) est le plus juste relève d'un arbitrage politique, pas d'un fait."
+    },
+    "ce_qui_est_inconnu": {
+      "synthese": "Le dispositif de remplacement, le calendrier et le financement des 150 000 places ne sont pas connus.",
+      "texte": "On ne sait pas **quelle règle départagerait les candidats quand une formation est pleine**, ni ce qui remplacerait la plateforme pour les formations sélectives et l'apprentissage. Le calendrier de création des 150 000 places, leur répartition (licence, BTS, BUT) et leur financement ne sont pas précisés. Le bilan final de Parcoursup 2026, qui dirait combien de bacheliers sont réellement restés sans place à la rentrée, n'a pas été publié. Aucune étude ne mesure l'effet qu'aurait aujourd'hui, en France, un retour à l'accès libre sur la réussite en licence."
+    },
+    "angles_morts": {
+      "synthese": "La mesure confond la plateforme et le manque de places, et ignore la réussite après l'inscription.",
+      "texte": "Premier angle mort : **la plateforme n'est pas le goulot d'étranglement**. Ce sont les capacités d'accueil qui laissent des candidats sans place ; la suppression de Parcoursup n'y change rien sans création de places. Deuxième angle mort : **la règle de départage**. Dans les licences saturées, renoncer au dossier oblige à choisir un autre critère (domicile, hasard), dont les effets sur la mixité et la mobilité ne sont pas évoqués. Troisième angle mort : **la réussite après l'entrée**. Le droit d'inscription ne garantit pas un diplôme, et les bacheliers professionnels réussissent très peu en licence sans accompagnement. Quatrième angle mort : **les bacheliers professionnels sans proposition visent surtout des BTS, déjà sélectifs avant 2018** : sans places en BTS, la mesure ne les aide pas. Note de rangement : le chiffrage des places est traité en faisabilité budgétaire et le manque de dossier chiffré en degré de préparation, ce que la méthode autorise ; le report de charge sur les universités et l'effet sur le déficit sont rangés en effets rebonds uniquement."
+    },
+    "notation_detaillee": {
+      "operationnalite_juridique": 8,
+      "qualification_juridique": "SOLIDE",
+      "operationnalite_budgetaire": 6,
+      "qualification_budgetaire": "INCERTAIN",
+      "operationnalite_moyens_humains": 5,
+      "qualification_moyens_humains": "INCERTAIN",
+      "operationnalite_moyens_total": 19,
+      "plafond_applique": false,
+      "plafond_declencheur": null,
+      "efficacite": 13,
+      "qualification_efficacite": "INCERTAIN",
+      "effets_rebonds_externalites": 10,
+      "qualification_effets_rebonds": "INCERTAIN",
+      "degre_preparation": 2,
+      "qualification_preparation": "FRAGILE",
+      "alignement_logique": 8,
+      "qualification_alignement": "SOLIDE",
+      "score_total": 52,
+      "appreciation": "partiellement fondé"
+    },
+    "verdict_final": "Ce qui tient : la mesure est juridiquement simple, puisqu'une loi ordinaire suffit, et elle prolonge fidèlement une position que le candidat défend depuis 2017. Le constat de départ est réel : le nombre de candidats sans proposition en juillet augmente, et les places manquent, surtout en Île-de-France. Les 150 000 places annoncées par son groupe s'attaquent à ce vrai problème, pour un coût que l'on peut estimer à environ 2 milliards d'euros par an.\n\nCe qui ne tient pas : supprimer la plateforme ne crée pas de places. Là où une licence est pleine, abandonner le dossier oblige à départager par le domicile ou par le hasard, ce qui change qui entre sans augmenter le nombre d'admis. Le chiffre de « 100 000 bacheliers sans débouché » décrit une étape de la procédure, pas une exclusion définitive. Et rien n'est prévu pour que les nouveaux inscrits réussissent, alors que 6,5 % seulement des bacheliers professionnels obtiennent leur licence.\n\nCe qui reste incertain : le dispositif de remplacement, le calendrier et le financement des places. L'analyse retient l'hypothèse d'un retour au régime d'avant 2018 (affectation par le recteur selon le domicile et les vœux), faute de précision du candidat.",
+    "sources_utilisees": [
+      "L'Insoumission, « « Nous abolirons Parcoursup » : l'entretien de Jean-Luc Mélenchon au groupe EBRA », 10 octobre 2026 : https://linsoumission.fr/2026/10/10/melenchon-entretien-parcoursup/",
+      "Orange Actu, « Présidentielle 2027 : suppression de Parcoursup, droit de vote à 16 ans… Jean-Luc Mélenchon multiplie les propositions pour les jeunes », octobre 2026 : https://actu.orange.fr/politique/presidentielle-2027-suppression-de-parcoursup-droit-de-vote-a-16-ans-jean-luc-melenchon-multiplie-les-propositions-pour-les-jeunes-magic-CNT000002sCYOg.html",
+      "Groupe La France insoumise, « Parcoursup trie, nous l'abolirons : l'accès à l'enseignement supérieur doit être garanti pour toutes et tous », 25 septembre 2026 : https://lafranceinsoumise.fr/2026/09/25/parcoursup-trie-nous-labolirons-lacces-a-lenseignement-superieur-doit-etre-garanti-pour-toutes-et-tous/",
+      "L'Etudiant, « Présidentielle 2022 : Jean-Luc Mélenchon, « nous supprimerons la sélection à l'entrée du master » », 9 mars 2022 : https://www.letudiant.fr/lifestyle/engagement-et-vie-associative/article/presidentielle-2022-jean-luc-melenchon-nous-supprimerons-la-selection-a-l-entree-du-master.html",
+      "Assemblée nationale, scrutin public n° 351 sur l'ensemble du projet de loi relatif à l'orientation et à la réussite des étudiants, 19 décembre 2017 : https://www.assemblee-nationale.fr/dyn/15/scrutins/351",
+      "Conseil d'État, avis n° 393743 sur le projet de loi relatif à l'orientation et à la réussite des étudiants, 22 novembre 2017 : https://www.conseil-etat.fr/ressources/avis-aux-pouvoirs-publics/derniers-avis-publies/projet-de-loi-relatif-a-l-orientation-et-a-la-reussite-des-etudiants",
+      "Assemblée nationale, proposition de loi n° 1425 visant à abroger la sélection à l'entrée des formations du premier cycle, 20 juin 2023 : https://www.assemblee-nationale.fr/dyn/16/textes/l16b1425_proposition-loi.pdf",
+      "Assemblée nationale, proposition de loi n° 2488 relative à la suppression de Parcoursup (groupe UDR), 17 février 2026 : https://www.assemblee-nationale.fr/dyn/17/textes/l17b2488_proposition-loi.pdf",
+      "Ministère de l'Enseignement supérieur, « Bilan Parcoursup 2025 : un nombre record de candidats, des résultats stables et un accompagnement renforcé », 10 octobre 2025 : https://www.enseignementsup-recherche.gouv.fr/fr/bilan-parcoursup-2025-un-nombre-record-de-candidats-des-resultats-stables-et-un-accompagnement-100136",
+      "Thotis Media, « Bilan Parcoursup 2026 : plus de 126 000 candidats encore sans proposition à l'issue de la phase principale », 27 juillet 2026 : https://thotismedia.com/bilan-parcoursup-2026-plus-de-126-000-candidats-encore-sans-proposition-a-lissue-de-la-phase-principale/",
+      "Ministère de l'Enseignement supérieur, L'état de l'Enseignement supérieur, de la Recherche et de l'Innovation n° 19, « L'orientation des nouveaux bacheliers sur Parcoursup » (données 2023) : https://publication.enseignementsup-recherche.gouv.fr/eesr/FR/T129/l_orientation_des_nouveaux_bacheliers_sur_parcoursup_les_voeux_et_les_propositions_d_admission/",
+      "Comité éthique et scientifique de Parcoursup et Mon Master, rapport annuel, avril 2026 : https://services.dgesip.fr/fichiers/RAPPORT_CESPMM_2026_Parcoursup-Mon_master.pdf",
+      "SIES, Note Flash n° 29, « Parcours et réussite en licence : les résultats de la session 2024 », novembre 2025 : https://www.enseignementsup-recherche.gouv.fr/sites/default/files/2025-11/nf-sies-2025-29-38293.pdf",
+      "DEPP, Note d'information n° 26.42, « En 2025, 199,2 milliards d'euros consacrés à l'éducation, soit 6,7 % du PIB », septembre 2026 : https://www.education.gouv.fr/sites/default/files/document/educationnationaledepp-ni-2026-42pdf-520993.pdf",
+      "SIES, « Projections des effectifs d'étudiants de l'enseignement supérieur jusqu'en 2034 », mai 2026 : https://www.enseignementsup-recherche.gouv.fr/fr/projections-des-effectifs-d-etudiants-de-l-enseignement-superieur-jusqu-en-2034-101497",
+      "N. Bechichi, J. Grenet, G. Thebault, « D'Admission post-bac à Parcoursup : quels effets sur la répartition des néo-bacheliers dans les formations d'enseignement supérieur ? », Insee : https://www.insee.fr/fr/statistiques/5432519",
+      "N. Bechichi, J. Grenet, G. Thebault, « Ségrégation à l'entrée des études supérieures en France et en région parisienne : quels effets du passage à Parcoursup ? », Insee, document de travail n° 2021-03, novembre 2021 : https://www.insee.fr/fr/statistiques/5893203",
+      "LCP, « Parcoursup est « un échec sur le plan politique », selon un rapport parlementaire » (mission flash Courbon-Gumbs), février 2026 : https://lcp.fr/actualites/parcoursup-est-un-echec-sur-le-plan-politique-selon-un-rapport-parlementaire-431423",
+      "Acteurs publics, « Pour la Cour des comptes, Parcoursup n'est pas plus performant qu'Admission post-bac », 27 février 2020 : https://acteurspublics.fr/articles/pour-la-cour-des-comptes-parcoursup-nest-pas-plus-performant-quadmission-post-bac",
+      "L'Etudiant, « APB : le ministère officialise le tirage au sort », 27 avril 2017 : https://www.letudiant.fr/etudes/parcoursup/apb-le-ministere-officialise-le-tirage-au-sort.html",
+      "L'Etudiant EducPros, « APB 2017 : le tirage au sort entre les mains du Conseil d'État », mai 2017 : https://www.letudiant.fr/educpros/actualite/apb-2017-le-tirage-au-sort-entre-les-mains-du-conseil-d-etat.html",
+      "L'Etudiant EducPros, « Moins de propositions, peu de choix d'orientation : Parcoursup est-il fait pour les bacs pro ? », 11 février 2026 : https://www.letudiant.fr/educpros/enquetes/moins-de-propositions-peu-de-choix-d-orientation-parcoursup-est-il-fait-pour-les-bacs-pro.html",
+      "AFP via Orange Actu, « Derrière la plateforme numérique Parcoursup, un enjeu de places à l'université ? », 12 octobre 2026 : https://actu.orange.fr/france/derriere-la-plateforme-numerique-parcoursup-un-enjeu-de-places-a-l-universite-CNT000002sFtUv.html",
+      "Diplomeo, « Législatives 2024 : le Front populaire souhaite abroger Parcoursup », 17 juin 2024 : https://diplomeo.com/actualite-legislatives_2024_front_populaire_abroger_parcoursup",
+      "OCDE, Regards sur l'éducation 2025, « Qui est susceptible d'achever des études tertiaires ? » : https://www.oecd.org/fr/publications/regards-sur-l-education-2025_b26d545c-fr/full-report/who-is-expected-to-complete-tertiary-education_a1099e2e.html",
+      "Code de l'éducation, articles L111-1 et L612-3 (Légifrance)."
+    ],
+    "niveau_de_confiance": "Élevé sur le cadre juridique, la position constante du candidat et les chiffres officiels de Parcoursup et de réussite en licence. Moyen sur l'estimation du coût des 150 000 places (coût moyen par étudiant appliqué par l'analyste, hors locaux) et sur la lecture des chiffres 2026, connus par des reprises de presse du tableau de bord ministériel. Moyen aussi sur le contenu exact de la mesure, le candidat n'ayant pas décrit le dispositif de remplacement.",
+    "limites": {
+      "synthese": "Dispositif de remplacement non précisé par le candidat : l'analyse repose sur l'hypothèse d'un retour au régime d'avant 2018.",
+      "texte": "**Le candidat n'a pas décrit ce qui remplacerait Parcoursup.** L'analyse retient un retour au régime antérieur à 2018 (libre inscription, affectation par le recteur selon le domicile, la situation de famille et les vœux), tel que le prévoyait une proposition de loi de la NUPES en 2023 ; une autre règle de départage changerait l'analyse des effets rebonds. Les 150 000 places viennent d'un communiqué du groupe parlementaire, pas du candidat lui-même. Les chiffres 2026 de fin de phase principale sont connus par des reprises de presse du tableau de bord du ministère, dont les sous-totaux ne se recoupent pas parfaitement ; le bilan final 2026 n'était pas publié au moment de l'analyse. **Le coût est une estimation de l'analyste** (coût moyen par étudiant), qui ne dit rien du coût marginal réel ni des investissements immobiliers. Les comparaisons internationales sont indicatives : aucune étude ne mesure l'effet d'un retour à l'accès libre en France aujourd'hui."
+    },
+    "analyse_par_criteres": [
+      {
+        "critere": "operationnalite_moyens",
+        "titre": "Opérationnalité & Moyens",
+        "note": 19,
+        "note_max": 30,
+        "plafond_applique": false,
+        "plafond_declencheur": null,
+        "texte": "**Supprimer la procédure issue de la loi ORE ne demande qu'une loi ordinaire**, puisque le législateur fixe librement les conditions d'accès au supérieur, et le régime antérieur à 2018 a fonctionné pendant plus de trente ans. Une réserve demeure : il faudra inscrire dans la loi des critères objectifs de départage pour les licences pleines, le tirage au sort de 2017 ayant été juridiquement contesté. Côté budget, **aucun financement n'est prévu** pour les 150 000 places, alors que leur coût est estimable à environ 2 milliards d'euros par an. Côté moyens humains, créer ces places suppose de recruter plusieurs milliers d'enseignants et de trouver des locaux, surtout en Île-de-France, sans calendrier annoncé."
+      },
+      {
+        "critere": "efficacite",
+        "titre": "Efficacité",
+        "note": 13,
+        "note_max": 30,
+        "texte": "**Supprimer la plateforme ne crée aucune place**, alors que c'est le manque de places qui laisse des bacheliers sans proposition : le levier principal ne vise pas directement la bonne cause. Les 150 000 places, elles, agissent sur l'accès, ce qui évite un mécanisme totalement vide. Mais dans les licences déjà saturées, **changer la règle de départage ne fait entrer personne de plus** : cela change qui entre, pas combien. Les bacheliers professionnels, premiers touchés, visent surtout des BTS restés sélectifs, et un accès ouvert sans accompagnement convertit mal l'inscription en diplôme, seuls 6,5 % d'entre eux obtenant leur licence en trois ou quatre ans."
+      },
+      {
+        "critere": "effets_rebonds_externalites",
+        "titre": "Effets rebonds & Externalités",
+        "note": 10,
+        "note_max": 20,
+        "texte": "**Le retour d'une affectation par le domicile favoriserait les candidats vivant près des universités demandées**, au détriment de la mobilité et de la mixité sociale visées par le service public. L'accès ouvert risque aussi de déplacer l'échec vers la première année, avec un coût en années perdues pour les étudiants, et **sans financement des places, la charge retomberait sur des universités déjà fragilisées**, alourdissant au passage le déficit public d'environ 2 milliards d'euros par an. À l'inverse, la mesure pourrait réduire le stress des candidats et freiner le recours au privé lucratif, deux effets plausibles mais non chiffrés."
+      },
+      {
+        "critere": "degre_preparation",
+        "titre": "Degré de préparation",
+        "note": 2,
+        "note_max": 10,
+        "texte": "**Le candidat n'a présenté ni dispositif de remplacement, ni règle de départage, ni coût** : les 150 000 places viennent de son groupe parlementaire, sans montant en euros. Le diagnostic central est en outre mal lu : **les « bacheliers sans débouché » cités correspondent à une étape intermédiaire mi-juillet**, alors qu'en fin de procédure 95 % des bacheliers obtiennent au moins une proposition. L'idée que garantir une place serait un retour à un principe constitutionnel est également inexacte : c'est une loi ordinaire de 1984 qui le prévoyait, pas la Constitution."
+      },
+      {
+        "critere": "alignement_logique",
+        "titre": "Alignement & Logique globale",
+        "note": 8,
+        "note_max": 10,
+        "texte": "**La mesure prolonge une position tenue sans interruption depuis 2017** : vote contre la loi ORE, promesse de « démanteler Parcoursup » en 2022, abrogation reprise par le Nouveau Front populaire en 2024. Elle s'articule logiquement avec le reste du programme, notamment la gratuité des études et la fin de la sélection en master. La seule tension interne reste que **garantir à chacun la formation de son choix est difficilement compatible avec un nombre de places nécessairement fini**."
+      }
+    ]
+  },
+  "titre_fiche": "Abolir Parcoursup",
+  "resume_court": "Jean-Luc Mélenchon promet d'abolir Parcoursup pour que chaque bachelier puisse entrer dans la formation de son choix, et son groupe parlementaire annonce 150 000 places supplémentaires dans le supérieur public. Il répond à un problème réel : le nombre de candidats sans proposition en juillet augmente, et les places manquent, surtout en Île-de-France.\n\nLes nouvelles places agiraient directement sur ce problème, pour environ 2 milliards d'euros par an selon notre estimation. Mais supprimer la plateforme, en soi, n'ouvre aucune place : dans les licences pleines, il faudrait départager par le domicile ou le hasard au lieu du dossier. La principale incertitude reste la réussite des nouveaux inscrits, très faible aujourd'hui pour les bacheliers professionnels.",
+  "teaser_accueil": "Chaque été, des dizaines de milliers de bacheliers attendent une place. Supprimer la plateforme suffirait-il à leur en ouvrir une ?",
+  "verdict_final": "Ce qui tient : la mesure est juridiquement simple, puisqu'une loi ordinaire suffit, et elle prolonge fidèlement une position que le candidat défend depuis 2017. Le constat de départ est réel, le nombre de candidats sans proposition en juillet augmente, et les places manquent, surtout en Île-de-France. Les 150 000 places annoncées par son groupe s'attaquent à ce vrai problème, pour un coût estimable à environ 2 milliards d'euros par an.\n\nCe qui ne tient pas : supprimer la plateforme ne crée pas de places. Là où une licence est pleine, abandonner le dossier oblige à départager par le domicile ou par le hasard, ce qui change qui entre sans augmenter le nombre d'admis. Le chiffre de « bacheliers sans débouché » décrit une étape de la procédure, pas une exclusion définitive. Et rien n'est prévu pour que les nouveaux inscrits réussissent, alors que seuls 6,5 % des bacheliers professionnels obtiennent leur licence.\n\nCe qui reste incertain : le dispositif de remplacement, le calendrier et le financement des places. L'analyse retient l'hypothèse d'un retour au régime d'avant 2018, faute de précision du candidat.",
+  "verdict_conclusion": "Une mesure juridiquement simple mais qui confond la plateforme avec le vrai problème, le manque de places."
+}
