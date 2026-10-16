@@ -19,7 +19,7 @@
   },
   "accueil": {
     "afficher": true,
-    "enTete": true,
+    "enTete": false,
     "titre": "Le plan budgétaire de Marine Le Pen",
     "accroche": "140 milliards d'économies promises d'ici 2032. Nous vérifions, poste par poste, ce qui tient face aux budgets réels, au droit et aux précédents."
   },
@@ -276,9 +276,9 @@
       "titre": "Une règle d'or budgétaire par référendum",
       "theme": "Démocratie et institutions",
       "montantMd": 0,
-      "statut": "a_venir",
-      "relectureSlug": null,
-      "propositionId": null
+      "statut": "publiee",
+   "relectureSlug": "lepen-budget-regle-dor",
+   "propositionId": 58
     },
     {
       "numero": 4,
