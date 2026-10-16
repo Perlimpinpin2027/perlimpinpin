@@ -148,6 +148,21 @@
         "titre": "Titre et phrase d'accroche",
         "texte": "Titre court proposé : « La règle d'or par référendum » (28 caractères). Phrase d'accroche : « En 2012, Marine Le Pen y voyait une « chape de plomb ». Elle veut désormais la graver dans la Constitution, avec des plafonds qui laissent encore grimper la dette. » Est-ce clair et fidèle à la fiche ?"
       }
-    ]
+    ],
+    "archive": {
+      "date": "2026-10-15",
+      "version_suivante": "data/analyses finales/LePen/lepen_budget_regle_dor_etape3.json",
+      "synthese": "Le resume_court, le contexte_programme et l'alignement_logique précisent désormais que la règle d'or s'inscrit dans un plan incluant aussi des baisses d'impôts sur le quinquennat ; aucune note ne change (score inchangé à 66/100).",
+      "reponses": [
+        {
+          "commentaire_id": "cmv9grobl000006jo0zeyrtlg",
+          "auteur": "Arno F.",
+          "section": "Le résumé de Perlimpinpin IA",
+          "commentaire": "est ce que tu ne devrais pas prendre en compte également le reste du programme budgétaire proposé par MLP et les incohérences qu'il y a dessus ?",
+          "reponse": "Bonne remarque, et elle est maintenant plus visible dans la fiche. Le résumé mentionne désormais explicitement que la règle d'or s'inscrit dans un plan plus large, qui prévoit aussi 140 milliards d'économies et des baisses d'impôts sur le quinquennat, et que son respect dépend de l'équilibre réel entre ces deux volets.\n\nCette tension était déjà présente dans la fiche, notamment dans le critère Alignement & Logique globale (noté 6/10), mais elle apparaissait seulement en détail et pas dans le résumé. Nous avons aussi complété la section sur le programme pour le dire plus tôt.\n\nEn revanche, le chiffrage précis de la compatibilité entre ces baisses d'impôts et les 140 milliards d'économies annoncées est traité dans une autre fiche du dossier, consacrée au plan budgétaire poste par poste : cette fiche-ci porte spécifiquement sur l'outil institutionnel qu'est la règle d'or, pas sur l'ensemble du chiffrage du programme.",
+          "retenu": true
+        }
+      ]
+    }
   }
 }
