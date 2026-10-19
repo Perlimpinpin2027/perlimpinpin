@@ -11,6 +11,7 @@ import {
   validateVersionBasique,
   checkChiffresVersionBasique,
   checkAncragesVersionBasique,
+  reparerAncrages,
   checkLongueursAccueil,
 } from "./scoring.js";
 
@@ -555,5 +556,42 @@ describe("checkLongueursAccueil (avertissement non bloquant)", () => {
     assert.deepEqual(checkLongueursAccueil({}), []);
     assert.deepEqual(checkLongueursAccueil(), []);
     assert.deepEqual(checkLongueursAccueil({ titre_fiche: null, teaser_accueil: 42 }), []);
+  });
+});
+
+describe("reparerAncrages", () => {
+  const fiche = {
+    contexte_national: { texte: "Depuis 2017, **l'accord d'entreprise prime déjà sur la branche dans la plupart des domaines**, et la durée du travail est organisée en trois étages." },
+    resume_court: "Le Code du travail compte 11 487 articles au 1er janvier 2025.",
+  };
+  const vb = { points_forts: [], points_faibles: [] };
+
+  test("corrige un extrait à un mot près (cas Attal, 19/10/2026)", () => {
+    const { ancrages, reparations } = reparerAncrages(
+      [{ texte: "x", extrait: "Depuis 2017, l'accord d'entreprise prime sur la branche dans la plupart des domaines" }],
+      fiche,
+    );
+    assert.equal(reparations.length, 1);
+    assert.equal(reparations[0].ecart, 1);
+    assert.deepEqual(checkAncragesVersionBasique(ancrages, vb, fiche), []);
+  });
+
+  test("laisse intact un extrait déjà exact", () => {
+    const ancrages = [{ texte: "x", extrait: "Le Code du travail compte 11 487 articles" }];
+    const r = reparerAncrages(ancrages, fiche);
+    assert.deepEqual(r.reparations, []);
+    assert.deepEqual(r.ancrages, ancrages);
+  });
+
+  test("ne corrige pas un extrait trop éloigné de la fiche", () => {
+    const ancrages = [{ texte: "x", extrait: "Le Code du travail compte 12 000 articles et reste illisible pour tout le monde" }];
+    const r = reparerAncrages(ancrages, fiche);
+    assert.deepEqual(r.reparations, []);
+    assert.ok(checkAncragesVersionBasique(r.ancrages, vb, fiche).length > 0);
+  });
+
+  test("ne corrige pas un extrait trop court", () => {
+    const r = reparerAncrages([{ texte: "x", extrait: "la durée du travail change" }], fiche);
+    assert.deepEqual(r.reparations, []);
   });
 });

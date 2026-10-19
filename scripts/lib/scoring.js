@@ -574,6 +574,82 @@ export function checkAncragesVersionBasique(ancrages, versionBasique, ficheFinal
   return errors;
 }
 
+// Réparation des extraits presque exacts (19/10/2026, fiche Attal « Constitution
+// du travail » : un seul mot ajouté, « déjà », avait fait rejeter toute la
+// version basique). Un extrait qui ne figure pas mot pour mot dans la fiche est
+// remplacé par le passage de la fiche le plus proche, à condition que l'écart
+// soit minime : au plus 2 mots, ou 15 % des mots de l'extrait s'il est long
+// (mots ajoutés, retirés ou changés), et un extrait d'au moins 6 mots. Le
+// passage retenu est copié de la fiche (forme normalisée, celle que compare
+// checkAncragesVersionBasique) : le contrôle mot pour mot reste donc la règle,
+// seule la citation est corrigée, jamais la phrase de la version basique.
+// Retourne { ancrages, reparations } ; ancrages est une copie.
+const REPARATION_MOTS_MIN = 6;
+
+function ecartMots(a, b, max) {
+  // Distance d'édition au niveau des mots, arrêtée dès qu'elle dépasse max.
+  let precedente = Array.from({ length: b.length + 1 }, (_, j) => j);
+  for (let i = 1; i <= a.length; i++) {
+    const courante = [i];
+    let minLigne = i;
+    for (let j = 1; j <= b.length; j++) {
+      const cout = a[i - 1] === b[j - 1] ? 0 : 1;
+      courante[j] = Math.min(precedente[j] + 1, courante[j - 1] + 1, precedente[j - 1] + cout);
+      if (courante[j] < minLigne) minLigne = courante[j];
+    }
+    if (minLigne > max) return max + 1;
+    precedente = courante;
+  }
+  return precedente[b.length];
+}
+
+// Mot sans la ponctuation qui lui est collée, pour la comparaison seulement :
+// le passage retenu garde la ponctuation de la fiche.
+const cleMot = (mot) => mot.replace(/^[«»"'(\[]+|[«»"')\].,;:!?]+$/g, "");
+
+function passageLePlusProche(extrait, champs) {
+  const mots = extrait.split(" ").map(cleMot);
+  const n = mots.length;
+  if (n < REPARATION_MOTS_MIN) return null;
+  const tolerance = Math.max(2, Math.floor(n * 0.15));
+  const debut = new Set(mots.slice(0, tolerance + 1));
+  let meilleur = null;
+  for (const champ of champs) {
+    const motsChamp = champ.split(" ");
+    const cles = motsChamp.map(cleMot);
+    for (let i = 0; i < motsChamp.length; i++) {
+      // Un passage proche commence forcément par l'un des premiers mots de l'extrait.
+      if (!debut.has(cles[i])) continue;
+      for (let taille = Math.max(1, n - tolerance); taille <= n + tolerance; taille++) {
+        if (i + taille > motsChamp.length) break;
+        const ecart = ecartMots(mots, cles.slice(i, i + taille), meilleur ? meilleur.ecart - 1 : tolerance);
+        if (ecart <= tolerance && (!meilleur || ecart < meilleur.ecart)) {
+          meilleur = { passage: motsChamp.slice(i, i + taille).join(" "), ecart };
+          if (ecart === 1) return meilleur;
+        }
+      }
+    }
+  }
+  return meilleur;
+}
+
+export function reparerAncrages(ancrages, ficheFinale) {
+  if (!Array.isArray(ancrages)) return { ancrages, reparations: [] };
+  const champs = collecterChaines(ficheFinale).map(normaliserPassage);
+  const fiche = champs.join("\u0000");
+  const reparations = [];
+  const repares = ancrages.map((ancrage) => {
+    if (!ancrage || typeof ancrage.extrait !== "string" || !ancrage.extrait.trim()) return ancrage;
+    const extrait = normaliserPassage(ancrage.extrait);
+    if (fiche.includes(extrait)) return ancrage;
+    const proche = passageLePlusProche(extrait, champs);
+    if (!proche) return ancrage;
+    reparations.push({ texte: ancrage.texte, avant: ancrage.extrait, apres: proche.passage, ecart: proche.ecart });
+    return { ...ancrage, extrait: proche.passage };
+  });
+  return { ancrages: repares, reparations };
+}
+
 // --- Publications X (étape 3 ter) ------------------------------------------
 // Trois formats rédigés à partir de la fiche finale (voir
 // data/prompt-reseaux.md), enregistrés dans contenuComplet.reseaux AVEC leurs

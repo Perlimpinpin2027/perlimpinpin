@@ -16,6 +16,7 @@ import {
   validateVersionBasique,
   checkChiffresVersionBasique,
   checkAncragesVersionBasique,
+  reparerAncrages,
   validatePartiesReseaux,
   consigneBudgets,
   validateAvisCommentairesEtape2,
@@ -808,9 +809,12 @@ async function corrigerRevision(etape1, mistralResult, commentaires, reponsePrec
 // séparé (data/prompt-version-basique.md) pour ne pas modifier
 // data/prompt-methodologie.md, dont la date sert d'audit
 // (getPromptFileModifiedAt). Cette étape ne bloque jamais le pipeline : en
-// cas d'échec après une nouvelle tentative, la fiche est enregistrée sans
-// version_basique.
+// cas d'échec après trois tentatives, la fiche est enregistrée sans
+// version_basique (rattrapage : workflow « Version basique manquante »).
 const PROMPT_VERSION_BASIQUE_PATH = join(__dirname, "..", "data", "prompt-version-basique.md");
+// Trois essais (deux jusqu'au 19/10/2026) : le deuxième et le troisième ne
+// corrigent que ce qui a été refusé.
+const TENTATIVES_VERSION_BASIQUE = 3;
 
 async function callVersionBasique(userMessage) {
   const response = await fetchWithTimeout(`${ANTHROPIC_BASE_URL}/messages`, {
@@ -842,7 +846,7 @@ function addUsage(total, usage = {}) {
 }
 
 // Retourne { versionBasique, ancrages, usage, errors } : versionBasique et
-// ancrages valent null si les deux tentatives ont échoué (errors donne alors
+// ancrages valent null si les trois tentatives ont échoué (errors donne alors
 // la cause du dernier échec), usage cumule les tokens des appels effectués.
 // Les ancrages (extraits de la fiche justifiant chaque phrase) sont un
 // contrôle interne : jamais publiés dans contenuComplet.
@@ -854,30 +858,46 @@ export async function genererVersionBasique(ficheFinale) {
   let usage = {};
   let errors = [];
   let nombresIntrouvables = [];
+  // Dernière réponse lisible, renvoyée au modèle pour une correction ciblée :
+  // il ne réécrit que ce qui a été refusé, au lieu de tout reprendre (et de
+  // commettre d'autres erreurs ailleurs).
+  let reponsePrecedente = null;
 
-  for (let tentative = 1; tentative <= 2; tentative++) {
+  for (let tentative = 1; tentative <= TENTATIVES_VERSION_BASIQUE; tentative++) {
     const userMessage =
-      tentative === 1
+      tentative === 1 || !reponsePrecedente
         ? basePrompt
         : `${basePrompt}
 
-ATTENTION : ta réponse précédente a été refusée pour les raisons suivantes. Corrige-les.
-${errors.map((error) => `- ${error}`).join("\n")}`;
+VOICI TA RÉPONSE PRÉCÉDENTE, refusée par le contrôle automatique :
+${JSON.stringify(reponsePrecedente, null, 2)}
+
+Raisons du refus :
+${errors.map((error) => `- ${error}`).join("\n")}
+
+Renvoie le JSON complet, en gardant tel quel tout ce qui n'est pas cité ci-dessus. Pour chaque extrait refusé, recopie le passage de la fiche caractère pour caractère (sans ajouter, retirer ni changer un seul mot), ou choisis un autre passage. Si aucun passage de la fiche ne justifie la phrase, réécris ou supprime la phrase.`;
 
     nombresIntrouvables = [];
     try {
       const data = await callVersionBasique(userMessage);
       usage = addUsage(usage, data.usage);
       const raw = cleanContenu(extractJson(data));
+      if (raw && typeof raw === "object") reponsePrecedente = raw;
       const validation = validateVersionBasique(raw?.version_basique, sourcesUtilisees);
       if (!validation.valid) {
         errors = validation.errors;
       } else {
         nombresIntrouvables = checkChiffresVersionBasique(validation.versionBasique, ficheFinale);
-        const erreursAncrages = checkAncragesVersionBasique(raw.ancrages, validation.versionBasique, ficheFinale);
-        if (nombresIntrouvables.length === 0 && erreursAncrages.length === 0) {
-          return { versionBasique: validation.versionBasique, ancrages: raw.ancrages, usage, errors: [] };
+        // Extraits à un ou deux mots près : citation corrigée par le code.
+        const { ancrages, reparations } = reparerAncrages(raw.ancrages, ficheFinale);
+        for (const r of reparations) {
+          console.log(`  Étape 3 bis : extrait corrigé (${r.ecart} mot(s) d'écart) pour « ${r.texte} »`);
         }
+        const erreursAncrages = checkAncragesVersionBasique(ancrages, validation.versionBasique, ficheFinale);
+        if (nombresIntrouvables.length === 0 && erreursAncrages.length === 0) {
+          return { versionBasique: validation.versionBasique, ancrages, usage, errors: [] };
+        }
+        reponsePrecedente = { ...raw, ancrages };
         errors = [
           ...nombresIntrouvables.map(
             (nombre) => `Le nombre « ${nombre} » n'apparaît pas dans la fiche finale : retire-le ou remplace-le par un chiffre de la fiche.`,
@@ -889,13 +909,13 @@ ${errors.map((error) => `- ${error}`).join("\n")}`;
       errors = [error.message];
     }
 
-    if (tentative === 1) {
-      console.error("  ⚠️  Étape 3 bis : version basique refusée, nouvelle tentative :");
+    if (tentative < TENTATIVES_VERSION_BASIQUE) {
+      console.error(`  ⚠️  Étape 3 bis : version basique refusée (essai ${tentative}), nouvelle tentative :`);
       for (const error of errors) console.error(`     - ${error}`);
     }
   }
 
-  console.error("  ⚠️  Étape 3 bis : ÉCHEC après deux tentatives, fiche conservée SANS version basique.");
+  console.error(`  ⚠️  Étape 3 bis : ÉCHEC après ${TENTATIVES_VERSION_BASIQUE} tentatives, fiche conservée SANS version basique.`);
   if (nombresIntrouvables.length > 0) {
     console.error(`     Nombres introuvables dans la fiche finale : ${nombresIntrouvables.join(", ")}`);
   }
