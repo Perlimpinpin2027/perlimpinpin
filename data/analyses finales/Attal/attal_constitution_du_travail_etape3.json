@@ -1,0 +1,177 @@
+{
+  "auditArbitrage": [
+    {
+      "remarque": "Le chiffre de 11 487 articles doit mieux souligner que l'augmentation vient en partie de la recodification de 2008.",
+      "statut": "rejetee",
+      "raison": "Le texte initial mentionne déjà explicitement, dans ce_qui_est_etabli et dans nature_et_existant, que le nombre de mots n'a augmenté que d'environ 64% et que la recodification de 2008 explique une partie de la hausse du nombre d'articles. La nuance est présente ; il ne s'agit pas d'une erreur factuelle mais d'une préférence de mise en avant, insuffisante pour justifier une modification."
+    },
+    {
+      "remarque": "L'opérationnalité budgétaire devrait discuter un ordre de grandeur des coûts d'ingénierie et d'accompagnement.",
+      "statut": "rejetee",
+      "raison": "Remarque mineure et de confiance moyenne. Le texte qualifie déjà le coût de marginal à l'échelle du budget de l'État et explique pourquoi la note n'est pas de 9 ou 10. Aucun chiffre d'ordre de grandeur n'est disponible dans les sources ; l'absence de chiffrage n'est pas une erreur mais une limite documentée."
+    },
+    {
+      "remarque": "La note d'efficacité ne discute pas si un raisonnement structuré aurait pu justifier une note plus élevée en l'absence de preuve empirique directe.",
+      "statut": "rejetee",
+      "raison": "Remarque de nature spéculative sans preuve concrète d'erreur. L'analyse explique déjà le raisonnement (mécanisme plausible mais indirect, précédent de 2017 montrant un effet modeste, levier principal — la représentation syndicale — sous-dimensionné) et justifie la note en bas de fourchette. Il ne s'agit pas d'une erreur mais d'un désaccord sur le curseur, insuffisant pour modifier la note sans nouvel élément factuel."
+    },
+    {
+      "remarque": "La note de moyens humains (4/10) est proche du seuil de déclenchement du plafond et mériterait une discussion plus approfondie.",
+      "statut": "rejetee",
+      "raison": "Le plafond ne se déclenche qu'en dessous de 3/10 selon la règle de calcul ; 4/10 reste au-dessus du seuil. L'analyse initiale documente déjà explicitement l'obstacle (89% des entreprises sans délégué syndical) et justifie la note sans ambiguïté. Pas d'erreur de calcul ni de cohérence à corriger."
+    }
+  ],
+  "fiche_complete": {
+    "mesure_reformulee": {
+      "synthese": "Remplacer le Code du travail par un texte court de grands principes et renvoyer le reste à la négociation.",
+      "texte": "Gabriel Attal propose de réécrire entièrement le Code du travail pour en faire une « Constitution du travail » : **quelques articles fondamentaux, environ cinquante pages** selon ses propos rapportés de la Rencontre des entrepreneurs de France du 27 août 2026, le reste des règles relevant des accords de branche et d'entreprise. Son programme précise la méthode : le Gouvernement, des experts et les partenaires sociaux réécriraient ensemble ce code.\n\nDeux mécanismes se combinent : **une réduction drastique de la loi**, ramenée à un socle de principes, et **un transfert massif de la fabrication des règles vers la négociation collective**. Le candidat ne dit ni quels principes figureraient dans le socle, ni ce qui s'appliquerait dans une branche ou une entreprise où aucun accord n'est signé."
+    },
+    "mesure_vers_objectif": {
+      "objectif_court": "Un droit du travail simple qui favorise l'emploi",
+      "categorie_objectif": "Emploi et chômage",
+      "objectif_vise": "Rendre le droit du travail lisible et adapté au terrain pour faciliter l'embauche, faire baisser le chômage et, à terme, faire monter les salaires.",
+      "mecanisme_propose": "Réécriture du Code du travail en un socle de quelques articles fondamentaux, toutes les autres règles (organisation et durée du travail, nombreuses modalités du contrat) étant fixées par accord de branche ou d'entreprise.",
+      "lien_causal": "indirect"
+    },
+    "nature_et_existant": "Mesure juridique et institutionnelle : elle relève de la loi, puisque l'article 34 de la Constitution réserve au législateur les principes fondamentaux du droit du travail, et elle touche au droit européen, qui encadre une large partie de ce droit.\n\nCe n'est pas une innovation pure mais l'amplification d'un mouvement engagé depuis vingt ans. La loi du 4 mai 2004 a permis aux accords d'entreprise de déroger aux accords de branche. La loi du 8 août 2016 a organisé la durée du travail en trois étages (règles d'ordre public, champ ouvert à la négociation, règles dites supplétives qui s'appliquent à défaut d'accord) et créé une commission chargée de refonder toute la partie législative du code en deux ans. Les ordonnances de septembre 2017 ont généralisé la primauté de l'accord d'entreprise sur la plupart des sujets et supprimé cette commission avant qu'elle ne rende ses travaux.\n\nL'idée d'un code resserré autour d'une cinquantaine de principes vient de Robert Badinter et Antoine Lyon-Caen (Le travail et la loi, 2015). Le comité Badinter a ensuite dégagé 61 principes essentiels en janvier 2016, mais à droit constant et pour servir de préambule, pas pour remplacer le code. Ce qui serait neuf : retirer de la loi l'essentiel des règles supplétives et confier leur contenu à la négociation.\n\nLe Code compte 11 487 articles au 1er janvier 2025 contre 5 131 en 2004, selon les indicateurs de Légifrance. Une partie de cette hausse vient toutefois de la recodification de 2008, qui a découpé les articles : le nombre de mots n'a augmenté que d'environ 64 % sur la même période. Enfin, une large partie du Code ne règle pas la relation entre employeur et salarié mais des politiques publiques (emploi, formation professionnelle, contrôle par l'inspection du travail), qui ne peuvent pas être renvoyées aux branches.",
+    "contexte_programme": {
+      "synthese": "Une pièce centrale du pilier travail du programme, cohérente avec la fin du plafond d'heures supplémentaires.",
+      "texte": "La Constitution du travail est l'un des leviers du chantier « Travail & salaires » du programme, présentée comme un moyen de faire baisser le chômage pour faire ensuite monter les salaires, aux côtés de la baisse des charges salariales (le « droit au brut ») et d'une nouvelle réforme de l'assurance chômage.\n\nElle est **cohérente avec la proposition de supprimer le plafond légal de 220 heures supplémentaires par an**, qui ne s'applique déjà qu'à défaut d'accord collectif : même logique de renvoi à la négociation. Elle est aussi cohérente avec le parcours du candidat : député en 2017, **il a voté la loi d'habilitation puis la ratification des ordonnances travail** (scrutins des 13 juillet, 1er août et 28 novembre 2017). Détail notable, cette loi d'habilitation supprimait la commission de 2016 chargée précisément de refonder le code.\n\nUne tension existe sur la méthode. Le programme affiche sa confiance dans les partenaires sociaux, mais, Premier ministre au printemps 2024, Gabriel Attal a engagé une réforme de l'assurance chômage par décret, contestée par les syndicats, avant de la suspendre en juillet 2024 ; il propose aujourd'hui de la relancer. Le sujet est différent, mais le rapport aux partenaires sociaux est le même, et le candidat n'explique pas ce changement de méthode."
+    },
+    "contexte_national": {
+      "synthese": "Le cadre légal laisse déjà beaucoup de place à la négociation, mais les négociateurs manquent dans la plupart des entreprises.",
+      "texte": "Bon signe pour la faisabilité de principe, mauvais signe pour la mise en œuvre. Depuis 2017, **l'accord d'entreprise prime déjà sur la branche dans la plupart des domaines**, et la durée du travail est organisée en trois étages (ordre public, négociation, règles supplétives). Le frein principal n'est donc plus la loi mais la capacité à négocier.\n\nSelon la Dares, **en 2022, seules 10,9 % des entreprises de 10 salariés ou plus avaient un délégué syndical** (elles emploient 56,6 % des salariés de ce champ), et 36,2 % disposaient d'une instance élue du personnel, une part en recul de près de 8 points depuis 2018. Les entreprises de moins de 11 salariés n'ont aucune obligation d'élire des représentants. La couverture par une convention de branche est en revanche quasi générale grâce au mécanisme d'extension (97,7 % des salariés en 2004, dernière mesure de la Dares citée par le ministère).\n\nLe comité d'évaluation des ordonnances, piloté par France Stratégie, a décrit dans son rapport de 2021 une appropriation lente et inégale des nouvelles possibilités. Le Sénat (rapport d'information de 2021) relève que l'usage des accords de performance collective reste limité et parfois déséquilibré en faveur des employeurs. Côté résultats, **la Banque de France (mai 2026) attribue 0,4 point de baisse du chômage structurel à l'ensemble formé par les ordonnances de 2017, le renforcement des contrôles de recherche d'emploi et la réforme de la formation**, sans isoler la part propre des ordonnances.\n\nJuridiquement, le Conseil constitutionnel admet que le législateur confie à la négociation collective les modalités concrètes d'application des principes fondamentaux du droit du travail, mais exige qu'il exerce pleinement sa propre compétence (décision n° 2008-568 DC du 7 août 2008)."
+    },
+    "contexte_international": {
+      "synthese": "Les pays qui ont décentralisé avec succès disposaient de partenaires sociaux forts dans les entreprises, ce qui manque en France.",
+      "texte": "L'OCDE (Perspectives de l'emploi 2018, puis rapport « Négocier pour avancer ensemble » de 2019) conclut que **les systèmes coordonnés, y compris la « décentralisation organisée », font mieux en matière d'emploi que les systèmes totalement décentralisés**. Elle précise que la bonne articulation des accords d'entreprise dans un cadre de branche dépend surtout du degré de représentation collective des salariés dans les entreprises.\n\nL'exemple allemand est souvent cité. Selon Dustmann, Fitzenberger, Schönberg et Spitz-Oener (Journal of Economic Perspectives, 2014), la décentralisation des négociations salariales, engagée dès le milieu des années 1990, a davantage contribué au redressement allemand que les lois Hartz. Mais examiné de près, **ce précédent plaide plutôt contre une décentralisation décidée par la loi** : elle s'est faite par l'autonomie des partenaires sociaux eux-mêmes, avec des représentants du personnel puissants dans les entreprises, et les auteurs doutent que le seul processus politique aurait obtenu le même résultat.\n\nLes recherches menées n'ont pas identifié de démocratie ayant remplacé un code du travail complet par un texte de principes de cette taille. Les pays nordiques, souvent cités pour la légèreté de leur législation, reposent sur des taux de syndicalisation élevés et une négociation de branche très structurée, pas sur une réduction récente de leur droit.\n\nCôté droit européen, l'Union permet de transposer des directives par accord collectif (article 153 du traité sur le fonctionnement de l'Union européenne), mais **l'État doit alors garantir le résultat pour tous les salariés**, y compris ceux qu'aucun accord ne couvre : la Cour de justice l'a jugé dès 1985 contre le Danemark (affaire 143/83)."
+    },
+    "impact_environnement": null,
+    "analyse_longevites": {
+      "synthese": "La réécriture prendrait au moins un mandat, et un code court resterait exposé à un regonflement rapide.",
+      "texte": "**Le chantier dépasserait probablement un quinquennat.** La recodification de 2008, faite pourtant à droit constant, a demandé environ trois ans entre son lancement en 2005 et son entrée en vigueur en mai 2008. Une refondation qui change le fond du droit suppose en plus de renégocier ensuite des centaines d'accords de branche, avec une longue période de transition.\n\nLa durabilité n'est pas acquise non plus. Un code de principes reste une loi ordinaire, modifiable à chaque majorité. La tendance observée depuis 2004, avec un nombre d'articles plus que doublé, montre que chaque réforme ajoute des dispositions : **sans règle de discipline normative, le socle court risquerait de se regonfler** au fil des alternances, comme le code actuel l'a fait."
+    },
+    "impact_temporel_et_sectoriel": {
+      "synthese": "Peu d'effet direct à court terme, puis des effets sur salaires et conditions de travail variables selon les secteurs.",
+      "texte": "**Court terme (0-2 ans)** : écriture du socle, ordonnances, période de transition. Incertitude juridique pour les entreprises et les salariés, sans effet mesurable sur l'inflation, la consommation des ménages ou la stabilité du secteur bancaire.\n\n**Moyen terme (2-7 ans)** : renégociation dans les branches. Un effet favorable sur l'emploi est possible mais vraisemblablement modeste, au vu du précédent de 2017. Les effets devraient différer selon les secteurs : la Dares observe une propension plus faible à disposer d'élus du personnel dans l'hébergement-restauration et la construction que dans l'industrie, à taille comparable. **Là où la représentation est faible, le risque est une modération des salaires et des conditions de travail plutôt qu'un gain de pouvoir d'achat** ; là où elle est forte, des accords mieux adaptés au terrain sont possibles. L'effet net sur le pouvoir d'achat est ambigu.\n\n**Long terme (au-delà de 7 ans)** : le résultat dépend de la capacité à reconstruire une représentation des salariés dans les petites et moyennes entreprises, que la mesure ne prévoit pas. Aucun mécanisme crédible ne relie la mesure à la stabilité bancaire, et son effet sur la dette publique est quasi nul."
+    },
+    "ce_qui_est_etabli": {
+      "synthese": "Le Code a plus que doublé en articles depuis 2004, et la négociation d'entreprise prime déjà depuis 2017.",
+      "texte": "**Le Code du travail compte 11 487 articles au 1er janvier 2025, contre 5 131 en 2004** (Légifrance), le nombre de mots ayant augmenté d'environ 64 %. Depuis les ordonnances de 2017, l'accord d'entreprise prime sur la branche dans la plupart des domaines. L'article 34 de la Constitution réserve à la loi les principes fondamentaux du droit du travail, et le Conseil constitutionnel exige que le législateur exerce pleinement cette compétence. Une directive européenne peut être transposée par accord collectif seulement si l'État garantit le résultat pour tous les salariés. **En 2022, 10,9 % des entreprises de 10 salariés ou plus avaient un délégué syndical** (Dares). Le comité Badinter avait dégagé 61 principes à droit constant en 2016, et la commission chargée de refonder le code a été supprimée en 2017 sans avoir rendu de travaux. Gabriel Attal a voté la loi d'habilitation et la ratification des ordonnances de 2017."
+    },
+    "ce_qui_est_probable": {
+      "synthese": "Un socle court ne suffirait pas seul : des règles applicables sans accord resteraient nécessaires.",
+      "texte": "Selon notre raisonnement, **un étage de règles supplétives resterait indispensable** pour respecter le droit européen et l'article 34, et pour couvrir les entreprises sans négociateur ; le volume du droit se déplacerait alors du code vers des décrets ou des accords plus qu'il ne disparaîtrait. Les branches gagneraient en importance, puisqu'elles seules couvrent la quasi-totalité des salariés. Une phase d'insécurité juridique et de contentieux accompagnerait la transition, des principes généraux laissant davantage de place à l'interprétation du juge. L'effet sur l'emploi serait plutôt modeste, comparable à celui des ordonnances de 2017."
+    },
+    "ce_qui_est_discutable": {
+      "synthese": "L'effet sur l'emploi d'une décentralisation supplémentaire reste débattu, faute d'évaluation isolant son effet propre.",
+      "texte": "La Banque de France attribue une baisse du chômage structurel aux ordonnances de 2017, mais **groupée avec deux autres réformes**, sans isoler leur part. L'OCDE juge la décentralisation organisée favorable à l'emploi, mais à condition d'une représentation forte des salariés, ce que la France n'a pas dans la plupart des entreprises. L'exemple allemand est souvent invoqué en faveur de la mesure, mais il repose sur l'autonomie des partenaires sociaux plutôt que sur la loi. Enfin, le gain de lisibilité pour un petit employeur est discutable : il devrait toujours connaître sa convention de branche et les accords applicables. L'indicateur pertinent pour juger l'effet serait le taux d'emploi, plus que le seul taux de chômage."
+    },
+    "ce_qui_est_inconnu": {
+      "synthese": "Le contenu du socle, la règle applicable sans accord et le calendrier ne sont pas connus.",
+      "texte": "On ignore **quels principes figureraient dans la Constitution du travail** (durée maximale du travail, salaire minimum, règles du licenciement, droit syndical, santé et sécurité), **ce qui s'appliquerait dans une branche ou une entreprise sans accord**, si la branche pourrait verrouiller certains sujets comme aujourd'hui, comment seraient transposées les directives européennes, où iraient les parties du code consacrées à l'emploi, à la formation et au contrôle, et selon quel calendrier. Le chiffre de cinquante pages n'est documenté que par des comptes rendus de presse de la REF du 27 août 2026."
+    },
+    "angles_morts": {
+      "synthese": "La mesure ignore les entreprises sans négociateurs, le droit européen et le renforcement de la représentation des salariés.",
+      "texte": "**Premier angle mort : la négociation sans négociateurs.** Près de neuf entreprises de 10 salariés ou plus sur dix n'ont pas de délégué syndical, et la mesure ne prévoit ni de renforcer la représentation, ni de règle de repli. **Deuxième angle mort : le droit européen**, qui impose de garantir à tous les salariés les protections des directives, ce qu'un socle de principes ne fait pas seul. Troisième angle mort : une large partie du code organise des politiques publiques (emploi, formation professionnelle, inspection) qui ne peuvent être renvoyées aux branches et changeraient seulement de code.\n\n**Alternative au même objectif** : l'OCDE suggère de renforcer d'abord la représentation et la coordination de la négociation de branche avant d'en élargir encore le champ ; une simplification rédactionnelle du code à droit constant viserait par ailleurs la lisibilité sans transférer les règles. Ce constat situe la mesure, sans en faire un critère de note.\n\nNote de méthode : la faiblesse de la représentation dans les entreprises est prise en compte sous deux angles distincts, sans double pénalité : en moyens humains, pour savoir si les règles renvoyées à la négociation peuvent être produites ; en efficacité, pour savoir si la liberté de négocier est réellement utilisée, au vu du précédent de 2017."
+    },
+    "notation_detaillee": {
+      "operationnalite_juridique": 5,
+      "qualification_juridique": "INCERTAIN",
+      "operationnalite_budgetaire": 8,
+      "qualification_budgetaire": "SOLIDE",
+      "operationnalite_moyens_humains": 4,
+      "qualification_moyens_humains": "INCERTAIN",
+      "operationnalite_moyens_total": 17,
+      "plafond_applique": false,
+      "plafond_declencheur": null,
+      "efficacite": 12,
+      "qualification_efficacite": "INCERTAIN",
+      "effets_rebonds_externalites": 10,
+      "qualification_effets_rebonds": "INCERTAIN",
+      "degre_preparation": 2,
+      "qualification_preparation": "FRAGILE",
+      "alignement_logique": 7,
+      "qualification_alignement": "INCERTAIN",
+      "score_total": 48,
+      "appreciation": "partiellement fondé"
+    },
+    "verdict_final": "Réduire la loi à un socle de principes et élargir la négociation est juridiquement envisageable, ne coûte presque rien à l'État, et prolonge une ligne que Gabriel Attal a votée dès 2017.\n\nMais un code de cinquante pages sans rien autour ne tient pas : le droit européen, l'article 34 de la Constitution et l'absence de délégué syndical dans 89 % des entreprises de 10 salariés ou plus imposent de garder des règles applicables à défaut d'accord. La complexité se déplacerait donc plus qu'elle ne disparaîtrait, et le précédent des ordonnances de 2017 montre déjà qu'élargir la négociation sans négociateurs produit des effets modestes.\n\nLa note retient l'hypothèse que ces règles de repli existeraient, ce que le candidat ne précise pas.",
+    "sources_utilisees": [
+      "Programme de Gabriel Attal, « Travail & salaires », attalpresident.fr (consulté le 16/10/2026) : https://attalpresident.fr/programme/travail-salaires",
+      "Gabriel Attal, publication X du 3 mai 2026 : https://x.com/GabrielAttal/status/2051000705712837026",
+      "CNews, « Quotas d'immigration, 13e mois pour tous, nouveau code du travail... Gabriel Attal dévoile ses mesures pour 2027 », 30/04/2026 : https://www.cnews.fr/france/2026-04-30/quotas-dimmigration-13e-mois-pour-tous-nouveau-code-du-travail-cooperation-avec",
+      "Time France, « Retraites, dette, industrie : ce que proposent les 7 candidats à la présidentielle » (REF du Medef, 27/08/2026), 28/08/2026 : https://www.timefrance.fr/politique/retraites-dette-industrie-ce-que-proposent-les-7-candidats-a-la-presidentielle/",
+      "Légifrance, loi n° 2016-1088 du 8 août 2016, article 1er (commission de refondation du code du travail) : https://www.legifrance.gouv.fr/loda/id/JORFARTI000032983943",
+      "Sénat, séance du 25 juillet 2017, projet de loi d'habilitation (suppression de la commission de refondation) : https://www.senat.fr/seances/s201707/s20170725/s20170725019.html",
+      "Rapport du comité Badinter, « Les principes essentiels du droit du travail », janvier 2016 (vie-publique.fr) : https://www.vie-publique.fr/sites/default/files/rapport/pdf/164000072.pdf",
+      "Assemblée nationale, question écrite n° 87791 (2015) sur « Le travail et la loi » de R. Badinter et A. Lyon-Caen : https://questions.assemblee-nationale.fr/dyn/14/questions/QANR5L14QE87791.pdf",
+      "Contrepoints, « Code du travail : 11 487 articles (+124 % en 20 ans) », 20/05/2025, reprenant les indicateurs de suivi de l'activité normative de Légifrance (30/04/2025) : https://contrepoints.org/code-du-travail-11-487-articles-124-en-20-ans/",
+      "Fondation iFRAP, « Pourquoi le Code du travail fera toujours 3 000 pages » (cite la décision du Conseil constitutionnel du 7 août 2008) : https://www.ifrap.org/emploi-et-politiques-sociales/pourquoi-le-code-du-travail-fera-toujours-3000-pages",
+      "Les Nouveaux Cahiers du Conseil constitutionnel n° 45 (2014), « La place de la négociation collective en droit constitutionnel » : https://www.labase-lextenso.fr/les-nouveaux-cahiers-du-conseil-constitutionnel/2014-n45/la-place-de-la-negociation-collective-en-droit-constitutionnel-NCCC2014-45-002",
+      "Eurofound, transposition des directives par conventions collectives (article 153 TFUE, CJCE 143/83 Commission c. Danemark) : https://www.eurofound.europa.eu/lt/node/23561",
+      "Dares Résultats n° 17, « Les instances de représentation des salariés dans les entreprises en 2022 », mars 2024 : https://dares.travail-emploi.gouv.fr/sites/default/files/7f2f58919d57c66a2c178ec6e4d551ea/Dares_DR_IRP_2022.pdf",
+      "Assemblée nationale, réponse ministérielle à la question écrite n° 40285 (taux de couverture conventionnelle, Dares) : https://questions.assemblee-nationale.fr/dyn/14/questions/QANR5L14QE40285.pdf",
+      "France Stratégie, comité d'évaluation des ordonnances, rapport 2021 : https://www.strategie-plan.gouv.fr/files/files/Publications/2021%20SP/2021-12-16%20-%20Ordonnances%20Travail%20-%20Rapport%202021/fs-2021-ordonnances-travail-rapport2021-_decembre.pdf",
+      "Sénat, rapport d'information n° 722 (2020-2021), bilan des réformes en matière de dialogue social et de négociation collective : https://www.senat.fr/rap/r20-722/r20-722_mono.html",
+      "Banque de France, Bulletin n° 264, « Les réformes du marché du travail et la baisse du chômage structurel en France : rétrospective 2015-2025 », mai 2026 : https://www.banque-france.fr/fr/publications-et-statistiques/publications/les-reformes-du-marche-du-travail-et-la-baisse-du-chomage-structurel-en-france-retrospective-2015",
+      "OCDE, Perspectives de l'emploi 2018, chapitre sur la négociation collective : https://www.oecd.org/fr/publications/2018/07/oecd-employment-outlook-2018_g1g8f61d/full-report/component-7.html",
+      "OCDE, Perspectives de l'emploi 2019, « Négocier pour avancer ensemble » : https://www.oecd.org/fr/publications/2019/04/oecd-employment-outlook-2019_0d35ae00/full-report/component-10.html",
+      "Dustmann, Fitzenberger, Schönberg et Spitz-Oener, « From Sick Man of Europe to Economic Superstar », Journal of Economic Perspectives, 2014 (VoxEU) : https://cepr.org/voxeu/columns/sick-man-europe-economic-superstar-germanys-resurgence-and-lessons-europe",
+      "Datan, scrutin n° 49 du 13/07/2017 (loi d'habilitation, vote de G. Attal) : https://datan.fr/votes/legislature-15/vote_49",
+      "Datan, scrutin n° 106 du 01/08/2017 (loi d'habilitation, texte CMP) : https://datan.fr/votes/legislature-15/vote_106",
+      "Datan, scrutin n° 314 du 28/11/2017 (ratification des ordonnances) : https://datan.fr/votes/legislature-15/vote_314",
+      "Public Sénat, « Réforme de l'assurance chômage : le projet de décret transmis au Conseil d'État », juin 2024 : https://www.publicsenat.fr/actualites/emploi/reforme-de-lassurance-chomage-le-projet-de-decret-transmis-au-conseil-detat",
+      "Public Sénat, « Pourquoi le gouvernement a suspendu la réforme de l'assurance chômage », juillet 2024 : https://www.publicsenat.fr/actualites/politique/pourquoi-le-gouvernement-a-suspendu-la-reforme-de-lassurance-chomage"
+    ],
+    "niveau_de_confiance": "Moyen : le cadre juridique, les données de représentation des salariés et le précédent de 2017 sont bien documentés par des sources officielles. Mais la mesure tient en une ligne de programme et des propos rapportés, et la note dépend d'une hypothèse (l'existence de règles applicables à défaut d'accord) que le candidat n'a pas précisée.",
+    "limites": {
+      "synthese": "Analyse fondée sur une ligne de programme et des propos rapportés, sans texte détaillé du candidat.",
+      "texte": "Le chiffre de cinquante pages provient de comptes rendus de presse de la REF du 27 août 2026, non vérifiés sur l'enregistrement ; le programme parle seulement de « quelques articles fondamentaux ». **L'analyse retient l'interprétation la plus plausible juridiquement : un socle de principes complété par des règles applicables à défaut d'accord.** Une lecture sans aucun étage supplétif rendrait la mesure juridiquement fragile. Les chiffres d'articles proviennent des indicateurs de Légifrance, consultés via leur reprise par la presse, le document source n'ayant pas pu être ouvert. L'objectif de référence du domaine Emploi repose sur un ancrage juridique indirect (article L111-2-1 du code de la sécurité sociale) et sur la Stratégie de l'OCDE pour l'emploi, cadre d'analyse lui-même discuté."
+    },
+    "analyse_par_criteres": [
+      {
+        "critere": "operationnalite_moyens",
+        "titre": "Opérationnalité & Moyens",
+        "note": 17,
+        "note_max": 30,
+        "plafond_applique": false,
+        "plafond_declencheur": null,
+        "texte": "Un code de cinquante pages sans rien autour n'est juridiquement pas tenable : **l'article 34 de la Constitution oblige le législateur à fixer lui-même les principes fondamentaux**, et les directives européennes doivent être garanties à tous les salariés, y compris ceux qu'aucun accord ne couvre. Une voie existe néanmoins, par loi d'habilitation et règles supplétives, mais elle aboutit à un socle court entouré d'un étage de repli volumineux, pas à un texte de cinquante pages. Côté budget, la mesure ne coûte presque rien à l'État : pas de dépense ni de perte de recette directe, seulement l'ingénierie de la réécriture. Le vrai obstacle est humain : **89 % des entreprises de 10 salariés ou plus n'ont pas de délégué syndical**, ce qui prive de négociateur la plupart des lieux où la loi renverrait des règles à la négociation."
+      },
+      {
+        "critere": "efficacite",
+        "titre": "Efficacité",
+        "note": 12,
+        "note_max": 30,
+        "texte": "Le moteur censé produire l'effet sur l'emploi tourne déjà au ralenti ailleurs. Le lien entre un code resserré et davantage d'embauches est plausible mais indirect, et **le précédent le plus proche, les ordonnances de 2017, a déjà donné la main à l'accord d'entreprise sans provoquer de choc sur l'emploi** : la Banque de France ne chiffre qu'une baisse groupée de 0,4 point de chômage structurel pour trois réformes réunies. Ce qui manque n'est plus la place laissée à la négociation mais des négociateurs, un manque que la mesure ne traite pas. Sur la lisibilité, autre objectif affiché, le gain reste incertain pour un petit employeur, qui devra toujours connaître sa convention de branche et les accords applicables."
+      },
+      {
+        "critere": "effets_rebonds_externalites",
+        "titre": "Effets rebonds & Externalités",
+        "note": 10,
+        "note_max": 20,
+        "texte": "Un risque documenté pèse sur la qualité du travail plus que sur sa quantité. Le Sénat relève que des accords d'entreprise réduisent déjà des rémunérations en deçà du niveau voulu par la branche, et que les accords de performance collective sont parfois déséquilibrés en faveur des employeurs : étendre ce mouvement là où les salariés sont peu représentés expose à une concurrence par le bas. **Le précédent de 2017 le confirme : la part des entreprises dotées d'une instance santé-sécurité est passée de 59,1 % à 35 % entre 2017 et 2022** chez les entreprises de 50 salariés ou plus avec élus, signe qu'un recul légal n'est pas spontanément compensé par la négociation. S'y ajoute une période probable d'insécurité juridique, sans qu'on puisse établir que ces effets dépasseraient le bénéfice visé."
+      },
+      {
+        "critere": "degre_preparation",
+        "titre": "Degré de préparation",
+        "note": 2,
+        "note_max": 10,
+        "texte": "C'est une orientation, pas un projet. **Aucune liste de principes, aucun partage entre loi, branche et entreprise, aucune règle applicable à défaut d'accord, aucun calendrier** ne sont précisés. Le seul chiffre avancé, le passage de 5 000 à 11 000 articles entre 2004 et 2025, est exact d'après Légifrance mais présenté sans dire qu'une partie vient du découpage des articles en 2008, et le chiffre de cinquante pages ne repose que sur des comptes rendus de presse."
+      },
+      {
+        "critere": "alignement_logique",
+        "titre": "Alignement & Logique globale",
+        "note": 7,
+        "note_max": 10,
+        "texte": "La continuité avec le parcours du candidat est réelle : **Gabriel Attal a voté la loi d'habilitation et la ratification des ordonnances de 2017**, et la mesure s'accorde avec sa proposition de supprimer le plafond légal d'heures supplémentaires. Une tension subsiste pourtant sur la méthode : sa confiance affichée dans les partenaires sociaux contraste avec la réforme de l'assurance chômage qu'il a engagée par décret en 2024 avant de la suspendre, et qu'il propose aujourd'hui de relancer, sans expliquer ce changement d'approche."
+      }
+    ]
+  },
+  "titre_fiche": "Une Constitution du travail de 50 pages",
+  "resume_court": "Gabriel Attal veut remplacer le Code du travail, plus de 11 000 articles aujourd'hui, par une « Constitution du travail » d'environ cinquante pages limitée à de grands principes. Le reste serait négocié dans les branches et les entreprises, pour un droit plus lisible et plus favorable à l'emploi.\n\nL'idée est juridiquement envisageable et ne coûterait presque rien à l'État. Mais elle se heurte à un obstacle concret : depuis 2017, la négociation a déjà la main sur la plupart des sujets, et ce sont les négociateurs qui manquent, absents de 89 % des entreprises de 10 salariés ou plus. Sans règles de repli, le droit européen ne serait pas respecté ; avec elles, le code ne rétrécirait guère.\n\nNote : 48/100, partiellement fondé, en retenant l'hypothèse de règles applicables à défaut d'accord, que le candidat ne précise pas.",
+  "teaser_accueil": "Donner la main aux entreprises pour négocier... sauf que 9 sur 10 n'ont personne en face pour le faire.",
+  "verdict_final": "Réduire la loi à un socle de principes et élargir la négociation est juridiquement envisageable, ne coûte presque rien à l'État, et prolonge une ligne que Gabriel Attal a votée dès 2017.\n\nMais un code de cinquante pages sans rien autour ne tient pas : le droit européen, l'article 34 de la Constitution et l'absence de délégué syndical dans 89 % des entreprises de 10 salariés ou plus imposent de garder des règles applicables à défaut d'accord. La complexité se déplacerait donc plus qu'elle ne disparaîtrait, et le précédent des ordonnances de 2017 montre déjà qu'élargir la négociation sans négociateurs produit des effets modestes.\n\nLa note retient l'hypothèse que ces règles de repli existeraient, ce que le candidat ne précise pas.",
+  "verdict_conclusion": "Une mesure juridiquement envisageable mais dont l'ambition affichée se heurte à l'absence de négociateurs dans la plupart des entreprises."
+}

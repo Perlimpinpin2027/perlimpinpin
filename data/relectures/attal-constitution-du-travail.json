@@ -149,6 +149,11 @@
         "titre": "Titre court et phrase d'accroche",
         "texte": "Titre proposé : « Un Code du travail de 50 pages ». Phrase d'accroche : « Depuis 2017, la négociation a déjà la main sur la plupart des sujets. Reste à trouver qui négocie : près de 9 entreprises de 10 salariés ou plus sur 10 n'ont aucun délégué syndical. » Vous conviennent-ils ?"
       }
-    ]
+    ],
+    "archive": {
+      "date": "2026-10-19",
+      "version_suivante": "data/analyses finales/Attal/attal_constitution_du_travail_etape3.json",
+      "reponses": []
+    }
   }
 }
