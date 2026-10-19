@@ -1,0 +1,173 @@
+// Rattrapage de la version basique (étape 3 bis) des brouillons qui n'en ont
+// pas, par exemple quand les trois essais de la révision ont échoué.
+// Lancé par .github/workflows/version-basique.yml (bouton « Run workflow »),
+// ou à la main :
+//
+//   node scripts/rattraper-version-basique.js [--id N] [--appliquer]
+//       sans --id : tous les brouillons (statut « brouillon ») sans version basique
+//       sans --appliquer : simulation, liste seulement les brouillons concernés
+//                          (aucun appel payant, rien n'est écrit)
+//
+// Pour chaque brouillon : génère la version basique à partir du contenu en base
+// (genererVersionBasique, scripts/analyze.js, avec ses trois essais et ses
+// contrôles), puis écrit UNIQUEMENT contenuComplet.version_basique et, dans
+// auditArbitrage, l'entrée { type: "ancrages_version_basique" }, comme
+// runPipeline. Aucun score, aucun statut ne change. Une fiche publiée ou à la
+// corbeille n'est jamais modifiée. Sauvegarde de chaque ligne dans
+// logs/sauvegardes/ avant écriture, ligne ajoutée à logs/insertions.jsonl.
+//
+// Hors GitHub Actions, l'écriture demande en plus de taper « oui »
+// (garde-fou-base.js). Dans le workflow, le clic sur « Run workflow » avec la
+// case « Écrire » cochée vaut confirmation.
+
+import "dotenv/config";
+import { appendFileSync, mkdirSync, writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+import { parseArgs } from "node:util";
+import { cleanContenu } from "./lib/clean-text.js";
+import { avertissementBase, confirmerEcriture, hoteDe } from "./lib/garde-fou-base.js";
+
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
+const SAUVEGARDES_PATH = join(ROOT, "logs", "sauvegardes");
+const INSERTIONS_LOG_PATH = join(ROOT, "logs", "insertions.jsonl");
+const DANS_GITHUB = process.env.GITHUB_ACTIONS === "true";
+
+// Résumé affiché sur la page du run GitHub (aucune donnée personnelle).
+function resume(ligne) {
+  console.log(ligne);
+  if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, `${ligne}\n`);
+}
+
+// Fiche envoyée au modèle et servant de référence aux contrôles : le contenu
+// en base sans les ajouts des étapes suivantes (comme fichePourReseaux).
+export function ficheDeReference(contenu) {
+  const { version_basique: _basique, reseaux: _reseaux, revision: _revision, ...fiche } = contenu ?? {};
+  return cleanContenu(fiche);
+}
+
+export function aBesoinDeVersionBasique(analyse) {
+  return analyse.statut === "brouillon" && !analyse.contenuComplet?.version_basique;
+}
+
+async function main() {
+  const { values } = parseArgs({
+    options: {
+      id: { type: "string" },
+      appliquer: { type: "boolean", default: false },
+    },
+  });
+  if (!process.env.DATABASE_URL) throw new Error("DATABASE_URL absent.");
+  if (values.id && !/^\d+$/.test(values.id)) throw new Error(`--id doit être un nombre (reçu « ${values.id} »).`);
+
+  const { PrismaClient } = await import("../src/generated/prisma/client.ts");
+  const { PrismaNeon } = await import("@prisma/adapter-neon");
+  const { neonConfig } = await import("@neondatabase/serverless");
+  neonConfig.webSocketConstructor = (await import("ws")).default;
+  const prisma = new PrismaClient({ adapter: new PrismaNeon({ connectionString: process.env.DATABASE_URL }) });
+
+  const host = hoteDe(process.env.DATABASE_URL);
+  for (const ligne of avertissementBase(host)) console.log(ligne);
+
+  try {
+    const where = values.id ? { id: Number(values.id) } : { statut: "brouillon" };
+    const analyses = await prisma.analyse.findMany({
+      where,
+      orderBy: { id: "asc" },
+      select: { id: true, statut: true, contenuComplet: true, auditArbitrage: true },
+    });
+
+    if (values.id && analyses.length === 0) throw new Error(`analyse #${values.id} introuvable.`);
+    if (values.id && !aBesoinDeVersionBasique(analyses[0])) {
+      const a = analyses[0];
+      resume(
+        a.statut !== "brouillon"
+          ? `Brouillon #${a.id} : statut « ${a.statut} », rien n'est modifié (seuls les brouillons sont rattrapés).`
+          : `Brouillon #${a.id} : il a déjà une version basique, rien n'est modifié.`,
+      );
+      return;
+    }
+
+    const cibles = analyses.filter(aBesoinDeVersionBasique);
+    resume(`### Version basique manquante\n`);
+    if (cibles.length === 0) {
+      resume("Aucun brouillon sans version basique. Rien à faire.");
+      return;
+    }
+    resume(`${cibles.length} brouillon(s) sans version basique :`);
+    for (const a of cibles) resume(`- #${a.id} ${a.contenuComplet?.titre_fiche ?? "(sans titre)"}`);
+    resume("");
+
+    if (!values.appliquer) {
+      resume("Simulation : rien n'a été généré ni écrit. Relancer avec la case « Écrire » cochée.");
+      return;
+    }
+
+    if (!DANS_GITHUB) {
+      const ok = await confirmerEcriture({ host, question: `Générer et écrire la version basique de ${cibles.length} brouillon(s) ?` });
+      if (!ok) {
+        console.log("Annulé, rien n'a été modifié.");
+        return;
+      }
+    }
+
+    // Import tardif : analyze.js n'est chargé (et l'API appelée) qu'en écriture.
+    const { genererVersionBasique } = await import("./analyze.js");
+    let echecs = 0;
+    for (const analyse of cibles) {
+      const titre = analyse.contenuComplet?.titre_fiche ?? "(sans titre)";
+      console.log(`\nBrouillon #${analyse.id} : ${titre}`);
+      const { versionBasique, ancrages, errors } = await genererVersionBasique(ficheDeReference(analyse.contenuComplet));
+      if (!versionBasique) {
+        echecs++;
+        resume(`- ✗ #${analyse.id} : échec après trois essais (${errors.join(" ; ")})`);
+        continue;
+      }
+
+      // Relecture juste avant l'écriture : le brouillon a pu changer (édition
+      // sur /test, publication) pendant la génération.
+      const actuelle = await prisma.analyse.findUnique({
+        where: { id: analyse.id },
+        select: { statut: true, contenuComplet: true, auditArbitrage: true },
+      });
+      if (!actuelle || !aBesoinDeVersionBasique({ ...actuelle, id: analyse.id })) {
+        resume(`- ⚠ #${analyse.id} : le brouillon a changé pendant la génération (publié, à la corbeille ou déjà complété), rien n'est écrit.`);
+        continue;
+      }
+
+      mkdirSync(SAUVEGARDES_PATH, { recursive: true });
+      const horodatage = new Date().toISOString().replace(/[:.]/g, "-");
+      const sauvegarde = join(SAUVEGARDES_PATH, `analyse-${analyse.id}-avant-version-basique-${horodatage}.json`);
+      writeFileSync(
+        sauvegarde,
+        `${JSON.stringify({ base: host, analyseId: analyse.id, statut: actuelle.statut, contenuComplet: actuelle.contenuComplet, auditArbitrage: actuelle.auditArbitrage }, null, 2)}\n`,
+        "utf-8",
+      );
+
+      const audit = Array.isArray(actuelle.auditArbitrage) ? actuelle.auditArbitrage : [];
+      await prisma.analyse.update({
+        where: { id: analyse.id },
+        data: {
+          contenuComplet: { ...actuelle.contenuComplet, version_basique: versionBasique },
+          auditArbitrage: [...audit.filter((e) => e?.type !== "ancrages_version_basique"), { type: "ancrages_version_basique", ancrages }],
+        },
+      });
+      mkdirSync(dirname(INSERTIONS_LOG_PATH), { recursive: true });
+      appendFileSync(
+        INSERTIONS_LOG_PATH,
+        `${JSON.stringify({ date: new Date().toISOString(), base: host, script: "rattraper-version-basique", analyseId: analyse.id, sauvegarde })}\n`,
+      );
+      resume(`- ✓ #${analyse.id} : version basique ajoutée, visible sur /test/${analyse.id}`);
+    }
+    if (echecs > 0) process.exitCode = 1;
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+  main().catch((e) => {
+    console.error(e.message ?? e);
+    process.exitCode = 1;
+  });
+}

@@ -154,6 +154,29 @@
         "titre": "Titre court et phrase d'accroche",
         "texte": "Titre court provisoire : « Alléger l'État et les collectivités » (35 caractères), repris de la page du dossier. Phrase d'accroche : « Sur les postes de fonctionnaires territoriaux, le RN chiffre comme la Cour des comptes. Sur les agences, le Sénat trouve près de vingt fois moins. » Vous conviennent-ils ?"
       }
-    ]
+    ],
+    "archive": {
+      "date": "2026-10-19",
+      "version_suivante": "data/analyses finales/LePen/lepen_budget_etat_collectivites_etape3.json",
+      "synthese": "La note d'efficacité passe de 15/30 à 10/30 (qualification FRAGILE) pour refléter le poids très inégal des trois leviers du plan ; le score total passe de 44 à 39/100. La note Effets rebonds & Externalités reste à 10/20.",
+      "reponses": [
+        {
+          "commentaire_id": "cmvf3icgq000007l8nf9qn340",
+          "auteur": "Arno F.",
+          "section": "Analyse par critères",
+          "commentaire": "la notation me semble très élevée par rapport au diagnostic que tu fais ici",
+          "reponse": "Tu as raison, et en relisant le texte on a trouvé la même incohérence : le seul levier vraiment solide, la baisse des effectifs territoriaux, ne représente qu'environ 13 % du total annoncé pour 2031, alors que les deux leviers jugés surestimés ou non démontrés, les agences et les intercommunalités, en représentent ensemble près de 40 %.\n\nUne note médiane de 15/30 ne reflétait pas ce déséquilibre, d'autant que le poste le plus lourd, plus de 10 milliards sur les agences, est contredit d'un facteur 20 par la seule évaluation indépendante disponible, celle du Sénat.\n\nOn a donc baissé la note d'efficacité à 10/30, avec la qualification FRAGILE, et le score total de la fiche passe de 44 à 39 sur 100.",
+          "retenu": true
+        },
+        {
+          "commentaire_id": "cmvf3j9qa000107l8l61ge02i",
+          "auteur": "Arno F.",
+          "section": "Analyse par critères",
+          "commentaire": "pareil ici : ca doit être plus sanctionné",
+          "reponse": "On a réexaminé ce point, mais on a choisi de garder la note à 10/20 plutôt que de la baisser. L'impact sur les emplois de proximité (écoles, crèches, voirie) est bien identifié dans la fiche comme un effet négatif réel, mais il est mis en balance avec un objectif de réduction de la dette que partagent la Cour des comptes et le Sénat, qui recommandent eux-mêmes une partie de ces réductions d'effectifs.\n\nCette situation correspond à la définition retenue pour la tranche médiane de ce critère : des effets négatifs significatifs, mais qui ne dépassent pas clairement le bénéfice attendu.\n\nOn n'a donc pas trouvé d'élément permettant de descendre sous ce seuil, mais le point reste mentionné explicitement dans la fiche.",
+          "retenu": false
+        }
+      ]
+    }
   }
 }

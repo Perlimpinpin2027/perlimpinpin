@@ -1,0 +1,89 @@
+# Rattrapage de la version basique des brouillons de /test qui n'en ont pas
+# (par exemple quand les trois essais de l'étape 3 bis ont échoué pendant une
+# révision : ligne « Version basique (étape 3 bis) : ✗ » dans la PR).
+#
+# Actions → Version basique manquante → Run workflow.
+#   - Numéro du brouillon (celui de perlimpinpin.ai/test/N) : vide = tous les
+#     brouillons sans version basique.
+#   - Écrire : décoché = simple liste des brouillons concernés, sans rien écrire.
+#
+# scripts/rattraper-version-basique.js : génère la version basique (mêmes
+# contrôles que le pipeline) et n'écrit que contenuComplet.version_basique et
+# son contrôle interne. Jamais une fiche publiée ou à la corbeille. Aucun
+# commit, aucune PR : le brouillon est mis à jour directement en base.
+#
+# Secrets : DATABASE_URL, ANTHROPIC_API_KEY.
+
+name: Version basique manquante
+run-name: Version basique ${{ inputs.id || '(tous les brouillons)' }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      id:
+        description: "Numéro du brouillon (perlimpinpin.ai/test/N). Vide : tous les brouillons sans version basique"
+        required: false
+        type: string
+        default: ""
+      ecrire:
+        description: "Écrire en base (décoché : liste seulement, rien n'est écrit)"
+        required: false
+        type: boolean
+        default: true
+
+concurrency:
+  group: version-basique
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  version-basique:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      ID: ${{ inputs.id }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+    steps:
+      - name: Récupération de main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # Le postinstall lance « prisma generate » (client utilisé par le script).
+      - name: Installation des modules
+        run: npm ci
+
+      - name: Vérifications
+        run: |
+          if [ -n "$ID" ] && ! echo "$ID" | grep -Eq '^[0-9]{1,9}$'; then echo "✗ Numéro de brouillon invalide : $ID"; exit 1; fi
+          for s in DATABASE_URL ANTHROPIC_API_KEY; do
+            if [ -z "${!s}" ]; then echo "✗ Secret manquant ($s)."; exit 1; fi
+          done
+
+      - name: Version basique
+        env:
+          ECRIRE: ${{ inputs.ecrire }}
+        run: |
+          args=()
+          if [ -n "$ID" ]; then args+=(--id "$ID"); fi
+          if [ "$ECRIRE" = "true" ]; then args+=(--appliquer); fi
+          node scripts/rattraper-version-basique.js "${args[@]}"
+
+      # logs/ n'est pas conservé sur le serveur GitHub : sauvegardes des
+      # brouillons avant écriture et journal des insertions, gardés 90 jours.
+      - name: Sauvegardes
+        if: ${{ always() && hashFiles('logs/**') != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: version-basique-${{ github.run_id }}
+          path: logs/
+          retention-days: 90
