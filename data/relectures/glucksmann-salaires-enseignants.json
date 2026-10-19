@@ -228,6 +228,11 @@
         "titre": "Titre court et phrase de teasing provisoires",
         "texte": "Titre proposé : « +10 % pour tous les enseignants » (31 caractères). Teasing : « Même pourcentage, même plafond, même facture qu'une promesse de 2022... qui s'était rétrécie en route. Cette fois, qui paierait les 6 milliards ? ». Vous conviennent-ils ?"
       }
-    ]
+    ],
+    "archive": {
+      "date": "2026-10-19",
+      "version_suivante": "data/analyses finales/Glucksmann/glucksmann_salaires_enseignants_etape3.json",
+      "reponses": []
+    }
   }
 }

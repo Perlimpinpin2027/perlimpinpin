@@ -1,0 +1,37 @@
+{
+  "contreAvisMistral": {
+    "remarques": [
+      {
+        "categorie": "coherence_note",
+        "contenu": "La note 'operationnalite_budgetaire' (3/10, INCERTAIN) est justifiée par l'absence de financement identifié, mais l'analyse ne discute pas explicitement si une tentative de reconstruction du coût (6 milliards) à partir de sources officielles a été menée pour éviter une notation FRAGILE par défaut. La cohérence avec la règle 6 bis est à vérifier.",
+        "severite": "majeure",
+        "confiance": "haute"
+      },
+      {
+        "categorie": "coherence_note",
+        "contenu": "La note 'efficacite' (22/30, INCERTAIN) repose sur un lien causal direct et des études internationales, mais l'analyse ne précise pas si l'absence de preuve empirique directe en France est compensée par un raisonnement structuré équivalent (ex. : transposition logique des résultats OCDE).",
+        "severite": "mineure",
+        "confiance": "moyenne"
+      },
+      {
+        "categorie": "juridique_operationnel",
+        "contenu": "La règle de plafond est correctement appliquée (operationnalite_moyens_total = 22 ≤ 30, plafond_applique = false), mais la justification de 'operationnalite_budgetaire' (3/10) mériterait une clarification sur l'absence de marge budgétaire alternative (ex. : redéploiement).",
+        "severite": "mineure",
+        "confiance": "haute"
+      }
+    ],
+    "avis_general": "a_nuancer"
+  },
+  "usage": {
+    "prompt_tokens": 8957,
+    "total_tokens": 9329,
+    "completion_tokens": 372,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "service_tier": "standard"
+  }
+}
