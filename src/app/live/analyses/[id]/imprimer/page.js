@@ -105,7 +105,7 @@ export default async function ImprimerPage({ params, searchParams }) {
             {analyse.dateLabel} · {sourceLibelle} · {analyse.themeLabel}
           </p>
           {analyse.sourceUrl && <p className="mt-0.5 break-all text-xs text-zinc-400">{analyse.sourceUrl}</p>}
-          <h1 className="mt-2 font-serif text-3xl font-bold leading-tight text-zinc-900">{analyse.titre}</h1>
+          <h1 className="mt-2 font-sans tracking-[-0.035em] text-3xl font-extrabold leading-tight text-zinc-900">{analyse.titre}</h1>
         </div>
       </header>
 

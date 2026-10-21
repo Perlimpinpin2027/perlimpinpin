@@ -99,7 +99,7 @@ export default async function LivePage({ searchParams }) {
               // Reste monté (masqué) pendant une recherche : un texte en cours de
               // saisie ou un résultat d'analyse n'est pas perdu.
               <div hidden={enRecherche}>
-                <h1 className="font-serif text-3xl font-bold leading-tight text-zinc-900">
+                <h1 className="font-sans tracking-[-0.035em] text-3xl font-extrabold leading-tight text-zinc-900">
                   Que souhaitez-vous analyser ?
                 </h1>
                 <p className="mt-2 text-sm text-zinc-500">
@@ -193,7 +193,7 @@ export default async function LivePage({ searchParams }) {
 
             {vue === "dossiers" && (
               <>
-                <h1 className="font-serif text-3xl font-bold leading-tight text-zinc-900">Dossiers</h1>
+                <h1 className="font-sans tracking-[-0.035em] text-3xl font-extrabold leading-tight text-zinc-900">Dossiers</h1>
                 <p className="mt-2 text-sm text-zinc-500">
                   {scope === "toutes" ? "Les analyses de l'équipe" : "Vos analyses"}, regroupées automatiquement par thème.
                   Cliquez sur un dossier pour ne voir que ses analyses.
@@ -216,7 +216,7 @@ export default async function LivePage({ searchParams }) {
 
             {vue === "favoris" && (
               <>
-                <h1 className="font-serif text-3xl font-bold leading-tight text-zinc-900">Favoris</h1>
+                <h1 className="font-sans tracking-[-0.035em] text-3xl font-extrabold leading-tight text-zinc-900">Favoris</h1>
                 <p className="mt-2 text-sm text-zinc-500">Les analyses que vous avez marquées d&apos;une étoile : vos favoris sont personnels, les autres journalistes ne les voient pas.</p>
                 <div className="-mt-6">
                   <RecentAnalyses

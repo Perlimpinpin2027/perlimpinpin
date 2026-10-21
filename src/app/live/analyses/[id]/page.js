@@ -96,7 +96,7 @@ export default async function AnalysePage({ params }) {
                 <p className="mt-0.5 text-xs text-zinc-400">
                   {analyse.dateLabel} · {sourceLibelle} · {analyse.themeLabel} · Par {analyse.auteurLabel}
                 </p>
-                <h1 className="mt-2 font-serif text-3xl font-bold leading-tight text-zinc-900 sm:text-4xl">
+                <h1 className="mt-2 font-sans tracking-[-0.035em] text-3xl font-extrabold leading-tight text-zinc-900 sm:text-4xl">
                   {analyse.titre}
                 </h1>
               </div>

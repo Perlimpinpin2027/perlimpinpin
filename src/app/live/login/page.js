@@ -22,7 +22,7 @@ export default async function LiveLoginPage({ searchParams }) {
       <Header />
 
       <main className="mx-auto w-full max-w-md flex-1 px-6 py-16 sm:px-8">
-        <h1 className="font-serif text-3xl font-bold leading-tight text-zinc-900">
+        <h1 className="font-sans tracking-[-0.035em] text-3xl font-extrabold leading-tight text-zinc-900">
           Décryptage en direct
         </h1>
         <p className="mt-2 text-sm text-zinc-500">Accès réservé à l&apos;équipe éditoriale. Connectez-vous avec votre compte personnel.</p>
