@@ -210,6 +210,52 @@ export function ligneCacheEtape3(cache) {
   ];
 }
 
+// Coût a priori d'une simulation (--dry-run : étapes 2 et 3), affiché avant
+// tout appel. Entrée : ~2,7 caractères par token (mesuré sur les fiches
+// réelles). Bas : un seul appel, sans recherche, ~4 000 tokens en sortie
+// (mode corrections). Haut : le prompt écrit puis relu 30 fois en cache
+// (boucle de la recherche web), un nouvel essai, 3 recherches, puis le repli
+// en fiche complète (~13 000 tokens en sortie). Tarifs de claude-sonnet-5.
+export function estimationCoutSimulation(caracteresPrompt) {
+  const entree = caracteresPrompt / 2.7;
+  const etape2 = 0.03;
+  const bas = etape2 + (entree * 2 + 4_000 * 10) / 1_000_000;
+  const haut = etape2 + 0.03 + (entree * 2.5 + 30 * entree * 0.2 + 2 * 4_000 * 10 + entree * 2 + 13_000 * 10) / 1_000_000;
+  return { tokensEntree: Math.round(entree), min: Number(bas.toFixed(2)), max: Number(haut.toFixed(2)) };
+}
+
+// Mode de l'étape 3 (analyze.js, etape3EnRevision) : corrections, ou repli sur
+// la fiche complète avec la cause. Rien pour un résultat d'avant ce mode.
+export function lignesModeEtape3(etape3Revision, cout = {}) {
+  if (!etape3Revision) return [];
+  const sortie = typeof cout.sortieEtape3 === "number" ? `, ${cout.sortieEtape3.toLocaleString("fr-FR")} tokens en sortie` : "";
+  if (etape3Revision.mode === "corrections") {
+    return [`- Étape 3 : mode corrections, ${etape3Revision.corrections.length} correction(s) appliquée(s)${sortie}`];
+  }
+  const causes = (etape3Revision.erreursCorrections ?? []).slice(0, 5).map((e) => `  - ${e}`);
+  return [`- ⚠️ Étape 3 : **repli sur la fiche complète** (le mode corrections a échoué deux fois)${sortie}. Causes :`, ...causes];
+}
+
+const enLigne = (valeur) => {
+  if (valeur === null || valeur === undefined) return "(ajout)";
+  const texte = typeof valeur === "string" ? valeur : JSON.stringify(valeur);
+  return `« ${texte.replace(/\s*\n+\s*/g, " / ").replace(/\|/g, "\\|")} »`;
+};
+
+// Liste des corrections appliquées, pour relire exactement ce qui a changé.
+export function sectionCorrections(etape3Revision) {
+  if (etape3Revision?.mode !== "corrections") return [];
+  const corrections = etape3Revision.corrections ?? [];
+  return [
+    `### Corrections appliquées (${corrections.length})`,
+    "",
+    ...(corrections.length
+      ? corrections.map((c) => `- \`${c.champ}\` : ${enLigne(c.avant)} → ${enLigne(c.apres)}  \n  _${c.raison}_`)
+      : ["Aucune : la fiche relue est reprise telle quelle."]),
+    "",
+  ];
+}
+
 // Markdown commun au corps de la PR et au résumé du job. Aucun nom d'adhérent.
 export function rapportMarkdown({ slug, relecture, notationAvant, resultat, commentaires, theme, avertissements = [], lienPR = null, siteUrl = SITE_URL }) {
   const r = resultat;
@@ -220,7 +266,7 @@ export function rapportMarkdown({ slug, relecture, notationAvant, resultat, comm
   const l = [
     `## Révision : ${relecture.titre} (${relecture.candidat})`,
     "",
-    `- Brouillon : ${siteUrl}/test/${r.analyseId}`,
+    r.ecrit === false ? "- Simulation (--dry-run) : rien n'a été écrit, ni en base ni dans le dépôt" : `- Brouillon : ${siteUrl}/test/${r.analyseId}`,
     ...(lienPR ? [`- Pull request : ${lienPR}`] : []),
     `- Score : ${notationAvant?.score_total ?? "?"} → **${r.score ?? "?"}/100** (version relue → fiche finale)`,
     `- Thème : ${theme}`,
@@ -230,10 +276,12 @@ export function rapportMarkdown({ slug, relecture, notationAvant, resultat, comm
     `- Coût total : ${dollars(cout.coutEstimeTotal)} (étape 2 ${dollars(cout.coutEstimeParEtape?.etape2)}, étape 3 ${dollars(cout.coutEstimeParEtape?.etape3)}, ` +
       `${cout.recherchesWeb ?? 0} recherche(s) web ${dollars(cout.coutEstimeParEtape?.recherchesWeb ?? 0)}, étape 3 bis ${dollars(cout.coutEstimeParEtape?.etape3bis)})`,
     ...ligneCacheEtape3(cout.cacheEtape3),
+    ...lignesModeEtape3(r.etape3Revision, cout),
     "",
   ];
   const modifs = criteresModifies(notationAvant, notationApres);
   l.push("### Critères modifiés", "", ...(modifs.length ? modifs.map((m) => `- ${m}`) : ["Aucun."]), "");
+  l.push(...sectionCorrections(r.etape3Revision));
 
   l.push(`### Commentaires (${commentaires.length})`, "");
   if (commentaires.length) {

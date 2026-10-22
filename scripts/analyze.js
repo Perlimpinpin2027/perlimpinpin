@@ -22,6 +22,7 @@ import {
   validateAvisCommentairesEtape2,
   validateRevisionRelecture,
 } from "./lib/scoring.js";
+import { MODE_CORRECTIONS, MODE_REPLI, validerSortieCorrections } from "./lib/corrections-etape3.js";
 
 neonConfig.webSocketConstructor = ws;
 
@@ -698,17 +699,34 @@ export function outilRechercheWeb(maxUses) {
 
 // Cache (avec commentaires seulement) : la recherche web fait relire tout le
 // prompt à chaque itération de la boucle côté serveur, puis à chaque reprise
-// après pause_turn et au nouvel essai de corrigerRevision (jusqu'à 735 000
+// après pause_turn et au nouvel essai de corrigerEtape3 (jusqu'à 735 000
 // tokens en entrée sur une révision, contre ~18 000 sans commentaires). Un
 // point de cache explicite sur la fin du message (le prompt complet, identique
 // pendant tout le run) et le cache automatique pour la suite de la conversation
 // font relire ce prompt à 10 % du prix. Le texte envoyé ne change pas. Sans
 // commentaires, un seul appel : pas de cache (l'écriture coûte 25 % de plus).
-// Le nouvel essai de corrigerRevision change l'outil (recherches restantes),
-// donc ne relit pas ce cache.
+// Le nouvel essai de corrigerEtape3 ne relit ce cache que si aucune recherche
+// n'a eu lieu (sinon l'outil change : recherches restantes).
 const CACHE_5_MIN = { type: "ephemeral" };
 
-export function construireRequeteEtape3(etape1, mistralResult, commentaires = null) {
+// Mode corrections (révision) : consignes et format de sortie dans un fichier
+// séparé, pour ne pas modifier data/prompt-methodologie.md (dont la date sert
+// d'audit, voir getPromptFileModifiedAt). Elles remplacent le FORMAT ÉTAPE 3,
+// retiré du gabarit dans ce mode.
+const PROMPT_CORRECTIONS_PATH = join(__dirname, "..", "data", "prompt-etape3-corrections.md");
+const DEBUT_FORMAT_ETAPE3 = "\n\n## FORMAT ÉTAPE 3";
+
+export function gabaritSansFormat(gabarit) {
+  const i = gabarit.indexOf(DEBUT_FORMAT_ETAPE3);
+  if (i === -1) throw new Error(`data/prompt-methodologie.md : section ${JSON.stringify(DEBUT_FORMAT_ETAPE3.trim())} introuvable.`);
+  return gabarit.slice(0, i);
+}
+
+// commentaires : null → requête d'avant, à l'octet près. Avec commentaires :
+// `corrections` (mode corrections, voir scripts/lib/corrections-etape3.js) ou
+// fiche complète (ancien mode, repli) ; `recherchesFaites` réduit le nombre
+// de recherches web encore permises (outil retiré s'il n'en reste aucune).
+export function construireRequeteEtape3(etape1, mistralResult, commentaires = null, { corrections = false, recherchesFaites = 0 } = {}) {
   const vars = {
     reponse_etape_1: JSON.stringify(etape1, null, 2),
     reponse_etape_2_ou_null: mistralResult ? JSON.stringify(mistralResult.parsed, null, 2) : "null",
@@ -722,19 +740,24 @@ export function construireRequeteEtape3(etape1, mistralResult, commentaires = nu
       stream: true,
     };
   }
+  const gabarit = fillTemplate(ARBITRAGE_TEMPLATE_AVEC_COMMENTAIRES, vars);
+  const consignes = corrections
+    ? [
+        { type: "text", text: gabaritSansFormat(gabarit) },
+        { type: "text", text: readFileSync(PROMPT_CORRECTIONS_PATH, "utf-8").replace(/\r\n/g, "\n").trim() },
+      ]
+    : [{ type: "text", text: gabarit }];
+  const restantes = MAX_RECHERCHES_WEB - recherchesFaites;
   return {
     model: "claude-sonnet-5",
     max_tokens: 32000,
     thinking: { type: "disabled" },
-    tools: [outilRechercheWeb(MAX_RECHERCHES_WEB)],
+    ...(restantes > 0 ? { tools: [outilRechercheWeb(restantes)] } : {}),
     cache_control: CACHE_5_MIN,
     messages: [
       {
         role: "user",
-        content: [
-          { type: "text", text: fillTemplate(ARBITRAGE_TEMPLATE_AVEC_COMMENTAIRES, vars) },
-          { type: "text", text: blocCommentaires(commentaires), cache_control: CACHE_5_MIN },
-        ],
+        content: [...consignes, { type: "text", text: blocCommentaires(commentaires), cache_control: CACHE_5_MIN }],
       },
     ],
     stream: true,
@@ -795,25 +818,102 @@ async function arbitrate(etape1, mistralResult, commentaires = null) {
   return commentaires ? appelerEtape3AvecRecherche(body) : appelerEtape3(body);
 }
 
-// revision_relecture refusée : un seul nouvel essai, dans la même conversation,
-// avec la liste des erreurs. Recherches web restantes seulement.
-async function corrigerRevision(etape1, mistralResult, commentaires, reponsePrecedente, errors, recherchesFaites) {
-  const body = construireRequeteEtape3(etape1, mistralResult, commentaires);
-  const restantes = MAX_RECHERCHES_WEB - recherchesFaites;
-  if (restantes > 0) body.tools = [outilRechercheWeb(restantes)];
-  else delete body.tools;
+// Réponse refusée : un seul nouvel essai, dans la même conversation, avec la
+// liste des erreurs, dans le même mode. Recherches web restantes seulement.
+export function messageCorrectionEtape3(errors, { corrections }) {
+  const liste = errors.map((error) => `- ${error}`).join("\n");
+  return corrections
+    ? "Ta réponse a été refusée par le contrôle automatique :\n" +
+        `${liste}\n` +
+        "Renvoie le JSON complet du FORMAT MODE CORRECTIONS, corrigé. Pour chaque « avant » introuvable, recopie l'extrait du champ visé caractère pour caractère, tel qu'il est dans la fiche relue, ou vise le bon champ. N'écris jamais les champs recalculés par le code. Garde tel quel tout ce qui n'est pas cité ci-dessus."
+    : "Ta réponse a été refusée : le champ revision_relecture ne respecte pas le format demandé.\n" +
+        `${liste}\n` +
+        "Renvoie le JSON complet de l'étape 3, corrigé, au même format : une réponse par commentaire, avec le même commentaire_id, et retenu à true ou false.";
+}
+
+async function corrigerEtape3(etape1, mistralResult, commentaires, { corrections, reponsePrecedente, errors, recherchesFaites }) {
+  const body = construireRequeteEtape3(etape1, mistralResult, commentaires, { corrections, recherchesFaites });
   body.messages = [
     ...body.messages,
     { role: "assistant", content: [{ type: "text", text: JSON.stringify(reponsePrecedente) }] },
-    {
-      role: "user",
-      content:
-        "Ta réponse a été refusée : le champ revision_relecture ne respecte pas le format demandé.\n" +
-        `${errors.map((error) => `- ${error}`).join("\n")}\n` +
-        "Renvoie le JSON complet de l'étape 3, corrigé, au même format : une réponse par commentaire, avec le même commentaire_id, et retenu à true ou false.",
-    },
+    { role: "user", content: messageCorrectionEtape3(errors, { corrections }) },
   ];
   return appelerEtape3AvecRecherche(body);
+}
+
+// Étape 3 avec commentaires du Club. D'abord le mode corrections (deux essais
+// au plus) ; s'il échoue, repli sur l'ancien mode (fiche complète), avec son
+// propre nouvel essai si revision_relecture est refusée : la révision n'est
+// jamais bloquée par le mode corrections. Renvoie { data3: { usage,
+// recherchesWeb }, arbitrage3, revisionRelecture, mode, corrections,
+// erreursCorrections }.
+async function etape3EnRevision(etape1, mistralResult, commentaires) {
+  const ids = commentaires.map((c) => c.id);
+  let usage = {};
+  let recherches = 0;
+  const appeler = async (requete) => {
+    const data = await requete;
+    usage = addUsage(usage, data.usage);
+    recherches += data.recherchesWeb ?? 0;
+    return data;
+  };
+
+  let reponse = null;
+  let controle = { valid: false, errors: [] };
+  for (let essai = 1; essai <= 2 && !controle.valid; essai++) {
+    try {
+      const data = await appeler(
+        reponse === null
+          ? appelerEtape3AvecRecherche(construireRequeteEtape3(etape1, mistralResult, commentaires, { corrections: true, recherchesFaites: recherches }))
+          : corrigerEtape3(etape1, mistralResult, commentaires, { corrections: true, reponsePrecedente: reponse, errors: controle.errors, recherchesFaites: recherches }),
+      );
+      reponse = extractJson(data);
+      controle = validerSortieCorrections(reponse, etape1, ids);
+    } catch (error) {
+      controle = { valid: false, errors: [error.message] };
+    }
+    if (!controle.valid) {
+      console.error(`  ⚠️  Étape 3, mode corrections : réponse refusée (essai ${essai}) :`);
+      for (const error of controle.errors.slice(0, 10)) console.error(`     - ${error}`);
+    }
+  }
+
+  if (controle.valid) {
+    console.log(`  ✓ mode corrections : ${controle.appliquees.length} correction(s) appliquée(s).`);
+    return {
+      data3: { usage, recherchesWeb: recherches },
+      arbitrage3: controle.arbitrage3,
+      revisionRelecture: controle.revision,
+      mode: MODE_CORRECTIONS,
+      corrections: controle.appliquees,
+      erreursCorrections: [],
+    };
+  }
+
+  console.error("  ⚠️  Étape 3 : REPLI sur l'ancien mode (fiche complète).");
+  let data = await appeler(appelerEtape3AvecRecherche(construireRequeteEtape3(etape1, mistralResult, commentaires, { recherchesFaites: recherches })));
+  let arbitrage3 = extractJson(data);
+  let revision = validateRevisionRelecture(arbitrage3.revision_relecture, ids);
+  if (!revision.valid) {
+    console.error("  ⚠️  Étape 3 : revision_relecture refusée, nouvelle tentative :");
+    for (const error of revision.errors) console.error(`     - ${error}`);
+    data = await appeler(
+      corrigerEtape3(etape1, mistralResult, commentaires, { corrections: false, reponsePrecedente: arbitrage3, errors: revision.errors, recherchesFaites: recherches }),
+    );
+    arbitrage3 = extractJson(data);
+    revision = validateRevisionRelecture(arbitrage3.revision_relecture, ids);
+    if (!revision.valid) {
+      throw new Error(`Étape 3 : revision_relecture toujours invalide après une nouvelle tentative.\n${revision.errors.join("\n")}`);
+    }
+  }
+  return {
+    data3: { usage, recherchesWeb: recherches },
+    arbitrage3,
+    revisionRelecture: revision.revision,
+    mode: MODE_REPLI,
+    corrections: [],
+    erreursCorrections: controle.errors,
+  };
 }
 
 // --- Étape 3 bis : version basique (Claude) ---------------------------------
@@ -1196,7 +1296,9 @@ function estimateMistralCost(usage) {
 // recherchesWeb : seulement avec des commentaires du Club (recherche web de
 // l'étape 3) ; absent, le coût garde exactement sa forme habituelle.
 // usage3ter (publications X) : absent, le coût garde sa forme d'avant l'étape 3 ter.
-export function buildCoutPipeline({ usage2, usage3, usage3bis, usage3ter, recherchesWeb }) {
+// modeEtape3 (révision seulement : "corrections" ou "repli_fiche_complete") :
+// ajoute le mode et les tokens de sortie de l'étape 3 ; absent, rien ne change.
+export function buildCoutPipeline({ usage2, usage3, usage3bis, usage3ter, recherchesWeb, modeEtape3 }) {
   const coutEtape2 = estimateMistralCost(usage2);
   const coutEtape3 = estimateClaudeCost(usage3);
   const coutEtape3bis = estimateClaudeCost(usage3bis);
@@ -1215,6 +1317,7 @@ export function buildCoutPipeline({ usage2, usage3, usage3bis, usage3ter, recher
     ...(avecReseaux ? { tokensEtape3ter: usage3ter } : {}),
     ...(avecRecherche ? { recherchesWeb } : {}),
     ...(cacheEtape3 ? { cacheEtape3 } : {}),
+    ...(modeEtape3 ? { modeEtape3, sortieEtape3: usage3?.output_tokens ?? 0 } : {}),
     coutEstimeParEtape: {
       etape2: Number(coutEtape2.toFixed(4)),
       etape3: Number(coutEtape3.toFixed(4)),
@@ -1266,7 +1369,8 @@ export function ficheCompleteAvecVerdictRacine(arbitrage3) {
 // construireRequeteEtape3). L'étape 3 doit alors produire revision_relecture.
 //
 // candidatNom (facultatif) : nécessaire à l'étape 3 ter (publications X).
-async function runPipeline(etape1Input, { commentaires = null, candidatNom = null } = {}) {
+// simulation (--dry-run) : étapes 2 et 3 seulement, voir plus bas.
+async function runPipeline(etape1Input, { commentaires = null, candidatNom = null, simulation = false } = {}) {
   const etape1 = validateEtape1Local(loadEtape1(etape1Input), "Étape 1");
   console.log(
     `✓ Étape 1 chargée et validée (score initial : ${etape1.notation_detaillee.score_total}/100${etape1.notation_detaillee.plafond_applique ? `, plafond appliqué — déclencheur : ${etape1.notation_detaillee.plafond_declencheur}` : ""}).`,
@@ -1285,29 +1389,20 @@ async function runPipeline(etape1Input, { commentaires = null, candidatNom = nul
   }
 
   console.log("Étape 3/3 : arbitrage final et rédaction (Claude)...");
-  let data3 = await arbitrate(etape1, mistralResult, commentaires);
-  let arbitrage3 = extractJson(data3);
-
+  let data3;
+  let arbitrage3;
   let revisionRelecture = null;
   let recherchesWeb;
+  // Avec commentaires seulement : mode corrections ou repli (etape3EnRevision).
+  let revision3 = null;
   if (commentaires) {
+    revision3 = await etape3EnRevision(etape1, mistralResult, commentaires);
+    ({ data3, arbitrage3, revisionRelecture } = revision3);
     recherchesWeb = data3.recherchesWeb;
-    const ids = commentaires.map((c) => c.id);
-    let revision = validateRevisionRelecture(arbitrage3.revision_relecture, ids);
-    if (!revision.valid) {
-      console.error("  ⚠️  Étape 3 : revision_relecture refusée, nouvelle tentative :");
-      for (const error of revision.errors) console.error(`     - ${error}`);
-      const data3bis = await corrigerRevision(etape1, mistralResult, commentaires, arbitrage3, revision.errors, recherchesWeb);
-      data3 = { ...data3bis, usage: addUsage(data3.usage, data3bis.usage) };
-      recherchesWeb += data3bis.recherchesWeb;
-      arbitrage3 = extractJson(data3bis);
-      revision = validateRevisionRelecture(arbitrage3.revision_relecture, ids);
-      if (!revision.valid) {
-        throw new Error(`Étape 3 : revision_relecture toujours invalide après une nouvelle tentative.\n${revision.errors.join("\n")}`);
-      }
-    }
-    revisionRelecture = revision.revision;
-    console.log(`  ✓ réponses aux ${ids.length} commentaire(s) validées (${recherchesWeb} recherche(s) web).`);
+    console.log(`  ✓ réponses aux ${commentaires.length} commentaire(s) validées (${recherchesWeb} recherche(s) web).`);
+  } else {
+    data3 = await arbitrate(etape1, mistralResult);
+    arbitrage3 = extractJson(data3);
   }
 
   const auditArbitrage = Array.isArray(arbitrage3.auditArbitrage) ? [...arbitrage3.auditArbitrage] : [];
@@ -1340,18 +1435,26 @@ async function runPipeline(etape1Input, { commentaires = null, candidatNom = nul
   // dans le bloc archive de la relecture).
   const { revision_relecture: _revision, ...etape3Brut } = { ...arbitrage3, fiche_complete: ficheComplete };
 
-  const { versionBasique, ancrages, usage: usage3bis, errors: erreursVersionBasique } = await genererVersionBasique(parsed);
-  if (versionBasique) {
-    parsed.version_basique = versionBasique;
-    // Contrôle interne : dans auditArbitrage, jamais dans contenuComplet (public).
-    auditArbitrage.push({ type: "ancrages_version_basique", ancrages });
-    console.log("Étape 3 bis : version basique… ✓");
+  // Simulation (--dry-run) : étapes 2 et 3 seulement, les 3 bis et 3 ter ne
+  // changent pas et coûteraient sans rien apprendre.
+  let usage3bis = {};
+  let versionBasique = null;
+  let erreursVersionBasique = [];
+  if (!simulation) {
+    const resultat3bis = await genererVersionBasique(parsed);
+    ({ versionBasique, usage: usage3bis, errors: erreursVersionBasique } = resultat3bis);
+    if (versionBasique) {
+      parsed.version_basique = versionBasique;
+      // Contrôle interne : dans auditArbitrage, jamais dans contenuComplet (public).
+      auditArbitrage.push({ type: "ancrages_version_basique", ancrages: resultat3bis.ancrages });
+      console.log("Étape 3 bis : version basique… ✓");
+    }
   }
 
   // Étape 3 ter : sans nom de candidat (appel isolé de runPipeline), sautée.
   let usage3ter;
   let erreursReseaux = [];
-  if (candidatNom) {
+  if (candidatNom && !simulation) {
     const resultat3ter = await genererReseaux(parsed, { candidatNom, score: parsed.notation_detaillee.score_total });
     usage3ter = resultat3ter.usage;
     erreursReseaux = resultat3ter.errors;
@@ -1367,6 +1470,7 @@ async function runPipeline(etape1Input, { commentaires = null, candidatNom = nul
     usage3bis,
     usage3ter,
     recherchesWeb,
+    modeEtape3: revision3?.mode,
   });
 
   return {
@@ -1378,6 +1482,9 @@ async function runPipeline(etape1Input, { commentaires = null, candidatNom = nul
     usageMistral: mistralResult?.usage ?? null,
     etape3Brut,
     revisionRelecture,
+    etape3Revision: revision3
+      ? { mode: revision3.mode, corrections: revision3.corrections, erreursCorrections: revision3.erreursCorrections }
+      : null,
     erreursVersionBasique: versionBasique ? [] : erreursVersionBasique,
     erreursReseaux: parsed.reseaux ? [] : erreursReseaux,
   };
@@ -1411,6 +1518,7 @@ function ecrireResultat(chemin, { ecrit, raison = null, saved = null, theme, pip
         etape2: { contreAvisMistral: pipelineResult.contreAvisMistral, usage: pipelineResult.usageMistral },
         etape3: pipelineResult.etape3Brut,
         revisionRelecture: pipelineResult.revisionRelecture,
+        etape3Revision: pipelineResult.etape3Revision ?? null,
       },
       null,
       2,
@@ -1874,6 +1982,9 @@ function printCoutPipeline(coutPipeline) {
   if (coutPipeline.cacheEtape3) {
     console.log(`  Économie estimée du cache (étape 3) : ~$${coutPipeline.cacheEtape3.economieEstimee}`);
   }
+  if (coutPipeline.modeEtape3) {
+    console.log(`  Mode de l'étape 3 : ${coutPipeline.modeEtape3} (${coutPipeline.sortieEtape3} tokens en sortie)`);
+  }
   if (coutPipeline.recherchesWeb !== undefined) {
     console.log(`  Recherches web (étape 3) : ${coutPipeline.recherchesWeb}, ~$${coutPipeline.coutEstimeParEtape.recherchesWeb}`);
   }
@@ -1925,7 +2036,11 @@ async function main() {
     return;
   }
 
-  if (isAuto && (args["seuil-score"] === undefined || Number.isNaN(Number(args["seuil-score"])))) {
+  // --dry-run : étapes 2 et 3 seulement (appels payants), rien n'est écrit en
+  // base ; --resultat est écrit avec ecrit: false (scripts/reviser-relecture.js --dry-run).
+  const simulation = Boolean(args["dry-run"]);
+
+  if (!simulation && isAuto && (args["seuil-score"] === undefined || Number.isNaN(Number(args["seuil-score"])))) {
     console.error(
       `--seuil-score est obligatoire et doit être un nombre avec --auto (reçu : ${JSON.stringify(args["seuil-score"])}). ` +
         "C'est un filtre éditorial choisi au cas par cas, jamais une valeur par défaut devinée ici.",
@@ -1953,9 +2068,19 @@ async function main() {
   const pipelineResult = await runPipeline(etape1Input, {
     commentaires: commentaires?.length ? commentaires : null,
     candidatNom,
+    simulation,
   });
   if (args.revision !== undefined) {
     pipelineResult.parsed.revision = construireChampRevision(args.revision, commentaires ?? [], pipelineResult.revisionRelecture);
+  }
+
+  if (simulation) {
+    ecrireResultat(args.resultat, { ecrit: false, raison: "simulation (--dry-run) : rien n'est écrit", theme, pipelineResult });
+    console.log("");
+    console.log("Simulation (--dry-run) : rien n'a été écrit en base.");
+    console.log("Coût de la simulation (étapes 2 et 3) :");
+    printCoutPipeline(pipelineResult.coutPipeline);
+    return;
   }
 
   if (isAuto) {

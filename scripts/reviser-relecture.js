@@ -15,6 +15,14 @@
 //   5. Écrit dans <dossier> (défaut : tmp/revision-<slug>) : rapport.md (corps
 //      de la PR et résumé du job), fichiers.txt (fichiers à commiter).
 //
+//   node scripts/reviser-relecture.js <slug> --dry-run [--sortie <dossier>]
+//       → simulation : rejoue la révision d'une relecture (même déjà close)
+//         avec ses commentaires, étapes 2 et 3 seulement. Affiche le coût
+//         estimé et demande « oui » avant tout appel payant. N'écrit rien en
+//         base ni dans le dépôt : seulement resultat.json et rapport.md dans
+//         <dossier> (défaut : tmp/revision-<slug>). Lit les commentaires dans
+//         la base de DATABASE_URL (lecture seule).
+//
 // Aucun nom ni e-mail d'adhérent dans les logs : seulement des comptes. Les
 // noms (prénom abrégé, authorName) ne vont que dans le bloc archive, comme
 // pour les relectures traitées à la main.
@@ -28,9 +36,14 @@ import { parseArgs } from "node:util";
 import { SLUG_PATTERN, erreursVersionSuivante } from "./relecture.js";
 import { verifierArchive } from "./build-relectures.js";
 import {
-  RevisionError, cheminsSorties, commentairesPourModele, construireArchive, dateParis, rapportMarkdown,
-  sourceDepuisRelecture, themeDuSite, trouverDoublon, verifierCandidat,
+  RevisionError, cheminsSorties, commentairesPourModele, construireArchive, dateParis, estimationCoutSimulation,
+  rapportMarkdown, sourceDepuisRelecture, themeDuSite, trouverDoublon, verifierCandidat,
 } from "./lib/revision-relecture.js";
+
+// Taille des consignes de l'étape 3 hors fiche et commentaires (gabarit de
+// data/prompt-methodologie.md + data/prompt-etape3-corrections.md), en
+// caractères, pour l'estimation de coût d'une simulation.
+const CONSIGNES_ETAPE3_CARACTERES = 20_000;
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -65,13 +78,16 @@ async function lireBase(slug, candidat) {
   }
 }
 
-export async function reviser(slug, { sortie, root = ROOT, lire = lireBase, lancerAnalyze, build, maintenant = new Date(), log = console.log } = {}) {
+// simulation (--dry-run) : voir l'en-tête. `confirmer(estimation)` décide de
+// lancer ou non les appels payants (true pour lancer).
+export async function reviser(slug, { sortie, root = ROOT, lire = lireBase, lancerAnalyze, build, maintenant = new Date(), log = console.log, simulation = false, confirmer } = {}) {
   if (!SLUG_PATTERN.test(String(slug))) throw new RevisionError(`Slug invalide : « ${slug} ».`);
   const cheminFiche = path.join(root, "data/relectures", `${slug}.json`);
   if (!existsSync(cheminFiche)) throw new RevisionError(`data/relectures/${slug}.json introuvable.`);
   const fiche = JSON.parse(readFileSync(cheminFiche, "utf8"));
   const { relecture, ...ficheRelue } = fiche;
-  if (relecture?.archive) throw new RevisionError("Fiche déjà archivée : la révision a déjà été faite.");
+  if (relecture?.archive && !simulation) throw new RevisionError("Fiche déjà archivée : la révision a déjà été faite.");
+  if (simulation) return simuler(slug, { relecture, ficheRelue, sortie, lire, lancerAnalyze, log, confirmer });
 
   // Paramètres d'analyze.js.
   const candidat = String(relecture.candidat ?? "").trim();
@@ -150,7 +166,59 @@ export async function reviser(slug, { sortie, root = ROOT, lire = lireBase, lanc
   return { resultat, archive, fichiers, rapport };
 }
 
+// Simulation : la fiche relue (le bloc archive éventuel ne la modifie pas) et
+// ses commentaires passent par les étapes 2 et 3 d'analyze.js --dry-run. Ni
+// anti-doublon (la révision réelle serait trouvée), ni écriture hors <sortie>.
+async function simuler(slug, { relecture, ficheRelue, sortie, lire, lancerAnalyze, log, confirmer }) {
+  const candidat = String(relecture.candidat ?? "").trim();
+  const { theme } = themeDuSite(relecture.theme);
+  const { commentaires } = await lire(slug, candidat);
+  if (!commentaires.length) throw new RevisionError("Aucun commentaire en base pour cette fiche : rien à simuler.");
+  log(`Simulation de la révision « ${slug} » : ${commentaires.length} commentaire(s), étapes 2 et 3 seulement.`);
+
+  const pourModele = commentairesPourModele(commentaires);
+  const estimation = estimationCoutSimulation(
+    JSON.stringify(ficheRelue, null, 2).length + JSON.stringify(pourModele, null, 2).length + CONSIGNES_ETAPE3_CARACTERES,
+  );
+  log(`Coût estimé : entre ~${estimation.min} $ et ~${estimation.max} $ (~${estimation.tokensEntree.toLocaleString("fr-FR")} tokens de prompt à l'étape 3, la recherche web fait varier l'entrée).`);
+  if (!(await confirmer(estimation))) {
+    log("Annulé : aucun appel payant.");
+    return { annule: true, estimation };
+  }
+
+  mkdirSync(sortie, { recursive: true });
+  const etape1 = path.join(sortie, "etape1.json");
+  const fichierCommentaires = path.join(sortie, "commentaires.json");
+  const fichierResultat = path.join(sortie, "resultat.json");
+  writeFileSync(etape1, json(ficheRelue));
+  writeFileSync(fichierCommentaires, json(pourModele));
+  lancerAnalyze([
+    "scripts/analyze.js", etape1,
+    "--candidat", candidat, "--theme", theme, "--source", sourceDepuisRelecture(relecture),
+    "--dry-run", "--resultat", fichierResultat, "--commentaires", fichierCommentaires,
+  ]);
+  if (!existsSync(fichierResultat)) throw new RevisionError("analyze.js n'a pas produit de résultat.");
+  const resultat = JSON.parse(readFileSync(fichierResultat, "utf8"));
+
+  const avertissements = erreursVersionSuivante(resultat.etape3).map((e) => `Sortie de l'étape 3 non conforme : ${e}`);
+  const rapport = rapportMarkdown({ slug, relecture, notationAvant: ficheRelue.notation_detaillee, resultat, commentaires, theme, avertissements });
+  writeFileSync(path.join(sortie, "rapport.md"), rapport);
+  log(`\n${rapport}`);
+  log(`Coût estimé de la simulation : ~${resultat.coutPipeline?.coutEstimeTotal ?? "?"} $. Rapport : ${path.join(sortie, "rapport.md")}`);
+  return { resultat, rapport, estimation };
+}
+
 // ---------- CLI ----------
+
+async function confirmerSimulation({ min, max }) {
+  const { createInterface } = await import("node:readline/promises");
+  const rl = createInterface({ input: process.stdin, output: process.stdout });
+  try {
+    return (await rl.question(`Lancer la simulation (appels payants, ~${min} à ~${max} $) ? Tapez « oui » : `)).trim().toLowerCase() === "oui";
+  } finally {
+    rl.close();
+  }
+}
 
 function lancerAnalyzeReel(args) {
   const r = spawnSync(process.execPath, args, { cwd: ROOT, stdio: "inherit" });
@@ -162,14 +230,23 @@ function buildReel() {
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  const { values, positionals } = parseArgs({ options: { sortie: { type: "string" } }, allowPositionals: true });
+  const { values, positionals } = parseArgs({
+    options: { sortie: { type: "string" }, "dry-run": { type: "boolean", default: false } },
+    allowPositionals: true,
+  });
   const slug = positionals[0];
   if (!SLUG_PATTERN.test(String(slug))) {
-    console.error(`✗ Slug invalide : « ${slug} ».\nUsage : node scripts/reviser-relecture.js <slug> [--sortie <dossier>]`);
+    console.error(`✗ Slug invalide : « ${slug} ».\nUsage : node scripts/reviser-relecture.js <slug> [--dry-run] [--sortie <dossier>]`);
     process.exit(1);
   }
   const sortie = path.resolve(values.sortie ?? path.join(ROOT, "tmp", `revision-${slug}`));
-  reviser(slug, { sortie, lancerAnalyze: lancerAnalyzeReel, build: buildReel }).catch((e) => {
+  reviser(slug, {
+    sortie,
+    lancerAnalyze: lancerAnalyzeReel,
+    build: buildReel,
+    simulation: values["dry-run"],
+    confirmer: confirmerSimulation,
+  }).catch((e) => {
     const message = e instanceof RevisionError ? e.message : e?.stack ?? String(e);
     console.error(`✗ ${message}`);
     if (process.env.GITHUB_STEP_SUMMARY) {

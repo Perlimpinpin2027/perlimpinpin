@@ -401,6 +401,39 @@ test("reviser : arrêts avant tout appel (déjà archivée, candidat inconnu, do
   for (const root of [archivee, inconnu, doublon]) rmSync(root, { recursive: true });
 });
 
+test("reviser --dry-run : relecture close rejouée, coût estimé avant tout appel, rien d'écrit hors <sortie>", async () => {
+  const root = depot("ma-fiche", (f) => (f.relecture.archive = { date: "2026-10-01", reponses: [] }));
+  const ficheAvant = readFileSync(path.join(root, "data/relectures/ma-fiche.json"), "utf8");
+  const sortie = path.join(root, "tmp");
+  const jamais = () => assert.fail("rien ne doit être construit ni lancé");
+  let estimationVue = null;
+
+  // Refus : aucun appel payant.
+  const refus = await reviser("ma-fiche", {
+    root, sortie, lire: lireFaux(), lancerAnalyze: jamais, build: jamais, log: () => {}, simulation: true,
+    confirmer: async (e) => ((estimationVue = e), false),
+  });
+  assert.ok(refus.annule);
+  assert.ok(estimationVue.min > 0 && estimationVue.max > estimationVue.min);
+
+  const { appels, lancerAnalyze } = fauxAnalyze({
+    ecrit: false, analyseId: null,
+    etape3Revision: { mode: "corrections", corrections: [{ champ: "limites.texte", avant: null, apres: "Version révisée…", raison: "Règle 9." }], erreursCorrections: [] },
+  });
+  const { rapport } = await reviser("ma-fiche", {
+    root, sortie, lire: lireFaux(), lancerAnalyze, build: jamais, log: () => {}, simulation: true, confirmer: async () => true,
+  });
+  const args = appels[0];
+  assert.ok(args.includes("--dry-run") && args.includes("--commentaires"));
+  assert.ok(!args.includes("--auto") && !args.includes("--revision"));
+  assert.match(rapport, /Simulation \(--dry-run\) : rien n'a été écrit/);
+  assert.match(rapport, /### Corrections appliquées \(1\)/);
+  assert.equal(readFileSync(path.join(root, "data/relectures/ma-fiche.json"), "utf8"), ficheAvant);
+  assert.ok(!existsSync(path.join(root, "data/analyses finales")));
+  assert.ok(existsSync(path.join(sortie, "rapport.md")));
+  rmSync(root, { recursive: true });
+});
+
 // ---------- champ revision de contenuComplet (phase C) ----------
 
 test("construireChampRevision : slug, réponses dans l'ordre des commentaires, ni nom ni e-mail", () => {

@@ -202,6 +202,37 @@ export function checkNotationCoherence(notation) {
   return errors;
 }
 
+// Exception à la règle de l'en-tête : en mode corrections (étape 3 d'une
+// révision, voir scripts/lib/corrections-etape3.js), le modèle ne corrige que
+// les notes et qualifications ; le code recalcule tous les champs dérivés,
+// selon le même CALCUL que checkNotationCoherence.
+export const CHAMPS_DERIVES_NOTATION = [
+  "operationnalite_moyens_total",
+  "plafond_applique",
+  "plafond_declencheur",
+  "score_total",
+  "appreciation",
+];
+
+export function recalculerNotation(notation) {
+  const sousTotal =
+    notation.operationnalite_juridique + notation.operationnalite_budgetaire + notation.operationnalite_moyens_humains;
+  const plafondDeclencheur = computePlafondDeclencheurAttendu(notation);
+  const total = plafondDeclencheur !== null ? Math.min(sousTotal, 10) : sousTotal;
+  const scoreTotal = Math.max(
+    0,
+    Math.min(100, total + notation.efficacite + notation.effets_rebonds_externalites + notation.degre_preparation + notation.alignement_logique),
+  );
+  return {
+    ...notation,
+    operationnalite_moyens_total: total,
+    plafond_applique: plafondDeclencheur !== null,
+    plafond_declencheur: plafondDeclencheur,
+    score_total: scoreTotal,
+    appreciation: computeAppreciation(scoreTotal),
+  };
+}
+
 // --- Schémas étape 1 / fiche_complete (étape 3) -------------------------------
 // Champs texte libre : parfois renvoyés en tableau de points par le modèle
 // malgré la consigne — cf. toText() dans analyze.js, permissif ici aussi.
