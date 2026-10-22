@@ -1,17 +1,29 @@
-import { Geist, Geist_Mono, Fraunces } from "next/font/google";
+import localFont from "next/font/local";
 import AnalyticsGate from "@/components/AnalyticsGate";
 import CookieConsentBanner from "@/components/CookieConsentBanner";
 import Footer from "@/components/Footer";
 import "./globals.css";
 
-const geistSans = Geist({
+// Polices hébergées dans le dépôt (src/app/fonts/, licences SIL OFL à côté) :
+// next/font/google télécharge les fichiers chez Google à chaque build, et une
+// panne de Google Fonts a déjà fait échouer un déploiement de production
+// (22 octobre 2026, « next/font/google queries have exactly one entry »).
+// Avec next/font/local, le build ne dépend plus d'aucun service extérieur.
+// Mêmes variables CSS qu'avant (--font-geist-sans, --font-geist-mono,
+// --font-fraunces, voir globals.css). Sources : paquet npm geist 1.8.2
+// (polices variables) et @fontsource/fraunces 5.3.0 (sous-ensemble latin).
+const geistSans = localFont({
+  src: "./fonts/Geist-Variable.woff2",
   variable: "--font-geist-sans",
-  subsets: ["latin"],
+  weight: "100 900",
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
+const geistMono = localFont({
+  src: "./fonts/GeistMono-Variable.woff2",
   variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: "100 900",
+  display: "swap",
 });
 
 // Serif éditoriale à fort contraste (titres uniquement, toujours utilisée
@@ -20,11 +32,13 @@ const geistMono = Geist_Mono({
 // display, cohérente avec la maquette. Poids chargés : 400 en secours,
 // 700 pour tous les titres (font-bold), qui sont les deux seuls utilisés
 // site-wide (voir les usages de font-serif dans src/).
-const fraunces = Fraunces({
+const fraunces = localFont({
+  src: [
+    { path: "./fonts/fraunces-latin-400-normal.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/fraunces-latin-700-normal.woff2", weight: "700", style: "normal" },
+  ],
   variable: "--font-fraunces",
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  style: ["normal"],
+  display: "swap",
 });
 
 const DESCRIPTION =
