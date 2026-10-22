@@ -2,10 +2,10 @@
 // ni appel à Claude, ni fichiers) pour pouvoir les tester avec `node --test`
 // (scripts/reseaux-lot.test.js).
 
-// Coût de l'étape 3 ter par fiche, observé sur les runs réels : environ 0,05 $
-// quand le premier essai passe, jusqu'à 0,16 $ avec le second essai et les
-// passes de raccourcissement.
-export const COUT_3TER_PAR_FICHE = { min: 0.05, max: 0.16 };
+// Coût de l'étape 3 ter par fiche, observé sur les runs réels au tarif de
+// claude-sonnet-5 (2 $ / 10 $) : environ 0,03 $ quand le premier essai passe,
+// jusqu'à 0,11 $ avec le second essai et les passes de raccourcissement.
+export const COUT_3TER_PAR_FICHE = { min: 0.03, max: 0.11 };
 
 export const LOT_MAX = 50;
 

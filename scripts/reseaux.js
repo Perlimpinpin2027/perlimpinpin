@@ -245,7 +245,7 @@ async function mainLot(host) {
     alertes.forEach((alerte) => console.log(`    ⚠ ${alerte}`));
   }
   const { min, max } = estimationCout(fiches.length);
-  console.log(`\nCoût estimé de l'étape 3 ter : entre ~$${min} et ~$${max} (${fiches.length} × 0,05 à 0,16 $).`);
+  console.log(`\nCoût estimé de l'étape 3 ter : entre ~$${min} et ~$${max} (${fiches.length} × 0,03 à 0,11 $).`);
   console.log(dryRun ? "Simulation (--dry-run) : les textes seront générés et affichés, RIEN ne sera écrit." : "Chaque fiche sera sauvegardée puis écrite (clé reseaux seulement).");
 
   const ok = await confirmerEcriture({

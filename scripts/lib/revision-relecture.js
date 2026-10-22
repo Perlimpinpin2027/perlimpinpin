@@ -198,6 +198,18 @@ export function premierePhrase(texte) {
 
 const dollars = (n) => (typeof n === "number" ? `~${n.toFixed(2)} $` : "?");
 
+// Cache de l'étape 3 (coutPipeline.cacheEtape3, voir bilanCache dans
+// analyze.js), pour vérifier le gain sans rien chercher. Sans cache utilisé,
+// la ligne le dit : c'est le signe qu'il ne joue pas.
+export function ligneCacheEtape3(cache) {
+  const n = (x) => (x ?? 0).toLocaleString("fr-FR");
+  if (!cache) return ["- Cache étape 3 : aucun token relu ni écrit en cache"];
+  const iterations = cache.iterations !== undefined ? `, ${cache.iterations} itération(s) côté serveur` : "";
+  return [
+    `- Cache étape 3 : ${n(cache.lus)} tokens relus en cache, ${n(cache.ecrits)} écrits, ${n(cache.nonCaches)} non cachés${iterations} ; économie estimée ${dollars(cache.economieEstimee)}`,
+  ];
+}
+
 // Markdown commun au corps de la PR et au résumé du job. Aucun nom d'adhérent.
 export function rapportMarkdown({ slug, relecture, notationAvant, resultat, commentaires, theme, avertissements = [], lienPR = null, siteUrl = SITE_URL }) {
   const r = resultat;
@@ -217,6 +229,7 @@ export function rapportMarkdown({ slug, relecture, notationAvant, resultat, comm
       : `- Version basique (étape 3 bis) : ✗ ${(r.versionBasique?.erreurs ?? []).join(" ; ") || "cause inconnue"}`,
     `- Coût total : ${dollars(cout.coutEstimeTotal)} (étape 2 ${dollars(cout.coutEstimeParEtape?.etape2)}, étape 3 ${dollars(cout.coutEstimeParEtape?.etape3)}, ` +
       `${cout.recherchesWeb ?? 0} recherche(s) web ${dollars(cout.coutEstimeParEtape?.recherchesWeb ?? 0)}, étape 3 bis ${dollars(cout.coutEstimeParEtape?.etape3bis)})`,
+    ...ligneCacheEtape3(cout.cacheEtape3),
     "",
   ];
   const modifs = criteresModifies(notationAvant, notationApres);

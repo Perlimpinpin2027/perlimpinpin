@@ -108,8 +108,8 @@ test("coût : l'étape 3 ter s'ajoute seulement quand elle a tourné", () => {
   const sans = buildCoutPipeline({ usage2: null, usage3, usage3bis: {} });
   assert.ok(!("tokensEtape3ter" in sans) && !("etape3ter" in sans.coutEstimeParEtape));
   const avec = buildCoutPipeline({ usage2: null, usage3, usage3bis: {}, usage3ter: { input_tokens: 10_000, output_tokens: 1_000 } });
-  assert.equal(avec.coutEstimeParEtape.etape3ter, 0.045);
-  assert.equal(avec.coutEstimeTotal, Number((sans.coutEstimeTotal + 0.045).toFixed(4)));
+  assert.equal(avec.coutEstimeParEtape.etape3ter, 0.03);
+  assert.equal(avec.coutEstimeTotal, Number((sans.coutEstimeTotal + 0.03).toFixed(4)));
 });
 
 // Parties variables conformes (ce que le modèle écrit désormais).

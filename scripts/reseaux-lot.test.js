@@ -15,7 +15,7 @@ test("lot : dernière analyse publiée de chaque fiche, sans celles qui ont déj
 });
 
 test("lot : coût estimé, alertes avant appel, récapitulatif", () => {
-  assert.deepEqual(estimationCout(10), { min: 0.5, max: 1.6 });
+  assert.deepEqual(estimationCout(10), { min: 0.3, max: 1.1 });
   assert.deepEqual(alertesFiche({ compteX: "@x", portraitExiste: true }), []);
   assert.equal(alertesFiche({ compteX: null, portraitExiste: false }).length, 2);
   const lignes = recapitulatif([

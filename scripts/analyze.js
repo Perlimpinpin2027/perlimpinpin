@@ -696,6 +696,18 @@ export function outilRechercheWeb(maxUses) {
   return { type: "web_search_20260209", name: "web_search", max_uses: maxUses };
 }
 
+// Cache (avec commentaires seulement) : la recherche web fait relire tout le
+// prompt à chaque itération de la boucle côté serveur, puis à chaque reprise
+// après pause_turn et au nouvel essai de corrigerRevision (jusqu'à 735 000
+// tokens en entrée sur une révision, contre ~18 000 sans commentaires). Un
+// point de cache explicite sur la fin du message (le prompt complet, identique
+// pendant tout le run) et le cache automatique pour la suite de la conversation
+// font relire ce prompt à 10 % du prix. Le texte envoyé ne change pas. Sans
+// commentaires, un seul appel : pas de cache (l'écriture coûte 25 % de plus).
+// Le nouvel essai de corrigerRevision change l'outil (recherches restantes),
+// donc ne relit pas ce cache.
+const CACHE_5_MIN = { type: "ephemeral" };
+
 export function construireRequeteEtape3(etape1, mistralResult, commentaires = null) {
   const vars = {
     reponse_etape_1: JSON.stringify(etape1, null, 2),
@@ -715,12 +727,13 @@ export function construireRequeteEtape3(etape1, mistralResult, commentaires = nu
     max_tokens: 32000,
     thinking: { type: "disabled" },
     tools: [outilRechercheWeb(MAX_RECHERCHES_WEB)],
+    cache_control: CACHE_5_MIN,
     messages: [
       {
         role: "user",
         content: [
           { type: "text", text: fillTemplate(ARBITRAGE_TEMPLATE_AVEC_COMMENTAIRES, vars) },
-          { type: "text", text: blocCommentaires(commentaires) },
+          { type: "text", text: blocCommentaires(commentaires), cache_control: CACHE_5_MIN },
         ],
       },
     ],
@@ -837,10 +850,23 @@ async function callVersionBasique(userMessage) {
   return readStreamedMessage(response);
 }
 
-function addUsage(total, usage = {}) {
+// Somme de deux usages : nombres additionnés, y compris dans les objets
+// imbriqués (server_tool_use, cache_creation) ; listes mises bout à bout
+// (iterations : le détail de chaque passage de la boucle côté serveur, seul
+// moyen de comprendre une entrée de plusieurs centaines de milliers de
+// tokens) ; texte (service_tier…) : la dernière valeur.
+export function addUsage(total = {}, usage = {}) {
   const sum = { ...total };
-  for (const [key, value] of Object.entries(usage)) {
-    if (typeof value === "number") sum[key] = (sum[key] ?? 0) + value;
+  for (const [key, value] of Object.entries(usage ?? {})) {
+    if (typeof value === "number") {
+      sum[key] = (typeof sum[key] === "number" ? sum[key] : 0) + value;
+    } else if (Array.isArray(value)) {
+      sum[key] = [...(Array.isArray(sum[key]) ? sum[key] : []), ...value];
+    } else if (value && typeof value === "object") {
+      sum[key] = addUsage(sum[key] && typeof sum[key] === "object" ? sum[key] : {}, value);
+    } else if (value !== null && value !== undefined) {
+      sum[key] = value;
+    }
   }
   return sum;
 }
@@ -1114,8 +1140,11 @@ ${JSON.stringify(derniere, (cle, valeur) => (CHAMPS_DU_CODE.has(cle) ? undefined
 // Tarifs approximatifs (USD / million de tokens), à ajuster si Anthropic ou
 // Mistral changent leurs prix. Sert uniquement à estimer coutPipeline pour
 // le suivi interne, ce n'est pas une source de facturation officielle.
+// claude-sonnet-5 : 2 $ / 10 $, écriture en cache (5 min) × 1,25, lecture × 0,1.
+// Jusqu'au 21/10/2026, 3 $ / 15 $ (tarif Sonnet 4.6) : les coûts enregistrés
+// avant surestiment la part Claude de moitié.
 const PRICING = {
-  claudeSonnet: { input: 3, cacheWrite: 3.75, cacheRead: 0.3, output: 15 },
+  claudeSonnet: { input: 2, cacheWrite: 2.5, cacheRead: 0.2, output: 10 },
   mistralLarge: { input: 2, output: 6 },
 };
 
@@ -1133,6 +1162,24 @@ function estimateClaudeCost(usage = {}) {
       output_tokens * PRICING.claudeSonnet.output) /
     1_000_000
   );
+}
+
+// Cache de l'étape 3 (révision) : tokens relus et écrits, et économie estimée
+// par rapport aux mêmes tokens payés au plein tarif d'entrée (lecture à 10 %,
+// moins le surcoût de 25 % de l'écriture). null quand le cache n'a pas servi.
+export function bilanCache(usage = {}) {
+  const lus = usage.cache_read_input_tokens ?? 0;
+  const ecrits = usage.cache_creation_input_tokens ?? 0;
+  if (lus === 0 && ecrits === 0) return null;
+  const { input, cacheRead, cacheWrite } = PRICING.claudeSonnet;
+  const economie = (lus * (input - cacheRead) - ecrits * (cacheWrite - input)) / 1_000_000;
+  return {
+    lus,
+    ecrits,
+    nonCaches: usage.input_tokens ?? 0,
+    ...(Array.isArray(usage.iterations) ? { iterations: usage.iterations.length } : {}),
+    economieEstimee: Number(economie.toFixed(4)),
+  };
 }
 
 function estimateMistralCost(usage) {
@@ -1157,6 +1204,8 @@ export function buildCoutPipeline({ usage2, usage3, usage3bis, usage3ter, recher
   const coutEtape3ter = avecReseaux ? estimateClaudeCost(usage3ter) : 0;
   const avecRecherche = recherchesWeb !== undefined;
   const coutRecherches = avecRecherche ? recherchesWeb * COUT_RECHERCHE_WEB : 0;
+  // Absent quand le cache n'a pas servi : coutPipeline garde sa forme d'avant.
+  const cacheEtape3 = bilanCache(usage3);
 
   return {
     tokensEtape1: null,
@@ -1165,6 +1214,7 @@ export function buildCoutPipeline({ usage2, usage3, usage3bis, usage3ter, recher
     tokensEtape3bis: usage3bis,
     ...(avecReseaux ? { tokensEtape3ter: usage3ter } : {}),
     ...(avecRecherche ? { recherchesWeb } : {}),
+    ...(cacheEtape3 ? { cacheEtape3 } : {}),
     coutEstimeParEtape: {
       etape2: Number(coutEtape2.toFixed(4)),
       etape3: Number(coutEtape3.toFixed(4)),
@@ -1777,6 +1827,9 @@ function printUsage(usage) {
   console.log(`  cache_creation_input_tokens   : ${usage.cache_creation_input_tokens ?? "?"}`);
   console.log(`  cache_read_input_tokens       : ${usage.cache_read_input_tokens ?? "?"}`);
   console.log(`  output_tokens                 : ${usage.output_tokens ?? "?"}`);
+  if (Array.isArray(usage.iterations)) {
+    console.log(`  itérations côté serveur       : ${usage.iterations.length}`);
+  }
 }
 
 function printScoreDetail(notation) {
@@ -1818,6 +1871,9 @@ function printCoutPipeline(coutPipeline) {
   }
   console.log(`  Étape 3 (Claude, arbitrage) : ~$${coutPipeline.coutEstimeParEtape.etape3}`);
   printUsage(coutPipeline.tokensEtape3 ?? {});
+  if (coutPipeline.cacheEtape3) {
+    console.log(`  Économie estimée du cache (étape 3) : ~$${coutPipeline.cacheEtape3.economieEstimee}`);
+  }
   if (coutPipeline.recherchesWeb !== undefined) {
     console.log(`  Recherches web (étape 3) : ${coutPipeline.recherchesWeb}, ~$${coutPipeline.coutEstimeParEtape.recherchesWeb}`);
   }

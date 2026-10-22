@@ -7,13 +7,13 @@ import path from "node:path";
 import { validateRevisionRelecture, validateAvisCommentairesEtape2 } from "./lib/scoring.js";
 import { erreursVersionSuivante } from "./relecture.js";
 import {
-  RevisionError, cheminsSorties, construireArchive, criteresModifies, dossierCandidat, premierePhrase, rapportMarkdown,
-  sourceDepuisRelecture, themeDuSite, trouverDoublon, verifierCandidat,
+  RevisionError, cheminsSorties, construireArchive, criteresModifies, dossierCandidat, ligneCacheEtape3, premierePhrase,
+  rapportMarkdown, sourceDepuisRelecture, themeDuSite, trouverDoublon, verifierCandidat,
 } from "./lib/revision-relecture.js";
 import { reviser } from "./reviser-relecture.js";
 import {
-  blocCommentaires, buildCoutPipeline, construireChampRevision, construireMessageEtape2, construireRequeteEtape3, retirerBloc,
-  reunirTexteFinal,
+  addUsage, bilanCache, blocCommentaires, buildCoutPipeline, construireChampRevision, construireMessageEtape2,
+  construireRequeteEtape3, retirerBloc, reunirTexteFinal,
 } from "./analyze.js";
 
 // Robot de révision (phase B) : aucun appel réseau, aucune base (dossiers
@@ -173,6 +173,31 @@ test("analyze.js avec commentaires : blocs 6 et 9, bloc COMMENTAIRES DU CLUB à 
   assert.ok(m2.endsWith(blocCommentaires(commentaires)));
   // Ni nom ni e-mail envoyés au modèle.
   assert.ok(!bloc.text.includes("Alexis") && !bloc.text.includes("@"));
+  // Cache : point explicite sur la fin du message, cache automatique pour la suite.
+  assert.deepEqual(body.cache_control, { type: "ephemeral" });
+  assert.deepEqual(bloc.cache_control, { type: "ephemeral" });
+  assert.ok(!("cache_control" in gabarit));
+});
+
+test("addUsage : nombres additionnés, objets imbriqués sommés, iterations mises bout à bout", () => {
+  const a = { input_tokens: 10, cache_read_input_tokens: 5, server_tool_use: { web_search_requests: 1 }, iterations: [{ type: "message" }], service_tier: "standard" };
+  const b = { input_tokens: 3, server_tool_use: { web_search_requests: 2 }, iterations: [{ type: "message" }, { type: "message" }], cache_creation: null };
+  assert.deepEqual(addUsage(addUsage({}, a), b), {
+    input_tokens: 13, cache_read_input_tokens: 5, server_tool_use: { web_search_requests: 3 },
+    iterations: [{ type: "message" }, { type: "message" }, { type: "message" }], service_tier: "standard",
+  });
+});
+
+test("cache de l'étape 3 : bilan dans coutPipeline et ligne du rapport", () => {
+  assert.equal(bilanCache({ input_tokens: 100 }), null);
+  const sans = buildCoutPipeline({ usage2: null, usage3: { input_tokens: 100 }, usage3bis: {} });
+  assert.ok(!("cacheEtape3" in sans));
+  // 1 M relus : 2 − 0,2 = 1,8 $ gagnés ; 100 000 écrits : 0,05 $ de surcoût.
+  const usage3 = { input_tokens: 20_000, cache_read_input_tokens: 1_000_000, cache_creation_input_tokens: 100_000, output_tokens: 0, iterations: [{}, {}] };
+  const { cacheEtape3 } = buildCoutPipeline({ usage2: null, usage3, usage3bis: {} });
+  assert.deepEqual(cacheEtape3, { lus: 1_000_000, ecrits: 100_000, nonCaches: 20_000, iterations: 2, economieEstimee: 1.75 });
+  assert.match(ligneCacheEtape3(cacheEtape3)[0], /1\s000\s000 tokens relus en cache, 100\s000 écrits, 20\s000 non cachés, 2 itération\(s\) côté serveur ; économie estimée ~1\.75 \$/);
+  assert.match(ligneCacheEtape3(undefined)[0], /aucun token relu ni écrit en cache/);
 });
 
 test("reunirTexteFinal : texte écrit après la dernière recherche, réuni en un bloc", () => {
