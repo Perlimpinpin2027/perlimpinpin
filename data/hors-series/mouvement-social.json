@@ -1,0 +1,215 @@
+{
+  "slug": "mouvement-social",
+  "visible": false,
+  "numero": 2,
+  "surtitre": "Dossier n°2 // Mouvement social · Octobre 2026",
+  "etiquette": "Mouvement social · Octobre 2026",
+  "titre": "Mouvement social",
+  "chapo": "Après plusieurs semaines de mobilisation lycéenne, la journée du 17 octobre 2026 a été marquée par des violences et des pillages dans plusieurs villes. Les candidats à l'élection présidentielle ont répondu par des propositions sur la sécurité. Nous les recensons, les classons et les analysons une à une.",
+  "boutons": [
+    {
+      "label": "Voir les propositions",
+      "ancre": "#propositions"
+    },
+    {
+      "label": "Notre méthode",
+      "ancre": "#methode"
+    }
+  ],
+  "essentiel": {
+    "titre": "L'essentiel",
+    "paragraphes": [
+      "Le mouvement démarre le 21 septembre dans les lycées. Les élèves dénoncent le manque d'enseignants, des équipements vétustes et des classes surchargées. Au fil des semaines, il gagne les étudiants, puis rejoint une contestation plus large du coût de la vie, en particulier du prix des carburants.",
+      "Le samedi 17 octobre, lycéens, étudiants, gilets jaunes, agriculteurs et syndicats manifestent ensemble dans tout le pays : 550 000 personnes selon le ministère de l'Intérieur, 800 000 selon les organisateurs. En marge des cortèges, des violences et des pillages touchent plusieurs villes : au moins 3 000 commerces sont touchés, la mairie de Limoges et l'office de tourisme de Lyon sont incendiés, la mairie de Marseille est envahie et la résidence du préfet de Bordeaux est attaquée.",
+      "Les jours suivants, le gouvernement écarte l'état d'urgence et annonce des couvre-feux localisés. L'Assemblée nationale crée une commission d'enquête sur les violences et le maintien de l'ordre. Les candidats, eux, avancent leurs propres réponses.",
+      "Perlimpinpin ne juge pas l'opportunité politique de ces propositions. Nous posons une question plus simple : chacune est-elle réalisable, au regard du droit, de la Constitution, des moyens disponibles et de son coût ?"
+    ]
+  },
+  "chiffres": {
+    "titre": "// Ce qui s'est passé",
+    "items": [
+      {
+        "valeur": "21 sept.",
+        "legende": "début du mouvement lycéen",
+        "source": {
+          "label": "Euronews",
+          "url": "https://fr.euronews.com/2026/10/14/nouvelles-violences-a-paris-lors-du-rassemblement-des-lyceens-et-des-etudiants"
+        }
+      },
+      {
+        "valeur": "550 000",
+        "legende": "manifestants le 17 octobre selon le ministère de l'Intérieur (800 000 selon les organisateurs)",
+        "source": {
+          "label": "Politis",
+          "url": "https://www.politis.fr/dossiers/17-octobre-macron-recolte-la-colere/"
+        }
+      },
+      {
+        "valeur": "3 000",
+        "legende": "commerces au moins touchés par les violences et les pillages",
+        "source": {
+          "label": "Public Sénat",
+          "url": "https://www.publicsenat.fr/actualites/politique/violences-du-17-octobre-pourquoi-letat-durgence-est-ecarte-par-le-gouvernement"
+        }
+      },
+      {
+        "valeur": "20 oct.",
+        "legende": "création d'une commission d'enquête à l'Assemblée nationale",
+        "source": {
+          "label": "franceinfo",
+          "url": "https://www.franceinfo.fr/societe/mobilisation-du-17-octobre/creation-d-une-commission-d-enquete-confiee-a-la-commission-des-lois-de-l-assemblee-nationale-apres-les-violences-du-17-octobre_8245390.html"
+        }
+      }
+    ],
+    "note": "Chiffres issus de sources publiques à la date de publication. Ils pourront être mis à jour."
+  },
+  "chronologie": {
+    "titre": "// Chronologie",
+    "items": [
+      {
+        "date": "21 septembre",
+        "texte": "Premiers blocages de lycées : manque d'enseignants, locaux vétustes, classes surchargées."
+      },
+      {
+        "date": "Début octobre",
+        "texte": "Le mouvement s'étend. Le gouvernement annonce l'arrivée de 3 000 professeurs remplaçants, jugée insuffisante par les lycéens."
+      },
+      {
+        "date": "17 octobre",
+        "texte": "Journée de mobilisation nationale contre la vie chère, rejointe par les lycéens. Violences et pillages en marge des cortèges, jusqu'au 18 octobre."
+      },
+      {
+        "date": "19 octobre",
+        "texte": "L'état d'urgence est écarté. Des couvre-feux localisés sont annoncés. Les candidats présentent leurs propositions."
+      },
+      {
+        "date": "20 octobre",
+        "texte": "L'Assemblée nationale crée une commission d'enquête sur les violences et le maintien de l'ordre."
+      },
+      {
+        "date": "27 octobre",
+        "texte": "Examen prévu au Sénat du projet de loi « casseurs-payeurs », présenté par le gouvernement le 16 septembre."
+      }
+    ]
+  },
+  "perimetre": {
+    "titre": "Ce que couvre ce dossier",
+    "texte": "Ce dossier porte uniquement sur les réponses en matière de sécurité : les moyens du maintien de l'ordre, la responsabilité des auteurs de violences, les méthodes et les équipements des forces de l'ordre. Les propositions sur l'école ou le pouvoir d'achat, au cœur des revendications du mouvement, font l'objet de fiches séparées."
+  },
+  "statuts": {
+    "titre": "Nouvelle annonce ou idée déjà défendue ?",
+    "texte": "Certaines propositions ont été formulées après le 17 octobre. D'autres existaient déjà et ont été remises en avant. Chaque proposition porte une étiquette.",
+    "items": [
+      {
+        "id": "nouvelle",
+        "label": "Annoncée après le 17 octobre"
+      },
+      {
+        "id": "mouvement-lyceen",
+        "label": "Formulée pendant le mouvement lycéen"
+      },
+      {
+        "id": "reaffirmee",
+        "label": "Déjà proposée, réaffirmée après le 17 octobre"
+      },
+      {
+        "id": "anterieure",
+        "label": "Issue d'un programme ou d'une proposition de loi antérieure"
+      }
+    ]
+  },
+  "onglets": [
+    {
+      "id": 1,
+      "titre": "Renforcer les moyens du maintien de l'ordre",
+      "description": "Moyens humains, dispositifs exceptionnels, renforts mobilisables, compétences des forces de sécurité et modalités de déploiement lors de violences ou de troubles à l'ordre public."
+    },
+    {
+      "id": 2,
+      "titre": "Renforcer la responsabilité des auteurs de violences et de leurs parents",
+      "description": "Responsabilité pénale et civile des auteurs, sanctions envisagées, prise en charge des mineurs, responsabilisation financière ou juridique des parents."
+    },
+    {
+      "id": 3,
+      "titre": "Faire évoluer les méthodes et les équipements du maintien de l'ordre",
+      "description": "Doctrines et techniques d'intervention, équipements des forces de l'ordre, formation, conditions d'emploi de certains dispositifs et contrôle de leur usage."
+    }
+  ],
+  "messageOngletVide": "Les propositions de cet onglet sont en cours de vérification. Elles seront ajoutées une à une, avec leur source et leur date.",
+  "textesEnCours": {
+    "titre": "À noter : des textes déjà en discussion",
+    "items": [
+      {
+        "texte": "Le projet de loi « casseurs-payeurs », présenté en Conseil des ministres le 16 septembre, doit être examiné au Sénat à partir du 27 octobre.",
+        "source": {
+          "label": "LCP",
+          "url": "https://lcp.fr/actualites/lycees-bloques-le-projet-de-loi-casseurs-payeurs-examine-fin-octobre-au-senat-442963"
+        }
+      },
+      {
+        "texte": "La loi Ripost, adoptée le 21 juillet 2026, prolonge la vidéosurveillance algorithmique jusqu'en 2030, sans reconnaissance faciale.",
+        "source": {
+          "label": "Maire-info",
+          "url": "https://www.maire-info.com/lois/ce-que-va-changer-le-projet-de-loi-ripost-da%C2%A9finitivement-adopta%C2%A9-pour-les-maires-article-31019"
+        }
+      },
+      {
+        "texte": "La commission des lois du Sénat a publié le 19 octobre un rapport intitulé « L'avenir du maintien de l'ordre : 30 propositions pour reprendre le contrôle ».",
+        "source": {
+          "label": "Sénat",
+          "url": "https://www.senat.fr/notice-rapport/2026/r26-078-notice.html"
+        }
+      }
+    ],
+    "note": "Nos fiches tiennent compte de ces textes lorsqu'ils concernent une proposition."
+  },
+  "toutesLesAnalyses": {
+    "titre": "Toutes les analyses du dossier",
+    "texte": "Retrouvez ici chaque analyse publiée, par candidat. Chaque lien ouvre la fiche complète : raisonnement, sources et détail de la note.",
+    "messageVide": "Aucune analyse n'est encore publiée. Cette liste se remplit à chaque nouvelle fiche."
+  },
+  "propositions": [],
+  "methode": {
+    "titre": "Méthode et limites",
+    "paragraphes": [
+      "Avant d'être ajoutée au dossier, chaque proposition est vérifiée : qui l'a formulée, quand, où, et avec quels mots. Une proposition sans source identifiable n'est pas publiée.",
+      "Chaque proposition retenue fait l'objet d'une fiche notée sur 100 selon le barème Perlimpinpin, puis d'une relecture par les adhérents du Club avant publication. Tant qu'une fiche n'est pas publiée, la proposition est signalée « Analyse à venir », sans note provisoire.",
+      "Ce dossier compare des propositions de candidats différents. Il ne calcule donc pas de note d'ensemble.",
+      "Le dossier est mis à jour au fur et à mesure des déclarations des candidats et de la publication des fiches."
+    ]
+  },
+  "sources": [
+    {
+      "label": "Euronews, « Nouvelles violences à Paris lors du rassemblement des lycéens et des étudiants », 14 octobre 2026",
+      "url": "https://fr.euronews.com/2026/10/14/nouvelles-violences-a-paris-lors-du-rassemblement-des-lyceens-et-des-etudiants"
+    },
+    {
+      "label": "Euronews, « Mobilisation lycéenne : nouvel appel à manifester samedi 17 octobre », 14 octobre 2026",
+      "url": "https://fr.euronews.com/2026/10/14/mobilisation-lyceenne-nouvel-appel-a-manifester-samedi-17-octobre"
+    },
+    {
+      "label": "Politis, dossier « 17 octobre », 17-18 octobre 2026",
+      "url": "https://www.politis.fr/dossiers/17-octobre-macron-recolte-la-colere/"
+    },
+    {
+      "label": "Public Sénat, « Violences du 17 octobre : pourquoi l'état d'urgence est écarté par le gouvernement »",
+      "url": "https://www.publicsenat.fr/actualites/politique/violences-du-17-octobre-pourquoi-letat-durgence-est-ecarte-par-le-gouvernement"
+    },
+    {
+      "label": "franceinfo, création d'une commission d'enquête à l'Assemblée nationale, 20 octobre 2026",
+      "url": "https://www.franceinfo.fr/societe/mobilisation-du-17-octobre/creation-d-une-commission-d-enquete-confiee-a-la-commission-des-lois-de-l-assemblee-nationale-apres-les-violences-du-17-octobre_8245390.html"
+    },
+    {
+      "label": "LCP, « Lycées bloqués : le projet de loi casseurs-payeurs examiné fin octobre au Sénat », 5 octobre 2026",
+      "url": "https://lcp.fr/actualites/lycees-bloques-le-projet-de-loi-casseurs-payeurs-examine-fin-octobre-au-senat-442963"
+    },
+    {
+      "label": "Maire-info, « Ce que va changer le projet de loi Ripost, définitivement adopté, pour les maires »",
+      "url": "https://www.maire-info.com/lois/ce-que-va-changer-le-projet-de-loi-ripost-da%C2%A9finitivement-adopta%C2%A9-pour-les-maires-article-31019"
+    },
+    {
+      "label": "Sénat, rapport d'information n° 78 (2026-2027), « L'avenir du maintien de l'ordre : 30 propositions pour reprendre le contrôle », 19 octobre 2026",
+      "url": "https://www.senat.fr/notice-rapport/2026/r26-078-notice.html"
+    }
+  ]
+}
