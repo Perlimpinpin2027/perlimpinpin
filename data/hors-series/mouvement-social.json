@@ -22,7 +22,7 @@
       "Le mouvement démarre le 21 septembre dans les lycées. Les élèves dénoncent le manque d'enseignants, des équipements vétustes et des classes surchargées. Au fil des semaines, il gagne les étudiants, puis rejoint une contestation plus large du coût de la vie, en particulier du prix des carburants.",
       "Le samedi 17 octobre, lycéens, étudiants, gilets jaunes, agriculteurs et syndicats manifestent ensemble dans tout le pays : 550 000 personnes selon le ministère de l'Intérieur, 800 000 selon les organisateurs. En marge des cortèges, des violences et des pillages touchent plusieurs villes : au moins 3 000 commerces sont touchés, la mairie de Limoges et l'office de tourisme de Lyon sont incendiés, la mairie de Marseille est envahie et la résidence du préfet de Bordeaux est attaquée.",
       "Les jours suivants, le gouvernement écarte l'état d'urgence et annonce des couvre-feux localisés. L'Assemblée nationale crée une commission d'enquête sur les violences et le maintien de l'ordre. Les candidats, eux, avancent leurs propres réponses.",
-      "Perlimpinpin ne juge pas l'opportunité politique de ces propositions. Nous posons une question plus simple : chacune est-elle réalisable, au regard du droit, de la Constitution, des moyens disponibles et de son coût ?"
+      "Notre question est simple : ces propositions peuvent-elles vraiment ramener le calme et la sécurité ? Pour chacune, nous regardons si elle serait efficace, si elle est applicable en droit, ce qu'elle coûterait et ce qu'elle pourrait provoquer d'autre. Nous ne disons pas pour qui voter."
     ]
   },
   "chiffres": {
@@ -75,6 +75,10 @@
         "texte": "Le mouvement s'étend. Le gouvernement annonce l'arrivée de 3 000 professeurs remplaçants, jugée insuffisante par les lycéens."
       },
       {
+        "date": "13 octobre",
+        "texte": "Nouvelle journée de mobilisation lycéenne et étudiante. Des violences éclatent à Paris."
+      },
+      {
         "date": "17 octobre",
         "texte": "Journée de mobilisation nationale contre la vie chère, rejointe par les lycéens. Violences et pillages en marge des cortèges, jusqu'au 18 octobre."
       },
@@ -87,10 +91,59 @@
         "texte": "L'Assemblée nationale crée une commission d'enquête sur les violences et le maintien de l'ordre."
       },
       {
+        "date": "24 octobre",
+        "texte": "Nouvelle journée de mobilisation contre la vie chère (« acte II »), à l'appel de la coordination des gilets jaunes."
+      },
+      {
         "date": "27 octobre",
         "texte": "Examen prévu au Sénat du projet de loi « casseurs-payeurs », présenté par le gouvernement le 16 septembre."
+      },
+      {
+        "date": "31 octobre",
+        "texte": "Troisième date annoncée par la coordination des gilets jaunes."
+      },
+      {
+        "date": "5 novembre",
+        "texte": "Grève et manifestations nationales à l'appel des syndicats (CFDT, CGT, FO, Unsa, FSU) sur les salaires, les services publics et l'emploi."
       }
-    ]
+    ],
+    "note": "Les dates à venir sont celles annoncées au 22 octobre. La chronologie sera mise à jour après chaque journée."
+  },
+  "sociologie": {
+    "titre": "Qui était dans la rue ?",
+    "enPreparation": true,
+    "texte": "Manifestants, casseurs, pilleurs : ce ne sont pas les mêmes personnes. Cette partie, en cours de préparation, s'appuiera sur les chiffres officiels (interpellations, jugements) et sur les enquêtes disponibles, en précisant à chaque fois leurs limites."
+  },
+  "triangle": {
+    "titre": "Où se situent les candidats ?",
+    "texte": "Nous avons relevé toutes les mesures de sécurité annoncées par chaque candidat depuis le début du mouvement : interviews, conférences de presse, communiqués, messages publiés. Chaque candidat est placé selon la part de ses mesures dans chacun des trois leviers. Plus il est proche d'un coin, plus ses propositions portent sur ce levier.",
+    "texteCouleur": "La couleur indique l'orientation de ses mesures sur les méthodes et les équipements : davantage de capacités d'intervention pour les forces de l'ordre, ou davantage d'encadrement de l'usage de la force.",
+    "legende": [
+      {
+        "id": "capacites",
+        "label": "Davantage de capacités d'intervention"
+      },
+      {
+        "id": "encadrement",
+        "label": "Davantage d'encadrement de la force"
+      },
+      {
+        "id": "mixte",
+        "label": "Orientation mixte"
+      },
+      {
+        "id": "aucune",
+        "label": "Aucune mesure sur les méthodes"
+      }
+    ],
+    "regle": "Une mesure distincte compte pour un. Les critiques sans proposition, les principes généraux et les demandes adressées au gouvernement actuel ne sont pas comptés. La position est calculée automatiquement à partir du relevé ; elle montre où chaque candidat met l'accent et ne juge pas la qualité de ses mesures.",
+    "note": "Un candidat qui n'a formulé qu'une ou deux mesures se retrouve souvent dans un coin : sa position est alors moins significative. Le nombre de mesures relevées est indiqué pour chaque candidat.",
+    "messageVide": "Le graphique s'affichera dès que les premières positions seront saisies.",
+    "lienReleve": {
+      "label": "Voir le relevé complet des prises de parole",
+      "ancre": "#releve"
+    },
+    "sourceInventaire": "inventaire-prises-de-parole.json"
   },
   "perimetre": {
     "titre": "Ce que couvre ce dossier",
@@ -208,8 +261,23 @@
       "url": "https://www.maire-info.com/lois/ce-que-va-changer-le-projet-de-loi-ripost-da%C2%A9finitivement-adopta%C2%A9-pour-les-maires-article-31019"
     },
     {
+      "label": "Sud Radio, « Les gilets jaunes appellent à une nouvelle journée de mobilisation dès ce samedi 24 octobre », 19 octobre 2026",
+      "url": "https://www.sudradio.fr/sud-radio/les-gilets-jaunes-appellent-a-une-nouvelle-journee-de-mobilisation-des-ce-samedi-24-octobre"
+    },
+    {
       "label": "Sénat, rapport d'information n° 78 (2026-2027), « L'avenir du maintien de l'ordre : 30 propositions pour reprendre le contrôle », 19 octobre 2026",
       "url": "https://www.senat.fr/notice-rapport/2026/r26-078-notice.html"
+    },
+    {
+      "label": "Perlimpinpin, relevé des prises de parole des candidats sur la sécurité (voir ci-dessus)",
+      "ancre": "#releve"
     }
-  ]
+  ],
+  "releve": {
+    "titre": "Le relevé complet des prises de parole",
+    "texte": "Toutes les mesures relevées, candidat par candidat, avec leur date, leur support et un lien vers la source. Les mesures non comptées dans le graphique sont affichées avec la raison de leur exclusion.",
+    "libelleNonRetenue": "Non comptée",
+    "libelleMaj": "Relevé mis à jour le",
+    "sourceInventaire": "inventaire-prises-de-parole.json"
+  }
 }
