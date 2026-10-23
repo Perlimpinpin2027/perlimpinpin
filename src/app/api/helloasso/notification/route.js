@@ -1,5 +1,7 @@
+import { after } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { HelloassoError, getOrder } from "@/lib/helloasso";
+import { bienvenuesAEnvoyer, envoyerBienvenues } from "@/lib/mail-bienvenue";
 import {
   enregistrerAdhesion,
   lireConfigHelloasso,
@@ -9,6 +11,9 @@ import {
   notificationHorsAdhesion,
   secretsEgaux,
 } from "@/lib/helloasso-core";
+
+// Laisse le temps au mail de bienvenue (envoyé dans after()) de partir.
+export const maxDuration = 60;
 
 // URL de notification HelloAsso (Mon compte > Intégrations et API) :
 //   https://perlimpinpin.ai/api/helloasso/notification?token=<HELLOASSO_WEBHOOK_TOKEN>
@@ -55,6 +60,9 @@ export async function POST(request) {
     const r = await enregistrerAdhesion({ prisma, order, config });
     if (r.resultat === "creee") {
       console.log(`[helloasso] adhérent ${r.adherentId} créé (${masquerEmail(r.email)}, commande ${r.orderId})`);
+      // Mail de bienvenue après la réponse : HelloAsso n'attend pas l'envoi, et
+      // un échec SMTP ne remet jamais en cause la création du compte.
+      after(() => envoyerBienvenues(bienvenuesAEnvoyer([r])));
     } else if (r.resultat === "ignoree") {
       console.log(`[helloasso] commande ${notif.orderId} ignorée : ${r.raison}`);
     }
