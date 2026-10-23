@@ -75,6 +75,33 @@ export default function OngletsPropositions({ onglets, propositions, messageOngl
             {messageOngletVide}
           </p>
         ) : null}
+        {/* Repères de l'onglet (`reperes` du JSON), sur fond bleu très pâle,
+            chaque point suivi de sa source. */}
+        {onglet.reperes?.items?.length ? (
+          <div className="flex flex-col gap-3 rounded-2xl bg-blue-50/70 px-5 py-4 sm:px-6 sm:py-5">
+            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-blue-950">{onglet.reperes.titre}</p>
+            <ul className="flex list-disc flex-col gap-2 pl-5 text-[15px] leading-relaxed text-zinc-700">
+              {onglet.reperes.items.map((repere) => (
+                <li key={repere.texte}>
+                  {repere.texte}
+                  {repere.source?.url ? (
+                    <>
+                      {" "}
+                      <a
+                        href={repere.source.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="whitespace-nowrap text-xs text-zinc-400 underline decoration-zinc-300 underline-offset-2 hover:text-zinc-700"
+                      >
+                        {repere.source.label} <span aria-hidden="true">↗</span>
+                      </a>
+                    </>
+                  ) : null}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
       </div>
     </div>
   );
