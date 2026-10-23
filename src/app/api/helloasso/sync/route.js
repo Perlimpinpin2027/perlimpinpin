@@ -1,6 +1,11 @@
+import { after } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { listMembershipOrders } from "@/lib/helloasso";
+import { bienvenuesAEnvoyer, envoyerBienvenues } from "@/lib/mail-bienvenue";
 import { enregistrerAdhesion, lireConfigHelloasso, masquerEmail, resumer, secretsEgaux } from "@/lib/helloasso-core";
+
+// Laisse le temps au mail de bienvenue (envoyé dans after()) de partir.
+export const maxDuration = 60;
 
 // Filet de sécurité quotidien (Cron Job Vercel, voir vercel.json) : relit les
 // adhésions des 7 derniers jours et crée les comptes manquants, avec exactement
@@ -35,6 +40,10 @@ export async function GET(request) {
     }
     const resume = resumer(resultats);
     console.log("[helloasso] synchro terminée :", JSON.stringify(resume));
+    // Comptes rattrapés par la synchro (notification manquée) : ils reçoivent
+    // eux aussi le mail de bienvenue, après la réponse.
+    const bienvenues = bienvenuesAEnvoyer(resultats);
+    if (bienvenues.length > 0) after(() => envoyerBienvenues(bienvenues));
     return Response.json(resume);
   } catch (error) {
     console.error("[helloasso] synchronisation impossible :", error?.code ?? error?.message);
