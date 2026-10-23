@@ -162,6 +162,15 @@ h3{margin:0}
 .admin input{font:inherit;background:var(--surface);color:var(--ink);border:1px solid var(--rule);border-radius:999px;padding:5px 10px;width:12em}
 .admin button{font:inherit;background:none;color:var(--ink);border:1px solid var(--rule);border-radius:999px;padding:5px 12px;cursor:pointer}
 .admin button:hover{border-color:var(--ink)}
+.admin button:disabled{opacity:.5;cursor:default;border-color:var(--rule)}
+.annonce{width:min(680px,calc(100vw - 32px));max-height:calc(100vh - 32px);padding:0;border:1px solid var(--rule);border-radius:18px;background:var(--surface);color:var(--ink);font-family:var(--sans)}
+.annonce::backdrop{background:rgba(0,0,0,.45)}
+.annonce-in{display:flex;flex-direction:column;gap:12px;padding:20px}
+.annonce h2{margin:0;font-size:18px;font-weight:600}
+.annonce-meta{margin:0;font-size:13.5px;color:var(--muted)}
+.annonce-meta strong{color:var(--ink);font-weight:600}
+.annonce iframe{box-sizing:border-box;display:block;width:100%;height:min(60vh,560px);border:1px solid var(--rule);border-radius:12px;background:#fff}
+.annonce-pied{display:flex;justify-content:flex-end}
 @media (max-width:560px){
   .fcard{grid-template-columns:minmax(0,1fr)}
   .fscore{justify-items:start;text-align:left;grid-auto-flow:row}
@@ -993,10 +1002,12 @@ mark.anno-hl.pending{background:var(--hl-strong)}
     var msg = message ? '<span class="chrono-err">' + esc(message) + "</span>" : "";
     adminEl.innerHTML = getAdminCode()
       ? "<span>// Mode comité : chronos modifiables</span>" +
-        '<button type="button" data-admin="forget">Oublier le code</button>' + msg
+        '<button type="button" data-admin="forget">Oublier le code</button>' +
+        '<span data-annonce-wrap><button type="button" data-admin="annonce">✉️ Prévenir les adhérents</button></span>' + msg
       : '<form class="admin-form"><label for="admin-code">// Code comité</label>' +
         '<input id="admin-code" type="password" name="code" autocomplete="off" required>' +
         '<button type="submit">Enregistrer</button></form>' + msg;
+    majAnnonce();
   }
 
   function durationFields(value) {
@@ -1068,6 +1079,79 @@ mark.anno-hl.pending{background:var(--hl-strong)}
       })
       .catch(function (e) {
         setRevision(slug, { erreur: e.message || "Échec, réessaie." });
+      });
+  }
+
+  // ---------- annonce aux adhérents (mode comité) ----------
+  // « Prévenir les adhérents » : aperçu du mail d'annonce des fiches dont le
+  // chrono est en cours (/api/relectures/annonce/apercu). Aucun envoi pour l'instant.
+  var ANNONCE_API = "/api/relectures/annonce/apercu";
+  var AUCUNE_ANNONCE = "Aucune fiche avec chrono en cours";
+  var annonceDialog = null;
+
+  function annonceDisponible() {
+    return ficheSlugs().some(function (slug) { return !isArchived(slug) && stateOf(slug) === "running"; });
+  }
+
+  // Active ou désactive le bouton selon les chronos (appelé à chaque seconde).
+  // L'info-bulle est aussi sur l'enveloppe : un bouton désactivé n'en affiche pas partout.
+  function majAnnonce() {
+    var btn = adminEl && adminEl.querySelector('[data-admin="annonce"]');
+    if (!btn || btn.getAttribute("data-chargement")) return;
+    var ok = annonceDisponible();
+    if (btn.disabled === !ok) return;
+    btn.disabled = !ok;
+    var titre = ok ? "" : AUCUNE_ANNONCE;
+    btn.title = titre;
+    btn.parentNode.title = titre;
+  }
+
+  function ouvrirAnnonce(contenu) {
+    if (!annonceDialog) {
+      annonceDialog = document.createElement("dialog");
+      annonceDialog.className = "annonce";
+      annonceDialog.setAttribute("aria-labelledby", "annonce-titre");
+      document.body.appendChild(annonceDialog);
+    }
+    annonceDialog.innerHTML = '<div class="annonce-in">' + contenu +
+      '<div class="annonce-pied"><button class="chrono-ghost" type="button" data-annonce-action="fermer">Fermer</button></div></div>';
+    if (!annonceDialog.open) annonceDialog.showModal();
+  }
+
+  function afficherApercu(res) {
+    var n = res.nbDestinataires;
+    ouvrirAnnonce('<h2 id="annonce-titre">Aperçu du mail</h2>' +
+      '<p class="annonce-meta">Sujet : <strong>' + esc(res.sujet) + "</strong></p>" +
+      '<p class="annonce-meta"><strong>' + n + " destinataire" + (n > 1 ? "s" : "") + "</strong> · prénom d'exemple, chaque adhérent verra le sien</p>" +
+      '<iframe title="Mail tel qu\'il sera reçu" sandbox="allow-popups allow-popups-to-escape-sandbox"></iframe>');
+    // srcdoc après coup : le HTML du mail n'est jamais interprété dans la page.
+    annonceDialog.querySelector("iframe").srcdoc = res.html;
+  }
+
+  function demanderApercu(btn) {
+    btn.disabled = true;
+    btn.setAttribute("data-chargement", "1");
+    var fin = function () { btn.removeAttribute("data-chargement"); btn.disabled = false; majAnnonce(); };
+    fetch(ANNONCE_API, {
+      method: "POST",
+      headers: { "x-relecture-admin-code": getAdminCode() },
+    })
+      .then(function (r) {
+        return r.json().catch(function () { return {}; }).then(function (res) {
+          if (r.status === 401) {
+            setAdminCode("");
+            renderAdmin("Code comité refusé.");
+            renderAllChronos();
+            return;
+          }
+          fin();
+          if (!r.ok) throw new Error(res.error || "Échec, réessaie.");
+          afficherApercu(res);
+        });
+      })
+      .catch(function (e) {
+        fin();
+        ouvrirAnnonce('<h2 id="annonce-titre">Aperçu du mail</h2><p class="chrono-err">' + esc(e.message || "Échec, réessaie.") + "</p>");
       });
   }
 
@@ -1165,6 +1249,7 @@ mark.anno-hl.pending{background:var(--hl-strong)}
 
   function renderAllChronos() {
     ficheSlugs().forEach(renderChrono);
+    majAnnonce();
   }
 
   // Chaque seconde : compte à rebours, et bascule en « Relecture terminée » à l'échéance.
@@ -1174,6 +1259,7 @@ mark.anno-hl.pending{background:var(--hl-strong)}
       if (renderedKey[slug] !== stateOf(slug) + (admin ? "+admin" : "")) renderChrono(slug);
       else tickChrono(slug);
     });
+    majAnnonce();
   }
 
   function applyServerNow(iso) {
@@ -1258,6 +1344,15 @@ mark.anno-hl.pending{background:var(--hl-strong)}
       setAdminCode("");
       renderAdmin();
       renderAllChronos();
+      return;
+    }
+    var annonce = ev.target.closest && ev.target.closest('[data-admin="annonce"]');
+    if (annonce) {
+      if (!annonce.disabled) demanderApercu(annonce);
+      return;
+    }
+    if (ev.target.closest && ev.target.closest('[data-annonce-action="fermer"]')) {
+      annonceDialog.close();
       return;
     }
     var rev = ev.target.closest && ev.target.closest("[data-revision-action]");
