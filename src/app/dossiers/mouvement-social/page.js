@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import Header from "@/components/Header";
 import SectionHeading from "@/components/SectionHeading";
 import { getScoreBands } from "@/lib/score";
@@ -7,8 +8,11 @@ import DOSSIER_MS from "../../../../data/hors-series/mouvement-social.json" with
 import INVENTAIRE from "../../../../data/hors-series/inventaire-prises-de-parole.json" with { type: "json" };
 import OngletsPropositions from "./OngletsPropositions";
 import TriangleLeviers from "./TriangleLeviers";
+import { SectionComprendre } from "./BlocsComprendre";
+import Graphique from "./Graphiques";
 import { COULEURS_ORIENTATION } from "./couleurs-orientation";
 import { couleurStatut } from "./statuts";
+import { Etiquette, LienSource, ListeSources, OMBRE_CARTE, Pastille, Prose, TuileChiffre } from "./elements";
 
 // Dossier n°2 « Mouvement social » (/dossiers/mouvement-social) : les
 // propositions des candidats après les violences du 17 octobre 2026, classées
@@ -29,65 +33,35 @@ export const metadata = {
   ...(DOSSIER_MS.visible ? {} : { robots: { index: false, follow: false } }),
 };
 
+// La chronologie marque « à venir » les dates postérieures au jour : la page
+// est régénérée toutes les heures pour que la date du jour reste à jour.
+export const revalidate = 3600;
+
+// Ordre des sections si le JSON n'en donne pas.
+const ORDRE_PAR_DEFAUT = [
+  "entete",
+  "essentiel",
+  "chiffres",
+  "chronologie",
+  "comprendre",
+  "perimetre",
+  "triangle",
+  "propositions",
+  "textesEnCours",
+  "toutesLesAnalyses",
+  "releve",
+  "methode",
+  "sources",
+];
+
+// Date du jour à Paris, au format du JSON (« 2026-10-23 »).
+function dateDuJour() {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Paris" }).format(new Date());
+}
+
 const SECTION = "w-full px-6 pb-14 sm:px-8 sm:pb-16";
 const CONTENEUR = "mx-auto w-full max-w-[1280px]";
 const TITRE_SECTION = "font-sans text-3xl font-extrabold tracking-tight text-zinc-950 sm:text-[2.125rem]";
-const OMBRE_CARTE = "shadow-[0_24px_60px_-30px_rgba(30,41,82,0.35)]";
-
-// Étiquette « // … », comme sur la page du dossier RN. Certains titres du JSON
-// commencent déjà par « // » : le préfixe n'est alors pas doublé.
-function Etiquette({ children, couleur = "text-zinc-400", className = "" }) {
-  const texte = String(children ?? "").replace(/^\/\/\s*/, "");
-  if (!texte) return null;
-  return (
-    <span className={`text-xs font-semibold uppercase tracking-[0.12em] ${couleur} ${className}`}>
-      {`// ${texte}`}
-    </span>
-  );
-}
-
-// Lien vers une source externe (`{ label, url }` du JSON), ouvert dans un
-// nouvel onglet. Rien n'est affiché si la source est absente.
-function LienSource({ source, prefixe = "Source : ", className = "" }) {
-  if (!source?.url) return null;
-  return (
-    <a
-      href={source.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={`text-xs text-zinc-400 underline decoration-zinc-300 underline-offset-2 transition-colors hover:text-zinc-700 ${className}`}
-    >
-      {prefixe}
-      {source.label} <span aria-hidden="true">↗</span>
-    </a>
-  );
-}
-
-// Texte courant « article », en colonne de lecture. `chapo` : le premier
-// paragraphe est mis en avant avec une fine barre jaune.
-function Prose({ paragraphes, chapo = false, className = "" }) {
-  if (!paragraphes?.length) return null;
-  return (
-    <div className={`flex max-w-3xl flex-col gap-5 text-lg leading-relaxed text-zinc-700 ${className}`}>
-      {paragraphes.map((paragraphe, i) => (
-        <p
-          key={paragraphe}
-          className={chapo && i === 0 ? `border-l-4 ${DOSSIER.bordure} pl-4 font-medium text-zinc-900` : undefined}
-        >
-          {paragraphe}
-        </p>
-      ))}
-    </div>
-  );
-}
-
-function Pastille({ className, children }) {
-  return (
-    <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${className}`}>
-      {children}
-    </span>
-  );
-}
 
 // Date du relevé (« 2026-10-22 ») en toutes lettres : « 22 octobre 2026 ».
 function dateEnLettres(iso) {
@@ -146,8 +120,9 @@ export default function DossierMouvementSocialPage() {
     photo,
     essentiel,
     chiffres,
+    ordreSections,
     chronologie,
-    sociologie,
+    comprendre,
     triangle,
     perimetre,
     statuts,
@@ -167,15 +142,17 @@ export default function DossierMouvementSocialPage() {
   const triangleVide = !candidatsTriangle.some((c) => c.parts);
   const releveParCandidat = mesuresParCandidat(INVENTAIRE);
 
+  const aujourdhui = dateDuJour();
+
   // Barème du plus bas au plus haut (0-19 Irréaliste … 85-100 Exemplaire).
   const bandes = getScoreBands().slice().reverse();
 
-  return (
-    <div className="flex min-h-screen flex-col bg-page-gradient font-sans">
-      <Header />
-
-      <main className="flex w-full flex-col">
-        {/* 1. En-tête : texte à gauche, illustration à droite (sous le texte
+  // Chaque section de la page, affichées dans l'ordre de `ordreSections`
+  // du JSON.
+  const sections = {
+    entete: (
+      <>
+        {/* En-tête : texte à gauche, illustration à droite (sous le texte
             sur téléphone). Tant que `photo` est absente du JSON, un cadre
             vide réserve sa place. */}
         <section className="w-full px-6 pb-14 pt-12 sm:px-8 sm:pb-16 sm:pt-20">
@@ -235,8 +212,11 @@ export default function DossierMouvementSocialPage() {
             </figure>
           </div>
         </section>
-
-        {/* 2. L'essentiel */}
+      </>
+    ),
+    essentiel: (
+      <>
+        {/* L'essentiel */}
         {essentiel ? (
           <section className={SECTION}>
             <div className={`${CONTENEUR} flex flex-col gap-5`}>
@@ -247,71 +227,108 @@ export default function DossierMouvementSocialPage() {
             </div>
           </section>
         ) : null}
-
-        {/* 3. Ce qui s'est passé : chiffres avec leur source */}
+      </>
+    ),
+    chiffres: (
+      <>
+        {/* Ce qui s'est passé : chiffres avec leur source */}
         {chiffres?.items?.length ? (
           <section className={SECTION}>
             <div className={`${CONTENEUR} flex flex-col gap-5`}>
               <Etiquette>{chiffres.titre}</Etiquette>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 {chiffres.items.map((item) => (
-                  <div
-                    key={item.valeur}
-                    className="flex flex-col gap-2 rounded-2xl border border-zinc-200 bg-white p-6"
-                  >
-                    <p className="whitespace-nowrap text-4xl font-extrabold leading-none tracking-tight text-blue-950 xl:text-[2.75rem]">
-                      {item.valeur}
-                    </p>
-                    <p className="text-[15px] leading-normal text-slate-500">{item.legende}</p>
-                    <LienSource source={item.source} className="mt-auto pt-1" />
-                  </div>
+                  <TuileChiffre key={item.valeur} item={item} />
                 ))}
               </div>
               {chiffres.note ? <p className="text-[13px] text-zinc-400">{chiffres.note}</p> : null}
             </div>
           </section>
         ) : null}
-
-        {/* 4. Chronologie : liste datée verticale, une pastille jaune par date */}
+      </>
+    ),
+    chronologie: (
+      <>
+        {/* Chronologie : frise à gauche, graphique des manifestants à droite
+            (fixe au défilement sur ordinateur), puis note et sources. Les dates
+            postérieures à aujourd'hui (`dateIso`) sont marquées « à venir ». */}
         {chronologie?.items?.length ? (
           <section className={SECTION}>
             <div className={`${CONTENEUR} flex flex-col gap-6`}>
               <Etiquette>{chronologie.titre}</Etiquette>
-              <ol className={`flex max-w-3xl flex-col gap-6 border-l-2 ${DOSSIER.bordure} pl-6`}>
-                {chronologie.items.map((item) => (
-                  <li key={`${item.date}-${item.texte}`} className="relative flex flex-col gap-1">
-                    <span
-                      aria-hidden="true"
-                      className={`absolute -left-[33px] top-1 h-4 w-4 rounded-full border-[3px] border-white ${DOSSIER.fond}`}
-                    />
-                    <span className="text-sm font-bold uppercase tracking-wide text-zinc-950">{item.date}</span>
-                    <p className="text-base leading-relaxed text-zinc-700">{item.texte}</p>
-                  </li>
-                ))}
-              </ol>
-              {chronologie.note ? <p className="text-[13px] text-zinc-400">{chronologie.note}</p> : null}
+              <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-2 lg:gap-14">
+                <ol className={`flex flex-col gap-6 border-l-2 ${DOSSIER.bordure} pl-6`}>
+                  {chronologie.items.map((item) => {
+                    const aVenir = item.dateIso != null && item.dateIso > aujourdhui;
+                    return (
+                      <li key={`${item.date}-${item.texte}`} className="relative flex flex-col gap-1">
+                        <span
+                          aria-hidden="true"
+                          className={`absolute -left-[33px] top-1 h-4 w-4 rounded-full ${
+                            aVenir ? "border-2 border-dashed border-zinc-400 bg-white" : `border-[3px] border-white ${DOSSIER.fond}`
+                          }`}
+                        />
+                        <span className={`text-sm font-bold uppercase tracking-wide ${aVenir ? "text-zinc-400" : "text-zinc-950"}`}>
+                          {item.date}
+                          {aVenir ? " · à venir" : ""}
+                        </span>
+                        <p className={`text-base leading-relaxed ${aVenir ? "text-zinc-500" : "text-zinc-700"}`}>{item.texte}</p>
+                      </li>
+                    );
+                  })}
+                </ol>
+                <div className="flex flex-col gap-3 lg:sticky lg:top-28">
+                  {chronologie.graphique ? <Graphique graphique={chronologie.graphique} /> : null}
+                  {chronologie.note ? <p className="text-[13px] leading-relaxed text-zinc-500">{chronologie.note}</p> : null}
+                  <ListeSources sources={chronologie.sources} />
+                </div>
+              </div>
             </div>
           </section>
         ) : null}
-
-        {/* Qui était dans la rue ? : partie en préparation, texte d'attente. */}
-        {sociologie ? (
+      </>
+    ),
+    comprendre: (
+      <>
+        {/* Comprendre la crise : filet noir, surtitre, grand titre, intro, puis
+            les sections numérotées, affichées par le moteur de blocs. */}
+        {comprendre ? (
+          <section id={comprendre.id ?? "comprendre"} className={`${SECTION} scroll-mt-20`}>
+            <div className={`${CONTENEUR} flex flex-col gap-14`}>
+              <div className="flex flex-col gap-4 border-t-2 border-zinc-950 pt-7">
+                <Etiquette couleur="text-zinc-500">{comprendre.surtitre}</Etiquette>
+                <h2 className="max-w-4xl font-serif text-4xl font-bold leading-[1.08] tracking-tight text-zinc-950 sm:text-5xl">
+                  {comprendre.titre}
+                </h2>
+                {comprendre.intro ? (
+                  <p className="max-w-3xl text-lg leading-relaxed text-slate-500 sm:text-xl">{comprendre.intro}</p>
+                ) : null}
+              </div>
+              {comprendre.sections?.map((section, i) => (
+                <SectionComprendre key={section.id} section={section} numero={i + 1} />
+              ))}
+            </div>
+          </section>
+        ) : null}
+      </>
+    ),
+    perimetre: (
+      <>
+        {/* Ce que couvre ce dossier : encadré */}
+        {perimetre ? (
           <section className={SECTION}>
-            <div className={`${CONTENEUR} flex flex-col gap-5`}>
-              <h2 className={TITRE_SECTION}>{sociologie.titre}</h2>
-              <p
-                className={`max-w-3xl text-lg leading-relaxed ${
-                  sociologie.enPreparation
-                    ? "rounded-2xl border border-dashed border-zinc-300 bg-white/60 px-6 py-5 text-[15px] text-zinc-500"
-                    : "text-zinc-700"
-                }`}
-              >
-                {sociologie.texte}
-              </p>
+            <div className={CONTENEUR}>
+              <div className={`flex max-w-4xl flex-col gap-2.5 rounded-2xl px-6 py-5 sm:px-7 sm:py-6 ${DOSSIER.fondClair}`}>
+                <h2 className="text-xl font-bold tracking-tight text-zinc-950">{perimetre.titre}</h2>
+                <p className="text-base leading-relaxed text-zinc-700">{perimetre.texte}</p>
+              </div>
             </div>
           </section>
         ) : null}
-
+      </>
+    ),
+    triangle: (
+      <>
         {/* Où se situent les candidats ? : triangle des leviers, calculé à
             partir du relevé des prises de parole. */}
         {triangle ? (
@@ -354,20 +371,11 @@ export default function DossierMouvementSocialPage() {
             </div>
           </section>
         ) : null}
-
-        {/* 5. Ce que couvre ce dossier : encadré */}
-        {perimetre ? (
-          <section className={SECTION}>
-            <div className={CONTENEUR}>
-              <div className={`flex max-w-4xl flex-col gap-2.5 rounded-2xl px-6 py-5 sm:px-7 sm:py-6 ${DOSSIER.fondClair}`}>
-                <h2 className="text-xl font-bold tracking-tight text-zinc-950">{perimetre.titre}</h2>
-                <p className="text-base leading-relaxed text-zinc-700">{perimetre.texte}</p>
-              </div>
-            </div>
-          </section>
-        ) : null}
-
-        {/* 6. Nouvelle annonce ou idée déjà défendue ? : les étiquettes de
+      </>
+    ),
+    statuts: (
+      <>
+        {/* Nouvelle annonce ou idée déjà défendue ? : les étiquettes de
             statut, une couleur chacune (badges des propositions). */}
         {statuts ? (
           <section className={SECTION}>
@@ -386,8 +394,11 @@ export default function DossierMouvementSocialPage() {
             </div>
           </section>
         ) : null}
-
-        {/* 7. Les propositions, un onglet par levier. Le JSON ne prévoit pas
+      </>
+    ),
+    propositions: (
+      <>
+        {/* Les propositions, un onglet par levier. Le JSON ne prévoit pas
             de titre pour cette section. */}
         <section id="propositions" className={`${SECTION} scroll-mt-20`}>
           <div className={CONTENEUR}>
@@ -398,8 +409,11 @@ export default function DossierMouvementSocialPage() {
             />
           </div>
         </section>
-
-        {/* 8. À noter : des textes déjà en discussion */}
+      </>
+    ),
+    textesEnCours: (
+      <>
+        {/* À noter : des textes déjà en discussion */}
         {textesEnCours?.items?.length ? (
           <section className={SECTION}>
             <div className={CONTENEUR}>
@@ -417,8 +431,11 @@ export default function DossierMouvementSocialPage() {
             </div>
           </section>
         ) : null}
-
-        {/* 9. Toutes les analyses du dossier : la liste des fiches publiées
+      </>
+    ),
+    toutesLesAnalyses: (
+      <>
+        {/* Toutes les analyses du dossier : la liste des fiches publiées
             viendra avec les propositions ; en attendant, `messageVide`. */}
         {toutesLesAnalyses ? (
           <section id="analyses" className={`${SECTION} scroll-mt-20`}>
@@ -431,7 +448,10 @@ export default function DossierMouvementSocialPage() {
             </div>
           </section>
         ) : null}
-
+      </>
+    ),
+    releve: (
+      <>
         {/* Le relevé complet : un bloc repliable par candidat (ordre de
             `nomTri`), mesures triées par date, règles de comptage. */}
         {releve ? (
@@ -480,12 +500,14 @@ export default function DossierMouvementSocialPage() {
             </div>
           </section>
         ) : null}
-
-        {/* 10. Méthode et limites, avec l'échelle des verdicts du site, puis
-            11. Sources */}
-        <section id="methode" className={`${SECTION} scroll-mt-20`}>
-          <div className={`${CONTENEUR} flex flex-col gap-4`}>
-            {methode ? (
+      </>
+    ),
+    methode: (
+      <>
+        {/* Méthode et limites, avec l'échelle des verdicts du site. */}
+        {methode ? (
+          <section id="methode" className={`${SECTION} scroll-mt-20`}>
+            <div className={CONTENEUR}>
               <div className="flex max-w-4xl flex-col gap-2.5 rounded-2xl border border-zinc-200 bg-white p-6 text-[15px] leading-relaxed text-slate-500 sm:p-7">
                 <SectionHeading>{methode.titre}</SectionHeading>
                 {methode.paragraphes?.map((paragraphe) => (
@@ -499,39 +521,57 @@ export default function DossierMouvementSocialPage() {
                   ))}
                 </div>
               </div>
-            ) : null}
-
-            {sources.length ? (
-              <div className="mt-2 flex flex-col gap-2">
-                <Etiquette>Sources</Etiquette>
-                <ul className="flex flex-col gap-1.5 text-[13px] leading-snug">
-                  {/* Une source avec `ancre` (le relevé) est un lien interne. */}
-                  {sources.map((source) => (
-                    <li key={source.url ?? source.ancre}>
-                      {source.url ? (
-                        <a
-                          href={source.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-zinc-600 underline decoration-zinc-300 underline-offset-2 transition-colors hover:text-zinc-950"
-                        >
-                          {source.label} <span aria-hidden="true">↗</span>
-                        </a>
-                      ) : (
-                        <a
-                          href={source.ancre}
-                          className="text-zinc-600 underline decoration-zinc-300 underline-offset-2 transition-colors hover:text-zinc-950"
-                        >
-                          {source.label} <span aria-hidden="true">↑</span>
-                        </a>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ) : null}
-          </div>
+            </div>
+          </section>
+        ) : null}
+      </>
+    ),
+    sources: (
+      <>
+        {/* Sources ; une source avec `ancre` (le relevé) est un lien interne. */}
+        {sources.length ? (
+                  <section className={SECTION}>
+          <div className={`${CONTENEUR} flex flex-col gap-2`}>
+                    <Etiquette>Sources</Etiquette>
+                    <ul className="flex flex-col gap-1.5 text-[13px] leading-snug">
+                      {/* Une source avec `ancre` (le relevé) est un lien interne. */}
+                      {sources.map((source) => (
+                        <li key={source.url ?? source.ancre}>
+                          {source.url ? (
+                            <a
+                              href={source.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-zinc-600 underline decoration-zinc-300 underline-offset-2 transition-colors hover:text-zinc-950"
+                            >
+                              {source.label} <span aria-hidden="true">↗</span>
+                            </a>
+                          ) : (
+                            <a
+                              href={source.ancre}
+                              className="text-zinc-600 underline decoration-zinc-300 underline-offset-2 transition-colors hover:text-zinc-950"
+                            >
+                              {source.label} <span aria-hidden="true">↑</span>
+                            </a>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                    </div>
         </section>
+        ) : null}
+      </>
+    ),
+  };
+
+  return (
+    <div className="flex min-h-screen flex-col bg-page-gradient font-sans">
+      <Header />
+
+      <main className="flex w-full flex-col">
+        {(ordreSections ?? ORDRE_PAR_DEFAUT).map((nom) => (
+          <Fragment key={nom}>{sections[nom] ?? null}</Fragment>
+        ))}
       </main>
     </div>
   );
