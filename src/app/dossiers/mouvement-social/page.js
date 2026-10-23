@@ -2,8 +2,12 @@ import Header from "@/components/Header";
 import SectionHeading from "@/components/SectionHeading";
 import { getScoreBands } from "@/lib/score";
 import { DOSSIER } from "@/lib/couleurs-dossier";
+import { compterParCandidat, mesuresParCandidat, partsLeviers } from "@/lib/releve-securite";
 import DOSSIER_MS from "../../../../data/hors-series/mouvement-social.json" with { type: "json" };
+import INVENTAIRE from "../../../../data/hors-series/inventaire-prises-de-parole.json" with { type: "json" };
 import OngletsPropositions from "./OngletsPropositions";
+import TriangleLeviers from "./TriangleLeviers";
+import { COULEURS_ORIENTATION } from "./couleurs-orientation";
 import { couleurStatut } from "./statuts";
 
 // Dossier n°2 « Mouvement social » (/dossiers/mouvement-social) : les
@@ -12,6 +16,9 @@ import { couleurStatut } from "./statuts";
 // d'où cette route dédiée (prioritaire sur /dossiers/[slug]), avec les mêmes
 // styles. Tout le texte vient de data/hors-series/mouvement-social.json ;
 // aucune note n'y est écrite.
+// Le triangle des leviers et la section « Le relevé complet » sont calculés à
+// partir du relevé des prises de parole (inventaire-prises-de-parole.json,
+// remplacé à chaque actualisation), voir src/lib/releve-securite.js.
 // Tant que `visible` vaut false, le dossier n'est pas inscrit dans le registre
 // (src/lib/hors-series.js) : absent de /dossiers, du carrousel de l'accueil et
 // du sitemap, non indexé, mais accessible par son adresse.
@@ -82,6 +89,53 @@ function Pastille({ className, children }) {
   );
 }
 
+// Date du relevé (« 2026-10-22 ») en toutes lettres : « 22 octobre 2026 ».
+function dateEnLettres(iso) {
+  if (!iso) return "";
+  return new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(
+    new Date(`${iso}T00:00:00Z`),
+  );
+}
+
+// « Relevé mis à jour le 22 octobre 2026 » (libellé du JSON de contenu, date
+// du relevé).
+function MiseAJour({ libelle, date, className = "" }) {
+  if (!libelle || !date) return null;
+  return (
+    <p className={`text-[13px] text-zinc-400 ${className}`}>
+      {libelle} {dateEnLettres(date)}
+    </p>
+  );
+}
+
+// Une mesure du relevé : date, support, mesure, levier, source. Les mesures
+// non retenues sont grisées, avec le motif de leur exclusion.
+function MesureReleve({ mesure, libelleNonRetenue }) {
+  const retenue = mesure.retenue;
+  return (
+    <li className={`flex flex-col gap-1.5 border-t border-zinc-100 py-3.5 first:border-t-0 ${retenue ? "" : "text-zinc-400"}`}>
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
+        <span className={`font-semibold ${retenue ? "text-zinc-900" : ""}`}>{mesure.dateAffichee}</span>
+        {mesure.support ? <span className={retenue ? "text-zinc-500" : ""}>· {mesure.support}</span> : null}
+        {mesure.levier ? (
+          <Pastille className={retenue ? "bg-zinc-100 text-zinc-600" : "bg-zinc-50 text-zinc-400"}>
+            Levier {mesure.levier}
+          </Pastille>
+        ) : null}
+        {!retenue ? (
+          <Pastille className="bg-zinc-100 text-zinc-500">{libelleNonRetenue}</Pastille>
+        ) : null}
+      </div>
+      <p className={`text-[15px] leading-snug ${retenue ? "text-zinc-800" : ""}`}>{mesure.mesure}</p>
+      {mesure.quiParle && mesure.quiParle !== mesure.candidat ? (
+        <p className="text-xs italic">par {mesure.quiParle}</p>
+      ) : null}
+      {!retenue && mesure.motifNonRetenue ? <p className="text-xs">{mesure.motifNonRetenue}</p> : null}
+      <LienSource source={mesure.url ? { label: "Source", url: mesure.url } : null} prefixe="" className="w-fit" />
+    </li>
+  );
+}
+
 export default function DossierMouvementSocialPage() {
   const {
     numero,
@@ -93,6 +147,8 @@ export default function DossierMouvementSocialPage() {
     essentiel,
     chiffres,
     chronologie,
+    sociologie,
+    triangle,
     perimetre,
     statuts,
     onglets = [],
@@ -102,7 +158,14 @@ export default function DossierMouvementSocialPage() {
     toutesLesAnalyses,
     methode,
     sources = [],
+    releve,
   } = DOSSIER_MS;
+
+  // Relevé des prises de parole : comptes par candidat (triangle) et mesures
+  // groupées par candidat (section « Le relevé complet »).
+  const candidatsTriangle = compterParCandidat(INVENTAIRE).map((c) => ({ ...c, parts: partsLeviers(c) }));
+  const triangleVide = !candidatsTriangle.some((c) => c.parts);
+  const releveParCandidat = mesuresParCandidat(INVENTAIRE);
 
   // Barème du plus bas au plus haut (0-19 Irréaliste … 85-100 Exemplaire).
   const bandes = getScoreBands().slice().reverse();
@@ -226,6 +289,68 @@ export default function DossierMouvementSocialPage() {
                   </li>
                 ))}
               </ol>
+              {chronologie.note ? <p className="text-[13px] text-zinc-400">{chronologie.note}</p> : null}
+            </div>
+          </section>
+        ) : null}
+
+        {/* Qui était dans la rue ? : partie en préparation, texte d'attente. */}
+        {sociologie ? (
+          <section className={SECTION}>
+            <div className={`${CONTENEUR} flex flex-col gap-5`}>
+              <h2 className={TITRE_SECTION}>{sociologie.titre}</h2>
+              <p
+                className={`max-w-3xl text-lg leading-relaxed ${
+                  sociologie.enPreparation
+                    ? "rounded-2xl border border-dashed border-zinc-300 bg-white/60 px-6 py-5 text-[15px] text-zinc-500"
+                    : "text-zinc-700"
+                }`}
+              >
+                {sociologie.texte}
+              </p>
+            </div>
+          </section>
+        ) : null}
+
+        {/* Où se situent les candidats ? : triangle des leviers, calculé à
+            partir du relevé des prises de parole. */}
+        {triangle ? (
+          <section className={SECTION}>
+            <div className={`${CONTENEUR} flex flex-col gap-5`}>
+              <h2 className={TITRE_SECTION}>{triangle.titre}</h2>
+              <Prose paragraphes={[triangle.texte, triangle.texteCouleur].filter(Boolean)} />
+              <div className="rounded-2xl border border-zinc-200 bg-white p-4 sm:p-8">
+                {triangleVide ? (
+                  <p className="rounded-xl border border-dashed border-zinc-300 bg-zinc-50 px-5 py-4 text-[15px] leading-relaxed text-zinc-500">
+                    {triangle.messageVide}
+                  </p>
+                ) : (
+                  <TriangleLeviers candidats={candidatsTriangle} onglets={onglets} legende={triangle.legende ?? []} />
+                )}
+                <div className="mt-6 flex flex-col gap-3 border-t border-zinc-100 pt-5">
+                  <ul className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-zinc-700">
+                    {triangle.legende?.map((item) => (
+                      <li key={item.id} className="flex items-center gap-2">
+                        <span aria-hidden="true" className={`h-3.5 w-3.5 flex-none rounded-full ${COULEURS_ORIENTATION[item.id] ?? ""}`} />
+                        {item.label}
+                      </li>
+                    ))}
+                  </ul>
+                  {triangle.regle ? <p className="max-w-4xl text-[14px] leading-relaxed text-slate-500">{triangle.regle}</p> : null}
+                  {triangle.note ? <p className="max-w-4xl text-[14px] leading-relaxed text-slate-500">{triangle.note}</p> : null}
+                  <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+                    <MiseAJour libelle={releve?.libelleMaj} date={INVENTAIRE.dateReleve} />
+                    {triangle.lienReleve ? (
+                      <a
+                        href={triangle.lienReleve.ancre}
+                        className={`text-sm font-semibold text-zinc-950 underline decoration-2 underline-offset-4 ${DOSSIER.soulignement}`}
+                      >
+                        {triangle.lienReleve.label} <span aria-hidden="true">↓</span>
+                      </a>
+                    ) : null}
+                  </div>
+                </div>
+              </div>
             </div>
           </section>
         ) : null}
@@ -307,6 +432,55 @@ export default function DossierMouvementSocialPage() {
           </section>
         ) : null}
 
+        {/* Le relevé complet : un bloc repliable par candidat (ordre de
+            `nomTri`), mesures triées par date, règles de comptage. */}
+        {releve ? (
+          <section id="releve" className={`${SECTION} scroll-mt-20`}>
+            <div className={`${CONTENEUR} flex flex-col gap-5`}>
+              <h2 className={TITRE_SECTION}>{releve.titre}</h2>
+              <p className="max-w-3xl text-lg leading-relaxed text-zinc-700">{releve.texte}</p>
+              <MiseAJour libelle={releve.libelleMaj} date={INVENTAIRE.dateReleve} />
+
+              {INVENTAIRE.regles?.length ? (
+                <div className={`flex max-w-4xl flex-col gap-3 rounded-2xl px-6 py-5 sm:px-7 sm:py-6 ${DOSSIER.fondClair}`}>
+                  <h3 className="text-lg font-bold tracking-tight text-zinc-950">Comment nous comptons</h3>
+                  <ul className="flex list-disc flex-col gap-2 pl-5 text-[15px] leading-relaxed text-zinc-700">
+                    {INVENTAIRE.regles.map((regle) => (
+                      <li key={regle}>{regle}</li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+
+              <div className="flex max-w-4xl flex-col gap-3">
+                {releveParCandidat.map((groupe) => (
+                  <details key={groupe.candidat} className="group rounded-2xl border border-zinc-200 bg-white">
+                    <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 sm:px-6 [&::-webkit-details-marker]:hidden">
+                      <span className="min-w-0">
+                        <span className="block text-base font-bold text-zinc-950">{groupe.candidat}</span>
+                        <span className="block text-xs text-zinc-500">
+                          {groupe.parti} ·{" "}
+                          <strong className="font-semibold text-zinc-700">
+                            {groupe.total} mesure{groupe.total > 1 ? "s" : ""} comptée{groupe.total > 1 ? "s" : ""}
+                          </strong>
+                        </span>
+                      </span>
+                      <span aria-hidden="true" className="flex-none text-zinc-400 transition-transform group-open:rotate-180">
+                        ▾
+                      </span>
+                    </summary>
+                    <ul className="border-t border-zinc-100 px-5 sm:px-6">
+                      {groupe.mesures.map((mesure) => (
+                        <MesureReleve key={mesure.id} mesure={mesure} libelleNonRetenue={releve.libelleNonRetenue} />
+                      ))}
+                    </ul>
+                  </details>
+                ))}
+              </div>
+            </div>
+          </section>
+        ) : null}
+
         {/* 10. Méthode et limites, avec l'échelle des verdicts du site, puis
             11. Sources */}
         <section id="methode" className={`${SECTION} scroll-mt-20`}>
@@ -331,16 +505,26 @@ export default function DossierMouvementSocialPage() {
               <div className="mt-2 flex flex-col gap-2">
                 <Etiquette>Sources</Etiquette>
                 <ul className="flex flex-col gap-1.5 text-[13px] leading-snug">
+                  {/* Une source avec `ancre` (le relevé) est un lien interne. */}
                   {sources.map((source) => (
-                    <li key={source.url}>
-                      <a
-                        href={source.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-zinc-600 underline decoration-zinc-300 underline-offset-2 transition-colors hover:text-zinc-950"
-                      >
-                        {source.label} <span aria-hidden="true">↗</span>
-                      </a>
+                    <li key={source.url ?? source.ancre}>
+                      {source.url ? (
+                        <a
+                          href={source.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-zinc-600 underline decoration-zinc-300 underline-offset-2 transition-colors hover:text-zinc-950"
+                        >
+                          {source.label} <span aria-hidden="true">↗</span>
+                        </a>
+                      ) : (
+                        <a
+                          href={source.ancre}
+                          className="text-zinc-600 underline decoration-zinc-300 underline-offset-2 transition-colors hover:text-zinc-950"
+                        >
+                          {source.label} <span aria-hidden="true">↑</span>
+                        </a>
+                      )}
                     </li>
                   ))}
                 </ul>
