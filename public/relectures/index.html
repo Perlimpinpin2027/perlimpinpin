@@ -134,7 +134,7 @@ h3{margin:0}
 .chrono-btn{font-size:12.5px;font-weight:500;background:var(--ink);color:var(--ink-inv);border:0;border-radius:999px;padding:6px 14px;cursor:pointer}
 .chrono-btn:disabled{opacity:.6;cursor:default}
 .chrono-err{flex-basis:100%;margin:0;color:var(--bad);font-size:12.5px}
-/* Couleur selon la part du temps restant : > 50 % vert, 20-50 % orange, < 20 % rouge. */
+/* Couleur selon le temps restant (échelle commune de 48 h) : > 24 h vert, ~10-24 h orange, < ~10 h rouge. */
 .fcard > .chrono{grid-column:1 / -1}
 .chrono-run{display:grid;gap:6px;margin-top:2px;--chrono-c:var(--ok)}
 .chrono-run.is-mid{--chrono-c:var(--orange)}
@@ -2049,11 +2049,13 @@ Est-ce qu&#x27;on parle du nombre d&#x27;actif pour un retraité ? Si c&#x27;est
     var el = document.querySelector('[data-chrono="' + slug + '"]');
     var f = chronoBySlug[slug];
     if (!el || !f || stateOf(slug) !== "running") return;
-    var start = new Date(f.reviewStartedAt || f.reviewDeadline).getTime();
     var end = new Date(f.reviewDeadline).getTime();
     var reste = end - nowMs();
-    // La barre montre le temps restant : pleine au lancement, vide à l'échéance.
-    var pct = end > start ? Math.min(100, Math.max(0, (reste / (end - start)) * 100)) : 0;
+    // Même échelle pour toutes les fiches : la barre est pleine à 48 h restantes (ou plus)
+    // et vide à l'échéance. Deux fiches avec le même temps restant ont donc la même barre
+    // et la même couleur, quelle que soit leur date de lancement ou leurs prolongations.
+    var ECHELLE_MS = 48 * 3600000;
+    var pct = Math.min(100, Math.max(0, (reste / ECHELLE_MS) * 100));
     var run = el.querySelector(".chrono-run");
     var left = el.querySelector("[data-left]");
     var bar = el.querySelector("[data-bar]");
