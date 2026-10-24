@@ -12,6 +12,7 @@ import {
   checkChiffresVersionBasique,
   checkAncragesVersionBasique,
   reparerAncrages,
+  separerProblemesAncrages,
   checkLongueursAccueil,
 } from "./scoring.js";
 
@@ -593,5 +594,23 @@ describe("reparerAncrages", () => {
   test("ne corrige pas un extrait trop court", () => {
     const r = reparerAncrages([{ texte: "x", extrait: "la durée du travail change" }], fiche);
     assert.deepEqual(r.reparations, []);
+  });
+});
+
+describe("separerProblemesAncrages (contrôle souple, 24/10/2026)", () => {
+  test("un extrait reformulé et un point sans ancrage identique ne bloquent pas", () => {
+    const fiche = { analyse: "Le gain annoncé sur les agences est près de vingt fois supérieur à ce que le Sénat juge possible." };
+    const vb = { resume: "r", points_forts: ["Un point reformulé"], points_faibles: [] };
+    const ancrages = [{ texte: "Un autre texte", extrait: "le gain sur les agences dépasse largement ce que le Sénat juge atteignable" }];
+    const { bloquants, avertissements } = separerProblemesAncrages(checkAncragesVersionBasique(ancrages, vb, fiche));
+    assert.deepEqual(bloquants, []);
+    assert.equal(avertissements.length, 2);
+  });
+
+  test("des ancrages absents ou mal formés restent bloquants", () => {
+    const fiche = { analyse: "texte" };
+    const vb = { resume: "r", points_forts: [], points_faibles: [] };
+    assert.ok(separerProblemesAncrages(checkAncragesVersionBasique([], vb, fiche)).bloquants.length > 0);
+    assert.ok(separerProblemesAncrages(checkAncragesVersionBasique([{ texte: "x" }], vb, fiche)).bloquants.some((e) => e.startsWith("ancrages.0")));
   });
 });

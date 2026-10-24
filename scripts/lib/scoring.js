@@ -574,6 +574,26 @@ export function checkAncragesVersionBasique(ancrages, versionBasique, ficheFinal
   return errors;
 }
 
+// Souplesse des ancrages (24/10/2026, demande d'Arno après la fiche Le Pen
+// « agences et intercos », publiée sans version basique parce que l'extrait
+// cité était reformulé trois fois de suite) : une reformulation n'est pas
+// grave pour la version basique. Seuls les problèmes de STRUCTURE des ancrages
+// (tableau absent ou vide, objet { texte, extrait } mal formé) restent
+// bloquants ; un extrait qui ne figure pas mot pour mot dans la fiche, ou un
+// point sans ancrage au texte identique, devient un simple avertissement,
+// gardé dans l'audit interne. Les chiffres absents de la fiche restent
+// bloquants (checkChiffresVersionBasique) : un nombre inventé n'est pas une
+// reformulation.
+export function separerProblemesAncrages(problemes) {
+  const bloquants = [];
+  const avertissements = [];
+  for (const probleme of problemes ?? []) {
+    if (/^ancrages(\.\d+)?:/.test(probleme)) bloquants.push(probleme);
+    else avertissements.push(probleme);
+  }
+  return { bloquants, avertissements };
+}
+
 // Réparation des extraits presque exacts (19/10/2026, fiche Attal « Constitution
 // du travail » : un seul mot ajouté, « déjà », avait fait rejeter toute la
 // version basique). Un extrait qui ne figure pas mot pour mot dans la fiche est

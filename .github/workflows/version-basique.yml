@@ -1,16 +1,19 @@
 # Rattrapage de la version basique des brouillons de /test qui n'en ont pas
 # (par exemple quand les trois essais de l'étape 3 bis ont échoué pendant une
-# révision : ligne « Version basique (étape 3 bis) : ✗ » dans la PR).
+# révision : ligne « Version basique (étape 3 bis) : ✗ » dans la PR), ou d'une
+# fiche déjà publiée, désignée par son numéro d'analyse.
 #
 # Actions → Version basique manquante → Run workflow.
-#   - Numéro du brouillon (celui de perlimpinpin.ai/test/N) : vide = tous les
-#     brouillons sans version basique.
+#   - Numéro de l'analyse (celui de perlimpinpin.ai/test/N, aussi valable pour
+#     une fiche publiée) : vide = tous les brouillons sans version basique
+#     (jamais les fiches publiées en lot).
 #   - Écrire : décoché = simple liste des brouillons concernés, sans rien écrire.
 #
 # scripts/rattraper-version-basique.js : génère la version basique (mêmes
 # contrôles que le pipeline) et n'écrit que contenuComplet.version_basique et
-# son contrôle interne. Jamais une fiche publiée ou à la corbeille. Aucun
-# commit, aucune PR : le brouillon est mis à jour directement en base.
+# son contrôle interne : ni score, ni statut, ni texte de la fiche. Une fiche
+# publiée seulement si son numéro est donné ; jamais une fiche à la corbeille.
+# Aucun commit, aucune PR : la ligne est mise à jour directement en base.
 #
 # Secrets : DATABASE_URL, ANTHROPIC_API_KEY.
 
@@ -21,7 +24,7 @@ on:
   workflow_dispatch:
     inputs:
       id:
-        description: "Numéro du brouillon (perlimpinpin.ai/test/N). Vide : tous les brouillons sans version basique"
+        description: "Numéro de l'analyse (perlimpinpin.ai/test/N, brouillon ou fiche publiée). Vide : tous les brouillons sans version basique"
         required: false
         type: string
         default: ""

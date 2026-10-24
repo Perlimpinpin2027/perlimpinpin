@@ -30,7 +30,7 @@ import { neonConfig } from "@neondatabase/serverless";
 import ws from "ws";
 import { cleanContenu } from "./lib/clean-text.js";
 import { confirmerEcriture, hoteDe } from "./lib/garde-fou-base.js";
-import { checkAncragesVersionBasique, checkChiffresVersionBasique, validateVersionBasique } from "./lib/scoring.js";
+import { checkAncragesVersionBasique, checkChiffresVersionBasique, separerProblemesAncrages, validateVersionBasique } from "./lib/scoring.js";
 
 neonConfig.webSocketConstructor = ws;
 
@@ -64,15 +64,21 @@ function loadFicheFinale(raw) {
 }
 
 // Mêmes contrôles que genererVersionBasique (scripts/analyze.js). Renvoie la
-// liste des erreurs (vide si tout passe).
+// liste des erreurs bloquantes (vide si tout passe). Les extraits reformulés
+// ne bloquent plus (contrôle souple, voir separerProblemesAncrages) : ils sont
+// seulement affichés.
 function controler(versionBasique, ancrages, ficheFinale) {
   const validation = validateVersionBasique(versionBasique, ficheFinale.sources_utilisees);
   if (!validation.valid) return validation.errors;
+  const { bloquants, avertissements } = separerProblemesAncrages(
+    checkAncragesVersionBasique(ancrages, validation.versionBasique, ficheFinale),
+  );
+  for (const a of avertissements) console.log(`  (accepté) ${a}`);
   return [
     ...checkChiffresVersionBasique(validation.versionBasique, ficheFinale).map(
       (nombre) => `Le nombre « ${nombre} » n'apparaît pas dans la fiche finale.`,
     ),
-    ...checkAncragesVersionBasique(ancrages, validation.versionBasique, ficheFinale),
+    ...bloquants,
   ];
 }
 
