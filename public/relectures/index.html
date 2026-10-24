@@ -169,8 +169,15 @@ h3{margin:0}
 .annonce h2{margin:0;font-size:18px;font-weight:600}
 .annonce-meta{margin:0;font-size:13.5px;color:var(--muted)}
 .annonce-meta strong{color:var(--ink);font-weight:600}
-.annonce iframe{box-sizing:border-box;display:block;width:100%;height:min(60vh,560px);border:1px solid var(--rule);border-radius:12px;background:#fff}
-.annonce-pied{display:flex;justify-content:flex-end}
+.annonce iframe{box-sizing:border-box;display:block;width:100%;height:min(45vh,480px);border:1px solid var(--rule);border-radius:12px;background:#fff}
+.annonce-pied{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px}
+.annonce-actions{display:flex;flex-wrap:wrap;gap:8px}
+.annonce-confirm{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:13.5px;color:var(--muted)}
+.annonce-confirm[hidden],.annonce-statut[hidden]{display:none}
+.annonce-confirm input{font:inherit;background:var(--surface);color:var(--ink);border:1px solid var(--rule);border-radius:999px;padding:5px 12px;width:6em}
+.annonce .chrono-btn:disabled{opacity:.5;cursor:default}
+.annonce-statut{margin:0;font-size:13.5px;color:var(--ink)}
+.annonce-statut.chrono-err{color:var(--bad)}
 @media (max-width:560px){
   .fcard{grid-template-columns:minmax(0,1fr)}
   .fscore{justify-items:start;text-align:left;grid-auto-flow:row}
@@ -1873,10 +1880,15 @@ Est-ce qu&#x27;on parle du nombre d&#x27;actif pour un retraité ? Si c&#x27;est
 
   // ---------- annonce aux adhérents (mode comité) ----------
   // « Prévenir les adhérents » : aperçu du mail d'annonce des fiches dont le
-  // chrono est en cours (/api/relectures/annonce/apercu). Aucun envoi pour l'instant.
+  // chrono est en cours (/api/relectures/annonce/apercu), puis envoi depuis la
+  // même fenêtre : un test à l'adresse du comité ou l'envoi réel, confirmé en
+  // tapant « oui » (/api/relectures/annonce/envoyer).
   var ANNONCE_API = "/api/relectures/annonce/apercu";
+  var ENVOI_API = "/api/relectures/annonce/envoyer";
   var AUCUNE_ANNONCE = "Aucune fiche avec chrono en cours";
   var annonceDialog = null;
+  // État de la fenêtre ouverte : remis à zéro à chaque aperçu.
+  var envoiAnnonce = { nb: 0, enCours: false, fait: false };
 
   function annonceDisponible() {
     return ficheSlugs().some(function (slug) { return !isArchived(slug) && stateOf(slug) === "running"; });
@@ -1895,26 +1907,115 @@ Est-ce qu&#x27;on parle du nombre d&#x27;actif pour un retraité ? Si c&#x27;est
     btn.parentNode.title = titre;
   }
 
-  function ouvrirAnnonce(contenu) {
+  function ouvrirAnnonce(contenu, actions) {
     if (!annonceDialog) {
       annonceDialog = document.createElement("dialog");
       annonceDialog.className = "annonce";
       annonceDialog.setAttribute("aria-labelledby", "annonce-titre");
+      // Pas de fermeture par Échap pendant un envoi.
+      annonceDialog.addEventListener("cancel", function (ev) { if (envoiAnnonce.enCours) ev.preventDefault(); });
       document.body.appendChild(annonceDialog);
     }
     annonceDialog.innerHTML = '<div class="annonce-in">' + contenu +
-      '<div class="annonce-pied"><button class="chrono-ghost" type="button" data-annonce-action="fermer">Fermer</button></div></div>';
+      '<div class="annonce-pied"><div class="annonce-actions">' + (actions || "") + "</div>" +
+      '<button class="chrono-ghost" type="button" data-annonce-action="fermer">Fermer</button></div></div>';
     if (!annonceDialog.open) annonceDialog.showModal();
   }
 
   function afficherApercu(res) {
     var n = res.nbDestinataires;
+    envoiAnnonce = { nb: n, enCours: false, fait: false };
     ouvrirAnnonce('<h2 id="annonce-titre">Aperçu du mail</h2>' +
       '<p class="annonce-meta">Sujet : <strong>' + esc(res.sujet) + "</strong></p>" +
       '<p class="annonce-meta"><strong>' + n + " destinataire" + (n > 1 ? "s" : "") + "</strong> · prénom d'exemple, chaque adhérent verra le sien</p>" +
-      '<iframe title="Mail tel qu\'il sera reçu" sandbox="allow-popups allow-popups-to-escape-sandbox"></iframe>');
+      '<iframe title="Mail tel qu\'il sera reçu" sandbox="allow-popups allow-popups-to-escape-sandbox"></iframe>' +
+      '<div class="annonce-confirm" hidden><label for="annonce-oui">Tapez oui pour confirmer</label>' +
+      '<input id="annonce-oui" type="text" autocomplete="off" spellcheck="false">' +
+      '<button class="chrono-btn" type="button" data-annonce-action="reel">Confirmer l\'envoi</button></div>' +
+      '<p class="annonce-statut" role="status" hidden></p>',
+      '<button class="chrono-ghost" type="button" data-annonce-action="test">M\'envoyer un test</button>' +
+      '<button class="chrono-btn" type="button" data-annonce-action="demander">' +
+      (n > 1 ? "Envoyer aux " + n + " adhérents" : "Envoyer à " + n + " adhérent") + "</button>");
     // srcdoc après coup : le HTML du mail n'est jamais interprété dans la page.
     annonceDialog.querySelector("iframe").srcdoc = res.html;
+    majEnvoiAnnonce();
+  }
+
+  // Boutons de la fenêtre selon l'état : tout est grisé pendant un envoi, et
+  // l'envoi réel reste grisé après coup jusqu'à la fermeture de la fenêtre.
+  function majEnvoiAnnonce() {
+    if (!annonceDialog) return;
+    var e = envoiAnnonce;
+    var q = function (sel) { return annonceDialog.querySelector(sel); };
+    var oui = q("#annonce-oui");
+    if (!oui) return; // fenêtre d'erreur, sans envoi
+    q('[data-annonce-action="test"]').disabled = e.enCours;
+    q('[data-annonce-action="demander"]').disabled = e.enCours || e.fait || !e.nb;
+    q('[data-annonce-action="reel"]').disabled = e.enCours || e.fait || oui.value !== "oui";
+    q('[data-annonce-action="fermer"]').disabled = e.enCours;
+    oui.disabled = e.enCours || e.fait;
+  }
+
+  function statutAnnonce(html, erreur) {
+    var el = annonceDialog.querySelector(".annonce-statut");
+    el.innerHTML = html;
+    el.classList.toggle("chrono-err", !!erreur);
+    el.hidden = false;
+  }
+
+  function envoyerAnnonce(mode) {
+    if (envoiAnnonce.enCours || (mode === "reel" && envoiAnnonce.fait)) return;
+    var oui = annonceDialog.querySelector("#annonce-oui");
+    envoiAnnonce.enCours = true;
+    majEnvoiAnnonce();
+    statutAnnonce("Envoi en cours…");
+    var fin = function (fait) {
+      envoiAnnonce.enCours = false;
+      if (fait) envoiAnnonce.fait = true;
+      majEnvoiAnnonce();
+    };
+    fetch(ENVOI_API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-relecture-admin-code": getAdminCode() },
+      body: JSON.stringify({ mode: mode, confirmation: mode === "reel" ? oui.value : undefined }),
+    })
+      .then(function (r) {
+        return r.json().catch(function () { return null; }).then(function (res) {
+          if (r.status === 401) {
+            envoiAnnonce.enCours = false;
+            annonceDialog.close();
+            setAdminCode("");
+            renderAdmin("Code comité refusé.");
+            renderAllChronos();
+            return;
+          }
+          if (!r.ok) {
+            // Refus avant tout envoi (400, 409, 500 avec message) : on peut réessayer.
+            // Autre échec (délai dépassé…) : on ne sait pas ce qui est parti, pas de deuxième envoi réel.
+            var refus = res && res.error && [400, 409, 500].indexOf(r.status) !== -1;
+            fin(mode === "reel" && !refus);
+            statutAnnonce(esc((res && res.error) || "Échec (" + r.status + "). Vérifiez avant de renvoyer."), true);
+            return;
+          }
+          if (mode === "test") {
+            fin(false);
+            if (res.envoyes) statutAnnonce("Test envoyé à votre adresse");
+            else statutAnnonce("Échec de l'envoi du test.", true);
+            return;
+          }
+          fin(true);
+          var txt = res.envoyes + " envoyé" + (res.envoyes > 1 ? "s" : "");
+          if (res.echecs && res.echecs.length) {
+            txt += "<br>Échecs (" + res.echecs.length + ") : " + res.echecs.map(esc).join(", ");
+          }
+          if (res.restants) txt += "<br>" + res.restants + " non tenté" + (res.restants > 1 ? "s" : "") + " (temps dépassé)";
+          statutAnnonce(txt, !!((res.echecs && res.echecs.length) || res.restants));
+        });
+      })
+      .catch(function () {
+        fin(mode === "reel");
+        statutAnnonce("Échec de la connexion. Vérifiez avant de renvoyer.", true);
+      });
   }
 
   function demanderApercu(btn) {
@@ -2140,8 +2241,15 @@ Est-ce qu&#x27;on parle du nombre d&#x27;actif pour un retraité ? Si c&#x27;est
       if (!annonce.disabled) demanderApercu(annonce);
       return;
     }
-    if (ev.target.closest && ev.target.closest('[data-annonce-action="fermer"]')) {
-      annonceDialog.close();
+    var annonceAction = ev.target.closest && ev.target.closest("[data-annonce-action]");
+    if (annonceAction && !annonceAction.disabled) {
+      var quoi = annonceAction.getAttribute("data-annonce-action");
+      if (quoi === "fermer") annonceDialog.close();
+      else if (quoi === "test" || quoi === "reel") envoyerAnnonce(quoi);
+      else if (quoi === "demander") {
+        annonceDialog.querySelector(".annonce-confirm").hidden = false;
+        annonceDialog.querySelector("#annonce-oui").focus();
+      }
       return;
     }
     var rev = ev.target.closest && ev.target.closest("[data-revision-action]");
@@ -2793,6 +2901,11 @@ Est-ce qu&#x27;on parle du nombre d&#x27;actif pour un retraité ? Si c&#x27;est
       try { localStorage.setItem("relecture-lecture", modeRapide ? "rapide" : "complete"); } catch (e) { /* stockage indisponible */ }
       views.forEach(function (v) { if (v.getAttribute("data-lecture")) appliquerMode(v); });
     }
+  });
+
+  // Confirmation de l'envoi réel : le bouton s'active quand le champ contient exactement « oui ».
+  document.addEventListener("input", function (ev) {
+    if (ev.target && ev.target.id === "annonce-oui") majEnvoiAnnonce();
   });
 
   window.addEventListener("hashchange", route);
