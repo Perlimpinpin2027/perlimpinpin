@@ -16,6 +16,7 @@ import {
   validateVersionBasique,
   checkChiffresVersionBasique,
   checkAncragesVersionBasique,
+  separerProblemesAncrages,
   reparerAncrages,
   validatePartiesReseaux,
   consigneBudgets,
@@ -871,9 +872,12 @@ export function addUsage(total = {}, usage = {}) {
   return sum;
 }
 
-// Retourne { versionBasique, ancrages, usage, errors } : versionBasique et
-// ancrages valent null si les trois tentatives ont échoué (errors donne alors
-// la cause du dernier échec), usage cumule les tokens des appels effectués.
+// Retourne { versionBasique, ancrages, usage, errors, avertissements } :
+// versionBasique et ancrages valent null si les trois tentatives ont échoué
+// (errors donne alors la cause du dernier échec), usage cumule les tokens des
+// appels effectués. avertissements : extraits reformulés ou points sans
+// ancrage identique, acceptés depuis le 24/10/2026 (voir
+// separerProblemesAncrages, scripts/lib/scoring.js) et gardés pour l'audit.
 // Les ancrages (extraits de la fiche justifiant chaque phrase) sont un
 // contrôle interne : jamais publiés dans contenuComplet.
 export async function genererVersionBasique(ficheFinale) {
@@ -919,9 +923,15 @@ Renvoie le JSON complet, en gardant tel quel tout ce qui n'est pas cité ci-dess
         for (const r of reparations) {
           console.log(`  Étape 3 bis : extrait corrigé (${r.ecart} mot(s) d'écart) pour « ${r.texte} »`);
         }
-        const erreursAncrages = checkAncragesVersionBasique(ancrages, validation.versionBasique, ficheFinale);
+        const { bloquants: erreursAncrages, avertissements } = separerProblemesAncrages(
+          checkAncragesVersionBasique(ancrages, validation.versionBasique, ficheFinale),
+        );
         if (nombresIntrouvables.length === 0 && erreursAncrages.length === 0) {
-          return { versionBasique: validation.versionBasique, ancrages, usage, errors: [] };
+          if (avertissements.length > 0) {
+            console.warn(`  ⚠️  Étape 3 bis : ${avertissements.length} extrait(s) reformulé(s), acceptés (contrôle souple) :`);
+            for (const a of avertissements) console.warn(`     - ${a}`);
+          }
+          return { versionBasique: validation.versionBasique, ancrages, usage, errors: [], avertissements };
         }
         reponsePrecedente = { ...raw, ancrages };
         errors = [
@@ -946,7 +956,7 @@ Renvoie le JSON complet, en gardant tel quel tout ce qui n'est pas cité ci-dess
     console.error(`     Nombres introuvables dans la fiche finale : ${nombresIntrouvables.join(", ")}`);
   }
   for (const error of errors.slice(nombresIntrouvables.length)) console.error(`     - ${error}`);
-  return { versionBasique: null, ancrages: null, usage, errors };
+  return { versionBasique: null, ancrages: null, usage, errors, avertissements: [] };
 }
 
 // --- Étape 3 ter : publications X (Claude) ----------------------------------
@@ -1340,11 +1350,22 @@ async function runPipeline(etape1Input, { commentaires = null, candidatNom = nul
   // dans le bloc archive de la relecture).
   const { revision_relecture: _revision, ...etape3Brut } = { ...arbitrage3, fiche_complete: ficheComplete };
 
-  const { versionBasique, ancrages, usage: usage3bis, errors: erreursVersionBasique } = await genererVersionBasique(parsed);
+  const {
+    versionBasique,
+    ancrages,
+    usage: usage3bis,
+    errors: erreursVersionBasique,
+    avertissements: avertissementsVersionBasique = [],
+  } = await genererVersionBasique(parsed);
   if (versionBasique) {
     parsed.version_basique = versionBasique;
     // Contrôle interne : dans auditArbitrage, jamais dans contenuComplet (public).
-    auditArbitrage.push({ type: "ancrages_version_basique", ancrages });
+    // avertissements : extraits reformulés acceptés (contrôle souple).
+    auditArbitrage.push({
+      type: "ancrages_version_basique",
+      ancrages,
+      ...(avertissementsVersionBasique.length > 0 ? { avertissements: avertissementsVersionBasique } : {}),
+    });
     console.log("Étape 3 bis : version basique… ✓");
   }
 

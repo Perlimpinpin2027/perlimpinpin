@@ -12,7 +12,14 @@ import { publierBrouillon, reessayerFusion } from "./actions";
 // Fiche issue d'une révision (`revision`) : la publication fusionne aussi la PR
 // « Révision <slug> ». Si la fiche est publiée mais que la fusion échoue,
 // l'action renvoie un avertissement (orange) et on propose « Réessayer la fusion ».
-export default function PublishBox({ analyseId, candidatNom, simulation, revision = false }) {
+//
+// Brouillon sans version basique (`sansVersionBasique`, 24/10/2026, fiche Le
+// Pen « agences et intercos » publiée sans elle) : avertissement permanent et
+// rappel dans la confirmation, avec le lien vers le workflow de rattrapage.
+// La publication reste possible : c'est un avertissement, pas un blocage.
+const LIEN_RATTRAPAGE = "https://github.com/Perlimpinpin2027/perlimpinpin/actions/workflows/version-basique.yml";
+
+export default function PublishBox({ analyseId, candidatNom, simulation, revision = false, sansVersionBasique = false }) {
   const [confirmation, setConfirmation] = useState(false);
   const [message, setMessage] = useState(null);
   const [enCours, startTransition] = useTransition();
@@ -76,6 +83,12 @@ export default function PublishBox({ analyseId, candidatNom, simulation, revisio
               ? " Les réponses aux commentaires du Club seront aussi publiées sur /relectures."
               : ""}
           </p>
+          {sansVersionBasique ? (
+            <p className="text-sm font-semibold text-orange-800">
+              Attention : cette fiche n&rsquo;a pas de version basique. Elle restera rattrapable après publication, mais
+              il vaut mieux la rattraper avant.
+            </p>
+          ) : null}
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
@@ -96,6 +109,16 @@ export default function PublishBox({ analyseId, candidatNom, simulation, revisio
           </div>
         </div>
       )}
+
+      {sansVersionBasique && !publieeSansFusion ? (
+        <p className="text-sm font-semibold text-orange-800">
+          Pas de version basique : la fiche serait publiée sans la bascule basique / expert. Avant de publier, lance{" "}
+          <a href={LIEN_RATTRAPAGE} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">
+            le rattrapage « Version basique manquante »
+          </a>{" "}
+          avec le numéro {analyseId}, puis recharge cette page.
+        </p>
+      ) : null}
 
       {message ? (
         <div role="status" className="flex flex-col gap-2">

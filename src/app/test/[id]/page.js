@@ -88,6 +88,7 @@ export default async function TestDetailPage({ params }) {
                   candidatNom={derniere.proposition.candidat.nom}
                   simulation={process.env.TEST_DRY_RUN === "1"}
                   revision={Boolean(revision)}
+                  sansVersionBasique={!derniere.contenuComplet?.version_basique}
                 />
               ) : null}
             </div>

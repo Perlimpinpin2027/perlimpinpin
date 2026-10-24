@@ -5,6 +5,8 @@
 //
 //   node scripts/rattraper-version-basique.js [--id N] [--appliquer]
 //       sans --id : tous les brouillons (statut « brouillon ») sans version basique
+//       avec --id : ce brouillon OU cette fiche publiée (24/10/2026 : fiche
+//                   Le Pen « agences et intercos », publiée sans version basique)
 //       sans --appliquer : simulation, liste seulement les brouillons concernés
 //                          (aucun appel payant, rien n'est écrit)
 //
@@ -12,9 +14,12 @@
 // (genererVersionBasique, scripts/analyze.js, avec ses trois essais et ses
 // contrôles), puis écrit UNIQUEMENT contenuComplet.version_basique et, dans
 // auditArbitrage, l'entrée { type: "ancrages_version_basique" }, comme
-// runPipeline. Aucun score, aucun statut ne change. Une fiche publiée ou à la
-// corbeille n'est jamais modifiée. Sauvegarde de chaque ligne dans
-// logs/sauvegardes/ avant écriture, ligne ajoutée à logs/insertions.jsonl.
+// runPipeline. Aucun score, aucun statut, aucun texte de la fiche ne change.
+// Une fiche publiée n'est rattrapée que si elle est désignée par --id (jamais
+// en lot) ; une fiche à la corbeille ne l'est jamais. Sauvegarde de chaque
+// ligne dans logs/sauvegardes/ avant écriture, ligne ajoutée à
+// logs/insertions.jsonl. Sur le site, la fiche publiée affiche sa version
+// basique au plus tard 5 minutes après (revalidate de /declarations/[id]).
 //
 // Hors GitHub Actions, l'écriture demande en plus de taper « oui »
 // (garde-fou-base.js). Dans le workflow, le clic sur « Run workflow » avec la
@@ -46,8 +51,15 @@ export function ficheDeReference(contenu) {
   return cleanContenu(fiche);
 }
 
-export function aBesoinDeVersionBasique(analyse) {
-  return analyse.statut === "brouillon" && !analyse.contenuComplet?.version_basique;
+// ciblee : fiche désignée explicitement par --id, seule façon de rattraper une
+// fiche publiée.
+export function aBesoinDeVersionBasique(analyse, { ciblee = false } = {}) {
+  const statutOk = analyse.statut === "brouillon" || (ciblee && analyse.statut === "publie");
+  return statutOk && !analyse.contenuComplet?.version_basique;
+}
+
+function lienFiche(analyse) {
+  return analyse.statut === "publie" ? `/declarations/${analyse.propositionId}` : `/test/${analyse.id}`;
 }
 
 async function main() {
@@ -74,28 +86,29 @@ async function main() {
     const analyses = await prisma.analyse.findMany({
       where,
       orderBy: { id: "asc" },
-      select: { id: true, statut: true, contenuComplet: true, auditArbitrage: true },
+      select: { id: true, statut: true, propositionId: true, contenuComplet: true, auditArbitrage: true },
     });
 
+    const ciblee = Boolean(values.id);
     if (values.id && analyses.length === 0) throw new Error(`analyse #${values.id} introuvable.`);
-    if (values.id && !aBesoinDeVersionBasique(analyses[0])) {
+    if (values.id && !aBesoinDeVersionBasique(analyses[0], { ciblee })) {
       const a = analyses[0];
       resume(
-        a.statut !== "brouillon"
-          ? `Brouillon #${a.id} : statut « ${a.statut} », rien n'est modifié (seuls les brouillons sont rattrapés).`
-          : `Brouillon #${a.id} : il a déjà une version basique, rien n'est modifié.`,
+        a.statut !== "brouillon" && a.statut !== "publie"
+          ? `Analyse #${a.id} : statut « ${a.statut} », rien n'est modifié (seuls les brouillons et les fiches publiées sont rattrapés).`
+          : `Analyse #${a.id} : elle a déjà une version basique, rien n'est modifié.`,
       );
       return;
     }
 
-    const cibles = analyses.filter(aBesoinDeVersionBasique);
+    const cibles = analyses.filter((a) => aBesoinDeVersionBasique(a, { ciblee }));
     resume(`### Version basique manquante\n`);
     if (cibles.length === 0) {
       resume("Aucun brouillon sans version basique. Rien à faire.");
       return;
     }
-    resume(`${cibles.length} brouillon(s) sans version basique :`);
-    for (const a of cibles) resume(`- #${a.id} ${a.contenuComplet?.titre_fiche ?? "(sans titre)"}`);
+    resume(`${cibles.length} fiche(s) sans version basique :`);
+    for (const a of cibles) resume(`- #${a.id} ${a.contenuComplet?.titre_fiche ?? "(sans titre)"} (${a.statut === "publie" ? "publiée" : "brouillon"})`);
     resume("");
 
     if (!values.appliquer) {
@@ -104,7 +117,7 @@ async function main() {
     }
 
     if (!DANS_GITHUB) {
-      const ok = await confirmerEcriture({ host, question: `Générer et écrire la version basique de ${cibles.length} brouillon(s) ?` });
+      const ok = await confirmerEcriture({ host, question: `Générer et écrire la version basique de ${cibles.length} fiche(s) ?` });
       if (!ok) {
         console.log("Annulé, rien n'a été modifié.");
         return;
@@ -116,22 +129,23 @@ async function main() {
     let echecs = 0;
     for (const analyse of cibles) {
       const titre = analyse.contenuComplet?.titre_fiche ?? "(sans titre)";
-      console.log(`\nBrouillon #${analyse.id} : ${titre}`);
-      const { versionBasique, ancrages, errors } = await genererVersionBasique(ficheDeReference(analyse.contenuComplet));
+      console.log(`\nAnalyse #${analyse.id} (${analyse.statut}) : ${titre}`);
+      const { versionBasique, ancrages, errors, avertissements = [] } = await genererVersionBasique(ficheDeReference(analyse.contenuComplet));
       if (!versionBasique) {
         echecs++;
         resume(`- ✗ #${analyse.id} : échec après trois essais (${errors.join(" ; ")})`);
         continue;
       }
 
-      // Relecture juste avant l'écriture : le brouillon a pu changer (édition
-      // sur /test, publication) pendant la génération.
+      // Relecture juste avant l'écriture : la fiche a pu changer (édition sur
+      // /test, publication, corbeille) pendant la génération. Le statut doit
+      // être resté le même qu'au départ.
       const actuelle = await prisma.analyse.findUnique({
         where: { id: analyse.id },
-        select: { statut: true, contenuComplet: true, auditArbitrage: true },
+        select: { statut: true, propositionId: true, contenuComplet: true, auditArbitrage: true },
       });
-      if (!actuelle || !aBesoinDeVersionBasique({ ...actuelle, id: analyse.id })) {
-        resume(`- ⚠ #${analyse.id} : le brouillon a changé pendant la génération (publié, à la corbeille ou déjà complété), rien n'est écrit.`);
+      if (!actuelle || actuelle.statut !== analyse.statut || !aBesoinDeVersionBasique({ ...actuelle, id: analyse.id }, { ciblee })) {
+        resume(`- ⚠ #${analyse.id} : la fiche a changé pendant la génération (statut modifié, corbeille ou déjà complétée), rien n'est écrit.`);
         continue;
       }
 
@@ -149,7 +163,10 @@ async function main() {
         where: { id: analyse.id },
         data: {
           contenuComplet: { ...actuelle.contenuComplet, version_basique: versionBasique },
-          auditArbitrage: [...audit.filter((e) => e?.type !== "ancrages_version_basique"), { type: "ancrages_version_basique", ancrages }],
+          auditArbitrage: [
+            ...audit.filter((e) => e?.type !== "ancrages_version_basique"),
+            { type: "ancrages_version_basique", ancrages, ...(avertissements.length > 0 ? { avertissements } : {}) },
+          ],
         },
       });
       mkdirSync(dirname(INSERTIONS_LOG_PATH), { recursive: true });
@@ -157,7 +174,10 @@ async function main() {
         INSERTIONS_LOG_PATH,
         `${JSON.stringify({ date: new Date().toISOString(), base: host, script: "rattraper-version-basique", analyseId: analyse.id, sauvegarde })}\n`,
       );
-      resume(`- ✓ #${analyse.id} : version basique ajoutée, visible sur /test/${analyse.id}`);
+      resume(
+        `- ✓ #${analyse.id} : version basique ajoutée, visible sur ${lienFiche({ ...actuelle, id: analyse.id })}` +
+          (avertissements.length > 0 ? ` (${avertissements.length} extrait(s) reformulé(s), acceptés)` : ""),
+      );
     }
     if (echecs > 0) process.exitCode = 1;
   } finally {
