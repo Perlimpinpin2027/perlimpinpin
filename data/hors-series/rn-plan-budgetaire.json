@@ -294,9 +294,9 @@
       "titre": "20 milliards d'économies sur la Sécurité sociale",
       "theme": "Retraites · Santé",
       "montantMd": 20,
-      "statut": "a_venir",
-      "relectureSlug": null,
-      "propositionId": null
+      "statut": "publiee",
+      "relectureSlug": "lepen-budget-securite-sociale",
+      "propositionId": 63
     }
   ],
   "noteGlobale": {
