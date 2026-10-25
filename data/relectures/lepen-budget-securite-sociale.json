@@ -137,6 +137,37 @@
         "titre": "Titre court et phrase d'accroche",
         "texte": "Titre court provisoire : « Sécu : 20 milliards d'économies » (31 caractères), proche de la page du dossier. Phrase d'accroche : « Le plus gros morceau, 15 milliards sur les retraites, ne correspond encore à aucune mesure. Et le même programme baisse l'âge de départ. » Vous conviennent-ils ?"
       }
-    ]
+    ],
+    "archive": {
+      "date": "2026-10-25",
+      "version_suivante": "data/analyses finales/LePen/lepen_budget_securite_sociale_etape3.json",
+      "synthese": "Deux précisions rédactionnelles ont été ajoutées (contenu non publié de la « réparation » des retraites, mise en regard explicite du chiffrage de la fraude aux prestations face aux 9,5 milliards visés) ; aucune note ne change, le score reste à 36/100.",
+      "reponses": [
+        {
+          "commentaire_id": "cmvmf0q3e000008ifzrojpb7e",
+          "auteur": "Alexis C.",
+          "section": "Verdict final",
+          "commentaire": "Ce serait bien d'avoir un chiffrage de la fraude social estimée, elle est bien moindre par rapport aux résultats attendus, et une partie de cette fraude provient des professionnels de la santé.",
+          "reponse": "Le chiffrage de la fraude sociale est déjà sourcé dans la fiche : le Haut Conseil du financement de la protection sociale l'estime à 13 milliards d'euros par an, dont 1,71 milliard de préjudice pour l'assurance maladie et 1,54 milliard sur le RSA, soit bien moins que les 9,5 milliards visés par le RN sur les « dépenses indues ». On a rendu cette comparaison plus explicite dans la fiche.\n\nEn revanche, aucune des sources utilisées ne permet d'isoler la part de cette fraude provenant spécifiquement des professionnels de santé plutôt que des assurés : ce chiffre n'existe pas dans les rapports publics consultés, donc on ne l'a pas ajouté pour éviter d'avancer un chiffre non vérifié.",
+          "retenu": true
+        },
+        {
+          "commentaire_id": "cmvmf1rug000108if31ky6763",
+          "auteur": "Alexis C.",
+          "section": "Mesure initiale",
+          "commentaire": "Peut-être qu'il faudrait expliquer ce qui est entendu par \"réparation des retraites\" ce n'est pas très clair.",
+          "reponse": "Bonne remarque, le terme méritait d'être précisé. On a ajouté dans la fiche que Marine Le Pen parle de « corrections de mesures injustes » sans liste publiée, et que le RN défend historiquement un âge de départ modulé selon l'âge d'entrée dans la vie active, sans que rien ne confirme que cette piste corresponde au contenu exact de cette ligne à 15 milliards.\n\nOn reste prudent sur ce point : une recherche complémentaire n'a trouvé aucune source confirmant le contenu précis de cette mesure avant la présentation annoncée pour le 17 novembre 2026.",
+          "retenu": true
+        },
+        {
+          "commentaire_id": "cmvmg9yya000407l090lygp25",
+          "auteur": "Jérémy P.",
+          "section": "Le résumé de Perlimpinpin IA",
+          "commentaire": "Ne faut-il pas expliquer la notion de réparation selon Marine Lepen ? (Indexé les retraites sur l'âge d'entrée dans la vie active + durée de cotisations). Le projet est assez peu lisible par nature.",
+          "reponse": "Tu as raison, ce point mérite clarification plutôt que spéculation. La fiche précise désormais que le RN n'a publié aucun détail sur cette « réparation », tout en rappelant sa position passée sur un âge de départ modulé selon l'âge d'entrée dans la vie active, sans affirmer que c'est le contenu retenu ici.\n\nLe choix a été de ne pas présenter l'hypothèse de l'indexation sur la durée de cotisation comme un fait, faute de confirmation dans les sources disponibles au 6 octobre 2026.",
+          "retenu": true
+        }
+      ]
+    }
   }
 }
