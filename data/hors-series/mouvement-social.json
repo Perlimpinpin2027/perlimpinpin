@@ -5,15 +5,17 @@
   "surtitre": "Dossier n°2 // Mouvement social · Octobre 2026",
   "etiquette": "Mouvement social · Octobre 2026",
   "titre": "Mouvement social",
-  "chapo": "Après un mois de mobilisation lycéenne, la journée du 17 octobre 2026 a été marquée par des violences et des pillages dans plusieurs villes. Les candidats à l'élection présidentielle ont répondu par des propositions sur la sécurité. Nous les recensons et les analysons une à une, en nous appuyant sur ce que l'on sait des violences et de leurs auteurs.",
+  "titreSurligne": "quelles réponses",
+  "miseAJour": {
+    "date": "2026-10-25",
+    "libelle": "Mis à jour le",
+    "avertissement": "Ce dossier est susceptible d'évoluer au fur et à mesure des mobilisations."
+  },
+  "chapo": "Après un mois de mobilisation lycéenne, la journée du 17 octobre 2026 a été marquée par des violences et des pillages dans plusieurs villes. Les candidats à l'élection présidentielle ont répondu par des propositions sur la sécurité. Nous les recensons, puis les analysons une à une : les fiches sont publiées au fil de l'eau, après relecture par le Club Perlimpinpin.",
   "boutons": [
     {
       "label": "Voir les propositions",
       "ancre": "#propositions"
-    },
-    {
-      "label": "Comprendre la crise",
-      "ancre": "#comprendre"
     },
     {
       "label": "Notre méthode",
@@ -22,1142 +24,150 @@
   ],
   "ordreSections": [
     "entete",
+    "plan",
     "essentiel",
     "chiffres",
-    "chronologie",
-    "comprendre",
-    "perimetre",
     "triangle",
+    "comprendre",
+    "reponses",
+    "perimetre",
     "propositions",
     "textesEnCours",
     "toutesLesAnalyses",
+    "pourAllerPlusLoin",
     "releve",
     "methode",
     "sources"
   ],
-  "essentiel": {
-    "titre": "L'essentiel",
-    "paragraphes": [
-      "Le mouvement démarre dans les lycées à la rentrée. Les élèves dénoncent les professeurs non remplacés, des bâtiments vétustes et des classes surchargées. Il gagne les étudiants, puis rejoint une contestation plus large du coût de la vie.",
-      "Le 17 octobre, lycéens, étudiants, gilets jaunes, agriculteurs et syndicats défilent ensemble : 550 000 personnes selon le ministère de l'Intérieur, 800 000 selon les organisateurs. En marge des cortèges, des violences et des pillages touchent plusieurs grandes villes : au moins 3 000 commerces, la mairie de Limoges et l'office de tourisme de Lyon incendiés, la mairie de Marseille envahie.",
-      "Les premiers chiffres judiciaires dessinent un profil : des hommes, jeunes, souvent sans antécédent. Ils décrivent les personnes incarcérées, pas l'ensemble des participants, et doivent être lus avec prudence.",
-      "Notre question est simple : les propositions des candidats peuvent-elles vraiment ramener le calme et la sécurité ? Pour chacune, nous regardons si elle serait efficace, si elle est applicable en droit, ce qu'elle coûterait et ce qu'elle pourrait provoquer d'autre. Nous ne disons pas pour qui voter."
-    ]
+  "charte": {
+    "note": "Charte propre au dossier : police sans empattement épurée, noir, gris et jaune.",
+    "police": "Inter",
+    "couleurs": {
+      "noir": "#0a0a0a",
+      "gris900": "#18181b",
+      "gris600": "#52525b",
+      "gris400": "#a1a1aa",
+      "gris200": "#e4e4e7",
+      "gris50": "#fafafa",
+      "jaune": "#ecd06f",
+      "jauneFonce": "#d4b23f",
+      "jaunePale": "#fbf7e6",
+      "grisPlan": "#ececea"
+    }
   },
-  "chiffres": {
-    "titre": "// Ce qui s'est passé",
+  "plan": {
+    "titre": "Plan de lecture",
     "items": [
       {
-        "valeur": "550 000",
-        "legende": "manifestants le 17 octobre selon le ministère de l'Intérieur (800 000 selon les organisateurs)",
+        "num": "01",
+        "titre": "L'essentiel en deux minutes",
+        "ancre": "#essentiel"
+      },
+      {
+        "num": "02",
+        "titre": "Qui propose quoi ? La carte des candidats",
+        "ancre": "#triangle"
+      },
+      {
+        "num": "03",
+        "titre": "Une colère d'abord scolaire",
+        "ancre": "#debut"
+      },
+      {
+        "num": "04",
+        "titre": "17 octobre : la bascule, et la semaine d'après",
+        "ancre": "#17-octobre"
+      },
+      {
+        "num": "05",
+        "titre": "Casseurs et pilleurs : ce que l'on sait vraiment",
+        "ancre": "#auteurs"
+      },
+      {
+        "num": "06",
+        "titre": "Réseaux, IA, ingérences : les accélérateurs",
+        "ancre": "#amplification"
+      },
+      {
+        "num": "07",
+        "titre": "Face aux violences, quelles réponses ?",
+        "ancre": "#reponses"
+      },
+      {
+        "num": "08",
+        "titre": "Les propositions, une par une",
+        "ancre": "#propositions"
+      }
+    ],
+    "annexes": [
+      {
+        "titre": "Pour aller plus loin",
+        "ancre": "#plus-loin"
+      },
+      {
+        "titre": "Le relevé complet",
+        "ancre": "#releve"
+      },
+      {
+        "titre": "Méthode et sources",
+        "ancre": "#methode"
+      }
+    ]
+  },
+  "essentiel": {
+    "titre": "L'essentiel en deux minutes",
+    "paragraphes": [
+      "Parti des lycées à la rentrée, le mouvement dénonce d'abord les professeurs non remplacés et des bâtiments vétustes, puis rejoint une contestation plus large du coût de la vie.",
+      "Le 17 octobre, des centaines de milliers de personnes défilent dans tout le pays. En marge des cortèges, des violences et des pillages touchent plusieurs grandes villes. Une semaine plus tard, le 24 octobre, la mobilisation reste forte mais recule, sous un dispositif de sécurité renforcé ; les interpellations sont deux fois moins nombreuses.",
+      "Les premières données judiciaires décrivent des hommes jeunes, souvent sans antécédent, mais elles ne portent que sur les personnes interpellées ou écrouées.",
+      "Notre question : les propositions des candidats peuvent-elles ramener le calme et la sécurité ? Nous les classons, puis évaluons chacune : efficacité, faisabilité juridique, coût, effets indésirables. Nous ne disons pas pour qui voter."
+    ],
+    "id": "essentiel",
+    "num": "01"
+  },
+  "chiffres": {
+    "titre": "// En quatre chiffres",
+    "items": [
+      {
+        "valeur": "550 000",
+        "legende": "manifestants le 17 octobre selon le ministère de l'Intérieur, 800 000 selon les organisateurs",
         "source": {
           "label": "Politis",
           "url": "https://www.politis.fr/dossiers/17-octobre-macron-recolte-la-colere/"
         }
       },
       {
-        "valeur": "3 000",
-        "legende": "commerces au moins touchés par les violences et les pillages du 17 octobre",
+        "valeur": "3 000",
+        "legende": "commerces au moins touchés par les violences et les pillages des 17 et 18 octobre",
         "source": {
           "label": "Public Sénat",
           "url": "https://www.publicsenat.fr/actualites/politique/violences-du-17-octobre-pourquoi-letat-durgence-est-ecarte-par-le-gouvernement"
         }
       },
       {
-        "valeur": "7 950",
-        "legende": "gardes à vue liées au mouvement lycéen jusqu'au 13 octobre, dont 85 % de mineurs",
-        "source": {
-          "label": "franceinfo, d'après le ministère de la Justice",
-          "url": "https://www.franceinfo.fr/societe/education/blocage-des-lycees/direct-mobilisation-lyceenne-des-etablissements-toujours-bloques-aucune-perturbation-dans-les-trois-quarts-des-departements-ajoute-edouard-geffray_8236774.html"
-        }
-      },
-      {
-        "valeur": "174",
-        "legende": "personnes incarcérées en quatre jours après le 17 octobre, sur 2 500 gardes à vue",
-        "source": {
-          "label": "Europe 1, d'après le ministre de la Justice",
-          "url": "https://www.europe1.fr/police-justice/violences-et-pillages-174-personnes-incarcerees-annonce-gerald-darmanin-1170576"
-        }
-      },
-      {
-        "valeur": "95 %",
-        "legende": "d'hommes parmi les 186 personnes écrouées entre le 18 et le 21 octobre",
-        "source": {
-          "label": "Europe 1, d'après une note de la Chancellerie (AFP)",
-          "url": "https://www.europe1.fr/societe/entre-18-et-25-ans-principalement-des-hommes-quel-est-le-profil-des-186-personnes-ecrouees-apres-les-pillages-1174452"
-        }
-      },
-      {
-        "valeur": "52 %",
-        "legende": "de ces personnes écrouées n'avaient aucun antécédent judiciaire",
-        "source": {
-          "label": "Europe 1, d'après une note de la Chancellerie (AFP)",
-          "url": "https://www.europe1.fr/societe/entre-18-et-25-ans-principalement-des-hommes-quel-est-le-profil-des-186-personnes-ecrouees-apres-les-pillages-1174452"
-        }
-      },
-      {
         "valeur": "715",
-        "legende": "policiers et gendarmes blessés au 6 octobre, ainsi que 215 élèves et 85 personnels de l'éducation",
+        "legende": "policiers et gendarmes blessés depuis le début du mouvement (bilan au 6 octobre)",
         "source": {
           "label": "Euronews",
           "url": "https://fr.euronews.com/2026/10/06/mobilisation-lyceenne-acte-iii-891-lycees-perturbes-annonce-le-ministere-de-linterieur"
         }
       },
       {
-        "valeur": "×3",
-        "legende": "messages sur X le 17 octobre (2,2 millions) par rapport au premier samedi des gilets jaunes en 2018",
-        "source": {
-          "label": "Les Gens d'Internet, d'après Visibrain",
-          "url": "https://gensdinternet.fr/2026/10/20/17-octobre-trois-fois-plus-de-publications-sur-les-reseaux-sociaux-que-lors-des-gilets-jaunes-en-2018/amp/"
+        "valeur": "53",
+        "calcul": "mesuresRetenues",
+        "legende": "mesures de sécurité relevées chez 11 candidats depuis le début du mouvement",
+        "calculLegende": "mesures de sécurité relevées chez {candidats} candidats depuis le début du mouvement",
+        "lien": {
+          "label": "Voir le relevé",
+          "ancre": "#releve"
         }
       }
     ],
-    "note": "Chiffres issus de sources publiques au 23 octobre 2026. Ils seront mis à jour. Les bilans judiciaires évoluent vite : garde à vue, poursuite, incarcération et condamnation sont des étapes différentes."
-  },
-  "chronologie": {
-    "titre": "// Chronologie",
-    "items": [
-      {
-        "date": "21 septembre",
-        "dateIso": "2026-09-21",
-        "texte": "Premiers blocages de lycées : professeurs non remplacés, locaux vétustes, classes surchargées."
-      },
-      {
-        "date": "Début octobre",
-        "texte": "Le gouvernement annonce l'arrivée de 3 000 professeurs remplaçants, jugée insuffisante par les lycéens."
-      },
-      {
-        "date": "6 octobre",
-        "dateIso": "2026-10-06",
-        "texte": "891 lycées sur 3 700 perturbés. 256 000 manifestants selon l'Intérieur, 450 000 selon les organisations lycéennes et étudiantes."
-      },
-      {
-        "date": "13 octobre",
-        "dateIso": "2026-10-13",
-        "texte": "Nouvelle journée lycéenne et étudiante : 161 500 manifestants selon l'Intérieur, 480 000 selon les syndicats. Violences à Paris."
-      },
-      {
-        "date": "17 octobre",
-        "dateIso": "2026-10-17",
-        "texte": "Journée nationale contre la vie chère, rejointe par les lycéens. Violences et pillages dans plusieurs villes, jusqu'au 18. Manifestations le même jour au Portugal et en Belgique."
-      },
-      {
-        "date": "18 octobre",
-        "dateIso": "2026-10-18",
-        "texte": "Allocution du président de la République : il distingue manifestants et casseurs et promet de « tirer toutes les leçons », notamment sur le renseignement et l'anticipation."
-      },
-      {
-        "date": "19 octobre",
-        "dateIso": "2026-10-19",
-        "texte": "L'état d'urgence est écarté ; des couvre-feux localisés sont annoncés. Les candidats présentent leurs propositions."
-      },
-      {
-        "date": "20 octobre",
-        "dateIso": "2026-10-20",
-        "texte": "L'Assemblée nationale crée une commission d'enquête sur les violences et le maintien de l'ordre."
-      },
-      {
-        "date": "21 octobre",
-        "dateIso": "2026-10-21",
-        "texte": "Premier bilan judiciaire : 2 500 gardes à vue, 917 personnes déférées, 174 incarcérées. En Grèce, plus de 10 000 élèves et enseignants manifestent « comme en France »."
-      },
-      {
-        "date": "22 octobre",
-        "dateIso": "2026-10-22",
-        "texte": "Une note de la Chancellerie décrit le profil des 186 personnes écrouées. Le chef de l'État appelle à éviter les rassemblements des jours suivants."
-      },
-      {
-        "date": "23 octobre",
-        "dateIso": "2026-10-23",
-        "texte": "Les organisations lycéennes sont reçues à l'Élysée. Un conseil de défense examine de nouvelles mesures de sécurité."
-      },
-      {
-        "date": "24 octobre",
-        "dateIso": "2026-10-24",
-        "texte": "Nouvelle journée contre la vie chère (« acte II »), à l'appel de la coordination des gilets jaunes."
-      },
-      {
-        "date": "26 octobre",
-        "dateIso": "2026-10-26",
-        "texte": "Concertation annoncée avec les organisations de jeunesse, les enseignants, les syndicats et le patronat."
-      },
-      {
-        "date": "27 octobre",
-        "dateIso": "2026-10-27",
-        "texte": "Examen prévu au Sénat du projet de loi « casseurs-payeurs », présenté par le gouvernement le 16 septembre."
-      },
-      {
-        "date": "31 octobre",
-        "dateIso": "2026-10-31",
-        "texte": "Troisième date annoncée par la coordination des gilets jaunes."
-      },
-      {
-        "date": "5 novembre",
-        "dateIso": "2026-11-05",
-        "texte": "Grève et manifestations nationales à l'appel des syndicats (CFDT, CGT, FO, Unsa, FSU) sur les salaires, les services publics et l'emploi."
-      }
-    ],
-    "graphique": {
-      "type": "barresGroupees",
-      "titre": "Combien de manifestants ?",
-      "sousTitre": "Trois grandes journées, selon les deux comptages, en milliers de personnes",
-      "unite": "k",
-      "series": [
-        {
-          "id": "interieur",
-          "label": "Ministère de l'Intérieur"
-        },
-        {
-          "id": "organisateurs",
-          "label": "Organisateurs"
-        }
-      ],
-      "donnees": [
-        {
-          "label": "6 octobre",
-          "valeurs": [
-            256,
-            450
-          ]
-        },
-        {
-          "label": "13 octobre",
-          "valeurs": [
-            161.5,
-            480
-          ]
-        },
-        {
-          "label": "17 octobre",
-          "valeurs": [
-            550,
-            800
-          ]
-        }
-      ],
-      "note": "Les deux comptages ne couvrent pas toujours les mêmes cortèges. Le 17 octobre réunit lycéens, étudiants, gilets jaunes, agriculteurs et syndicats.",
-      "sources": [
-        {
-          "label": "Euronews",
-          "url": "https://fr.euronews.com/2026/10/06/mobilisation-lyceenne-acte-iii-891-lycees-perturbes-annonce-le-ministere-de-linterieur"
-        },
-        {
-          "label": "Euronews",
-          "url": "https://fr.euronews.com/2026/10/14/nouvelles-violences-a-paris-lors-du-rassemblement-des-lyceens-et-des-etudiants"
-        },
-        {
-          "label": "Politis",
-          "url": "https://www.politis.fr/dossiers/17-octobre-macron-recolte-la-colere/"
-        }
-      ]
-    },
-    "note": "Les dates à venir sont celles annoncées au 23 octobre. La chronologie sera mise à jour après chaque journée.",
-    "sources": [
-      {
-        "label": "Public Sénat",
-        "url": "https://www.publicsenat.fr/actualites/politique/violences-du-17-octobre-macron-exprime-sa-colere-et-sa-honte-et-promet-toute-la-transparence"
-      },
-      {
-        "label": "Kaweru, dépêche du 23 octobre",
-        "url": "https://www.kaweru.com/politique-societe/2026/10/23/france-le-pr-macron-va-recevoir-ce-vendredi-les-organisations-lyceennes-a-lelysee/"
-      },
-      {
-        "label": "Europe 1, d'après le ministre de la Justice",
-        "url": "https://www.europe1.fr/police-justice/violences-et-pillages-174-personnes-incarcerees-annonce-gerald-darmanin-1170576"
-      },
-      {
-        "label": "AFP, via Bourse Direct",
-        "url": "https://www.boursedirect.fr/fr/actualites/categorie/economie/grece-comme-en-france-plus-de-10-000-etudiants-et-enseignants-dans-la-rue-afp-6ab8abcee9c11e80d62aa523fb58d4f4fd3cdeca"
-      },
-      {
-        "label": "Europe 1, d'après une note de la Chancellerie (AFP)",
-        "url": "https://www.europe1.fr/societe/entre-18-et-25-ans-principalement-des-hommes-quel-est-le-profil-des-186-personnes-ecrouees-apres-les-pillages-1174452"
-      }
-    ]
-  },
-  "comprendre": {
-    "id": "comprendre",
-    "surtitre": "// Comprendre la crise",
-    "titre": "Qui manifeste, qui casse, et pourquoi ?",
-    "intro": "Pour juger si une mesure de sécurité peut ramener le calme, il faut savoir à qui elle s'adresse. Voici ce que disent les données disponibles au 23 octobre, et ce qu'elles ne permettent pas encore de dire.",
-    "sections": [
-      {
-        "id": "etages",
-        "titre": "Une crise à trois étages",
-        "blocs": [
-          {
-            "type": "texte",
-            "paragraphes": [
-              "Manifestations pacifiques et violences ne relèvent pas des mêmes mécanismes. Pour y voir clair, on peut distinguer trois niveaux, qui se superposent."
-            ]
-          },
-          {
-            "type": "etages",
-            "items": [
-              {
-                "titre": "Les causes de fond",
-                "texte": "Elles rendent une partie de la population plus réceptive à la contestation.",
-                "exemples": [
-                  "heures de cours perdues",
-                  "lycées vieillissants",
-                  "chômage des jeunes",
-                  "coût de la vie",
-                  "défiance envers les institutions"
-                ]
-              },
-              {
-                "titre": "Les déclencheurs",
-                "texte": "Ils transforment un mécontentement diffus en revendication concrète.",
-                "exemples": [
-                  "professeurs non remplacés à la rentrée",
-                  "hausse des prix",
-                  "appel national du 17 octobre"
-                ]
-              },
-              {
-                "titre": "Les accélérateurs",
-                "texte": "Ils jouent sur la vitesse, la taille et la forme du mouvement, jusqu'aux violences.",
-                "exemples": [
-                  "réseaux sociaux",
-                  "outils d'IA",
-                  "images virales",
-                  "convergence avec gilets jaunes et syndicats",
-                  "affrontements"
-                ]
-              }
-            ]
-          },
-          {
-            "type": "encadre",
-            "ton": "info",
-            "texte": "Les propositions analysées dans ce dossier portent sur la sécurité : elles agissent sur le moment des violences et sur leurs auteurs. Les causes de fond relèvent d'autres politiques, que nous analysons dans des fiches séparées."
-          }
-        ]
-      },
-      {
-        "id": "sociologie",
-        "titre": "Qui était dans la rue ?",
-        "blocs": [
-          {
-            "type": "texte",
-            "paragraphes": [
-              "Manifestants, pilleurs, casseurs : ce ne sont pas les mêmes personnes. La seule photographie officielle des auteurs de violences est une note de la Chancellerie sur les 186 personnes écrouées entre le 18 et le 21 octobre. Elle décrit un groupe très masculin et très jeune."
-            ]
-          },
-          {
-            "type": "cartes",
-            "colonnes": 4,
-            "items": [
-              {
-                "etiquette": "Les manifestants",
-                "chiffre": "Plus de 550 000",
-                "texte": "L'immense majorité des personnes présentes le 17 octobre. Lycéens, étudiants, gilets jaunes, agriculteurs, syndiqués : des cortèges très divers, restés pacifiques pour l'essentiel.",
-                "source": {
-                  "label": "Politis",
-                  "url": "https://www.politis.fr/dossiers/17-octobre-macron-recolte-la-colere/"
-                }
-              },
-              {
-                "etiquette": "Les pilleurs",
-                "chiffre": "46 %",
-                "texte": "des personnes écrouées le sont pour des pillages, premier motif d'incarcération. Au moins 3 000 commerces ont été touchés.",
-                "source": {
-                  "label": "Europe 1, d'après une note de la Chancellerie (AFP)",
-                  "url": "https://www.europe1.fr/societe/entre-18-et-25-ans-principalement-des-hommes-quel-est-le-profil-des-186-personnes-ecrouees-apres-les-pillages-1174452"
-                }
-              },
-              {
-                "etiquette": "Les casseurs",
-                "chiffre": "26 %",
-                "texte": "des personnes écrouées le sont pour des affrontements avec les forces de l'ordre. 10 % cumulent pillage et affrontements.",
-                "source": {
-                  "label": "Europe 1, d'après une note de la Chancellerie (AFP)",
-                  "url": "https://www.europe1.fr/societe/entre-18-et-25-ans-principalement-des-hommes-quel-est-le-profil-des-186-personnes-ecrouees-apres-les-pillages-1174452"
-                }
-              },
-              {
-                "etiquette": "Les indécis",
-                "chiffre": "52 %",
-                "texte": "des personnes écrouées n'avaient aucun antécédent judiciaire. Entre le cortège et la casse, une zone grise de jeunes entraînés par le groupe ou l'occasion. En 2023, près de 60 % des personnes interpellées étaient déjà des primo-délinquants.",
-                "source": {
-                  "label": "Europe 1, d'après une note de la Chancellerie (AFP)",
-                  "url": "https://www.europe1.fr/societe/entre-18-et-25-ans-principalement-des-hommes-quel-est-le-profil-des-186-personnes-ecrouees-apres-les-pillages-1174452"
-                }
-              }
-            ]
-          },
-          {
-            "type": "grille",
-            "colonnes": 2,
-            "blocs": [
-              {
-                "type": "graphique",
-                "graphique": {
-                  "type": "barres",
-                  "titre": "Le profil des personnes écrouées",
-                  "sousTitre": "186 personnes écrouées du 18 au 21 octobre, en %",
-                  "unite": "%",
-                  "max": 100,
-                  "donnees": [
-                    {
-                      "label": "Hommes",
-                      "valeur": 95
-                    },
-                    {
-                      "label": "Nationalité française",
-                      "valeur": 70
-                    },
-                    {
-                      "label": "25 ans ou moins",
-                      "valeur": 68
-                    },
-                    {
-                      "label": "Sans antécédent judiciaire",
-                      "valeur": 52
-                    }
-                  ],
-                  "note": "Parmi les 25 ans ou moins, les 18-20 ans sont les plus nombreux. Presque toutes ces personnes sont nées en France.",
-                  "sources": [
-                    {
-                      "label": "Europe 1, d'après une note de la Chancellerie (AFP)",
-                      "url": "https://www.europe1.fr/societe/entre-18-et-25-ans-principalement-des-hommes-quel-est-le-profil-des-186-personnes-ecrouees-apres-les-pillages-1174452"
-                    }
-                  ]
-                }
-              },
-              {
-                "type": "graphique",
-                "graphique": {
-                  "type": "barreEmpilee",
-                  "titre": "Pourquoi elles ont été écrouées",
-                  "sousTitre": "Faits principalement reprochés, en % des 186 personnes",
-                  "unite": "%",
-                  "segments": [
-                    {
-                      "label": "Pillage",
-                      "valeur": 46
-                    },
-                    {
-                      "label": "Affrontements avec les forces de l'ordre",
-                      "valeur": 26
-                    },
-                    {
-                      "label": "Les deux",
-                      "valeur": 10
-                    },
-                    {
-                      "label": "Autres faits",
-                      "valeur": 18
-                    }
-                  ],
-                  "note": "« Autres faits » : part déduite du total ; la note ne détaille pas ces faits.",
-                  "sources": [
-                    {
-                      "label": "Europe 1, d'après une note de la Chancellerie (AFP)",
-                      "url": "https://www.europe1.fr/societe/entre-18-et-25-ans-principalement-des-hommes-quel-est-le-profil-des-186-personnes-ecrouees-apres-les-pillages-1174452"
-                    }
-                  ]
-                }
-              }
-            ]
-          },
-          {
-            "type": "grille",
-            "colonnes": 2,
-            "blocs": [
-              {
-                "type": "graphique",
-                "graphique": {
-                  "type": "entonnoir",
-                  "titre": "De l'interpellation à la prison",
-                  "sousTitre": "Violences du 17 octobre, bilan au 21 octobre",
-                  "etapes": [
-                    {
-                      "label": "Gardes à vue",
-                      "valeur": 2500,
-                      "libelle": "≈ 2 500"
-                    },
-                    {
-                      "label": "Déférés en vue d'une comparution immédiate",
-                      "valeur": 917,
-                      "libelle": "917"
-                    },
-                    {
-                      "label": "Incarcérés",
-                      "valeur": 174,
-                      "libelle": "174"
-                    }
-                  ],
-                  "note": "Le lendemain, le bilan atteignait 217 incarcérations. Les relaxes et les condamnations définitives ne sont pas encore connues.",
-                  "sources": [
-                    {
-                      "label": "Europe 1, d'après le ministre de la Justice",
-                      "url": "https://www.europe1.fr/police-justice/violences-et-pillages-174-personnes-incarcerees-annonce-gerald-darmanin-1170576"
-                    },
-                    {
-                      "label": "Europe 1, d'après une note de la Chancellerie (AFP)",
-                      "url": "https://www.europe1.fr/societe/entre-18-et-25-ans-principalement-des-hommes-quel-est-le-profil-des-186-personnes-ecrouees-apres-les-pillages-1174452"
-                    }
-                  ]
-                }
-              },
-              {
-                "type": "graphique",
-                "graphique": {
-                  "type": "barresGroupees",
-                  "titre": "2023, 2026 : des profils proches",
-                  "sousTitre": "Émeutes de 2023 et violences d'octobre 2026, en %",
-                  "unite": "%",
-                  "max": 100,
-                  "series": [
-                    {
-                      "id": "2023",
-                      "label": "Émeutes de 2023"
-                    },
-                    {
-                      "id": "2026",
-                      "label": "Octobre 2026"
-                    }
-                  ],
-                  "donnees": [
-                    {
-                      "label": "Hommes",
-                      "valeurs": [
-                        91,
-                        95
-                      ]
-                    },
-                    {
-                      "label": "Nationalité française",
-                      "valeurs": [
-                        71,
-                        70
-                      ]
-                    },
-                    {
-                      "label": "Sans antécédent",
-                      "valeurs": [
-                        60,
-                        52
-                      ]
-                    }
-                  ],
-                  "note": "Comparaison indicative : en 2023, personnes jugées (sexe, nationalité) et personnes interpellées (antécédents) ; en 2026, personnes écrouées.",
-                  "sources": [
-                    {
-                      "label": "Public Sénat, d'après le rapport du Sénat sur les émeutes de 2023",
-                      "url": "https://www.publicsenat.fr/actualites/parlementaire/violences-urbaines-quel-est-le-profil-des-emeutiers"
-                    },
-                    {
-                      "label": "Sénat, rapport n° 521 (2023-2024)",
-                      "url": "https://www.senat.fr/rap/r23-521/r23-5211.pdf"
-                    },
-                    {
-                      "label": "Europe 1, d'après une note de la Chancellerie (AFP)",
-                      "url": "https://www.europe1.fr/societe/entre-18-et-25-ans-principalement-des-hommes-quel-est-le-profil-des-186-personnes-ecrouees-apres-les-pillages-1174452"
-                    }
-                  ]
-                }
-              }
-            ]
-          },
-          {
-            "type": "encadre",
-            "ton": "attention",
-            "titre": "Ce que ces chiffres ne disent pas",
-            "texte": "Ils décrivent les personnes interpellées, poursuivies ou écrouées, pas l'ensemble de celles qui ont cassé ou pillé. Ils dépendent de l'endroit où se trouvaient les forces de l'ordre, des preuves réunies et des décisions des juges. Pour le mouvement lycéen dans son ensemble, les gardes à vue concernent surtout des mineurs (85 % jusqu'au 13 octobre) ; après le 17 octobre, les 18-20 ans dominent parmi les personnes écrouées."
-          }
-        ]
-      },
-      {
-        "id": "origine",
-        "titre": "L'origine des auteurs : ce que disent les chiffres, et ce qu'ils ne disent pas",
-        "blocs": [
-          {
-            "type": "texte",
-            "paragraphes": [
-              "Depuis le 17 octobre, une partie du débat porte sur l'origine des auteurs de violences. Le seul chiffre officiel disponible porte sur la nationalité : 30 % des 186 personnes écrouées sont étrangères, presque toutes nées en France selon la note de la Chancellerie. Les étrangers représentent 9,1 % de la population française.",
-              "L'écart est réel et mérite d'être étudié. Il ne suffit pas, en l'état, à mesurer la part des personnes issues de l'immigration parmi l'ensemble des émeutiers."
-            ]
-          },
-          {
-            "type": "grille",
-            "colonnes": 2,
-            "blocs": [
-              {
-                "type": "graphique",
-                "graphique": {
-                  "type": "barres",
-                  "titre": "Part de personnes de nationalité étrangère",
-                  "sousTitre": "En %",
-                  "unite": "%",
-                  "max": 100,
-                  "donnees": [
-                    {
-                      "label": "Population vivant en France (2025)",
-                      "valeur": 9.1
-                    },
-                    {
-                      "label": "Personnes jugées après les émeutes de 2023",
-                      "valeur": 29
-                    },
-                    {
-                      "label": "Personnes écrouées du 18 au 21 octobre 2026",
-                      "valeur": 30,
-                      "accent": true
-                    }
-                  ],
-                  "note": "Comparaison brute, non corrigée de l'âge, du sexe ni du lieu de résidence. En 2023, le ministre de l'Intérieur avançait 10 % d'étrangers parmi l'ensemble des interpellés : la proportion varie selon l'étape de la procédure.",
-                  "sources": [
-                    {
-                      "label": "Insee",
-                      "url": "https://insee.fr/fr/statistiques/3633212"
-                    },
-                    {
-                      "label": "Public Sénat, d'après le rapport du Sénat sur les émeutes de 2023",
-                      "url": "https://www.publicsenat.fr/actualites/parlementaire/violences-urbaines-quel-est-le-profil-des-emeutiers"
-                    },
-                    {
-                      "label": "Europe 1, d'après une note de la Chancellerie (AFP)",
-                      "url": "https://www.europe1.fr/societe/entre-18-et-25-ans-principalement-des-hommes-quel-est-le-profil-des-186-personnes-ecrouees-apres-les-pillages-1174452"
-                    }
-                  ]
-                }
-              },
-              {
-                "type": "encadre",
-                "ton": "attention",
-                "titre": "Trois raisons de lire ce chiffre avec prudence",
-                "liste": [
-                  "L'échantillon : les personnes écrouées ne sont pas tous les émeutiers. Elles ont passé plusieurs filtres : interpellation, preuves, décision du parquet puis du juge.",
-                  "La comparaison : les violences se sont concentrées dans de grandes villes, où la part d'étrangers dépasse la moyenne nationale, et chez de jeunes hommes. La note ne précise pas où vivent les personnes écrouées.",
-                  "Les notions : nationalité, immigration et origine sont trois choses différentes. Un étranger peut être né en France ; un immigré peut être devenu français ; un descendant d'immigré de nationalité française n'apparaît pas dans ce chiffre."
-                ]
-              }
-            ]
-          },
-          {
-            "type": "cartes",
-            "colonnes": 3,
-            "items": [
-              {
-                "etiquette": "Étranger",
-                "chiffre": "6,3 millions",
-                "texte": "Personne qui n'a pas la nationalité française, soit 9,1 % de la population. Environ 1 million sont nés en France.",
-                "source": {
-                  "label": "Insee",
-                  "url": "https://insee.fr/fr/statistiques/3633212"
-                }
-              },
-              {
-                "etiquette": "Immigré",
-                "chiffre": "8,0 millions",
-                "texte": "Personne née étrangère à l'étranger et vivant en France, soit 11,6 % de la population. Un immigré peut être devenu français.",
-                "source": {
-                  "label": "Insee",
-                  "url": "https://insee.fr/fr/statistiques/3633212"
-                }
-              },
-              {
-                "etiquette": "Descendant d'immigré",
-                "chiffre": "Non mesuré ici",
-                "texte": "Personne née en France d'au moins un parent immigré. Seules des enquêtes statistiques permettent de la compter ; aucune donnée n'existe sur les auteurs des violences d'octobre.",
-                "source": {
-                  "label": "Insee",
-                  "url": "https://insee.fr/fr/statistiques/3633212"
-                }
-              }
-            ]
-          },
-          {
-            "type": "texte",
-            "paragraphes": [
-              "À l'échelle des communes, les chercheurs de Sciences Po qui étudient les émeutes de 2023 relèvent que les émeutes de faible intensité ont davantage touché des communes plus ségréguées, comptant plus de familles nombreuses et d'immigrés ; les plus intenses, des communes avec davantage de familles monoparentales et de délinquance d'appropriation, une vie associative plus faible et une participation électorale plus basse. Une corrélation entre communes ne dit rien, à elle seule, des personnes qui y émeutent."
-            ],
-            "sources": [
-              {
-                "label": "LIEPP, Sciences Po",
-                "url": "https://www.sciencespo.fr/liepp/files/Poster%20LIEPP%20Emeutes%202023%20-%20mars%202026.pdf"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "id": "numerique",
-        "titre": "Réseaux sociaux et IA : la bataille des récits",
-        "blocs": [
-          {
-            "type": "texte",
-            "paragraphes": [
-              "Les réseaux sociaux n'ont pas inventé la colère, mais ils ont changé sa vitesse. La génération qui manifeste est aussi la première à utiliser l'IA générative au quotidien : des lycéens s'en sont servis pour rédiger leurs revendications, fabriquer des affiches et contacter des journalistes."
-            ],
-            "sources": [
-              {
-                "label": "Le Parisien",
-                "url": "https://www.leparisien.fr/societe/il-y-a-une-forte-utilisation-de-lia-sur-les-blocus-comment-lintelligence-artificielle-a-booste-la-mobilisation-lyceenne-16-10-2026-KBLKARZM6FC4XKHZ2HGNEUYM3I.php"
-              }
-            ]
-          },
-          {
-            "type": "chiffres",
-            "items": [
-              {
-                "valeur": "2,2 M",
-                "legende": "messages sur X le 17 octobre, trois fois plus qu'au premier samedi des gilets jaunes",
-                "source": {
-                  "label": "Les Gens d'Internet, d'après Visibrain",
-                  "url": "https://gensdinternet.fr/2026/10/20/17-octobre-trois-fois-plus-de-publications-sur-les-reseaux-sociaux-que-lors-des-gilets-jaunes-en-2018/amp/"
-                }
-              },
-              {
-                "valeur": "800 M",
-                "legende": "vues sur TikTok pour les contenus liés à la mobilisation",
-                "source": {
-                  "label": "Les Gens d'Internet, d'après Visibrain",
-                  "url": "https://gensdinternet.fr/2026/10/20/17-octobre-trois-fois-plus-de-publications-sur-les-reseaux-sociaux-que-lors-des-gilets-jaunes-en-2018/amp/"
-                }
-              },
-              {
-                "valeur": "85 %",
-                "legende": "des 18-24 ans utilisent l'IA générative, contre 48 % de l'ensemble des Français",
-                "source": {
-                  "label": "Banque des Territoires, d'après le Baromètre du numérique 2026 (Arcep, Arcom, ANCT, Crédoc)",
-                  "url": "https://www.banquedesterritoires.fr/barometre-du-numerique-comment-lia-dessine-de-nouvelles-fractures"
-                }
-              },
-              {
-                "valeur": "6 M",
-                "legende": "vues sur X pour une seule fausse photo générée par IA, présentée comme prise pendant les manifestations",
-                "source": {
-                  "label": "AFP Factuel, via Yahoo Actualités",
-                  "url": "https://fr.news.yahoo.com/manifestations-17-octobre-attention-%C3%A0-133516220.html"
-                }
-              }
-            ]
-          },
-          {
-            "type": "grille",
-            "colonnes": 2,
-            "blocs": [
-              {
-                "type": "graphique",
-                "graphique": {
-                  "type": "barres",
-                  "titre": "Un récit migratoire surtout amplifié hors de France",
-                  "sousTitre": "Part des publications attribuant les troubles aux migrants ou à l'islam, selon la langue, en %",
-                  "unite": "%",
-                  "max": 25,
-                  "donnees": [
-                    {
-                      "label": "Français",
-                      "valeur": 3
-                    },
-                    {
-                      "label": "Polonais",
-                      "valeur": 13
-                    },
-                    {
-                      "label": "Anglais",
-                      "valeur": 19
-                    }
-                  ],
-                  "note": "Analyse d'environ 550 000 publications du 11 au 18 octobre. Un corpus de publications n'est pas un sondage d'opinion.",
-                  "sources": [
-                    {
-                      "label": "Le Grand Continent",
-                      "url": "https://legrandcontinent.eu/fr/2026/10/22/comment-des-acteurs-etrangers-ont-attise-la-colere-en-ligne-autour-des-manifestations-du-17-octobre-en-france/"
-                    },
-                    {
-                      "label": "Alliance4Europe",
-                      "url": "https://alliance4europe.eu/report/eu-unrest-report-%C2%B7-how-frances-october-2026-protests-were-manipulated-then-retold-abroad"
-                    }
-                  ]
-                }
-              },
-              {
-                "type": "encadre",
-                "ton": "info",
-                "titre": "Des acteurs étrangers en renfort",
-                "texte": "L'ONG Alliance4Europe a identifié au moins 639 publications coordonnées du réseau russe Doppelganger, en 22 vagues entre le 2 septembre et le 14 octobre, vues environ 7,4 millions de fois. La fausse rumeur d'immigrés incendiant la mairie de Limoges a circulé 3,6 fois plus en anglais qu'en français. L'ONG ne trouve en revanche aucune preuve qu'un acteur étranger soit à l'origine des manifestations.",
-                "sources": [
-                  {
-                    "label": "Alliance4Europe",
-                    "url": "https://alliance4europe.eu/report/eu-unrest-report-%C2%B7-how-frances-october-2026-protests-were-manipulated-then-retold-abroad"
-                  },
-                  {
-                    "label": "Le Grand Continent",
-                    "url": "https://legrandcontinent.eu/fr/2026/10/22/comment-des-acteurs-etrangers-ont-attise-la-colere-en-ligne-autour-des-manifestations-du-17-octobre-en-france/"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "type": "encadre",
-            "ton": "attention",
-            "titre": "Viralité ne veut pas dire causalité",
-            "texte": "Aucune étude ne mesure encore si les vidéos de violences ont provoqué de nouveaux passages à l'acte, ou si elles ont seulement montré des violences déjà en cours. Selon les comptes suivis, un même utilisateur pouvait ne voir que les cortèges pacifiques, ou que les pillages."
-          }
-        ]
-      },
-      {
-        "id": "griefs",
-        "titre": "Des griefs mesurables",
-        "blocs": [
-          {
-            "type": "texte",
-            "paragraphes": [
-              "Les revendications de départ ne sont pas qu'un ressenti : plusieurs d'entre elles se mesurent. Ces données expliquent la mobilisation ; elles ne justifient pas les violences, et elles n'établissent pas de lien direct avec le passage à l'acte."
-            ]
-          },
-          {
-            "type": "chiffres",
-            "items": [
-              {
-                "valeur": "9,8 %",
-                "legende": "des heures de cours non assurées dans les collèges et lycées publics en 2024-2025, surtout faute de remplacement (7,5 points)",
-                "source": {
-                  "label": "DEPP, ministère de l'Éducation nationale",
-                  "url": "https://www.education.gouv.fr/depp/la-part-du-temps-d-enseignement-non-assure-dans-les-etablissements-publics-du-second-degre-en-2024-504512"
-                }
-              },
-              {
-                "valeur": "61 ans",
-                "legende": "âge moyen des lycées ; 71 ans pour les lycées professionnels. Plus d'un tiers ont atteint leur capacité d'accueil",
-                "source": {
-                  "label": "Le Monde (5 et 17 octobre), repris par Santé-Environnement-Politique",
-                  "url": "https://environnementsantepolitique.fr/2026/10/19/le-mouvement-lyceen-analyses/"
-                }
-              },
-              {
-                "valeur": "80 %",
-                "legende": "des lycées dégradés en Île-de-France sont professionnels ou polyvalents, contre environ la moitié des lycées",
-                "source": {
-                  "label": "Le Monde (5 et 17 octobre), repris par Santé-Environnement-Politique",
-                  "url": "https://environnementsantepolitique.fr/2026/10/19/le-mouvement-lyceen-analyses/"
-                }
-              },
-              {
-                "valeur": "21,6 %",
-                "legende": "de chômage chez les 15-24 ans au 2e trimestre 2026, contre 8,3 % pour l'ensemble des actifs",
-                "source": {
-                  "label": "Insee",
-                  "url": "https://www.insee.fr/fr/statistiques/9032359"
-                }
-              }
-            ]
-          },
-          {
-            "type": "grille",
-            "colonnes": 2,
-            "blocs": [
-              {
-                "type": "graphique",
-                "graphique": {
-                  "type": "barres",
-                  "titre": "Sans proposition sur Parcoursup",
-                  "sousTitre": "Part des bacheliers 2025 sans aucune proposition, en %",
-                  "unite": "%",
-                  "max": 25,
-                  "donnees": [
-                    {
-                      "label": "Bac général",
-                      "valeur": 3.5
-                    },
-                    {
-                      "label": "Bac professionnel",
-                      "valeur": 20,
-                      "libelle": "plus de 20 %",
-                      "accent": true
-                    }
-                  ],
-                  "sources": [
-                    {
-                      "label": "Le Monde (5 et 17 octobre), repris par Santé-Environnement-Politique",
-                      "url": "https://environnementsantepolitique.fr/2026/10/19/le-mouvement-lyceen-analyses/"
-                    }
-                  ]
-                }
-              },
-              {
-                "type": "graphique",
-                "graphique": {
-                  "type": "barres",
-                  "titre": "Moins d'embauches de jeunes en CDI",
-                  "sousTitre": "Baisse des embauches en CDI des 21-29 ans entre novembre 2022 et mars 2026, en %",
-                  "unite": "%",
-                  "max": 30,
-                  "donnees": [
-                    {
-                      "label": "Métiers les moins exposés à l'IA",
-                      "valeur": 8,
-                      "libelle": "−8 %"
-                    },
-                    {
-                      "label": "Métiers les plus exposés à l'IA",
-                      "valeur": 28,
-                      "libelle": "−28 %",
-                      "accent": true
-                    }
-                  ],
-                  "note": "Une association, pas un effet démontré de l'IA : les auteurs citent aussi la politique monétaire, le recul de la tech et le télétravail. À l'échelle européenne, Eurofound ne constate pas d'éviction des jeunes : leur emploi dans les métiers utilisant beaucoup l'IA a progressé de 16,4 % entre 2019 et 2025.",
-                  "sources": [
-                    {
-                      "label": "Banque de France, Bloc-notes Éco n° 463",
-                      "url": "https://www.banque-france.fr/system/files/2026-10/Billet_463_FR_0.pdf"
-                    },
-                    {
-                      "label": "Eurofound",
-                      "url": "https://www.eurofound.europa.eu/en/publications/all/ai-is-already-in-use-in-europe-s-workplaces-but-not-at-the-expense-of-young-workers"
-                    }
-                  ]
-                }
-              }
-            ]
-          },
-          {
-            "type": "graphique",
-            "graphique": {
-              "type": "barres",
-              "titre": "Confiance : la police et les maires loin devant",
-              "sousTitre": "Part des Français déclarant avoir confiance, février 2026, en %",
-              "unite": "%",
-              "max": 100,
-              "donnees": [
-                {
-                  "label": "La police",
-                  "valeur": 73,
-                  "accent": true
-                },
-                {
-                  "label": "Les maires",
-                  "valeur": 60,
-                  "accent": true
-                },
-                {
-                  "label": "La politique",
-                  "valeur": 22
-                },
-                {
-                  "label": "Les députés",
-                  "valeur": 20
-                },
-                {
-                  "label": "Le président de la République",
-                  "valeur": 18
-                },
-                {
-                  "label": "Les partis politiques",
-                  "valeur": 15
-                }
-              ],
-              "note": "Enquête OpinionWay pour le Cevipof réalisée avant le mouvement, auprès de l'ensemble des adultes, pas des seuls manifestants.",
-              "sources": [
-                {
-                  "label": "Cevipof, Sciences Po",
-                  "url": "https://www.sciencespo.fr/cevipof/fr/actualites/barometre-de-la-confiance-politique-cevipof-2026-la-confiance-s-effondre-en-politique-la-proximite-fait-figure-de-refuge/"
-                }
-              ]
-            }
-          }
-        ]
-      },
-      {
-        "id": "europe",
-        "titre": "En Europe, une contagion sans chef d'orchestre",
-        "blocs": [
-          {
-            "type": "texte",
-            "paragraphes": [
-              "La France n'est pas seule. Plusieurs pays connaissent des mobilisations au même moment. Certaines se réclament explicitement du mouvement français ; d'autres ont leurs propres causes. Aucun élément ne montre une coordination européenne : on observe plutôt des mouvements qui s'observent et s'imitent."
-            ]
-          },
-          {
-            "type": "pays",
-            "legende": [
-              {
-                "id": "foyer",
-                "label": "Point de départ"
-              },
-              {
-                "id": "explicite",
-                "label": "Se réclame de la France"
-              },
-              {
-                "id": "echo",
-                "label": "Fait écho à la France"
-              },
-              {
-                "id": "parallele",
-                "label": "Mouvement parallèle"
-              }
-            ],
-            "items": [
-              {
-                "pays": "France",
-                "lien": "foyer",
-                "foyer": "École, puis coût de la vie",
-                "fait": "891 lycées perturbés le 6 octobre ; jusqu'à 550 000 à 800 000 manifestants le 17.",
-                "source": {
-                  "label": "Euronews",
-                  "url": "https://fr.euronews.com/2026/10/06/mobilisation-lyceenne-acte-iii-891-lycees-perturbes-annonce-le-ministere-de-linterieur"
-                }
-              },
-              {
-                "pays": "Italie",
-                "lien": "explicite",
-                "foyer": "École, coût de la vie",
-                "fait": "Occupations de lycées dès le 5 octobre à Turin, dans le sillage français ; grève étudiante nationale le 16 octobre.",
-                "source": {
-                  "label": "Euronews Italia",
-                  "url": "https://it.euronews.com/2026/10/15/prime-scuole-occupate-in-italia-sulla-scia-delle-proteste-studentesche-francesi"
-                }
-              },
-              {
-                "pays": "Grèce",
-                "lien": "explicite",
-                "foyer": "École, coût de la vie",
-                "fait": "Plus de 10 000 élèves et enseignants le 21 octobre. « En Grèce comme en France, nous réclamons une éducation publique et gratuite. »",
-                "source": {
-                  "label": "AFP, via Bourse Direct",
-                  "url": "https://www.boursedirect.fr/fr/actualites/categorie/economie/grece-comme-en-france-plus-de-10-000-etudiants-et-enseignants-dans-la-rue-afp-6ab8abcee9c11e80d62aa523fb58d4f4fd3cdeca"
-                }
-              },
-              {
-                "pays": "Belgique",
-                "lien": "echo",
-                "foyer": "École, budget",
-                "fait": "Blocus de lycées décrits comme importés de France ; une cinquantaine d'arrestations à Liège le 6 octobre.",
-                "source": {
-                  "label": "La Libre Belgique",
-                  "url": "https://www.lalibre.be/belgique/societe/2026/10/07/manifestations-etudiantes-a-liege-une-cinquantaine-de-personnes-arretees-mardi-DGMOGE3NCBCKNODMGYPICYF2WM/"
-                }
-              },
-              {
-                "pays": "Portugal",
-                "lien": "parallele",
-                "foyer": "Logement, coût de la vie",
-                "fait": "Des dizaines de milliers de manifestants à Lisbonne le 17 octobre. Les prix des logements ont plus que doublé depuis 2017.",
-                "source": {
-                  "label": "Reuters, via Internazionale",
-                  "url": "https://www.internazionale.it/ultime-notizie-reuters/2026/10/17/tens-of-thousands-march-in-lisbon-over-housing-and-living-costs"
-                }
-              },
-              {
-                "pays": "Espagne",
-                "lien": "parallele",
-                "foyer": "Logement",
-                "fait": "L'expulsion puis la mort de Maricarmen, 87 ans, à Madrid, déclenche manifestations et campements.",
-                "source": {
-                  "label": "Al Jazeera",
-                  "url": "https://aljazeera.com/gallery/2026/10/8/photos-protests-erupt-after-87-year-old-evicted-woman-dies-in-madrid"
-                }
-              },
-              {
-                "pays": "Albanie",
-                "lien": "parallele",
-                "foyer": "Université, gouvernement",
-                "fait": "Trois jours de heurts à Tirana mi-octobre ; plus de 100 interpellations.",
-                "source": {
-                  "label": "Qatar Tribune, d'après l'AP",
-                  "url": "https://www.qatar-tribune.com/article/259408/world/violent-student-protests-spread-in-albania-as-unrest-enters-3rd-day"
-                }
-              }
-            ],
-            "note": "En Serbie, le mouvement étudiant né fin 2024 après l'effondrement meurtrier d'un auvent de gare à Novi Sad suit une trajectoire propre, antérieure à la vague française."
-          }
-        ]
-      },
-      {
-        "id": "preuves",
-        "titre": "Ce que l'on sait, ce que l'on suppose",
-        "blocs": [
-          {
-            "type": "texte",
-            "paragraphes": [
-              "Beaucoup d'explications circulent. Voici où en sont les preuves au 23 octobre, du plus solide au moins étayé."
-            ]
-          },
-          {
-            "type": "niveaux",
-            "legende": [
-              {
-                "id": "etabli",
-                "label": "Établi"
-              },
-              {
-                "id": "documente",
-                "label": "Documenté en partie"
-              },
-              {
-                "id": "signal",
-                "label": "Signal à confirmer"
-              },
-              {
-                "id": "non",
-                "label": "Non démontré"
-              }
-            ],
-            "items": [
-              {
-                "affirmation": "Les difficultés de l'école et le coût de la vie sont au départ de la mobilisation.",
-                "niveau": "etabli",
-                "explication": "Revendications explicites ; heures de cours perdues mesurées par la DEPP."
-              },
-              {
-                "affirmation": "Les violences sont le fait d'une minorité, distincte de la masse des manifestants.",
-                "niveau": "etabli",
-                "explication": "Environ 2 500 gardes à vue le 17 octobre, pour 550 000 à 800 000 manifestants."
-              },
-              {
-                "affirmation": "Les auteurs écroués sont surtout de jeunes hommes, souvent sans antécédent.",
-                "niveau": "etabli",
-                "explication": "Établi pour les 186 personnes écrouées ; pas forcément pour tous les auteurs."
-              },
-              {
-                "affirmation": "Les réseaux sociaux et l'IA ont accéléré la mobilisation.",
-                "niveau": "documente",
-                "explication": "Usages observés et volumes records ; l'effet propre n'est pas mesuré."
-              },
-              {
-                "affirmation": "Des acteurs étrangers ont amplifié la colère en ligne.",
-                "niveau": "documente",
-                "explication": "Campagnes identifiées par une ONG ; rien n'indique qu'ils aient déclenché le mouvement."
-              },
-              {
-                "affirmation": "Les étrangers sont surreprésentés parmi les auteurs de violences.",
-                "niveau": "signal",
-                "explication": "30 % des écroués, contre 9,1 % de la population ; écart non corrigé, sur un échantillon sélectionné."
-              },
-              {
-                "affirmation": "L'IA fragilise déjà l'entrée des jeunes dans l'emploi.",
-                "niveau": "signal",
-                "explication": "Signal en France (Banque de France), non confirmé à l'échelle européenne (Eurofound)."
-              },
-              {
-                "affirmation": "Les violences opposent des blocs « immigrés » et « autochtones ».",
-                "niveau": "non",
-                "explication": "Aucune donnée ni aucun affrontement entre groupes de civils ne l'indique."
-              },
-              {
-                "affirmation": "Une organisation coordonne les mouvements à l'échelle européenne.",
-                "niveau": "non",
-                "explication": "Simultanéité et imitation, mais aucun commandement commun identifié."
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  },
-  "perimetre": {
-    "titre": "Ce que couvre ce dossier",
-    "texte": "Ce dossier porte uniquement sur les réponses en matière de sécurité : les moyens du maintien de l'ordre, la responsabilité des auteurs de violences, les méthodes et les équipements des forces de l'ordre. Les propositions sur l'école ou le pouvoir d'achat, au cœur des revendications du mouvement, font l'objet de fiches séparées."
+    "note": "Chiffres issus de sources publiques au 25 octobre 2026. Ils seront mis à jour."
   },
   "triangle": {
-    "titre": "Où se situent les candidats ?",
-    "texte": "Nous avons relevé toutes les mesures de sécurité annoncées par chaque candidat depuis le début du mouvement : interviews, conférences de presse, communiqués, messages publiés. Chaque candidat est placé selon la part de ses mesures dans chacun des trois leviers. Plus il est proche d'un coin, plus ses propositions portent sur ce levier.",
+    "titre": "Qui propose quoi ? La carte des candidats",
+    "texte": "Nous avons relevé les mesures de sécurité annoncées par chaque candidat depuis le début du mouvement : interviews, conférences de presse, communiqués, messages publiés. Chaque candidat est placé selon la part de ses mesures dans chacun des trois leviers. Plus il est proche d'un coin, plus ses propositions portent sur ce levier.",
     "texteCouleur": "La couleur indique l'orientation de ses mesures sur les méthodes et les équipements : davantage de capacités d'intervention pour les forces de l'ordre, ou davantage d'encadrement de l'usage de la force.",
     "legende": [
       {
@@ -1184,7 +194,796 @@
       "label": "Voir le relevé complet des prises de parole",
       "ancre": "#releve"
     },
-    "sourceInventaire": "inventaire-prises-de-parole.json"
+    "sourceInventaire": "inventaire-prises-de-parole.json",
+    "avertissement": "Ce graphique décrit des annonces, pas leur qualité : dix mesures ne font pas une réponse plus solide que deux. La qualité de chaque proposition est évaluée dans nos fiches notées, publiées une à une après relecture.",
+    "statutAnalyses": {
+      "texte": "État des analyses : {publiees} fiche(s) publiée(s), {enRelecture} en relecture.",
+      "enRelecture": 3,
+      "noteEnRelecture": "Le nombre de fiches publiées est calculé à partir de la liste des propositions ; le nombre de fiches en relecture est mis à jour à la main."
+    },
+    "num": "02"
+  },
+  "comprendre": {
+    "id": "comprendre",
+    "surtitre": "// Comprendre la crise",
+    "titre": "Avant de juger les réponses, comprendre la crise",
+    "intro": "Pour savoir si une mesure de sécurité peut ramener le calme, il faut savoir d'où vient la colère, ce qui s'est passé et à qui la mesure s'adresse.",
+    "synthese": {
+      "titre": "Le tri des certitudes",
+      "texte": "Où en sont les preuves au 23 octobre sur les questions les plus débattues.",
+      "legende": [
+        {
+          "id": "etabli",
+          "label": "Établi"
+        },
+        {
+          "id": "documente",
+          "label": "Documenté en partie"
+        },
+        {
+          "id": "signal",
+          "label": "Signal à confirmer"
+        },
+        {
+          "id": "non",
+          "label": "Non démontré"
+        }
+      ],
+      "items": [
+        {
+          "affirmation": "La mobilisation est partie de revendications sur l'école, puis sur le coût de la vie.",
+          "niveau": "etabli",
+          "explication": "Revendications explicites des organisations lycéennes ; heures de cours perdues mesurées par la statistique publique.",
+          "renvoi": "#debut"
+        },
+        {
+          "affirmation": "Les violences ont eu lieu en marge des cortèges, sans en être la forme dominante.",
+          "niveau": "documente",
+          "explication": "Récits concordants des journalistes sur place. Le nombre de gardes à vue ne permet pas, à lui seul, d'estimer la proportion réelle d'auteurs.",
+          "renvoi": "#17-octobre"
+        },
+        {
+          "affirmation": "Les personnes écrouées sont surtout de jeunes hommes, souvent sans antécédent.",
+          "niveau": "etabli",
+          "explication": "Établi pour les 186 personnes écrouées du 18 au 21 octobre ; pas forcément pour tous les auteurs.",
+          "renvoi": "#auteurs"
+        },
+        {
+          "affirmation": "Les étrangers sont surreprésentés parmi les auteurs de violences.",
+          "niveau": "signal",
+          "explication": "Écart brut parmi les personnes écrouées, non corrigé de l'âge, du sexe, du territoire ni des étapes judiciaires.",
+          "renvoi": "#auteurs"
+        },
+        {
+          "affirmation": "Des acteurs étrangers ont amplifié la colère en ligne.",
+          "niveau": "documente",
+          "explication": "Campagnes coordonnées identifiées par une ONG ; rien n'indique qu'elles aient déclenché le mouvement ni changé les comportements.",
+          "renvoi": "#amplification"
+        },
+        {
+          "affirmation": "Une organisation coordonne les mobilisations à l'échelle européenne.",
+          "niveau": "non",
+          "explication": "Mouvements simultanés et imitations revendiquées, mais aucun commandement commun identifié.",
+          "renvoi": "#amplification"
+        }
+      ]
+    },
+    "sections": [
+      {
+        "id": "debut",
+        "titre": "Une colère d'abord scolaire",
+        "blocs": [
+          {
+            "type": "revendications",
+            "titre": "Ce que réclament les lycéens",
+            "chapo": "Le 5 octobre, l'Union syndicale lycéenne et l'Union étudiante publient dix mesures d'urgence, soutenues par l'Unef, la Fage et Solidaires étudiant·es. Elles tiennent en cinq demandes.",
+            "items": [
+              {
+                "titre": "Des professeurs devant chaque classe",
+                "texte": "Des postes de titulaires plutôt que des contractuels, un statut pour les accompagnants d'élèves en situation de handicap (AESH), et un infirmier, un psychologue et un conseiller d'orientation pour 500 élèves."
+              },
+              {
+                "titre": "Des bâtiments dignes",
+                "texte": "Un plan d'urgence de rénovation du « bâti scolaire et universitaire délabré et insalubre », adapté aux fortes chaleurs."
+              },
+              {
+                "titre": "Des journées soutenables",
+                "texte": "Une refonte des rythmes scolaires, une pause de midi d'au moins 1 h 30 et un retour sur la réforme du bac et du lycée."
+              },
+              {
+                "titre": "Un avenir après le bac",
+                "texte": "250 000 places supplémentaires dans le supérieur dès 2027, des bourses revalorisées de 200 euros et la revalorisation des aides au logement."
+              },
+              {
+                "titre": "Être entendus, pas réprimés",
+                "texte": "Plus de place pour les lycéens dans les instances des établissements, aucune sanction pour les absences liées à la mobilisation et des poursuites contre les membres des forces de l'ordre auteurs de violences."
+              }
+            ],
+            "citation": {
+              "texte": "Restons calmes, restons dignes comme nos revendications.",
+              "auteur": "Ryad Rani, Union syndicale lycéenne"
+            },
+            "sources": [
+              {
+                "label": "L'Etudiant",
+                "url": "https://www.letudiant.fr/lycee/mobilisation-lyceenne-la-jeunesse-propose-10-mesures-d-urgence.html"
+              },
+              {
+                "label": "Café pédagogique",
+                "url": "https://www.cafepedagogique.net/2026/10/01/lyceens-mobilises-ce-quils-disent-ce-quon-leur-repond/"
+              }
+            ]
+          },
+          {
+            "type": "encadre",
+            "ton": "info",
+            "titre": "La réponse du gouvernement : cinq chantiers",
+            "texte": "Le 4 octobre, le Premier ministre fixe cinq chantiers prioritaires : le remplacement des professeurs absents, les emplois du temps, les bâtiments (recensement des besoins urgents par les régions dès le 6 octobre), la transparence de Parcoursup pour 2027 et une réponse motivée à chaque proposition des conseils de la vie lycéenne. Les premières décisions, chiffrées, sont annoncées pour la fin octobre.",
+            "sources": [
+              {
+                "label": "L'Etudiant",
+                "url": "https://www.letudiant.fr/lycee/mouvement-lyceen-alors-que-la-mobilisation-continue-le-gouvernement-lance-cinq-chantiers-prioritaires.html"
+              }
+            ]
+          },
+          {
+            "type": "texte",
+            "paragraphes": [
+              "Ces revendications reposent sur des difficultés mesurables. Dans les collèges et lycées publics, 9,8 % des heures de cours n'ont pas été assurées en 2024-2025, surtout faute de remplacement des enseignants absents (7,5 points). Les lycées ont en moyenne 61 ans, 71 ans pour les lycées professionnels, et plus d'un tiers ont atteint leur capacité d'accueil.",
+              "Le mouvement s'élargit ensuite : les étudiants le rejoignent, puis une contestation plus large du coût de la vie, portée notamment par les gilets jaunes et des syndicats. La journée du 17 octobre marque cette convergence.",
+              "Trois niveaux se superposent : des causes de fond (conditions d'études, coût de la vie, défiance envers les institutions), des déclencheurs (professeurs non remplacés à la rentrée, hausse des prix, appel national du 17 octobre) et des accélérateurs (réseaux sociaux, convergence des colères, affrontements). Les mesures de sécurité analysées ici agissent sur le troisième niveau et sur les auteurs de violences ; les causes de fond relèvent d'autres politiques, analysées dans des fiches séparées."
+            ],
+            "sources": [
+              {
+                "label": "DEPP, ministère de l'Éducation nationale",
+                "url": "https://www.education.gouv.fr/depp/la-part-du-temps-d-enseignement-non-assure-dans-les-etablissements-publics-du-second-degre-en-2024-504512"
+              },
+              {
+                "label": "Le Monde (5 et 17 octobre), repris par Santé-Environnement-Politique",
+                "url": "https://environnementsantepolitique.fr/2026/10/19/le-mouvement-lyceen-analyses/"
+              }
+            ],
+            "titre": "Des griefs qui se mesurent"
+          },
+          {
+            "type": "grille",
+            "colonnes": 2,
+            "blocs": [
+              {
+                "type": "chronologie",
+                "titre": "Les dates clés",
+                "items": [
+                  {
+                    "date": "21 septembre",
+                    "texte": "Premiers blocages de lycées."
+                  },
+                  {
+                    "date": "Début octobre",
+                    "texte": "Le gouvernement annonce 3 000 professeurs remplaçants, jugés insuffisants par les lycéens."
+                  },
+                  {
+                    "date": "6 octobre",
+                    "texte": "891 lycées sur 3 700 perturbés."
+                  },
+                  {
+                    "date": "17 octobre",
+                    "texte": "Journée nationale contre la vie chère, rejointe par les lycéens. Violences et pillages jusqu'au 18."
+                  },
+                  {
+                    "date": "18 octobre",
+                    "texte": "Allocution du président de la République, qui distingue manifestants et casseurs."
+                  },
+                  {
+                    "date": "20 octobre",
+                    "texte": "L'Assemblée nationale crée une commission d'enquête sur les violences et le maintien de l'ordre."
+                  },
+                  {
+                    "date": "23 octobre",
+                    "texte": "Les organisations lycéennes sont reçues à l'Élysée."
+                  },
+                  {
+                    "date": "24 octobre",
+                    "texte": "Deuxième journée contre la vie chère, sous un dispositif renforcé : mobilisation en recul, violences en fin de cortège dans plusieurs villes."
+                  }
+                ],
+                "sources": [
+                  {
+                    "label": "Euronews",
+                    "url": "https://fr.euronews.com/2026/10/06/mobilisation-lyceenne-acte-iii-891-lycees-perturbes-annonce-le-ministere-de-linterieur"
+                  },
+                  {
+                    "label": "Public Sénat",
+                    "url": "https://www.publicsenat.fr/actualites/politique/violences-du-17-octobre-macron-exprime-sa-colere-et-sa-honte-et-promet-toute-la-transparence"
+                  },
+                  {
+                    "label": "Europe 1, d'après une note de la Chancellerie (AFP)",
+                    "url": "https://www.europe1.fr/societe/entre-18-et-25-ans-principalement-des-hommes-quel-est-le-profil-des-186-personnes-ecrouees-apres-les-pillages-1174452"
+                  },
+                  {
+                    "label": "Kaweru, dépêche du 23 octobre",
+                    "url": "https://www.kaweru.com/politique-societe/2026/10/23/france-le-pr-macron-va-recevoir-ce-vendredi-les-organisations-lyceennes-a-lelysee/"
+                  },
+                  {
+                    "label": "Le JDD",
+                    "url": "https://www.lejdd.fr/Societe/manifestations-du-24-octobre-interpellations-nombre-de-manifestants-le-bilan-des-autorites-186957"
+                  }
+                ]
+              },
+              {
+                "type": "graphique",
+                "graphique": {
+                  "type": "barresGroupees",
+                  "titre": "Après le pic du 17 octobre, un premier recul",
+                  "sousTitre": "Manifestants lors des quatre grandes journées, selon les deux comptages",
+                  "unite": "k",
+                  "series": [
+                    {
+                      "id": "interieur",
+                      "label": "Ministère de l'Intérieur"
+                    },
+                    {
+                      "id": "organisateurs",
+                      "label": "Organisateurs"
+                    }
+                  ],
+                  "donnees": [
+                    {
+                      "label": "6 octobre",
+                      "valeurs": [
+                        256,
+                        450
+                      ]
+                    },
+                    {
+                      "label": "13 octobre",
+                      "valeurs": [
+                        161.5,
+                        480
+                      ]
+                    },
+                    {
+                      "label": "17 octobre",
+                      "valeurs": [
+                        550,
+                        800
+                      ]
+                    },
+                    {
+                      "label": "24 octobre",
+                      "valeurs": [
+                        410,
+                        800
+                      ]
+                    }
+                  ],
+                  "note": "Les 17 et 24 octobre réunissent lycéens, étudiants, gilets jaunes, agriculteurs et syndicats ; les journées précédentes étaient surtout lycéennes et étudiantes. Le 24, la CGT annonce le même chiffre qu'une semaine plus tôt. Les deux comptages ne couvrent pas toujours les mêmes cortèges.",
+                  "sources": [
+                    {
+                      "label": "Euronews",
+                      "url": "https://fr.euronews.com/2026/10/06/mobilisation-lyceenne-acte-iii-891-lycees-perturbes-annonce-le-ministere-de-linterieur"
+                    },
+                    {
+                      "label": "Euronews",
+                      "url": "https://fr.euronews.com/2026/10/14/nouvelles-violences-a-paris-lors-du-rassemblement-des-lyceens-et-des-etudiants"
+                    },
+                    {
+                      "label": "Politis",
+                      "url": "https://www.politis.fr/dossiers/17-octobre-macron-recolte-la-colere/"
+                    },
+                    {
+                      "label": "Le JDD",
+                      "url": "https://www.lejdd.fr/Societe/manifestations-du-24-octobre-interpellations-nombre-de-manifestants-le-bilan-des-autorites-186957"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "type": "aVenir",
+            "titre": "Prochains rendez-vous annoncés",
+            "items": [
+              {
+                "date": "26 octobre",
+                "dateIso": "2026-10-26",
+                "texte": "Annonces attendues du gouvernement, notamment sur Parcoursup, et concertation avec les organisations de jeunesse, les enseignants, les syndicats et le patronat."
+              },
+              {
+                "date": "27 octobre",
+                "dateIso": "2026-10-27",
+                "texte": "Examen au Sénat du projet de loi « casseurs-payeurs »."
+              },
+              {
+                "date": "31 octobre",
+                "dateIso": "2026-10-31",
+                "texte": "Troisième date annoncée par la coordination des gilets jaunes."
+              },
+              {
+                "date": "5 novembre",
+                "dateIso": "2026-11-05",
+                "texte": "Grève et manifestations à l'appel de la CFDT, de la CGT, de FO, de l'Unsa et de la FSU."
+              }
+            ],
+            "note": "Dates annoncées au 25 octobre. Les dates passées sont ajoutées aux dates clés après chaque journée.",
+            "sources": [
+              {
+                "label": "Kaweru, dépêche du 23 octobre",
+                "url": "https://www.kaweru.com/politique-societe/2026/10/23/france-le-pr-macron-va-recevoir-ce-vendredi-les-organisations-lyceennes-a-lelysee/"
+              },
+              {
+                "label": "Reuters, via Boursorama",
+                "url": "https://www.boursorama.com/actualite-economique/actualites-amp/france-veillee-d-armes-avant-une-nouvelle-journee-de-manifestations-le-dispositif-securitaire-renforce-7bfd55516b379ea7cde18eb3b493547f"
+              }
+            ]
+          }
+        ],
+        "num": "03"
+      },
+      {
+        "id": "17-octobre",
+        "titre": "17 octobre : la bascule, et la semaine d'après",
+        "blocs": [
+          {
+            "type": "texte",
+            "paragraphes": [
+              "La journée réunit des cortèges très divers dans tout le pays. En marge, des violences touchent plusieurs grandes villes, dont Paris, Lyon, Marseille, Bordeaux et Limoges : la mairie de Limoges et l'office de tourisme de Lyon sont incendiés, la mairie de Marseille est envahie, la résidence du préfet de Bordeaux est attaquée.",
+              "La réponse judiciaire est rapide : les personnes déférées l'ont été en vue d'une comparution immédiate, jugées dans les jours qui suivent. Les relaxes et les condamnations définitives ne sont pas encore connues."
+            ],
+            "sources": [
+              {
+                "label": "Politis",
+                "url": "https://www.politis.fr/dossiers/17-octobre-macron-recolte-la-colere/"
+              },
+              {
+                "label": "Public Sénat",
+                "url": "https://www.publicsenat.fr/actualites/politique/violences-du-17-octobre-pourquoi-letat-durgence-est-ecarte-par-le-gouvernement"
+              }
+            ]
+          },
+          {
+            "type": "grille",
+            "colonnes": 2,
+            "blocs": [
+              {
+                "type": "graphique",
+                "graphique": {
+                  "type": "entonnoir",
+                  "titre": "De la garde à vue à la prison",
+                  "sousTitre": "Personnes interpellées après les violences du 17 octobre, bilan au 21 octobre",
+                  "etapes": [
+                    {
+                      "label": "Gardes à vue",
+                      "valeur": 2500,
+                      "libelle": "≈ 2 500"
+                    },
+                    {
+                      "label": "Déférées en vue d'une comparution immédiate",
+                      "valeur": 917,
+                      "libelle": "917"
+                    },
+                    {
+                      "label": "Incarcérées",
+                      "valeur": 174,
+                      "libelle": "174"
+                    }
+                  ],
+                  "note": "Le lendemain, le bilan atteignait 217 incarcérations. Ces étapes ne disent rien de la culpabilité : une garde à vue n'est pas une condamnation.",
+                  "sources": [
+                    {
+                      "label": "Europe 1, d'après le ministre de la Justice",
+                      "url": "https://www.europe1.fr/police-justice/violences-et-pillages-174-personnes-incarcerees-annonce-gerald-darmanin-1170576"
+                    },
+                    {
+                      "label": "Europe 1, d'après une note de la Chancellerie (AFP)",
+                      "url": "https://www.europe1.fr/societe/entre-18-et-25-ans-principalement-des-hommes-quel-est-le-profil-des-186-personnes-ecrouees-apres-les-pillages-1174452"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "encadre",
+                "ton": "info",
+                "titre": "Avant le 17 octobre : un mouvement lycéen déjà très judiciarisé",
+                "texte": "Du 17 septembre au 13 octobre, le mouvement lycéen avait déjà donné lieu à 7 950 gardes à vue, dont 85 % de mineurs, et à 2 735 poursuites. Au 6 octobre, 215 élèves et 85 personnels de l'éducation avaient été blessés, selon le Premier ministre.",
+                "sources": [
+                  {
+                    "label": "franceinfo, d'après le ministère de la Justice",
+                    "url": "https://www.franceinfo.fr/societe/education/blocage-des-lycees/direct-mobilisation-lyceenne-des-etablissements-toujours-bloques-aucune-perturbation-dans-les-trois-quarts-des-departements-ajoute-edouard-geffray_8236774.html"
+                  },
+                  {
+                    "label": "Euronews",
+                    "url": "https://fr.euronews.com/2026/10/06/mobilisation-lyceenne-acte-iii-891-lycees-perturbes-annonce-le-ministere-de-linterieur"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "texte",
+            "titre": "Le 24 octobre, un test pour le maintien de l'ordre",
+            "paragraphes": [
+              "Pour la deuxième journée contre la vie chère, l'État change de dispositif. Environ 70 000 policiers et gendarmes sont mobilisés, 10 000 de plus qu'une semaine plus tôt, avec des unités d'intervention spécialisées. Le président de la République annonce l'interdiction des rassemblements sans organisateur « légitime » et impose des parcours hors des centres-villes : à Paris, le cortège syndical est déplacé entre la porte d'Italie et la porte de Vincennes, et la marche des gilets jaunes est interdite. Des manifestations sont aussi interdites à Lyon, Rouen, Le Havre, Nice, Chambéry, Le Mans et Grenoble.",
+              "Le ministre de l'Intérieur estime que « les cortèges se sont bien passés ». À Paris, le défilé se déroule dans le calme, mais des heurts éclatent en fin de cortège avec environ 500 casseurs selon le ministère ; la préfecture de police y compte 142 interpellations. Des commerces sont encore pillés ou dégradés dans plusieurs villes, et deux personnes sont grièvement blessées lors d'interventions des forces de l'ordre, à Toulouse et à Clermont-Ferrand."
+            ],
+            "sources": [
+              {
+                "label": "Reuters, via Boursorama",
+                "url": "https://www.boursorama.com/actualite-economique/actualites-amp/france-veillee-d-armes-avant-une-nouvelle-journee-de-manifestations-le-dispositif-securitaire-renforce-7bfd55516b379ea7cde18eb3b493547f"
+              },
+              {
+                "label": "Le JDD",
+                "url": "https://www.lejdd.fr/Societe/manifestations-du-24-octobre-interpellations-nombre-de-manifestants-le-bilan-des-autorites-186957"
+              },
+              {
+                "label": "France 3 Paris Île-de-France",
+                "url": "https://france3-regions.franceinfo.fr/paris-ile-de-france/direct-manifestation-du-24-octobre-a-paris-parcours-des-corteges-stations-fermees-securite-suivez-notre-direct-pour-tout-savoir-heure-par-heure-3438498.html"
+              },
+              {
+                "label": "ICI Paris",
+                "url": "https://www.ici.fr/ile-de-france/paris-75/paris/manifestation-du-24-octobre-a-paris-cortege-dans-le-calme-mais-142-interpellations-9175688"
+              }
+            ]
+          },
+          {
+            "type": "cartes",
+            "colonnes": 4,
+            "items": [
+              {
+                "etiquette": "Manifestants (Intérieur)",
+                "chiffre": "550 000 → 410 000",
+                "texte": "La CGT annonce 800 000 participants les deux fois.",
+                "source": {
+                  "label": "Le JDD",
+                  "url": "https://www.lejdd.fr/Societe/manifestations-du-24-octobre-interpellations-nombre-de-manifestants-le-bilan-des-autorites-186957"
+                }
+              },
+              {
+                "etiquette": "Rassemblements recensés",
+                "chiffre": "430 → 289",
+                "texte": "Nombre d'actions comptées par les autorités sur l'ensemble du territoire.",
+                "source": {
+                  "label": "Le JDD",
+                  "url": "https://www.lejdd.fr/Societe/manifestations-du-24-octobre-interpellations-nombre-de-manifestants-le-bilan-des-autorites-186957"
+                }
+              },
+              {
+                "etiquette": "Forces mobilisées",
+                "chiffre": "≈ 60 000 → 70 000",
+                "texte": "Policiers et gendarmes déployés, soit 10 000 de plus le 24 octobre.",
+                "source": {
+                  "label": "Reuters, via Boursorama",
+                  "url": "https://www.boursorama.com/actualite-economique/actualites-amp/france-veillee-d-armes-avant-une-nouvelle-journee-de-manifestations-le-dispositif-securitaire-renforce-7bfd55516b379ea7cde18eb3b493547f"
+                }
+              },
+              {
+                "etiquette": "Interpellations",
+                "chiffre": "≈ 2 400 → 1 314",
+                "texte": "Deux fois moins que le 17 octobre. 53 membres des forces de l'ordre ont été blessés le 24 (premier décompte).",
+                "source": {
+                  "label": "Police & Réalités, d'après le ministère de l'Intérieur",
+                  "url": "https://policeetrealites.com/2026/10/25/mobilisation-du-24-octobre-1-314-interpellations-et-53-membres-des-forces-de-lordre-blesses-le-bilan-du-ministere-de-linterieur/"
+                }
+              }
+            ]
+          },
+          {
+            "type": "encadre",
+            "ton": "attention",
+            "titre": "Moins d'interpellations le 24 : ce que l'on ne sait pas encore",
+            "texte": "Le recul des interpellations peut tenir à plusieurs causes à la fois : un dispositif policier plus important, des parcours éloignés des centres-villes, des interdictions, une participation en baisse, ou l'effet dissuasif des condamnations rapides prononcées après le 17 octobre. Les données disponibles ne permettent pas de mesurer la part de chacune. Le bilan judiciaire du 24 octobre (gardes à vue, poursuites) n'est pas encore connu.",
+            "sources": [
+              {
+                "label": "ICI",
+                "url": "https://www.ici.fr/infos/societe/mobilisation-du-24-octobre-1-314-interpellations-ce-samedi-en-france-moitie-moins-que-la-semaine-derniere-3724749"
+              }
+            ]
+          }
+        ],
+        "num": "04"
+      },
+      {
+        "id": "auteurs",
+        "titre": "Casseurs et pilleurs : ce que l'on sait vraiment",
+        "blocs": [
+          {
+            "type": "texte",
+            "paragraphes": [
+              "Il n'existe pas de portrait de l'ensemble des personnes qui ont cassé ou pillé. La seule donnée officielle détaillée est une note de la Chancellerie sur les 186 personnes écrouées entre le 18 et le 21 octobre. Elle décrit un groupe très masculin et très jeune : parmi les 25 ans ou moins, les 18-20 ans sont les plus nombreux.",
+              "Près de la moitié de ces personnes sont écrouées pour des pillages, un quart pour des affrontements avec les forces de l'ordre. Plus de la moitié n'avaient aucun antécédent judiciaire. Le profil est proche de celui observé après les émeutes de 2023, où près de 60 % des personnes interpellées étaient des primo-délinquants."
+            ],
+            "sources": [
+              {
+                "label": "Europe 1, d'après une note de la Chancellerie (AFP)",
+                "url": "https://www.europe1.fr/societe/entre-18-et-25-ans-principalement-des-hommes-quel-est-le-profil-des-186-personnes-ecrouees-apres-les-pillages-1174452"
+              },
+              {
+                "label": "Sénat, rapport n° 521 (2023-2024)",
+                "url": "https://www.senat.fr/rap/r23-521/r23-5211.pdf"
+              }
+            ]
+          },
+          {
+            "type": "grille",
+            "colonnes": 2,
+            "blocs": [
+              {
+                "type": "graphique",
+                "graphique": {
+                  "type": "barres",
+                  "titre": "Le profil des 186 personnes écrouées",
+                  "sousTitre": "Personnes écrouées du 18 au 21 octobre, en %",
+                  "unite": "%",
+                  "max": 100,
+                  "donnees": [
+                    {
+                      "label": "Hommes",
+                      "valeur": 95
+                    },
+                    {
+                      "label": "De nationalité française",
+                      "valeur": 70
+                    },
+                    {
+                      "label": "25 ans ou moins",
+                      "valeur": 68
+                    },
+                    {
+                      "label": "Sans antécédent judiciaire",
+                      "valeur": 52
+                    }
+                  ],
+                  "sources": [
+                    {
+                      "label": "Europe 1, d'après une note de la Chancellerie (AFP)",
+                      "url": "https://www.europe1.fr/societe/entre-18-et-25-ans-principalement-des-hommes-quel-est-le-profil-des-186-personnes-ecrouees-apres-les-pillages-1174452"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "graphique",
+                "graphique": {
+                  "type": "barreEmpilee",
+                  "titre": "Ce qui leur est reproché",
+                  "sousTitre": "Faits principalement reprochés aux 186 personnes écrouées, en %",
+                  "unite": "%",
+                  "segments": [
+                    {
+                      "label": "Pillage",
+                      "valeur": 46
+                    },
+                    {
+                      "label": "Affrontements avec les forces de l'ordre",
+                      "valeur": 26
+                    },
+                    {
+                      "label": "Les deux",
+                      "valeur": 10
+                    },
+                    {
+                      "label": "Autres faits",
+                      "valeur": 18
+                    }
+                  ],
+                  "note": "« Autres faits » : part déduite du total ; la note ne les détaille pas.",
+                  "sources": [
+                    {
+                      "label": "Europe 1, d'après une note de la Chancellerie (AFP)",
+                      "url": "https://www.europe1.fr/societe/entre-18-et-25-ans-principalement-des-hommes-quel-est-le-profil-des-186-personnes-ecrouees-apres-les-pillages-1174452"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "type": "texte",
+            "titre": "Nationalité : un chiffre à manier avec précaution",
+            "paragraphes": [
+              "Selon la même note, 70 % des personnes écrouées sont de nationalité française, « presque tous nés en France ». La note ne précise pas le lieu de naissance des 30 % de personnes étrangères. Les étrangers représentent 9,1 % de la population vivant en France.",
+              "L'écart existe et mérite d'être étudié. Il ne mesure pas pour autant la part des étrangers, ni des personnes issues de l'immigration, parmi l'ensemble des auteurs de violences : les personnes écrouées ont franchi plusieurs filtres (interpellation, preuves, décision du juge), et la comparaison n'est corrigée ni de l'âge, ni du sexe, ni du lieu de résidence, alors que les violences se sont concentrées dans de grandes villes et chez de jeunes hommes. La proportion varie d'ailleurs selon l'étape de la procédure : en 2023, le ministre de l'Intérieur avançait 10 % d'étrangers parmi l'ensemble des interpellés."
+            ],
+            "sources": [
+              {
+                "label": "Europe 1, d'après une note de la Chancellerie (AFP)",
+                "url": "https://www.europe1.fr/societe/entre-18-et-25-ans-principalement-des-hommes-quel-est-le-profil-des-186-personnes-ecrouees-apres-les-pillages-1174452"
+              },
+              {
+                "label": "Insee",
+                "url": "https://insee.fr/fr/statistiques/3633212"
+              },
+              {
+                "label": "Public Sénat, d'après le rapport du Sénat sur les émeutes de 2023",
+                "url": "https://www.publicsenat.fr/actualites/parlementaire/violences-urbaines-quel-est-le-profil-des-emeutiers"
+              }
+            ]
+          },
+          {
+            "type": "encadre",
+            "ton": "attention",
+            "titre": "Ce que ces données ne disent pas",
+            "texte": "Elles décrivent des personnes interpellées, poursuivies ou écrouées, pas l'ensemble des participants aux violences. Elles dépendent de l'endroit où se trouvaient les forces de l'ordre et des preuves réunies. Nationalité, immigration et origine sont trois notions distinctes (voir les définitions dans « Pour aller plus loin »). Aucune origine ne peut être déduite d'un nom, d'une photo ou d'une vidéo."
+          }
+        ],
+        "num": "05"
+      },
+      {
+        "id": "amplification",
+        "titre": "Réseaux, IA, ingérences : les accélérateurs",
+        "blocs": [
+          {
+            "type": "texte",
+            "paragraphes": [
+              "Trois phénomènes se superposent en ligne, et il faut les distinguer."
+            ]
+          },
+          {
+            "type": "cartes",
+            "colonnes": 3,
+            "items": [
+              {
+                "etiquette": "La circulation de l'information",
+                "chiffre": "×3",
+                "texte": "Plus de 2,2 millions de messages sur X le 17 octobre, trois fois plus qu'au premier samedi des gilets jaunes en 2018. Des lycéens ont aussi utilisé l'IA pour rédiger leurs revendications, fabriquer des affiches et contacter des journalistes.",
+                "source": {
+                  "label": "Les Gens d'Internet, d'après Visibrain",
+                  "url": "https://gensdinternet.fr/2026/10/20/17-octobre-trois-fois-plus-de-publications-sur-les-reseaux-sociaux-que-lors-des-gilets-jaunes-en-2018/amp/"
+                }
+              },
+              {
+                "etiquette": "La désinformation",
+                "chiffre": "6 millions",
+                "texte": "de vues sur X pour une seule fausse photo générée par IA, présentée comme prise pendant les manifestations. L'AFP a recensé plusieurs images de ce type.",
+                "source": {
+                  "label": "AFP Factuel, via Yahoo Actualités",
+                  "url": "https://fr.news.yahoo.com/manifestations-17-octobre-attention-%C3%A0-133516220.html"
+                }
+              },
+              {
+                "etiquette": "Les campagnes coordonnées",
+                "chiffre": "639",
+                "texte": "publications du réseau russe Doppelganger, en 22 vagues entre le 2 septembre et le 14 octobre, vues environ 7,4 millions de fois, selon l'ONG Alliance4Europe.",
+                "source": {
+                  "label": "Alliance4Europe",
+                  "url": "https://alliance4europe.eu/report/eu-unrest-report-%C2%B7-how-frances-october-2026-protests-were-manipulated-then-retold-abroad"
+                }
+              }
+            ]
+          },
+          {
+            "type": "grille",
+            "colonnes": 2,
+            "blocs": [
+              {
+                "type": "graphique",
+                "graphique": {
+                  "type": "barres",
+                  "titre": "Un récit migratoire surtout porté hors de France",
+                  "sousTitre": "Part des publications attribuant les troubles aux migrants ou à l'islam, selon la langue, en %",
+                  "unite": "%",
+                  "max": 25,
+                  "donnees": [
+                    {
+                      "label": "Français",
+                      "valeur": 3
+                    },
+                    {
+                      "label": "Polonais",
+                      "valeur": 13
+                    },
+                    {
+                      "label": "Anglais",
+                      "valeur": 19
+                    }
+                  ],
+                  "note": "Analyse d'environ 550 000 publications du 11 au 18 octobre. La fausse rumeur d'immigrés incendiant la mairie de Limoges a circulé 3,6 fois plus en anglais qu'en français. Un corpus de publications n'est pas un sondage d'opinion.",
+                  "sources": [
+                    {
+                      "label": "Le Grand Continent",
+                      "url": "https://legrandcontinent.eu/fr/2026/10/22/comment-des-acteurs-etrangers-ont-attise-la-colere-en-ligne-autour-des-manifestations-du-17-octobre-en-france/"
+                    },
+                    {
+                      "label": "Alliance4Europe",
+                      "url": "https://alliance4europe.eu/report/eu-unrest-report-%C2%B7-how-frances-october-2026-protests-were-manipulated-then-retold-abroad"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "encadre",
+                "ton": "attention",
+                "titre": "Amplifier n'est pas provoquer",
+                "liste": [
+                  "L'ONG ne trouve aucune preuve qu'un acteur étranger soit à l'origine des manifestations.",
+                  "Aucune étude ne mesure encore si les vidéos de violences ont provoqué de nouveaux passages à l'acte, ou si elles ont seulement montré des violences déjà en cours.",
+                  "Selon les comptes suivis, un même utilisateur pouvait ne voir que les cortèges pacifiques, ou que les pillages."
+                ],
+                "sources": [
+                  {
+                    "label": "Alliance4Europe",
+                    "url": "https://alliance4europe.eu/report/eu-unrest-report-%C2%B7-how-frances-october-2026-protests-were-manipulated-then-retold-abroad"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "encadre",
+            "ton": "info",
+            "titre": "En Europe : des mouvements qui se réclament de la France",
+            "texte": "En Italie, des lycées sont occupés dès le 5 octobre à Turin, dans le sillage du mouvement français, avant une grève étudiante nationale le 16. En Grèce, plus de 10 000 élèves et enseignants manifestent le 21 octobre : « En Grèce comme en France, nous réclamons une éducation publique et gratuite. » En Belgique, des blocus de lycées sont décrits comme importés de France. Aucune coordination commune n'a été identifiée.",
+            "sources": [
+              {
+                "label": "Euronews Italia",
+                "url": "https://it.euronews.com/2026/10/15/prime-scuole-occupate-in-italia-sulla-scia-delle-proteste-studentesche-francesi"
+              },
+              {
+                "label": "AFP, via Bourse Direct",
+                "url": "https://www.boursedirect.fr/fr/actualites/categorie/economie/grece-comme-en-france-plus-de-10-000-etudiants-et-enseignants-dans-la-rue-afp-6ab8abcee9c11e80d62aa523fb58d4f4fd3cdeca"
+              },
+              {
+                "label": "Paris Match Belgique",
+                "url": "https://www.parismatch.be/actualites/societe/2026/10/07/le-blocus-des-lyceens-francais-sexporte-en-belgique-pourquoi-nos-etudiants-du-secondaire-manifestent-ils-JRSQLVH4TNHWPADWTPONFEUSMU/"
+              }
+            ]
+          }
+        ],
+        "num": "06"
+      }
+    ]
+  },
+  "reponses": {
+    "id": "reponses",
+    "surtitre": "// Les réponses",
+    "titre": "Face aux violences, quelles réponses ?",
+    "gouvernement": {
+      "titre": "Ce qu'a fait le gouvernement",
+      "items": [
+        {
+          "texte": "Le 18 octobre, le président de la République promet de « tirer toutes les leçons » du 17 octobre, notamment sur le renseignement et l'anticipation.",
+          "source": {
+            "label": "Public Sénat",
+            "url": "https://www.publicsenat.fr/actualites/politique/violences-du-17-octobre-macron-exprime-sa-colere-et-sa-honte-et-promet-toute-la-transparence"
+          }
+        },
+        {
+          "texte": "Le 19 octobre, l'état d'urgence est écarté ; les préfets peuvent instaurer des couvre-feux localisés et interdire certains rassemblements.",
+          "source": {
+            "label": "Public Sénat",
+            "url": "https://www.publicsenat.fr/actualites/politique/violences-du-17-octobre-pourquoi-letat-durgence-est-ecarte-par-le-gouvernement"
+          }
+        },
+        {
+          "texte": "Le 22 octobre, le président de la République annonce l'interdiction des rassemblements sans organisateur « légitime » et des parcours de manifestation éloignés des centres-villes.",
+          "source": {
+            "label": "Reuters, via Boursorama",
+            "url": "https://www.boursorama.com/actualite-economique/actualites-amp/france-veillee-d-armes-avant-une-nouvelle-journee-de-manifestations-le-dispositif-securitaire-renforce-7bfd55516b379ea7cde18eb3b493547f"
+          }
+        },
+        {
+          "texte": "Le 23 octobre, un conseil de défense se réunit ; le même jour, le président reçoit les organisations lycéennes et juge nécessaire une « refonte en profondeur » de Parcoursup. Des annonces sont attendues le 26 octobre.",
+          "source": {
+            "label": "Reuters, via Boursorama",
+            "url": "https://www.boursorama.com/actualite-economique/actualites-amp/france-veillee-d-armes-avant-une-nouvelle-journee-de-manifestations-le-dispositif-securitaire-renforce-7bfd55516b379ea7cde18eb3b493547f"
+          }
+        },
+        {
+          "texte": "Le 24 octobre, environ 70 000 policiers et gendarmes sont déployés, 10 000 de plus que la semaine précédente.",
+          "source": {
+            "label": "Reuters, via Boursorama",
+            "url": "https://www.boursorama.com/actualite-economique/actualites-amp/france-veillee-d-armes-avant-une-nouvelle-journee-de-manifestations-le-dispositif-securitaire-renforce-7bfd55516b379ea7cde18eb3b493547f"
+          }
+        }
+      ]
+    },
+    "intro": "Les propositions des candidats sont classées en trois leviers. Chacune est vérifiée (source, date, auteur) avant d'être ajoutée, puis analysée dans une fiche notée. Tant que la fiche n'est pas publiée, la proposition est signalée « Analyse à venir », sans note provisoire.",
+    "num": "07",
+    "titrePropositions": "Les propositions, une par une",
+    "numPropositions": "08"
+  },
+  "perimetre": {
+    "titre": "Ce que couvre ce dossier",
+    "texte": "Ce dossier porte uniquement sur les réponses en matière de sécurité : les moyens du maintien de l'ordre, la responsabilité des auteurs de violences, les méthodes et les équipements des forces de l'ordre. Les propositions sur l'école ou le pouvoir d'achat, au cœur des revendications du mouvement, font l'objet de fiches séparées."
   },
   "statuts": {
     "titre": "Nouvelle annonce ou idée déjà défendue ?",
@@ -1217,25 +1016,16 @@
         "titre": "Repères pour juger de l'efficacité",
         "items": [
           {
-            "texte": "Les violences ont éclaté le même jour dans plusieurs grandes villes, dont Paris, Lyon, Marseille, Bordeaux et Limoges.",
-            "source": {
-              "label": "Politis",
-              "url": "https://www.politis.fr/dossiers/17-octobre-macron-recolte-la-colere/"
-            }
+            "texte": "Le 24 octobre, avec davantage de forces mobilisées et des parcours déplacés, les interpellations ont été deux fois moins nombreuses qu'une semaine plus tôt ; la part du dispositif dans ce recul n'est pas mesurable à ce stade.",
+            "renvoi": "#17-octobre"
           },
           {
-            "texte": "Au 6 octobre, plus de 715 policiers et gendarmes avaient été blessés depuis le début du mouvement, selon le Premier ministre.",
-            "source": {
-              "label": "Euronews",
-              "url": "https://fr.euronews.com/2026/10/06/mobilisation-lyceenne-acte-iii-891-lycees-perturbes-annonce-le-ministere-de-linterieur"
-            }
+            "texte": "Les violences ont éclaté le même jour dans plusieurs grandes villes : la question posée est celle de la répartition des forces autant que de leur nombre.",
+            "renvoi": "#17-octobre"
           },
           {
-            "texte": "Le 18 octobre, le président de la République a promis de « tirer toutes les leçons » du 17 octobre, notamment sur le renseignement et l'anticipation.",
-            "source": {
-              "label": "Public Sénat",
-              "url": "https://www.publicsenat.fr/actualites/politique/violences-du-17-octobre-macron-exprime-sa-colere-et-sa-honte-et-promet-toute-la-transparence"
-            }
+            "texte": "Le président de la République a lui-même évoqué des leçons à tirer sur le renseignement et l'anticipation.",
+            "renvoi": "#reponses"
           }
         ]
       }
@@ -1248,32 +1038,16 @@
         "titre": "Repères pour juger de l'efficacité",
         "items": [
           {
-            "texte": "52 % des personnes écrouées après le 17 octobre n'avaient aucun antécédent judiciaire : les mesures fondées sur la récidive ne concernent qu'une partie des auteurs.",
-            "source": {
-              "label": "Europe 1, d'après une note de la Chancellerie (AFP)",
-              "url": "https://www.europe1.fr/societe/entre-18-et-25-ans-principalement-des-hommes-quel-est-le-profil-des-186-personnes-ecrouees-apres-les-pillages-1174452"
-            }
+            "texte": "Plus de la moitié des personnes écrouées n'avaient aucun antécédent : les mesures fondées sur la récidive ne concernent qu'une partie des auteurs.",
+            "renvoi": "#auteurs"
           },
           {
-            "texte": "Les gardes à vue du mouvement lycéen concernent surtout des mineurs (85 % jusqu'au 13 octobre). Après le 17 octobre, les 18-20 ans dominent parmi les personnes écrouées.",
-            "source": {
-              "label": "franceinfo, d'après le ministère de la Justice",
-              "url": "https://www.franceinfo.fr/societe/education/blocage-des-lycees/direct-mobilisation-lyceenne-des-etablissements-toujours-bloques-aucune-perturbation-dans-les-trois-quarts-des-departements-ajoute-edouard-geffray_8236774.html"
-            }
+            "texte": "Les mineurs dominent les gardes à vue du mouvement lycéen ; après le 17 octobre, ce sont les 18-20 ans qui dominent parmi les personnes écrouées.",
+            "renvoi": "#auteurs"
           },
           {
-            "texte": "70 % des personnes écrouées sont françaises et presque toutes sont nées en France. Les mesures liées à la nationalité visent des publics précis : les binationaux pour la déchéance, les étrangers pour l'expulsion.",
-            "source": {
-              "label": "Europe 1, d'après une note de la Chancellerie (AFP)",
-              "url": "https://www.europe1.fr/societe/entre-18-et-25-ans-principalement-des-hommes-quel-est-le-profil-des-186-personnes-ecrouees-apres-les-pillages-1174452"
-            }
-          },
-          {
-            "texte": "En quatre jours, 917 personnes ont été déférées en vue d'une comparution immédiate et 174 incarcérées.",
-            "source": {
-              "label": "Europe 1, d'après le ministre de la Justice",
-              "url": "https://www.europe1.fr/police-justice/violences-et-pillages-174-personnes-incarcerees-annonce-gerald-darmanin-1170576"
-            }
+            "texte": "Les mesures liées à la nationalité visent des publics précis : les binationaux pour la déchéance, les étrangers pour l'expulsion.",
+            "renvoi": "#auteurs"
           }
         ]
       }
@@ -1286,25 +1060,16 @@
         "titre": "Repères pour juger de l'efficacité",
         "items": [
           {
-            "texte": "Avant le mouvement, 73 % des Français déclaraient faire confiance à la police, l'institution la mieux placée du baromètre du Cevipof.",
-            "source": {
-              "label": "Cevipof, Sciences Po",
-              "url": "https://www.sciencespo.fr/cevipof/fr/actualites/barometre-de-la-confiance-politique-cevipof-2026-la-confiance-s-effondre-en-politique-la-proximite-fait-figure-de-refuge/"
-            }
+            "texte": "Les organisations lycéennes et étudiantes demandent des poursuites contre les membres des forces de l'ordre auteurs de violences pendant les manifestations.",
+            "renvoi": "#debut"
           },
           {
-            "texte": "Au 6 octobre, 215 élèves et 85 personnels de l'éducation avaient été blessés depuis le début du mouvement, ainsi que plus de 715 policiers et gendarmes.",
-            "source": {
-              "label": "Euronews",
-              "url": "https://fr.euronews.com/2026/10/06/mobilisation-lyceenne-acte-iii-891-lycees-perturbes-annonce-le-ministere-de-linterieur"
-            }
+            "texte": "Élèves, personnels de l'éducation, policiers et gendarmes ont été blessés depuis le début du mouvement.",
+            "renvoi": "#17-octobre"
           },
           {
-            "texte": "Des vidéos de violences, vraies ou fabriquées, ont circulé à des millions de vues ; l'Assemblée nationale enquête depuis le 20 octobre sur le maintien de l'ordre.",
-            "source": {
-              "label": "AFP Factuel, via Yahoo Actualités",
-              "url": "https://fr.news.yahoo.com/manifestations-17-octobre-attention-%C3%A0-133516220.html"
-            }
+            "texte": "Une commission d'enquête de l'Assemblée nationale examine depuis le 20 octobre les violences et le maintien de l'ordre.",
+            "renvoi": "#debut"
           }
         ]
       }
@@ -1344,6 +1109,122 @@
     "texte": "Retrouvez ici chaque analyse publiée, par candidat. Chaque lien ouvre la fiche complète : raisonnement, sources et détail de la note.",
     "messageVide": "Aucune analyse n'est encore publiée. Cette liste se remplit à chaque nouvelle fiche."
   },
+  "pourAllerPlusLoin": {
+    "titre": "Pour aller plus loin",
+    "texte": "Des éléments de contexte utiles, mais secondaires pour juger les réponses de sécurité. Chaque bloc se déplie.",
+    "blocs": [
+      {
+        "titre": "Étranger, immigré, descendant d'immigré : les définitions",
+        "blocs": [
+          {
+            "type": "cartes",
+            "colonnes": 3,
+            "items": [
+              {
+                "etiquette": "Étranger",
+                "chiffre": "6,3 millions",
+                "texte": "Personne qui n'a pas la nationalité française, soit 9,1 % de la population. Environ 1 million sont nés en France.",
+                "source": {
+                  "label": "Insee",
+                  "url": "https://insee.fr/fr/statistiques/3633212"
+                }
+              },
+              {
+                "etiquette": "Immigré",
+                "chiffre": "8,0 millions",
+                "texte": "Personne née étrangère à l'étranger et vivant en France, soit 11,6 % de la population. Un immigré peut être devenu français.",
+                "source": {
+                  "label": "Insee",
+                  "url": "https://insee.fr/fr/statistiques/3633212"
+                }
+              },
+              {
+                "etiquette": "Descendant d'immigré",
+                "chiffre": "Non mesuré",
+                "texte": "Personne née en France d'au moins un parent immigré. Seules des enquêtes statistiques la mesurent ; aucune donnée n'existe sur les auteurs des violences d'octobre.",
+                "source": {
+                  "label": "Insee",
+                  "url": "https://insee.fr/fr/statistiques/3633212"
+                }
+              }
+            ]
+          },
+          {
+            "type": "texte",
+            "paragraphes": [
+              "À l'échelle des communes, les chercheurs de Sciences Po qui étudient les émeutes de 2023 relèvent que les émeutes de faible intensité ont davantage touché des communes plus ségréguées, comptant plus de familles nombreuses et d'immigrés ; les plus intenses, des communes avec davantage de familles monoparentales et de délinquance d'appropriation, une vie associative plus faible et une participation électorale plus basse. Une corrélation entre communes ne dit rien, à elle seule, des personnes qui y émeutent."
+            ],
+            "sources": [
+              {
+                "label": "LIEPP, Sciences Po",
+                "url": "https://www.sciencespo.fr/liepp/files/Poster%20LIEPP%20Emeutes%202023%20-%20mars%202026.pdf"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "titre": "La situation des jeunes : études, emploi, confiance",
+        "blocs": [
+          {
+            "type": "texte",
+            "paragraphes": [
+              "En 2025, plus de 20 % des bacheliers professionnels n'ont reçu aucune proposition sur Parcoursup, contre 3,5 % des bacheliers généraux. Au 2e trimestre 2026, le chômage des 15-24 ans atteint 21,6 %, contre 8,3 % pour l'ensemble des actifs.",
+              "Selon la Banque de France, les embauches en CDI des 21-29 ans ont baissé de 28 % entre novembre 2022 et mars 2026 dans les métiers les plus exposés à l'IA, contre 8 % dans les moins exposés ; les auteurs y voient une association, pas un effet démontré. À l'échelle européenne, Eurofound ne constate pas d'éviction des jeunes de ces métiers.",
+              "En février 2026, avant le mouvement, 73 % des Français déclaraient faire confiance à la police et 60 % à leur maire, contre 22 % à « la politique » et 15 % aux partis."
+            ],
+            "sources": [
+              {
+                "label": "Le Monde (5 et 17 octobre), repris par Santé-Environnement-Politique",
+                "url": "https://environnementsantepolitique.fr/2026/10/19/le-mouvement-lyceen-analyses/"
+              },
+              {
+                "label": "Insee",
+                "url": "https://www.insee.fr/fr/statistiques/9032359"
+              },
+              {
+                "label": "Banque de France, Bloc-notes Éco n° 463",
+                "url": "https://www.banque-france.fr/system/files/2026-10/Billet_463_FR_0.pdf"
+              },
+              {
+                "label": "Eurofound",
+                "url": "https://www.eurofound.europa.eu/en/publications/all/ai-is-already-in-use-in-europe-s-workplaces-but-not-at-the-expense-of-young-workers"
+              },
+              {
+                "label": "Cevipof, Sciences Po",
+                "url": "https://www.sciencespo.fr/cevipof/fr/actualites/barometre-de-la-confiance-politique-cevipof-2026-la-confiance-s-effondre-en-politique-la-proximite-fait-figure-de-refuge/"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "titre": "Les autres mobilisations en Europe",
+        "blocs": [
+          {
+            "type": "texte",
+            "paragraphes": [
+              "D'autres pays connaissent des mobilisations au même moment, avec leurs propres causes. Au Portugal, des dizaines de milliers de personnes manifestent à Lisbonne le 17 octobre contre la crise du logement. En Espagne, l'expulsion puis la mort d'une femme de 87 ans à Madrid déclenche manifestations et campements. En Albanie, des étudiants affrontent la police à Tirana pendant trois jours à la mi-octobre. En Serbie, le mouvement étudiant né fin 2024 suit une trajectoire propre."
+            ],
+            "sources": [
+              {
+                "label": "Reuters, via Internazionale",
+                "url": "https://www.internazionale.it/ultime-notizie-reuters/2026/10/17/tens-of-thousands-march-in-lisbon-over-housing-and-living-costs"
+              },
+              {
+                "label": "Al Jazeera",
+                "url": "https://aljazeera.com/gallery/2026/10/8/photos-protests-erupt-after-87-year-old-evicted-woman-dies-in-madrid"
+              },
+              {
+                "label": "Qatar Tribune, d'après l'AP",
+                "url": "https://www.qatar-tribune.com/article/259408/world/violent-student-protests-spread-in-albania-as-unrest-enters-3rd-day"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
   "releve": {
     "titre": "Le relevé complet des prises de parole",
     "texte": "Toutes les mesures relevées, candidat par candidat, avec leur date, leur support et un lien vers la source. Les mesures non comptées dans le graphique sont affichées avec la raison de leur exclusion.",
@@ -1356,7 +1237,7 @@
     "paragraphes": [
       "Avant d'être ajoutée au dossier, chaque proposition est vérifiée : qui l'a formulée, quand, où, et avec quels mots. Une proposition sans source identifiable n'est pas publiée.",
       "Chaque proposition retenue fait l'objet d'une fiche notée sur 100 selon le barème Perlimpinpin, puis d'une relecture par les adhérents du Club avant publication. Tant qu'une fiche n'est pas publiée, la proposition est signalée « Analyse à venir », sans note provisoire.",
-      "La partie « Comprendre la crise » s'appuie sur des statistiques publiques, des données judiciaires et des études. Chaque chiffre est daté et sourcé. Les données judiciaires décrivent les personnes interpellées, poursuivies ou écrouées, pas l'ensemble des participants. Aucune origine n'est déduite d'un nom, d'une photo ou d'une vidéo.",
+      "La partie « Comprendre la crise » s'appuie sur des statistiques publiques, des données judiciaires et des études, chacune datée et sourcée. Chaque chiffre important n'est détaillé qu'à un seul endroit. Les données judiciaires décrivent les personnes interpellées, poursuivies ou écrouées, pas l'ensemble des participants. Aucune origine n'est déduite d'un nom, d'une photo ou d'une vidéo.",
       "Ce dossier compare des propositions de candidats différents. Il ne calcule donc pas de note d'ensemble.",
       "Le dossier est mis à jour au fur et à mesure des déclarations des candidats et de la publication des fiches."
     ]
@@ -1407,7 +1288,7 @@
       "url": "https://www.europe1.fr/police-justice/violences-et-pillages-174-personnes-incarcerees-annonce-gerald-darmanin-1170576"
     },
     {
-      "label": "franceinfo, « Sur près de 8 000 gardes à vue depuis le début du mouvement, 2 735 ont donné lieu à des poursuites, annonce le ministère de la Justice », 14-15 octobre 2026",
+      "label": "franceinfo, « Sur près de 8 000 gardes à vue depuis le début du mouvement, 2 735 ont donné lieu à des poursuites, annonce le ministère de la Justice », 14-15 octobre 2026",
       "url": "https://www.franceinfo.fr/societe/education/blocage-des-lycees/direct-mobilisation-lyceenne-des-etablissements-toujours-bloques-aucune-perturbation-dans-les-trois-quarts-des-departements-ajoute-edouard-geffray_8236774.html"
     },
     {
@@ -1491,7 +1372,7 @@
       "url": "https://it.euronews.com/2026/10/15/prime-scuole-occupate-in-italia-sulla-scia-delle-proteste-studentesche-francesi"
     },
     {
-      "label": "AFP, « Grèce : comme en France, plus de 10 000 étudiants et enseignants dans la rue », 21 octobre 2026",
+      "label": "AFP, « Grèce : comme en France, plus de 10 000 étudiants et enseignants dans la rue », 21 octobre 2026",
       "url": "https://www.boursedirect.fr/fr/actualites/categorie/economie/grece-comme-en-france-plus-de-10-000-etudiants-et-enseignants-dans-la-rue-afp-6ab8abcee9c11e80d62aa523fb58d4f4fd3cdeca"
     },
     {
@@ -1513,6 +1394,42 @@
     {
       "label": "Qatar Tribune / AP, « Violent student protests spread in Albania as unrest enters 3rd day », 16 octobre 2026",
       "url": "https://www.qatar-tribune.com/article/259408/world/violent-student-protests-spread-in-albania-as-unrest-enters-3rd-day"
+    },
+    {
+      "label": "L'Etudiant, « Mobilisation lycéenne : les lycéens et étudiants proposent 10 mesures d'urgence », 5 octobre 2026",
+      "url": "https://www.letudiant.fr/lycee/mobilisation-lyceenne-la-jeunesse-propose-10-mesures-d-urgence.html"
+    },
+    {
+      "label": "Café pédagogique, « Lycéens mobilisés : ce qu'ils disent, ce qu'on leur répond », 1er octobre 2026",
+      "url": "https://www.cafepedagogique.net/2026/10/01/lyceens-mobilises-ce-quils-disent-ce-quon-leur-repond/"
+    },
+    {
+      "label": "L'Etudiant, « Mouvement lycéen : le gouvernement lance cinq chantiers prioritaires », octobre 2026",
+      "url": "https://www.letudiant.fr/lycee/mouvement-lyceen-alors-que-la-mobilisation-continue-le-gouvernement-lance-cinq-chantiers-prioritaires.html"
+    },
+    {
+      "label": "Le JDD, « Manifestations du 24 octobre : interpellations, nombre de manifestants… Le bilan des autorités », 25 octobre 2026",
+      "url": "https://www.lejdd.fr/Societe/manifestations-du-24-octobre-interpellations-nombre-de-manifestants-le-bilan-des-autorites-186957"
+    },
+    {
+      "label": "Police & Réalités, « Mobilisation du 24 octobre : 1 314 interpellations et 53 membres des forces de l'ordre blessés, le bilan du ministère de l'Intérieur », 25 octobre 2026",
+      "url": "https://policeetrealites.com/2026/10/25/mobilisation-du-24-octobre-1-314-interpellations-et-53-membres-des-forces-de-lordre-blesses-le-bilan-du-ministere-de-linterieur/"
+    },
+    {
+      "label": "ICI, « Mobilisation du 24 octobre : 1 314 interpellations en France ce samedi, moitié moins que la semaine dernière », 25 octobre 2026",
+      "url": "https://www.ici.fr/infos/societe/mobilisation-du-24-octobre-1-314-interpellations-ce-samedi-en-france-moitie-moins-que-la-semaine-derniere-3724749"
+    },
+    {
+      "label": "Reuters, « Veillée d'armes avant une nouvelle journée de manifestations, le dispositif sécuritaire renforcé », 23 octobre 2026 (via Boursorama)",
+      "url": "https://www.boursorama.com/actualite-economique/actualites-amp/france-veillee-d-armes-avant-une-nouvelle-journee-de-manifestations-le-dispositif-securitaire-renforce-7bfd55516b379ea7cde18eb3b493547f"
+    },
+    {
+      "label": "ICI Paris, « Manifestation du 24 octobre à Paris : cortège dans le calme mais 142 interpellations », 25 octobre 2026",
+      "url": "https://www.ici.fr/ile-de-france/paris-75/paris/manifestation-du-24-octobre-a-paris-cortege-dans-le-calme-mais-142-interpellations-9175688"
+    },
+    {
+      "label": "France 3 Paris Île-de-France, direct de la manifestation du 24 octobre à Paris",
+      "url": "https://france3-regions.franceinfo.fr/paris-ile-de-france/direct-manifestation-du-24-octobre-a-paris-parcours-des-corteges-stations-fermees-securite-suivez-notre-direct-pour-tout-savoir-heure-par-heure-3438498.html"
     },
     {
       "label": "Perlimpinpin, relevé des prises de parole des candidats sur la sécurité (voir ci-dessus)",

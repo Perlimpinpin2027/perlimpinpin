@@ -187,7 +187,7 @@ export default function TriangleLeviers({ candidats, onglets, legende }) {
             onFocus={() => setActif(point.candidat)}
             onBlur={() => setActif(null)}
             onClick={() => setActif((a) => (a === point.candidat ? null : point.candidat))}
-            className={`absolute h-4 w-4 rounded-full shadow-[0_0_0_2px_white] transition-transform hover:scale-125 focus-visible:scale-125 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-950 ${COULEURS_ORIENTATION[point.couleur]}`}
+            className={`absolute h-4 w-4 rounded-full shadow-[0_0_0_2px_white] transition-transform hover:scale-125 focus-visible:scale-125 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--ms-noir) ${COULEURS_ORIENTATION[point.couleur]}`}
             style={{
               left: `${point.x}%`,
               top: `${point.y}%`,

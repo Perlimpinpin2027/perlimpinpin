@@ -1,19 +1,22 @@
-import { DOSSIER } from "@/lib/couleurs-dossier";
-
 // Briques d'affichage communes à la page du dossier « Mouvement social » et à
-// ses blocs (partie « Comprendre la crise », graphiques), avec les mêmes styles
-// que la page du dossier RN.
+// ses blocs (partie « Comprendre la crise », graphiques), dans la charte propre
+// au dossier (voir charte.js : couleurs en variables CSS --ms-…).
+
+// Date du jour à Paris, au format des champs `dateIso` du JSON (« 2026-10-23 »).
+export function dateDuJour() {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Paris" }).format(new Date());
+}
 
 export const OMBRE_CARTE = "shadow-[0_24px_60px_-30px_rgba(30,41,82,0.35)]";
 
-// Étiquette « // … », comme sur la page du dossier RN (en Geist, pas en police
-// mono). Certains titres du JSON commencent déjà par « // » : le préfixe n'est
-// alors pas doublé.
-export function Etiquette({ children, couleur = "text-zinc-400", className = "" }) {
+// Étiquette « // … » en police mono (Geist Mono), comme le veut la charte du
+// dossier. Certains titres du JSON commencent déjà par « // » : le préfixe
+// n'est alors pas doublé.
+export function Etiquette({ children, couleur = "text-(--ms-gris600)", className = "" }) {
   const texte = String(children ?? "").replace(/^\/\/\s*/, "");
   if (!texte) return null;
   return (
-    <span className={`text-xs font-semibold uppercase tracking-[0.12em] ${couleur} ${className}`}>
+    <span className={`font-mono text-xs font-semibold uppercase tracking-[0.1em] ${couleur} ${className}`}>
       {`// ${texte}`}
     </span>
   );
@@ -62,12 +65,27 @@ export function Prose({ paragraphes, chapo = false, className = "" }) {
       {paragraphes.map((paragraphe, i) => (
         <p
           key={paragraphe}
-          className={chapo && i === 0 ? `border-l-4 ${DOSSIER.bordure} pl-4 font-medium text-zinc-900` : undefined}
+          className={chapo && i === 0 ? `border-l-4 border-(--ms-jaune) pl-4 font-medium text-zinc-900` : undefined}
         >
           {paragraphe}
         </p>
       ))}
     </div>
+  );
+}
+
+// Titre de partie : numéro (`num` du JSON) dans un carré jaune à texte noir
+// (mono, gras), puis le titre en grand. Le même numéro figure dans le plan.
+export function TitreNumerote({ num, children, as: Balise = "h2", className = "" }) {
+  return (
+    <Balise className={`flex items-start gap-3.5 text-3xl font-extrabold leading-[1.1] tracking-[-0.03em] text-(--ms-noir) sm:text-[2.25rem] ${className}`}>
+      {num ? (
+        <span className="mt-0.5 inline-flex h-9 min-w-9 flex-none items-center justify-center rounded-md bg-(--ms-jaune) px-1.5 font-mono text-base font-bold tracking-normal text-(--ms-noir) sm:mt-1">
+          {num}
+        </span>
+      ) : null}
+      <span>{children}</span>
+    </Balise>
   );
 }
 
@@ -83,12 +101,23 @@ export function Pastille({ className, children }) {
 // blocs `chiffres` de la partie « Comprendre la crise ».
 export function TuileChiffre({ item }) {
   return (
-    <div className="flex flex-col gap-2 rounded-2xl border border-zinc-200 bg-white p-6">
-      <p className="whitespace-nowrap text-4xl font-extrabold leading-none tracking-tight text-blue-950 xl:text-[2.75rem]">
+    <div className="flex flex-col gap-2 rounded-2xl border border-(--ms-gris200) bg-white p-6">
+      <span aria-hidden="true" className="h-1 w-8 rounded-full bg-(--ms-jaune)" />
+      <p className="whitespace-nowrap text-4xl font-extrabold leading-none tracking-[-0.03em] text-(--ms-noir) xl:text-[2.75rem]">
         {item.valeur}
       </p>
-      <p className="text-[15px] leading-normal text-slate-500">{item.legende}</p>
-      <LienSource source={item.source} className="mt-auto pt-1" />
+      <p className="text-[15px] leading-normal text-(--ms-gris600)">{item.legende}</p>
+      {/* Lien interne (ex. vers le relevé) à la place d'une source. */}
+      {item.lien?.ancre ? (
+        <a
+          href={item.lien.ancre}
+          className="mt-auto w-fit pt-1 text-xs font-semibold text-(--ms-noir) underline decoration-(--ms-jaune) decoration-2 underline-offset-2"
+        >
+          {item.lien.label} <span aria-hidden="true">↓</span>
+        </a>
+      ) : (
+        <LienSource source={item.source} className="mt-auto pt-1" />
+      )}
     </div>
   );
 }
