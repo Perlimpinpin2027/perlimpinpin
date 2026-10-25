@@ -84,6 +84,12 @@ export function lienRecherchePR(slug) {
 // Renvoie { ok: true, pr: { numero, lien } } ou { ok: false, raison, lien }.
 // GitHub calcule `mergeable` en arrière-plan : tant qu'il vaut null, on
 // redemande quelques fois.
+//
+// PR déjà fusionnée (fusion faite à la main sur GitHub avant le clic sur
+// « Publier » : règle d'or le 16/10/2026, Sécurité sociale le 25/10/2026) :
+// rien n'est plus à fusionner, la publication peut se faire. Renvoie alors
+// { ok: true, dejaFusionnee: true, pr: { numero, lien } }. Une PR fermée SANS
+// fusion reste un refus : la révision a été abandonnée.
 export async function verifierRevisionFusionnable(slug, { token = jetonParDefaut(), fetchImpl = fetch, attente = 1500, essais = 3 } = {}) {
   const lien = lienRecherchePR(slug);
   if (!SLUG_PATTERN.test(String(slug))) return { ok: false, raison: "slug de révision invalide", lien };
@@ -94,7 +100,17 @@ export async function verifierRevisionFusionnable(slug, { token = jetonParDefaut
   if (!r.ok) return { ok: false, raison: erreurGitHub("la lecture des pull requests", r.status), lien };
   const prs = await r.json();
   if (!Array.isArray(prs) || prs.length === 0) {
-    return { ok: false, raison: `aucune pull request ouverte pour la branche revision/${slug} (déjà fusionnée ou fermée ?)`, lien };
+    const f = await fetchImpl(`${API_DEPOT}/pulls?state=closed&head=${encodeURIComponent(branche)}`, { headers: entetes(token) });
+    if (!f.ok) return { ok: false, raison: erreurGitHub("la lecture des pull requests fermées", f.status), lien };
+    const fermees = await f.json();
+    const fusionnee = Array.isArray(fermees) ? fermees.find((pr) => pr.merged_at) : null;
+    if (fusionnee) {
+      return { ok: true, dejaFusionnee: true, pr: { numero: fusionnee.number, lien: fusionnee.html_url || lien } };
+    }
+    const raison = Array.isArray(fermees) && fermees.length > 0
+      ? `la pull request de la branche revision/${slug} a été fermée sans être fusionnée`
+      : `aucune pull request pour la branche revision/${slug}`;
+    return { ok: false, raison, lien };
   }
 
   const numero = prs[0].number;
