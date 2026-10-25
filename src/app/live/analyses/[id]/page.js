@@ -2,15 +2,20 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { getLiveUser } from "@/lib/live-auth";
-import { getLiveAnalyseDetail, getRecentLiveAnalyses } from "@/lib/live-history";
+import {
+  getLiveAnalyseDetail,
+  getLiveCandidatCounts,
+  getLiveDossiers,
+  getRecentLiveAnalyses,
+} from "@/lib/live-history";
 import { getLiveChatMessages } from "@/lib/live-chat-db";
 import { SCOPE_COOKIE_NAME, normalizeScope } from "@/lib/live-scope";
 import AnalysisActions from "../../AnalysisActions";
-import AnalysisAside from "../../AnalysisAside";
 import AnalysisView from "../../AnalysisView";
 import AnalysisChat from "../../AnalysisChat";
 import { LiveSearchProvider, SearchBar } from "../../LiveSearch";
-import LiveSidebar, { LiveBrand, LiveMobileNav, LiveMobileUser, LiveSearchIcon } from "../../LiveSidebar";
+import LiveShell from "../../LiveShell";
+import LiveSidebar from "../../LiveSidebar";
 import VideoSource from "../../VideoSource";
 import { Avatar, Icon } from "../../ui";
 
@@ -19,13 +24,18 @@ export const metadata = {
   robots: { index: false, follow: false },
 };
 
-const SIDEBAR_COUNT = 8;
+const SIDEBAR_COUNT = 6;
 const QUOTE_LENGTH = 320;
 
-// Extrait de la déclaration pour l'en-tête (le texte complet reste consultable).
+// Extrait de la déclaration (le texte complet reste consultable).
 function excerpt(text) {
   const clean = text.replace(/\s+/g, " ").trim();
   return clean.length > QUOTE_LENGTH ? `${clean.slice(0, QUOTE_LENGTH - 1).trimEnd()}…` : clean;
+}
+
+// Adresse cliquable : http(s) uniquement (déjà validée à l'enregistrement)
+function safeHref(url) {
+  return typeof url === "string" && /^https?:\/\/\S+$/i.test(url) ? url : null;
 }
 
 export default async function AnalysePage({ params }) {
@@ -38,99 +48,116 @@ export default async function AnalysePage({ params }) {
   if (!Number.isInteger(id) || id <= 0) notFound();
 
   // Toute analyse de l'équipe reste consultable par lien, quelle que soit la portée
-  // choisie pour les listes (l'historique de la barre latérale, lui, la suit).
+  // choisie pour les listes (la barre latérale, elle, la suit).
   const scope = normalizeScope((await cookies()).get(SCOPE_COOKIE_NAME)?.value);
-  const [analyse, historique, messages] = await Promise.all([
+  const listOptions = { userId: user.id, scope };
+  const [analyse, historique, messages, dossiers, candidatCounts] = await Promise.all([
     getLiveAnalyseDetail(id, { userId: user.id }),
-    getRecentLiveAnalyses(SIDEBAR_COUNT, { userId: user.id, scope }),
+    getRecentLiveAnalyses(SIDEBAR_COUNT, listOptions),
     getLiveChatMessages(id),
+    getLiveDossiers(listOptions),
+    getLiveCandidatCounts(listOptions),
   ]);
   if (!analyse) notFound();
 
   const candidatNom = analyse.candidat?.nom ?? null;
   const citation = excerpt(analyse.declaration);
-  const sourceLibelle = analyse.video
+  const origine = analyse.video
     ? `Vidéo ${analyse.video.label}`
     : (analyse.sourceLabel ?? "Déclaration collée par l'équipe");
+  const lienSource = safeHref(analyse.sourceUrl);
   const declarationLongue = analyse.declaration.replace(/\s+/g, " ").trim().length > QUOTE_LENGTH;
+
+  // Déclaration, vidéo et origine : en tête du panneau « Lire l'analyse détaillée »
+  const declaration = (
+    <div>
+      <h3 className="text-base font-bold text-zinc-900">Déclaration analysée</h3>
+      <p className="mt-1 text-xs text-zinc-500">
+        {origine} · {analyse.themeLabel} · Par {analyse.auteurLabel}
+        {lienSource && (
+          <>
+            {" · "}
+            <a href={lienSource} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-blue-600 hover:underline">
+              Voir la source
+              <Icon name="external" className="h-3 w-3" />
+            </a>
+          </>
+        )}
+      </p>
+      <blockquote className="mt-3 border-l-2 border-blue-300 pl-4 text-sm leading-relaxed text-zinc-600">
+        <p>{`« ${citation} »`}</p>
+        {declarationLongue && (
+          <details className="mt-2">
+            <summary className="cursor-pointer text-xs font-medium text-blue-600 hover:underline">
+              Voir la déclaration complète
+            </summary>
+            <p className="mt-2 whitespace-pre-line text-zinc-600">{analyse.declaration}</p>
+          </details>
+        )}
+      </blockquote>
+      {analyse.video && (
+        <div className="mt-4">
+          <VideoSource video={analyse.video} sourceUrl={analyse.sourceUrl} titre={analyse.titre} />
+        </div>
+      )}
+    </div>
+  );
+
+  const sidebar = (
+    <LiveSidebar
+      vue="analyses"
+      user={user}
+      scope={scope}
+      candidats={candidatCounts}
+      themes={dossiers}
+      deplie={false}
+      historique={historique}
+      currentId={analyse.id}
+    />
+  );
 
   return (
     <LiveSearchProvider query="">
-      <div className="min-h-screen bg-background font-sans lg:grid lg:grid-cols-[288px_minmax(0,1fr)_320px]">
-        <LiveSidebar historique={historique} vue="analyses" user={user} scope={scope} currentId={analyse.id} />
+      <LiveShell sidebar={sidebar} vue="analyses" user={user}>
+        <div className="mx-auto max-w-[1180px]">
+          <SearchBar key="" />
 
-        {/* Barre du haut, mobile uniquement (la barre latérale est masquée sous lg) */}
-        <div className="border-b border-zinc-200 bg-white px-5 py-4 lg:hidden">
-          <div className="flex items-center justify-between gap-2">
-            <LiveBrand />
-            <LiveSearchIcon />
+          {/* Fil d'Ariane et actions (Partager, Exporter) */}
+          <div className="flex items-center justify-between gap-4">
+            <nav aria-label="Fil d'Ariane" className="flex min-w-0 items-center gap-2 text-[15px] text-zinc-500">
+              <Link href="/live" className="shrink-0 hover:text-zinc-900 hover:underline">
+                Analyses
+              </Link>
+              <Icon name="chevronRight" className="h-3.5 w-3.5 shrink-0" />
+              <span aria-current="page" className="truncate text-zinc-800">
+                {analyse.titre}
+              </span>
+            </nav>
+            <AnalysisActions analyseId={analyse.id} />
           </div>
-          <LiveMobileNav vue="analyses" />
-          <LiveMobileUser user={user} />
+
+          {/* En-tête : photo du candidat, « candidat · date », titre */}
+          <header className="mt-6 flex items-center gap-5 sm:gap-7">
+            <Avatar nom={candidatNom} photoUrl={analyse.candidat?.photoUrl ?? null} size={96} rounded="rounded-2xl" />
+            <div className="min-w-0">
+              <p className="text-sm text-zinc-500">
+                <span className="font-medium text-zinc-800">{candidatNom ?? "Candidat non précisé"}</span> ·{" "}
+                {analyse.dateLabel}
+              </p>
+              <h1 className="mt-1.5 font-sans text-3xl font-extrabold leading-[1.05] tracking-[-0.035em] text-zinc-900 sm:text-4xl lg:text-5xl">
+                {analyse.titre}
+              </h1>
+            </div>
+          </header>
+
+          <div className="mt-5">
+            <AnalysisView key={analyse.id} analyse={analyse} declaration={declaration} />
+          </div>
+
+          {/* Questions sur l'analyse : fil enregistré + barre fixée en bas de la colonne */}
+          <AnalysisChat key={analyse.id} analyseId={analyse.id} initialMessages={messages} mode={analyse.mode} />
         </div>
-
-        <main className="min-w-0 px-5 py-8 sm:px-8 lg:py-10">
-          <div className="mx-auto max-w-3xl">
-            <SearchBar key="" />
-
-            {/* Fil d'Ariane et actions (Partager, Exporter) */}
-            <div className="flex items-center justify-between gap-4">
-              <nav aria-label="Fil d'Ariane" className="flex min-w-0 items-center gap-1.5 text-sm text-zinc-500">
-                <Link href="/live" className="shrink-0 hover:text-zinc-900 hover:underline">
-                  Analyses
-                </Link>
-                <Icon name="chevronRight" className="h-3.5 w-3.5 shrink-0" />
-                <span aria-current="page" className="truncate text-zinc-800">
-                  {analyse.titre}
-                </span>
-              </nav>
-              <AnalysisActions analyseId={analyse.id} />
-            </div>
-
-            {/* En-tête : candidat, date, source, titre généré et citation. Le bloc vidéo
-                n'existe que si la source est une vidéo reconnue (YouTube, Dailymotion, X, France TV). */}
-            <header className="mt-6 flex items-start gap-4 sm:gap-5">
-              <Avatar nom={candidatNom} photoUrl={analyse.candidat?.photoUrl ?? null} size={88} rounded="rounded-xl" />
-              <div className="min-w-0">
-                <p className="text-sm font-medium text-zinc-800">{candidatNom ?? "Candidat non précisé"}</p>
-                <p className="mt-0.5 text-xs text-zinc-400">
-                  {analyse.dateLabel} · {sourceLibelle} · {analyse.themeLabel} · Par {analyse.auteurLabel}
-                </p>
-                <h1 className="mt-2 font-sans tracking-[-0.035em] text-3xl font-extrabold leading-tight text-zinc-900 sm:text-4xl">
-                  {analyse.titre}
-                </h1>
-              </div>
-            </header>
-
-            <blockquote className="mt-5 border-l-2 border-indigo-300 pl-4 text-sm leading-relaxed text-zinc-500">
-              <p>{`« ${citation} »`}</p>
-              {declarationLongue && (
-                <details className="mt-2">
-                  <summary className="cursor-pointer text-xs font-medium text-indigo-600 hover:underline">
-                    Voir la déclaration complète
-                  </summary>
-                  <p className="mt-2 whitespace-pre-line text-zinc-600">{analyse.declaration}</p>
-                </details>
-              )}
-            </blockquote>
-
-            {analyse.video && (
-              <div className="mt-4">
-                <VideoSource video={analyse.video} sourceUrl={analyse.sourceUrl} titre={analyse.titre} />
-              </div>
-            )}
-
-            <div className="mt-8">
-              <AnalysisView key={analyse.id} analyse={analyse} />
-            </div>
-
-            {/* Conversation avec l'analyse : l'historique enregistré est rechargé à chaque ouverture */}
-            <AnalysisChat key={analyse.id} analyseId={analyse.id} initialMessages={messages} />
-          </div>
-        </main>
-
-        <AnalysisAside analyse={analyse} />
-      </div>
+      </LiveShell>
     </LiveSearchProvider>
   );
 }

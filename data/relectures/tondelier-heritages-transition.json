@@ -143,6 +143,29 @@
         "titre": "Titre et teasing provisoires",
         "texte": "Titre court proposé : « Gros héritages pour la transition » (33 caractères). Teasing : « Les Écologistes annoncent 15 milliards par an pour la transition. En refaisant le calcul taxe par taxe, on trouve… nettement moins. » (131 caractères). Faut-il les formuler autrement ?"
       }
-    ]
+    ],
+    "archive": {
+      "date": "2026-10-25",
+      "version_suivante": "data/analyses finales/Tondelier/tondelier_heritages_transition_etape3.json",
+      "synthese": "La fiche ajoute le contexte OCDE sur l'abolition des droits de succession ailleurs qu'en Suède, et confirme le seuil de 50 millions pour le pacte Dutreil ; aucun score ne change.",
+      "reponses": [
+        {
+          "commentaire_id": "cmvmfdjfc000007l01vf5gb2r",
+          "auteur": "Alexis C.",
+          "section": "Longévité des effets",
+          "commentaire": "Pas d'autre exemple à l'international sur ce sujet notamment au sein de l'OCDE ?",
+          "reponse": "Bonne remarque, et la fiche a été complétée sur ce point. Au-delà de la Suède, l'OCDE recense dix pays membres ayant aboli leur impôt sur les successions ou les droits de mutation à titre gratuit, dont cinq depuis les années 2000 : l'Autriche, la République tchèque, la Norvège, la Slovaquie et la Suède.\n\nCe contexte est désormais présent dans les sections sur l'international et sur la longévité des effets. Il renforce le constat déjà présent dans la fiche : un impôt sur les successions dépend d'un consensus politique fragile, qui peut se retourner. Cela ne change pas la note, puisque le risque politique de long terme était déjà identifié, mais cela l'étaye avec des exemples plus larges que le seul cas suédois.",
+          "retenu": true
+        },
+        {
+          "commentaire_id": "cmvmgiqrw000507l0p7wch8pc",
+          "auteur": "Jérémy P.",
+          "section": "Points de jugement à valider",
+          "commentaire": "Sur le programme de la candidate + dans la presse on retrouve bien les deux notions. Un imposition ajoutée (10 % pour les 10% et 20% (10 + 10) pour les 0,1% ayant un héritage supérieur à 13 millions. \nPuis plafonnement à 50% du Dutreil (contre 75% aujourd'hui) pour les transmissions pros supérieur à 50 millions.",
+          "reponse": "Merci pour cette précision, qui correspond bien à ce que confirme une proposition de loi cosignée par Eva Sas en décembre 2025 : une exonération du pacte Dutreil ramenée de 75 % à 50 % pour la part des transmissions d'entreprise dépassant 50 millions d'euros, et non une réduction générale.\n\nLa fiche retenait déjà cette version (celle de l'Agefi) comme hypothèse la plus probable, mais la formulais avec plus de prudence faute de document officiel des Écologistes. Le texte a été ajusté pour présenter ce point comme confirmé plutôt que comme une simple interprétation, et la proposition de loi a été ajoutée aux sources. La note sur ce critère ne change pas, car l'hypothèse de calcul était déjà la bonne.",
+          "retenu": true
+        }
+      ]
+    }
   }
 }

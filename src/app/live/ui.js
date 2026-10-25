@@ -2,6 +2,17 @@ import { getScoreBadge } from "@/lib/score";
 
 // Petits éléments partagés par les blocs de /live (PerlimpinpinGo).
 
+// Habillage de GO (refonte d'après la maquette « Perlimpinpin GO ») : fond gris chaud
+// (.bg-go, globals.css), cartes blanc cassé à bordure fine, accent bleu. Définis une
+// seule fois ici et réutilisés partout dans /live.
+export const GO_CARD = "rounded-2xl border border-[#e6e4de] bg-[#f8f7f4]";
+// Bouton secondaire en carte (barre du haut, Partager / Exporter, Fichier / URL…)
+export const GO_BUTTON =
+  "inline-flex items-center gap-2 rounded-xl border border-[#e6e4de] bg-[#f8f7f4] text-sm font-medium text-zinc-800 transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-50";
+// Pastille « Bientôt » des fonctions affichées mais pas encore branchées
+export const SOON_BADGE =
+  "rounded-md bg-zinc-200/70 px-1.5 py-0.5 text-[11px] font-medium text-zinc-500";
+
 // Icônes Heroicons (outline, trait 1,8), comme le header du site.
 export const ICONS = {
   chart: "M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z",
@@ -33,6 +44,10 @@ export const ICONS = {
   alert: "M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z",
   play: "M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z",
   external: "M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25",
+  paperclip: "m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13",
+  bookOpen: "M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25",
+  question: "M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z",
+  user: "M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z",
   printer: "M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0 0 21 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 0 0-1.913-.247M6.34 18H5.25A2.25 2.25 0 0 1 3 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 0 1 1.913-.247m10.5 0a48.536 48.536 0 0 0-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5Zm-3 0h.008v.008H15V10.5Z",
 };
 
@@ -99,6 +114,20 @@ export function ScoreBadge({ score }) {
   );
 }
 
+// Pastille compacte « 68/100 » (cartes d'analyses) : couleurs du palier, libellé
+// du palier en infobulle.
+export function ScorePill({ score, className = "" }) {
+  const badge = getScoreBadge(score);
+  return (
+    <span
+      title={badge.label}
+      className={`inline-flex shrink-0 items-baseline rounded-full px-2.5 py-1 text-sm font-semibold tabular-nums ${badge.badgeClass} ${className}`}
+    >
+      {score}/100
+    </span>
+  );
+}
+
 // Élément visible mais inactif, avec infobulle. Le title est posé sur un
 // conteneur : un <button disabled> n'émet pas d'événements souris, donc son
 // propre title ne s'afficherait pas partout.
@@ -124,6 +153,25 @@ const VERDICT_FALLBACK = { dot: "bg-zinc-300", text: "text-zinc-500" };
 export function VerdictDot({ verdict }) {
   const style = VERDICT_STYLES[verdict] ?? VERDICT_FALLBACK;
   return <span aria-hidden="true" className={`mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ${style.dot}`} />;
+}
+
+// Pastille de verdict (colonne « Les faits » de la page d'une analyse)
+const VERDICT_PILLS = {
+  "Cohérent": "bg-emerald-50 text-emerald-700",
+  "Plutôt cohérent": "bg-green-50 text-green-700",
+  "Incertain": "bg-amber-50 text-amber-700",
+  "Non étayé": "bg-red-50 text-red-600",
+  "Contredit": "bg-red-100 text-red-800",
+};
+
+export function VerdictPill({ verdict, className = "" }) {
+  return (
+    <span
+      className={`shrink-0 whitespace-nowrap rounded-full px-3 py-1 text-sm font-medium ${VERDICT_PILLS[verdict] ?? "bg-zinc-100 text-zinc-500"} ${className}`}
+    >
+      {verdict}
+    </span>
+  );
 }
 
 export function VerdictLabel({ verdict, className = "" }) {

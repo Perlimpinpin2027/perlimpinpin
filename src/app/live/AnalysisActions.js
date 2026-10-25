@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { copyText } from "./clipboard";
-import { ComingSoon, Icon } from "./ui";
+import { ComingSoon, GO_BUTTON, Icon } from "./ui";
 
 // Actions en haut de la page d'une analyse.
 //   - Partager : copie le lien direct vers la page (elle reste protégée par le mot
@@ -29,17 +29,17 @@ export default function AnalysisActions({ analyseId }) {
   }
 
   const shareColor =
-    copied === "copied" ? "text-emerald-600" : copied === "failed" ? "text-red-500" : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900";
+    copied === "copied" ? "!text-emerald-700" : copied === "failed" ? "!text-red-600" : "";
 
   return (
-    <div className="flex shrink-0 items-center gap-2">
+    <div className="flex shrink-0 items-center gap-2 sm:gap-3">
       <button
         type="button"
         onClick={share}
         title="Copier le lien de cette analyse"
-        className={`flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors ${shareColor}`}
+        className={`${GO_BUTTON} h-11 px-3 sm:px-4 ${shareColor}`}
       >
-        <Icon name={copied === "copied" ? "check" : "share"} className="h-4 w-4" />
+        <Icon name={copied === "copied" ? "check" : "share"} className="h-5 w-5" />
         <span className={copied === "idle" ? "hidden sm:inline" : ""}>
           {copied === "copied" ? "Lien copié" : copied === "failed" ? "Copie impossible" : "Partager"}
         </span>
@@ -48,27 +48,22 @@ export default function AnalysisActions({ analyseId }) {
         </span>
       </button>
 
-      <ComingSoon>
-        <button
-          type="button"
-          disabled
-          aria-label="Plus d'actions"
-          className="cursor-not-allowed rounded-lg px-2 py-2 text-zinc-400"
-        >
-          <Icon name="dots" className="h-4 w-4" />
-        </button>
-      </ComingSoon>
-
       <a
         href={`/live/analyses/${analyseId}/imprimer`}
         target="_blank"
         rel="noopener"
         title="Ouvrir la vue imprimable (enregistrement en PDF)"
-        className="flex items-center gap-1.5 rounded-lg bg-zinc-900 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-zinc-800"
+        className={`${GO_BUTTON} h-11 px-3 sm:px-4`}
       >
-        Exporter
-        <Icon name="download" className="h-4 w-4" />
+        <Icon name="download" className="h-5 w-5" />
+        <span className="hidden sm:inline">Exporter</span>
       </a>
+
+      <ComingSoon>
+        <button type="button" disabled aria-label="Plus d'actions" className={`${GO_BUTTON} h-11 w-11 justify-center`}>
+          <Icon name="dots" className="h-5 w-5" />
+        </button>
+      </ComingSoon>
     </div>
   );
 }
