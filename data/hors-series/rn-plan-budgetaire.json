@@ -300,10 +300,11 @@
     }
   ],
   "noteGlobale": {
-    "score": null,
-    "titre": "Comment sera calculée la note globale",
+    "score": 37,
+    "titre": "Comment est calculée la note globale",
     "paragraphes": [
       "Chaque fiche pèse selon les milliards qu'elle représente dans le plan : la fiche sur 24 Md€ compte deux fois plus que celle sur 12 Md€.",
+      "Le calcul : (31 × 12 + 43 × 9 + 39 × 24 + 36 × 20) / 65 = 37. La règle d'or, qui n'annonce aucun montant, ne pèse donc pas dans la note, même si c'est la proposition la mieux notée du dossier (66/100).",
       "Nous vérifions ensuite que le plan tient dans son ensemble : la somme des postes atteint-elle les 140 Md€ annoncés ?"
     ],
     "attente": "Calculée quand les 5 fiches seront publiées."
