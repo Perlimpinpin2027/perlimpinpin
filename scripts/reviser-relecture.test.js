@@ -234,12 +234,12 @@ test("thème : thème du site gardé, sinon table explicite signalée, sinon arr
   assert.throws(() => themeDuSite("Culture"), RevisionError);
 });
 
-test("source : mesure initiale + citation + (source)", () => {
+test("source : mesure initiale seule, sans la citation", () => {
   const { relecture } = lireJson("data/relectures/lepen-budget-immigration.json");
   const s = sourceDepuisRelecture(relecture);
-  assert.ok(s.startsWith(relecture.mesure_initiale));
-  assert.ok(s.includes(` Citation : ${relecture.extrait.citation} (${relecture.extrait.source})`));
-  assert.equal(sourceDepuisRelecture({ mesure_initiale: "M.", extrait: {} }), "M.");
+  assert.equal(s, relecture.mesure_initiale.trim());
+  assert.ok(!s.includes("Citation :"));
+  assert.equal(sourceDepuisRelecture({ mesure_initiale: " M. ", extrait: { citation: "« c »", source: "s" } }), "M.");
   assert.throws(() => sourceDepuisRelecture({ mesure_initiale: " " }), /mesure_initiale vide/);
 });
 
@@ -358,7 +358,7 @@ test("reviser : analyze.js lancé avec les bons paramètres, sorties écrites, a
   const val = (opt) => args[args.indexOf(opt) + 1];
   assert.equal(val("--candidat"), "Éric Zemmour");
   assert.equal(val("--theme"), "Emploi & Chômage");
-  assert.match(val("--source"), / Citation : /);
+  assert.doesNotMatch(val("--source"), /Citation :/);
   assert.ok(args.includes("--auto") && val("--seuil-score") === "0");
   // Lien brouillon ↔ PR de révision (bouton Publier de /test, phase C).
   assert.equal(val("--revision"), "ma-fiche");

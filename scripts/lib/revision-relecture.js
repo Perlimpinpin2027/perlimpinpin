@@ -47,14 +47,14 @@ export function themeDuSite(theme) {
 
 // ---------- source et candidat ----------
 
-// relecture.mesure_initiale + « Citation : » + extrait.citation + (extrait.source).
+// Texte de la proposition (affiché comme « Mesure initiale » sur la fiche) :
+// relecture.mesure_initiale seule. La citation et sa source restent dans le
+// bloc relecture.extrait (page /relectures, archive) ; on ne les recopie pas
+// ici, à la demande de la rédaction (25/10/2026).
 export function sourceDepuisRelecture(relecture) {
   const mesure = String(relecture?.mesure_initiale ?? "").trim();
   if (!mesure) throw new RevisionError("relecture.mesure_initiale vide.");
-  const citation = String(relecture.extrait?.citation ?? "").trim();
-  const origine = String(relecture.extrait?.source ?? "").trim();
-  if (!citation) return mesure;
-  return `${mesure} Citation : ${citation}${origine ? ` (${origine})` : ""}`;
+  return mesure;
 }
 
 // Le nom doit exister exactement en base (Candidat.nom) : jamais de création.
