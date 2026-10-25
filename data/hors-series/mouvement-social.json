@@ -1,11 +1,29 @@
 {
   "slug": "mouvement-social",
-  "visible": false,
-  "numero": 2,
+  "visible": true,
   "surtitre": "Dossier n°2 // Mouvement social · Octobre 2026",
-  "etiquette": "Mouvement social · Octobre 2026",
-  "titre": "Mouvement social",
+  "titre": "Violences urbaines : quelles réponses politiques ?",
   "titreSurligne": "quelles réponses",
+  "numero": 2,
+  "etiquette": "Mouvement social · Octobre 2026",
+  "datePublication": "2026-10-26",
+  "motItalique": "réponses",
+  "description": "Après les violences du 17 octobre, les candidats multiplient les propositions sur la sécurité. Nous les recensons et les analysons une à une, au regard de leur efficacité pour ramener le calme.",
+  "photo": {
+    "src": "/photos/dossiers/mouvement-social.jpg",
+    "alt": "Illustration « Les dossiers » : la statue de la place de la République vêtue d'un gilet jaune, et des graphiques",
+    "credit": "Illustration Perlimpinpin",
+    "srcVertical": "/photos/dossiers/mouvement-social-vertical.jpg",
+    "fondVertical": "#f8b444"
+  },
+  "accueil": {
+    "afficher": true,
+    "enTete": false,
+    "titre": "Violences urbaines : quelles réponses politiques ?",
+    "accroche": "Après les violences du 17 octobre, les candidats multiplient les propositions sur la sécurité. Nous les analysons une à une, au regard de leur efficacité pour ramener le calme.",
+    "messageSansFiche": "Premières analyses en relecture"
+  },
+  "accent": "#f8b444",
   "miseAJour": {
     "date": "2026-10-25",
     "libelle": "Mis à jour le",
@@ -40,7 +58,7 @@
     "sources"
   ],
   "charte": {
-    "note": "Charte propre au dossier : police sans empattement épurée, noir, gris et jaune.",
+    "note": "Charte propre au dossier : police sans empattement épurée, noir, gris et jaune. Tous les titres sont en noir à 90 % d'opacité ; le bloc des revendications est en gris foncé.",
     "police": "Inter",
     "couleurs": {
       "noir": "#0a0a0a",
@@ -52,7 +70,9 @@
       "jaune": "#ecd06f",
       "jauneFonce": "#d4b23f",
       "jaunePale": "#fbf7e6",
-      "grisPlan": "#ececea"
+      "grisPlan": "#ececea",
+      "grisFonce": "#27272a",
+      "titres": "rgba(10, 10, 10, 0.9)"
     }
   },
   "plan": {
@@ -75,27 +95,32 @@
       },
       {
         "num": "04",
-        "titre": "17 octobre : la bascule, et la semaine d'après",
+        "titre": "17 octobre : la bascule",
         "ancre": "#17-octobre"
       },
       {
         "num": "05",
+        "titre": "24 octobre : l'épreuve du maintien de l'ordre",
+        "ancre": "#24-octobre"
+      },
+      {
+        "num": "06",
         "titre": "Casseurs et pilleurs : ce que l'on sait vraiment",
         "ancre": "#auteurs"
       },
       {
-        "num": "06",
+        "num": "07",
         "titre": "Réseaux, IA, ingérences : les accélérateurs",
         "ancre": "#amplification"
       },
       {
-        "num": "07",
-        "titre": "Face aux violences, quelles réponses ?",
+        "num": "08",
+        "titre": "Apporter des réponses politiques aux violences",
         "ancre": "#reponses"
       },
       {
-        "num": "08",
-        "titre": "Les propositions, une par une",
+        "num": "09",
+        "titre": "Les propositions des candidats analysées",
         "ancre": "#propositions"
       }
     ],
@@ -329,7 +354,7 @@
           {
             "type": "texte",
             "paragraphes": [
-              "Ces revendications reposent sur des difficultés mesurables. Dans les collèges et lycées publics, 9,8 % des heures de cours n'ont pas été assurées en 2024-2025, surtout faute de remplacement des enseignants absents (7,5 points). Les lycées ont en moyenne 61 ans, 71 ans pour les lycées professionnels, et plus d'un tiers ont atteint leur capacité d'accueil.",
+              "Ces revendications reposent sur des difficultés mesurables. Dans les collèges et lycées publics, 9,8 % des heures de cours n'ont pas été assurées en 2024-2025, surtout faute de remplacement des enseignants absents (7,5 points). Les lycées ont en moyenne 61 ans, 71 ans pour les lycées professionnels, et plus d'un tiers ont atteint leur capacité d'accueil.",
               "Le mouvement s'élargit ensuite : les étudiants le rejoignent, puis une contestation plus large du coût de la vie, portée notamment par les gilets jaunes et des syndicats. La journée du 17 octobre marque cette convergence.",
               "Trois niveaux se superposent : des causes de fond (conditions d'études, coût de la vie, défiance envers les institutions), des déclencheurs (professeurs non remplacés à la rentrée, hausse des prix, appel national du 17 octobre) et des accélérateurs (réseaux sociaux, convergence des colères, affrontements). Les mesures de sécurité analysées ici agissent sur le troisième niveau et sur les auteurs de violences ; les causes de fond relèvent d'autres politiques, analysées dans des fiches séparées."
             ],
@@ -346,69 +371,217 @@
             "titre": "Des griefs qui se mesurent"
           },
           {
+            "type": "chronologie",
+            "titre": "Les dates clés",
+            "items": [
+              {
+                "date": "21 septembre",
+                "texte": "Premiers blocages de lycées."
+              },
+              {
+                "date": "Début octobre",
+                "texte": "Le gouvernement annonce 3 000 professeurs remplaçants, jugés insuffisants par les lycéens."
+              },
+              {
+                "date": "6 octobre",
+                "texte": "891 lycées sur 3 700 perturbés."
+              },
+              {
+                "date": "17 octobre",
+                "texte": "Journée nationale contre la vie chère, rejointe par les lycéens. Violences et pillages jusqu'au 18."
+              },
+              {
+                "date": "18 octobre",
+                "texte": "Allocution du président de la République, qui distingue manifestants et casseurs."
+              },
+              {
+                "date": "20 octobre",
+                "texte": "L'Assemblée nationale crée une commission d'enquête sur les violences et le maintien de l'ordre."
+              },
+              {
+                "date": "23 octobre",
+                "texte": "Les organisations lycéennes sont reçues à l'Élysée."
+              },
+              {
+                "date": "24 octobre",
+                "texte": "Deuxième journée contre la vie chère, sous un dispositif renforcé : mobilisation en recul, violences en fin de cortège dans plusieurs villes."
+              }
+            ],
+            "sources": [
+              {
+                "label": "Euronews",
+                "url": "https://fr.euronews.com/2026/10/06/mobilisation-lyceenne-acte-iii-891-lycees-perturbes-annonce-le-ministere-de-linterieur"
+              },
+              {
+                "label": "Public Sénat",
+                "url": "https://www.publicsenat.fr/actualites/politique/violences-du-17-octobre-macron-exprime-sa-colere-et-sa-honte-et-promet-toute-la-transparence"
+              },
+              {
+                "label": "Europe 1, d'après une note de la Chancellerie (AFP)",
+                "url": "https://www.europe1.fr/societe/entre-18-et-25-ans-principalement-des-hommes-quel-est-le-profil-des-186-personnes-ecrouees-apres-les-pillages-1174452"
+              },
+              {
+                "label": "Kaweru, dépêche du 23 octobre",
+                "url": "https://www.kaweru.com/politique-societe/2026/10/23/france-le-pr-macron-va-recevoir-ce-vendredi-les-organisations-lyceennes-a-lelysee/"
+              },
+              {
+                "label": "Le JDD",
+                "url": "https://www.lejdd.fr/Societe/manifestations-du-24-octobre-interpellations-nombre-de-manifestants-le-bilan-des-autorites-186957"
+              }
+            ]
+          },
+          {
+            "type": "aVenir",
+            "titre": "Prochains rendez-vous annoncés",
+            "items": [
+              {
+                "date": "26 octobre",
+                "texte": "Annonces attendues du gouvernement, notamment sur Parcoursup, et concertation avec les organisations de jeunesse, les enseignants, les syndicats et le patronat."
+              },
+              {
+                "date": "27 octobre",
+                "texte": "Examen au Sénat du projet de loi « casseurs-payeurs »."
+              },
+              {
+                "date": "31 octobre",
+                "texte": "Troisième date annoncée par la coordination des gilets jaunes."
+              },
+              {
+                "date": "5 novembre",
+                "texte": "Grève et manifestations à l'appel de la CFDT, de la CGT, de FO, de l'Unsa et de la FSU."
+              }
+            ],
+            "note": "Dates annoncées au 25 octobre. Les dates passées sont ajoutées aux dates clés après chaque journée.",
+            "sources": [
+              {
+                "label": "Kaweru, dépêche du 23 octobre",
+                "url": "https://www.kaweru.com/politique-societe/2026/10/23/france-le-pr-macron-va-recevoir-ce-vendredi-les-organisations-lyceennes-a-lelysee/"
+              },
+              {
+                "label": "Reuters, via Boursorama",
+                "url": "https://www.boursorama.com/actualite-economique/actualites-amp/france-veillee-d-armes-avant-une-nouvelle-journee-de-manifestations-le-dispositif-securitaire-renforce-7bfd55516b379ea7cde18eb3b493547f"
+              }
+            ]
+          }
+        ],
+        "num": "03"
+      },
+      {
+        "id": "17-octobre",
+        "titre": "17 octobre : la bascule",
+        "blocs": [
+          {
+            "type": "texte",
+            "paragraphes": [
+              "La journée réunit des cortèges très divers dans tout le pays. En marge, des violences touchent plusieurs grandes villes, dont Paris, Lyon, Marseille, Bordeaux et Limoges : la mairie de Limoges et l'office de tourisme de Lyon sont incendiés, la mairie de Marseille est envahie, la résidence du préfet de Bordeaux est attaquée.",
+              "La réponse judiciaire est rapide : les personnes déférées l'ont été en vue d'une comparution immédiate, jugées dans les jours qui suivent. Les relaxes et les condamnations définitives ne sont pas encore connues."
+            ],
+            "sources": [
+              {
+                "label": "Politis",
+                "url": "https://www.politis.fr/dossiers/17-octobre-macron-recolte-la-colere/"
+              },
+              {
+                "label": "Public Sénat",
+                "url": "https://www.publicsenat.fr/actualites/politique/violences-du-17-octobre-pourquoi-letat-durgence-est-ecarte-par-le-gouvernement"
+              }
+            ]
+          },
+          {
             "type": "grille",
             "colonnes": 2,
             "blocs": [
               {
-                "type": "chronologie",
-                "titre": "Les dates clés",
-                "items": [
-                  {
-                    "date": "21 septembre",
-                    "texte": "Premiers blocages de lycées."
-                  },
-                  {
-                    "date": "Début octobre",
-                    "texte": "Le gouvernement annonce 3 000 professeurs remplaçants, jugés insuffisants par les lycéens."
-                  },
-                  {
-                    "date": "6 octobre",
-                    "texte": "891 lycées sur 3 700 perturbés."
-                  },
-                  {
-                    "date": "17 octobre",
-                    "texte": "Journée nationale contre la vie chère, rejointe par les lycéens. Violences et pillages jusqu'au 18."
-                  },
-                  {
-                    "date": "18 octobre",
-                    "texte": "Allocution du président de la République, qui distingue manifestants et casseurs."
-                  },
-                  {
-                    "date": "20 octobre",
-                    "texte": "L'Assemblée nationale crée une commission d'enquête sur les violences et le maintien de l'ordre."
-                  },
-                  {
-                    "date": "23 octobre",
-                    "texte": "Les organisations lycéennes sont reçues à l'Élysée."
-                  },
-                  {
-                    "date": "24 octobre",
-                    "texte": "Deuxième journée contre la vie chère, sous un dispositif renforcé : mobilisation en recul, violences en fin de cortège dans plusieurs villes."
-                  }
-                ],
+                "type": "graphique",
+                "graphique": {
+                  "type": "entonnoir",
+                  "titre": "De la garde à vue à la prison",
+                  "sousTitre": "Personnes interpellées après les violences du 17 octobre, bilan au 21 octobre",
+                  "etapes": [
+                    {
+                      "label": "Gardes à vue",
+                      "valeur": 2500,
+                      "libelle": "≈ 2 500"
+                    },
+                    {
+                      "label": "Déférées en vue d'une comparution immédiate",
+                      "valeur": 917,
+                      "libelle": "917"
+                    },
+                    {
+                      "label": "Incarcérées",
+                      "valeur": 174,
+                      "libelle": "174"
+                    }
+                  ],
+                  "note": "Le lendemain, le bilan atteignait 217 incarcérations. Ces étapes ne disent rien de la culpabilité : une garde à vue n'est pas une condamnation.",
+                  "sources": [
+                    {
+                      "label": "Europe 1, d'après le ministre de la Justice",
+                      "url": "https://www.europe1.fr/police-justice/violences-et-pillages-174-personnes-incarcerees-annonce-gerald-darmanin-1170576"
+                    },
+                    {
+                      "label": "Europe 1, d'après une note de la Chancellerie (AFP)",
+                      "url": "https://www.europe1.fr/societe/entre-18-et-25-ans-principalement-des-hommes-quel-est-le-profil-des-186-personnes-ecrouees-apres-les-pillages-1174452"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "encadre",
+                "ton": "info",
+                "titre": "Avant le 17 octobre : un mouvement lycéen déjà très judiciarisé",
+                "texte": "Du 17 septembre au 13 octobre, le mouvement lycéen avait déjà donné lieu à 7 950 gardes à vue, dont 85 % de mineurs, et à 2 735 poursuites. Au 6 octobre, 215 élèves et 85 personnels de l'éducation avaient été blessés, selon le Premier ministre.",
                 "sources": [
+                  {
+                    "label": "franceinfo, d'après le ministère de la Justice",
+                    "url": "https://www.franceinfo.fr/societe/education/blocage-des-lycees/direct-mobilisation-lyceenne-des-etablissements-toujours-bloques-aucune-perturbation-dans-les-trois-quarts-des-departements-ajoute-edouard-geffray_8236774.html"
+                  },
                   {
                     "label": "Euronews",
                     "url": "https://fr.euronews.com/2026/10/06/mobilisation-lyceenne-acte-iii-891-lycees-perturbes-annonce-le-ministere-de-linterieur"
-                  },
-                  {
-                    "label": "Public Sénat",
-                    "url": "https://www.publicsenat.fr/actualites/politique/violences-du-17-octobre-macron-exprime-sa-colere-et-sa-honte-et-promet-toute-la-transparence"
-                  },
-                  {
-                    "label": "Europe 1, d'après une note de la Chancellerie (AFP)",
-                    "url": "https://www.europe1.fr/societe/entre-18-et-25-ans-principalement-des-hommes-quel-est-le-profil-des-186-personnes-ecrouees-apres-les-pillages-1174452"
-                  },
-                  {
-                    "label": "Kaweru, dépêche du 23 octobre",
-                    "url": "https://www.kaweru.com/politique-societe/2026/10/23/france-le-pr-macron-va-recevoir-ce-vendredi-les-organisations-lyceennes-a-lelysee/"
-                  },
-                  {
-                    "label": "Le JDD",
-                    "url": "https://www.lejdd.fr/Societe/manifestations-du-24-octobre-interpellations-nombre-de-manifestants-le-bilan-des-autorites-186957"
                   }
                 ]
+              }
+            ]
+          }
+        ],
+        "num": "04"
+      },
+      {
+        "id": "24-octobre",
+        "num": "05",
+        "titre": "24 octobre : l'épreuve du maintien de l'ordre",
+        "blocs": [
+          {
+            "type": "texte",
+            "paragraphes": [
+              "Pour la deuxième journée contre la vie chère, l'État change de dispositif. Environ 70 000 policiers et gendarmes sont mobilisés, 10 000 de plus qu'une semaine plus tôt, avec des unités d'intervention spécialisées. Le président de la République annonce l'interdiction des rassemblements sans organisateur « légitime » et impose des parcours hors des centres-villes : à Paris, le cortège syndical est déplacé entre la porte d'Italie et la porte de Vincennes, et la marche des gilets jaunes est interdite. Des manifestations sont aussi interdites à Lyon, Rouen, Le Havre, Nice, Chambéry, Le Mans et Grenoble.",
+              "Le ministre de l'Intérieur estime que « les cortèges se sont bien passés ». À Paris, le défilé se déroule dans le calme, mais des heurts éclatent en fin de cortège avec environ 500 casseurs selon le ministère ; la préfecture de police y compte 142 interpellations. Des commerces sont encore pillés ou dégradés dans plusieurs villes, et deux personnes sont grièvement blessées lors d'interventions des forces de l'ordre, à Toulouse et à Clermont-Ferrand."
+            ],
+            "sources": [
+              {
+                "label": "Reuters, via Boursorama",
+                "url": "https://www.boursorama.com/actualite-economique/actualites-amp/france-veillee-d-armes-avant-une-nouvelle-journee-de-manifestations-le-dispositif-securitaire-renforce-7bfd55516b379ea7cde18eb3b493547f"
               },
+              {
+                "label": "Le JDD",
+                "url": "https://www.lejdd.fr/Societe/manifestations-du-24-octobre-interpellations-nombre-de-manifestants-le-bilan-des-autorites-186957"
+              },
+              {
+                "label": "France 3 Paris Île-de-France",
+                "url": "https://france3-regions.franceinfo.fr/paris-ile-de-france/direct-manifestation-du-24-octobre-a-paris-parcours-des-corteges-stations-fermees-securite-suivez-notre-direct-pour-tout-savoir-heure-par-heure-3438498.html"
+              },
+              {
+                "label": "ICI Paris",
+                "url": "https://www.ici.fr/ile-de-france/paris-75/paris/manifestation-du-24-octobre-a-paris-cortege-dans-le-calme-mais-142-interpellations-9175688"
+              }
+            ]
+          },
+          {
+            "type": "grille",
+            "colonnes": 2,
+            "blocs": [
               {
                 "type": "graphique",
                 "graphique": {
@@ -476,151 +649,22 @@
                     }
                   ]
                 }
-              }
-            ]
-          },
-          {
-            "type": "aVenir",
-            "titre": "Prochains rendez-vous annoncés",
-            "items": [
-              {
-                "date": "26 octobre",
-                "dateIso": "2026-10-26",
-                "texte": "Annonces attendues du gouvernement, notamment sur Parcoursup, et concertation avec les organisations de jeunesse, les enseignants, les syndicats et le patronat."
-              },
-              {
-                "date": "27 octobre",
-                "dateIso": "2026-10-27",
-                "texte": "Examen au Sénat du projet de loi « casseurs-payeurs »."
-              },
-              {
-                "date": "31 octobre",
-                "dateIso": "2026-10-31",
-                "texte": "Troisième date annoncée par la coordination des gilets jaunes."
-              },
-              {
-                "date": "5 novembre",
-                "dateIso": "2026-11-05",
-                "texte": "Grève et manifestations à l'appel de la CFDT, de la CGT, de FO, de l'Unsa et de la FSU."
-              }
-            ],
-            "note": "Dates annoncées au 25 octobre. Les dates passées sont ajoutées aux dates clés après chaque journée.",
-            "sources": [
-              {
-                "label": "Kaweru, dépêche du 23 octobre",
-                "url": "https://www.kaweru.com/politique-societe/2026/10/23/france-le-pr-macron-va-recevoir-ce-vendredi-les-organisations-lyceennes-a-lelysee/"
-              },
-              {
-                "label": "Reuters, via Boursorama",
-                "url": "https://www.boursorama.com/actualite-economique/actualites-amp/france-veillee-d-armes-avant-une-nouvelle-journee-de-manifestations-le-dispositif-securitaire-renforce-7bfd55516b379ea7cde18eb3b493547f"
-              }
-            ]
-          }
-        ],
-        "num": "03"
-      },
-      {
-        "id": "17-octobre",
-        "titre": "17 octobre : la bascule, et la semaine d'après",
-        "blocs": [
-          {
-            "type": "texte",
-            "paragraphes": [
-              "La journée réunit des cortèges très divers dans tout le pays. En marge, des violences touchent plusieurs grandes villes, dont Paris, Lyon, Marseille, Bordeaux et Limoges : la mairie de Limoges et l'office de tourisme de Lyon sont incendiés, la mairie de Marseille est envahie, la résidence du préfet de Bordeaux est attaquée.",
-              "La réponse judiciaire est rapide : les personnes déférées l'ont été en vue d'une comparution immédiate, jugées dans les jours qui suivent. Les relaxes et les condamnations définitives ne sont pas encore connues."
-            ],
-            "sources": [
-              {
-                "label": "Politis",
-                "url": "https://www.politis.fr/dossiers/17-octobre-macron-recolte-la-colere/"
-              },
-              {
-                "label": "Public Sénat",
-                "url": "https://www.publicsenat.fr/actualites/politique/violences-du-17-octobre-pourquoi-letat-durgence-est-ecarte-par-le-gouvernement"
-              }
-            ]
-          },
-          {
-            "type": "grille",
-            "colonnes": 2,
-            "blocs": [
-              {
-                "type": "graphique",
-                "graphique": {
-                  "type": "entonnoir",
-                  "titre": "De la garde à vue à la prison",
-                  "sousTitre": "Personnes interpellées après les violences du 17 octobre, bilan au 21 octobre",
-                  "etapes": [
-                    {
-                      "label": "Gardes à vue",
-                      "valeur": 2500,
-                      "libelle": "≈ 2 500"
-                    },
-                    {
-                      "label": "Déférées en vue d'une comparution immédiate",
-                      "valeur": 917,
-                      "libelle": "917"
-                    },
-                    {
-                      "label": "Incarcérées",
-                      "valeur": 174,
-                      "libelle": "174"
-                    }
-                  ],
-                  "note": "Le lendemain, le bilan atteignait 217 incarcérations. Ces étapes ne disent rien de la culpabilité : une garde à vue n'est pas une condamnation.",
-                  "sources": [
-                    {
-                      "label": "Europe 1, d'après le ministre de la Justice",
-                      "url": "https://www.europe1.fr/police-justice/violences-et-pillages-174-personnes-incarcerees-annonce-gerald-darmanin-1170576"
-                    },
-                    {
-                      "label": "Europe 1, d'après une note de la Chancellerie (AFP)",
-                      "url": "https://www.europe1.fr/societe/entre-18-et-25-ans-principalement-des-hommes-quel-est-le-profil-des-186-personnes-ecrouees-apres-les-pillages-1174452"
-                    }
-                  ]
-                }
               },
               {
                 "type": "encadre",
-                "ton": "info",
-                "titre": "Avant le 17 octobre : un mouvement lycéen déjà très judiciarisé",
-                "texte": "Du 17 septembre au 13 octobre, le mouvement lycéen avait déjà donné lieu à 7 950 gardes à vue, dont 85 % de mineurs, et à 2 735 poursuites. Au 6 octobre, 215 élèves et 85 personnels de l'éducation avaient été blessés, selon le Premier ministre.",
+                "ton": "attention",
+                "titre": "Moins d'interpellations le 24 : ce que l'on ne sait pas encore",
+                "texte": "Le recul des interpellations peut tenir à plusieurs causes à la fois : un dispositif policier plus important, des parcours éloignés des centres-villes, des interdictions, une participation en baisse, une pluie continue toute la journée sur Paris et la moitié nord du pays, ou l'effet dissuasif des condamnations rapides prononcées après le 17 octobre. Les données disponibles ne permettent pas de mesurer la part de chacune. Le bilan judiciaire du 24 octobre (gardes à vue, poursuites) n'est pas encore connu.",
                 "sources": [
                   {
-                    "label": "franceinfo, d'après le ministère de la Justice",
-                    "url": "https://www.franceinfo.fr/societe/education/blocage-des-lycees/direct-mobilisation-lyceenne-des-etablissements-toujours-bloques-aucune-perturbation-dans-les-trois-quarts-des-departements-ajoute-edouard-geffray_8236774.html"
+                    "label": "ICI",
+                    "url": "https://www.ici.fr/infos/societe/mobilisation-du-24-octobre-1-314-interpellations-ce-samedi-en-france-moitie-moins-que-la-semaine-derniere-3724749"
                   },
                   {
-                    "label": "Euronews",
-                    "url": "https://fr.euronews.com/2026/10/06/mobilisation-lyceenne-acte-iii-891-lycees-perturbes-annonce-le-ministere-de-linterieur"
+                    "label": "Météo-Paris, bulletin du 24 octobre",
+                    "url": "https://www.meteo-paris.com/bulletins/un-week-end-encore-tres-pluvieux-avant-le-retour-au-calme"
                   }
                 ]
-              }
-            ]
-          },
-          {
-            "type": "texte",
-            "titre": "Le 24 octobre, un test pour le maintien de l'ordre",
-            "paragraphes": [
-              "Pour la deuxième journée contre la vie chère, l'État change de dispositif. Environ 70 000 policiers et gendarmes sont mobilisés, 10 000 de plus qu'une semaine plus tôt, avec des unités d'intervention spécialisées. Le président de la République annonce l'interdiction des rassemblements sans organisateur « légitime » et impose des parcours hors des centres-villes : à Paris, le cortège syndical est déplacé entre la porte d'Italie et la porte de Vincennes, et la marche des gilets jaunes est interdite. Des manifestations sont aussi interdites à Lyon, Rouen, Le Havre, Nice, Chambéry, Le Mans et Grenoble.",
-              "Le ministre de l'Intérieur estime que « les cortèges se sont bien passés ». À Paris, le défilé se déroule dans le calme, mais des heurts éclatent en fin de cortège avec environ 500 casseurs selon le ministère ; la préfecture de police y compte 142 interpellations. Des commerces sont encore pillés ou dégradés dans plusieurs villes, et deux personnes sont grièvement blessées lors d'interventions des forces de l'ordre, à Toulouse et à Clermont-Ferrand."
-            ],
-            "sources": [
-              {
-                "label": "Reuters, via Boursorama",
-                "url": "https://www.boursorama.com/actualite-economique/actualites-amp/france-veillee-d-armes-avant-une-nouvelle-journee-de-manifestations-le-dispositif-securitaire-renforce-7bfd55516b379ea7cde18eb3b493547f"
-              },
-              {
-                "label": "Le JDD",
-                "url": "https://www.lejdd.fr/Societe/manifestations-du-24-octobre-interpellations-nombre-de-manifestants-le-bilan-des-autorites-186957"
-              },
-              {
-                "label": "France 3 Paris Île-de-France",
-                "url": "https://france3-regions.franceinfo.fr/paris-ile-de-france/direct-manifestation-du-24-octobre-a-paris-parcours-des-corteges-stations-fermees-securite-suivez-notre-direct-pour-tout-savoir-heure-par-heure-3438498.html"
-              },
-              {
-                "label": "ICI Paris",
-                "url": "https://www.ici.fr/ile-de-france/paris-75/paris/manifestation-du-24-octobre-a-paris-cortege-dans-le-calme-mais-142-interpellations-9175688"
               }
             ]
           },
@@ -665,21 +709,8 @@
                 }
               }
             ]
-          },
-          {
-            "type": "encadre",
-            "ton": "attention",
-            "titre": "Moins d'interpellations le 24 : ce que l'on ne sait pas encore",
-            "texte": "Le recul des interpellations peut tenir à plusieurs causes à la fois : un dispositif policier plus important, des parcours éloignés des centres-villes, des interdictions, une participation en baisse, ou l'effet dissuasif des condamnations rapides prononcées après le 17 octobre. Les données disponibles ne permettent pas de mesurer la part de chacune. Le bilan judiciaire du 24 octobre (gardes à vue, poursuites) n'est pas encore connu.",
-            "sources": [
-              {
-                "label": "ICI",
-                "url": "https://www.ici.fr/infos/societe/mobilisation-du-24-octobre-1-314-interpellations-ce-samedi-en-france-moitie-moins-que-la-semaine-derniere-3724749"
-              }
-            ]
           }
-        ],
-        "num": "04"
+        ]
       },
       {
         "id": "auteurs",
@@ -689,7 +720,7 @@
             "type": "texte",
             "paragraphes": [
               "Il n'existe pas de portrait de l'ensemble des personnes qui ont cassé ou pillé. La seule donnée officielle détaillée est une note de la Chancellerie sur les 186 personnes écrouées entre le 18 et le 21 octobre. Elle décrit un groupe très masculin et très jeune : parmi les 25 ans ou moins, les 18-20 ans sont les plus nombreux.",
-              "Près de la moitié de ces personnes sont écrouées pour des pillages, un quart pour des affrontements avec les forces de l'ordre. Plus de la moitié n'avaient aucun antécédent judiciaire. Le profil est proche de celui observé après les émeutes de 2023, où près de 60 % des personnes interpellées étaient des primo-délinquants."
+              "Près de la moitié de ces personnes sont écrouées pour des pillages, un quart pour des affrontements avec les forces de l'ordre. Plus de la moitié n'avaient aucun antécédent judiciaire. Le profil est proche de celui observé après les émeutes de 2023, où près de 60 % des personnes interpellées étaient des primo-délinquants."
             ],
             "sources": [
               {
@@ -780,8 +811,8 @@
             "type": "texte",
             "titre": "Nationalité : un chiffre à manier avec précaution",
             "paragraphes": [
-              "Selon la même note, 70 % des personnes écrouées sont de nationalité française, « presque tous nés en France ». La note ne précise pas le lieu de naissance des 30 % de personnes étrangères. Les étrangers représentent 9,1 % de la population vivant en France.",
-              "L'écart existe et mérite d'être étudié. Il ne mesure pas pour autant la part des étrangers, ni des personnes issues de l'immigration, parmi l'ensemble des auteurs de violences : les personnes écrouées ont franchi plusieurs filtres (interpellation, preuves, décision du juge), et la comparaison n'est corrigée ni de l'âge, ni du sexe, ni du lieu de résidence, alors que les violences se sont concentrées dans de grandes villes et chez de jeunes hommes. La proportion varie d'ailleurs selon l'étape de la procédure : en 2023, le ministre de l'Intérieur avançait 10 % d'étrangers parmi l'ensemble des interpellés."
+              "Selon la même note, 70 % des personnes écrouées sont de nationalité française, « presque tous nés en France ». La note ne précise pas le lieu de naissance des 30 % de personnes étrangères. Les étrangers représentent 9,1 % de la population vivant en France.",
+              "L'écart existe et mérite d'être étudié. Il ne mesure pas pour autant la part des étrangers, ni des personnes issues de l'immigration, parmi l'ensemble des auteurs de violences : les personnes écrouées ont franchi plusieurs filtres (interpellation, preuves, décision du juge), et la comparaison n'est corrigée ni de l'âge, ni du sexe, ni du lieu de résidence, alors que les violences se sont concentrées dans de grandes villes et chez de jeunes hommes. La proportion varie d'ailleurs selon l'étape de la procédure : en 2023, le ministre de l'Intérieur avançait 10 % d'étrangers parmi l'ensemble des interpellés."
             ],
             "sources": [
               {
@@ -799,13 +830,87 @@
             ]
           },
           {
+            "type": "texte",
+            "titre": "Gilets jaunes, octobre 2026 : deux mouvements, deux profils",
+            "paragraphes": [
+              "Le mouvement des gilets jaunes, à partir de novembre 2018, est le précédent le plus souvent cité. Les manifestants y étaient plus âgés : 45 ans en moyenne selon une enquête menée sur les ronds-points et dans les cortèges, avec presque autant de femmes que d'hommes, et près d'un sur deux qui manifestait pour la première fois. Les personnes jugées en comparution immédiate à Paris début décembre 2018 étaient surtout des hommes de 20 à 40 ans, souvent venus de province, le plus souvent en emploi et inconnus des services de police.",
+              "Le point commun avec octobre 2026 : des auteurs de violences souvent sans passé judiciaire. La différence : un public beaucoup plus jeune aujourd'hui, et un nombre de gardes à vue comparable atteint en quelques semaines, contre trois mois en 2018-2019."
+            ],
+            "sources": [
+              {
+                "label": "Bedock, Bernard de Raymond, Della Sudda et al., enquête parue dans Le Monde (via Verso)",
+                "url": "https://www.versobooks.com/blogs/news/4180-gilets-jaunes-a-pioneering-study-of-the-low-earners-revolt"
+              },
+              {
+                "label": "Ifop, Jérôme Fourquet, note Focus n° 192",
+                "url": "https://www.ifop.com/wp-content/uploads/2019/02/Focus-192-Gilets-jaunes-note-3.pdf"
+              }
+            ]
+          },
+          {
+            "type": "comparaison",
+            "colonnes": [
+              "Gilets jaunes (2018-2019)",
+              "Octobre 2026"
+            ],
+            "lignes": [
+              {
+                "critere": "Qui manifeste ?",
+                "valeurs": [
+                  "45 ans en moyenne ; 54 % d'hommes, 45 % de femmes ; 47 % de primo-manifestants",
+                  "Lycéens et étudiants, rejoints le 17 octobre par gilets jaunes, agriculteurs et syndicats ; pas encore d'enquête sur les participants"
+                ]
+              },
+              {
+                "critere": "Qui est jugé ou écroué ?",
+                "valeurs": [
+                  "À Paris, surtout des hommes de 20 à 40 ans, souvent venus de province, en emploi et inconnus de la police",
+                  "95 % d'hommes, 68 % de 25 ans ou moins, 52 % sans antécédent judiciaire"
+                ]
+              },
+              {
+                "critere": "Réponse judiciaire",
+                "valeurs": [
+                  "En trois mois : environ 7 500 gardes à vue et 1 800 condamnations ; fin mars 2019, 2 000 condamnations, dont environ 4 sur 10 avec de la prison ferme",
+                  "En quatre semaines : 7 950 gardes à vue liées au mouvement lycéen, puis environ 2 500 après le 17 octobre"
+                ]
+              },
+              {
+                "critere": "Blessés",
+                "valeurs": [
+                  "En un an : 2 500 manifestants et 1 800 membres des forces de l'ordre, selon le gouvernement",
+                  "Au 6 octobre : 215 élèves, 85 personnels de l'éducation et plus de 715 policiers et gendarmes ; 53 policiers et gendarmes le 24 octobre"
+                ]
+              }
+            ],
+            "note": "Comparaison indicative : les périodes, les sources et les modes de comptage diffèrent. L'enquête sur les gilets jaunes repose sur 166 questionnaires, aux résultats présentés comme provisoires par leurs auteurs.",
+            "sources": [
+              {
+                "label": "Bedock, Bernard de Raymond, Della Sudda et al., enquête parue dans Le Monde (via Verso)",
+                "url": "https://www.versobooks.com/blogs/news/4180-gilets-jaunes-a-pioneering-study-of-the-low-earners-revolt"
+              },
+              {
+                "label": "Ifop, Jérôme Fourquet, note Focus n° 192",
+                "url": "https://www.ifop.com/wp-content/uploads/2019/02/Focus-192-Gilets-jaunes-note-3.pdf"
+              },
+              {
+                "label": "LCP, audition de la ministre de la Justice",
+                "url": "https://lcp.fr/actualites/gilets-jaunes-le-gouvernement-rend-des-comptes-apres-quatre-mois-de-manifestations"
+              },
+              {
+                "label": "Amnesty International, d'après les chiffres du gouvernement",
+                "url": "https://www.amnesty.fr/liberte-d-expression/actualites/gilets-jaunes-un-bilan-inquietant"
+              }
+            ]
+          },
+          {
             "type": "encadre",
             "ton": "attention",
             "titre": "Ce que ces données ne disent pas",
             "texte": "Elles décrivent des personnes interpellées, poursuivies ou écrouées, pas l'ensemble des participants aux violences. Elles dépendent de l'endroit où se trouvaient les forces de l'ordre et des preuves réunies. Nationalité, immigration et origine sont trois notions distinctes (voir les définitions dans « Pour aller plus loin »). Aucune origine ne peut être déduite d'un nom, d'une photo ou d'une vidéo."
           }
         ],
-        "num": "05"
+        "num": "06"
       },
       {
         "id": "amplification",
@@ -928,14 +1033,14 @@
             ]
           }
         ],
-        "num": "06"
+        "num": "07"
       }
     ]
   },
   "reponses": {
     "id": "reponses",
     "surtitre": "// Les réponses",
-    "titre": "Face aux violences, quelles réponses ?",
+    "titre": "Apporter des réponses politiques aux violences",
     "gouvernement": {
       "titre": "Ce qu'a fait le gouvernement",
       "items": [
@@ -977,9 +1082,9 @@
       ]
     },
     "intro": "Les propositions des candidats sont classées en trois leviers. Chacune est vérifiée (source, date, auteur) avant d'être ajoutée, puis analysée dans une fiche notée. Tant que la fiche n'est pas publiée, la proposition est signalée « Analyse à venir », sans note provisoire.",
-    "num": "07",
-    "titrePropositions": "Les propositions, une par une",
-    "numPropositions": "08"
+    "num": "08",
+    "titrePropositions": "Les propositions des candidats analysées",
+    "numPropositions": "09"
   },
   "perimetre": {
     "titre": "Ce que couvre ce dossier",
@@ -1017,7 +1122,7 @@
         "items": [
           {
             "texte": "Le 24 octobre, avec davantage de forces mobilisées et des parcours déplacés, les interpellations ont été deux fois moins nombreuses qu'une semaine plus tôt ; la part du dispositif dans ce recul n'est pas mesurable à ce stade.",
-            "renvoi": "#17-octobre"
+            "renvoi": "#24-octobre"
           },
           {
             "texte": "Les violences ont éclaté le même jour dans plusieurs grandes villes : la question posée est celle de la répartition des forces autant que de leur nombre.",
@@ -1123,7 +1228,7 @@
               {
                 "etiquette": "Étranger",
                 "chiffre": "6,3 millions",
-                "texte": "Personne qui n'a pas la nationalité française, soit 9,1 % de la population. Environ 1 million sont nés en France.",
+                "texte": "Personne qui n'a pas la nationalité française, soit 9,1 % de la population. Environ 1 million sont nés en France.",
                 "source": {
                   "label": "Insee",
                   "url": "https://insee.fr/fr/statistiques/3633212"
@@ -1132,7 +1237,7 @@
               {
                 "etiquette": "Immigré",
                 "chiffre": "8,0 millions",
-                "texte": "Personne née étrangère à l'étranger et vivant en France, soit 11,6 % de la population. Un immigré peut être devenu français.",
+                "texte": "Personne née étrangère à l'étranger et vivant en France, soit 11,6 % de la population. Un immigré peut être devenu français.",
                 "source": {
                   "label": "Insee",
                   "url": "https://insee.fr/fr/statistiques/3633212"
@@ -1169,9 +1274,9 @@
           {
             "type": "texte",
             "paragraphes": [
-              "En 2025, plus de 20 % des bacheliers professionnels n'ont reçu aucune proposition sur Parcoursup, contre 3,5 % des bacheliers généraux. Au 2e trimestre 2026, le chômage des 15-24 ans atteint 21,6 %, contre 8,3 % pour l'ensemble des actifs.",
-              "Selon la Banque de France, les embauches en CDI des 21-29 ans ont baissé de 28 % entre novembre 2022 et mars 2026 dans les métiers les plus exposés à l'IA, contre 8 % dans les moins exposés ; les auteurs y voient une association, pas un effet démontré. À l'échelle européenne, Eurofound ne constate pas d'éviction des jeunes de ces métiers.",
-              "En février 2026, avant le mouvement, 73 % des Français déclaraient faire confiance à la police et 60 % à leur maire, contre 22 % à « la politique » et 15 % aux partis."
+              "En 2025, plus de 20 % des bacheliers professionnels n'ont reçu aucune proposition sur Parcoursup, contre 3,5 % des bacheliers généraux. Au 2e trimestre 2026, le chômage des 15-24 ans atteint 21,6 %, contre 8,3 % pour l'ensemble des actifs.",
+              "Selon la Banque de France, les embauches en CDI des 21-29 ans ont baissé de 28 % entre novembre 2022 et mars 2026 dans les métiers les plus exposés à l'IA, contre 8 % dans les moins exposés ; les auteurs y voient une association, pas un effet démontré. À l'échelle européenne, Eurofound ne constate pas d'éviction des jeunes de ces métiers.",
+              "En février 2026, avant le mouvement, 73 % des Français déclaraient faire confiance à la police et 60 % à leur maire, contre 22 % à « la politique » et 15 % aux partis."
             ],
             "sources": [
               {
@@ -1430,6 +1535,26 @@
     {
       "label": "France 3 Paris Île-de-France, direct de la manifestation du 24 octobre à Paris",
       "url": "https://france3-regions.franceinfo.fr/paris-ile-de-france/direct-manifestation-du-24-octobre-a-paris-parcours-des-corteges-stations-fermees-securite-suivez-notre-direct-pour-tout-savoir-heure-par-heure-3438498.html"
+    },
+    {
+      "label": "Météo-Paris, « Un week-end encore très pluvieux avant le retour au calme », 24 octobre 2026",
+      "url": "https://www.meteo-paris.com/bulletins/un-week-end-encore-tres-pluvieux-avant-le-retour-au-calme"
+    },
+    {
+      "label": "C. Bedock, A. Bernard de Raymond, M. Della Sudda, T. Grémion, E. Reungoat, T. Schnatterer, enquête sur les gilets jaunes, Le Monde, 11 décembre 2018 (traduction Verso)",
+      "url": "https://www.versobooks.com/blogs/news/4180-gilets-jaunes-a-pioneering-study-of-the-low-earners-revolt"
+    },
+    {
+      "label": "Ifop, Jérôme Fourquet, « Gilets jaunes », note Focus n° 192, février 2019",
+      "url": "https://www.ifop.com/wp-content/uploads/2019/02/Focus-192-Gilets-jaunes-note-3.pdf"
+    },
+    {
+      "label": "LCP, « Gilets jaunes : le gouvernement rend des comptes après quatre mois de manifestations », 27 mars 2019",
+      "url": "https://lcp.fr/actualites/gilets-jaunes-le-gouvernement-rend-des-comptes-apres-quatre-mois-de-manifestations"
+    },
+    {
+      "label": "Amnesty International, « Gilets jaunes : un bilan inquiétant », 18 novembre 2019",
+      "url": "https://www.amnesty.fr/liberte-d-expression/actualites/gilets-jaunes-un-bilan-inquietant"
     },
     {
       "label": "Perlimpinpin, relevé des prises de parole des candidats sur la sécurité (voir ci-dessus)",

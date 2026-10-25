@@ -26,9 +26,9 @@ import { Etiquette, LienSource, OMBRE_CARTE, Pastille, Prose, TitreNumerote, Tui
 //     (lecture seule) dans la dernière analyse publiée de chaque `ficheId`
 //     (getFichesPubliees) : une fiche publiée apparaît seule à la
 //     régénération suivante, sans toucher au JSON.
-// Tant que `visible` vaut false, le dossier n'est pas inscrit dans le registre
-// (src/lib/hors-series.js) : absent de /dossiers, du carrousel de l'accueil et
-// du sitemap, non indexé, mais accessible par son adresse.
+// Inscrit dans le registre (src/lib/hors-series.js) : listé sur /dossiers,
+// dans le carrousel de l'accueil et le sitemap. Avec `visible: false`, il en
+// sort et la page n'est plus indexée, mais reste accessible par son adresse.
 
 export const metadata = {
   title: `${DOSSIER_MS.titre} | Perlimpinpin`,

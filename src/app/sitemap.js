@@ -1,3 +1,4 @@
+import { getHorsSeries } from "@/lib/hors-series";
 import { getPublishedPropositionsForSitemap } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
@@ -15,7 +16,8 @@ const STATIC_ROUTES = [
   "/dossiers",
   "/methode",
   "/a-propos",
-  "/dossiers/rn-plan-budgetaire",
+  // Pages des dossiers du registre (les dossiers non visibles en sont absents).
+  ...getHorsSeries().map((hs) => `/dossiers/${hs.slug}`),
 ];
 
 export default async function sitemap() {

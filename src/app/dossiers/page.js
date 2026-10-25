@@ -2,20 +2,25 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import AvancementDossier from "@/components/AvancementDossier";
 import TitreAvecItalique from "@/components/TitreAvecItalique";
-import { avancementHorsSerie, getHorsSeries, texteAvancement } from "@/lib/hors-series";
+import { avancementHorsSerie, getHorsSeries } from "@/lib/hors-series";
 import { DOSSIER } from "@/lib/couleurs-dossier";
 
 // Liste des dossiers : un plan d'ensemble d'un candidat,
-// analysé poste par poste dans plusieurs fiches notées. Page statique : le
-// contenu vient des JSON de data/hors-series/ (src/lib/hors-series.js).
+// analysé poste par poste dans plusieurs fiches notées. Le contenu vient des
+// JSON de data/hors-series/ (src/lib/hors-series.js) ; l'avancement de
+// certains dossiers est lu en base (lecture seule), d'où la régénération
+// toutes les heures.
+export const revalidate = 3600;
+
 export const metadata = {
   title: "Dossiers | Perlimpinpin",
   description:
     "Les dossiers de Perlimpinpin : les plans d'ensemble des candidats, analysés poste par poste.",
 };
 
-export default function DossiersPage() {
+export default async function DossiersPage() {
   const dossiers = getHorsSeries();
+  const avancements = await Promise.all(dossiers.map(avancementHorsSerie));
 
   return (
     <div className="flex min-h-screen flex-col bg-page-gradient font-sans">
@@ -37,8 +42,8 @@ export default function DossiersPage() {
           </div>
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            {dossiers.map((dossier) => {
-              const avancement = avancementHorsSerie(dossier);
+            {dossiers.map((dossier, i) => {
+              const avancement = avancements[i];
               return (
                 <Link
                   key={dossier.slug}
@@ -84,7 +89,7 @@ export default function DossiersPage() {
                     </p>
                     <AvancementDossier
                       avancement={avancement}
-                      texte={texteAvancement(avancement)}
+                      texte={avancement.texte}
                       className="mt-auto border-t border-zinc-200 pt-4"
                     />
                     <span className={`mt-1 text-sm font-semibold text-zinc-950 underline decoration-2 underline-offset-4 ${DOSSIER.soulignement}`}>
