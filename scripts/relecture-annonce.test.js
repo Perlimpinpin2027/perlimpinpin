@@ -6,6 +6,9 @@ import {
   nombreEnLettres,
   prenomDepuisNom,
   redigerAnnonce,
+  corpsParDefaut,
+  corpsEnHtml,
+  lirePersonnalisation,
 } from "../src/lib/relecture-annonce.js";
 
 // Mail d'annonce des fiches en relecture (bouton « Prévenir les adhérents »).
@@ -70,4 +73,41 @@ test("fiches à annoncer : chrono en cours seulement, hors archives", () => {
 
 test("aucune fiche : erreur", () => {
   assert.throws(() => redigerAnnonce({ fiches: [], prenom: null }));
+});
+
+test("texte retouché : sujet et corps du comité, salutation et désinscription gardées", () => {
+  const perso = { sujet: "Relecture express", corps: "Petit mot du **comité**.\n\nLien : https://perlimpinpin.ai/relectures." };
+  const { sujet, texte, html } = redigerAnnonce({ fiches: [FICHE_A], prenom: "Camille", perso });
+  assert.equal(sujet, "Relecture express");
+  assert.equal(texte, "Bonjour Camille,\n\nPetit mot du comité.\n\nLien : https://perlimpinpin.ai/relectures.\n\nVous recevez ce mail en tant qu'adhérent du Club Perlimpinpin. Se désinscrire en répondant à cet email");
+  assert.ok(html.includes("Petit mot du <strong>comité</strong>."));
+  // Le point final ne fait pas partie du lien.
+  assert.ok(html.includes('<a href="https://perlimpinpin.ai/relectures" style="color:#2563eb">https://perlimpinpin.ai/relectures</a>.'));
+  assert.ok(html.includes("Se désinscrire"));
+});
+
+test("corps par défaut : le texte d'origine, candidats en gras", () => {
+  const corps = corpsParDefaut({ fiches: [FICHE_A] });
+  assert.ok(corps.startsWith("Une nouvelle fiche vient d'arriver"));
+  assert.ok(corps.includes("• **Marine Le Pen** (RN) : Règle d'or budgétaire"));
+  assert.ok(corps.endsWith("Merci de faire vivre Perlimpinpin !\nL'équipe Perlimpinpin"));
+});
+
+test("corps en HTML : tout est échappé, paragraphes et retours à la ligne", () => {
+  const html = corpsEnHtml('<script>alert(1)</script>\nligne 2\n\n\nparagraphe "2"');
+  assert.ok(!html.includes("<script>"));
+  assert.ok(html.includes("&lt;script&gt;alert(1)&lt;/script&gt;<br>ligne 2</p>"));
+  assert.ok(html.includes("paragraphe &quot;2&quot;"));
+  assert.equal((html.match(/<p /g) || []).length, 2);
+});
+
+test("retouches vérifiées : absentes, vides, trop longues", () => {
+  assert.deepEqual(lirePersonnalisation({ mode: "test" }), { perso: null });
+  assert.deepEqual(lirePersonnalisation(null), { perso: null });
+  assert.deepEqual(lirePersonnalisation({ sujet: "  Un   sujet ", corps: "Texte\r\n" }), { perso: { sujet: "Un sujet", corps: "Texte" } });
+  assert.ok(lirePersonnalisation({ sujet: "", corps: "x" }).error);
+  assert.ok(lirePersonnalisation({ sujet: "x", corps: "   " }).error);
+  assert.ok(lirePersonnalisation({ sujet: "x" }).error);
+  assert.ok(lirePersonnalisation({ sujet: "x".repeat(201), corps: "x" }).error);
+  assert.ok(lirePersonnalisation({ sujet: "x", corps: "x".repeat(8001) }).error);
 });

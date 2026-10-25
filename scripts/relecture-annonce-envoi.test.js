@@ -155,3 +155,22 @@ test("aucune fiche avec chrono en cours : 409", async () => {
   assert.equal(r.status, 409);
   assert.equal(r.transport.envois.length, 0);
 });
+
+test("texte retouché : envoyé tel quel, prénom de chacun conservé", async () => {
+  const perso = { sujet: "Sujet du comité", corps: "Texte du **comité**." };
+  const r = await envoyer({ mode: "reel", confirmation: "oui", ...perso });
+  assert.equal(r.status, 200);
+  for (const m of r.transport.envois) {
+    assert.equal(m.subject, "Sujet du comité");
+    assert.ok(m.text.includes("Texte du comité."));
+    assert.ok(m.html.includes("Texte du <strong>comité</strong>."));
+    assert.ok(m.text.includes("Se désinscrire"));
+  }
+  assert.ok(r.transport.envois[0].text.startsWith("Bonjour Camille,"));
+});
+
+test("texte retouché vide : refus (400), rien n'est envoyé", async () => {
+  const r = await envoyer({ mode: "test", sujet: "Sujet", corps: "   " });
+  assert.equal(r.status, 400);
+  assert.equal(r.transport.envois.length, 0);
+});

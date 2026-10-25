@@ -1,6 +1,13 @@
 import { prisma } from "@/lib/prisma";
 import { isAdmin } from "@/lib/relecture-admin";
-import { NOM_APERCU, prenomDepuisNom, redigerAnnonce } from "@/lib/relecture-annonce";
+import {
+  NOM_APERCU,
+  corpsParDefaut,
+  lirePersonnalisation,
+  prenomDepuisNom,
+  redigerAnnonce,
+  sujetParDefaut,
+} from "@/lib/relecture-annonce";
 import { ADHERENTS_ELIGIBLES, chargerFiches } from "@/lib/relecture-annonce-envoi";
 
 // Aperçu du mail d'annonce des fiches en relecture (/relectures, mode comité,
@@ -8,11 +15,17 @@ import { ADHERENTS_ELIGIBLES, chargerFiches } from "@/lib/relecture-annonce-envo
 // x-relecture-admin-code). Base en lecture seule, AUCUN envoi : l'envoi passe
 // par /api/relectures/annonce/envoyer (mêmes fiches, mêmes destinataires).
 // Seul le nombre de destinataires est renvoyé, jamais les adresses.
+// Body facultatif { sujet, corps } : texte retouché dans la fenêtre (bouton
+// « Modifier le texte »), même contrôle qu'à l'envoi. Sans body : texte d'origine.
 
 export async function POST(request) {
   if (!isAdmin(request)) {
     return Response.json({ error: "Code admin absent ou invalide." }, { status: 401 });
   }
+
+  const data = await request.json().catch(() => null);
+  const { perso, error } = lirePersonnalisation(data);
+  if (error) return Response.json({ error }, { status: 400 });
 
   const [fiches, nbDestinataires] = await Promise.all([
     chargerFiches(prisma),
@@ -22,6 +35,15 @@ export async function POST(request) {
     return Response.json({ error: "Aucune fiche avec chrono en cours." }, { status: 409 });
   }
 
-  const { sujet, texte, html } = redigerAnnonce({ fiches, prenom: prenomDepuisNom(NOM_APERCU) });
-  return Response.json({ sujet, texte, html, nbDestinataires, fiches });
+  const { sujet, texte, html } = redigerAnnonce({ fiches, prenom: prenomDepuisNom(NOM_APERCU), perso });
+  return Response.json({
+    sujet,
+    texte,
+    html,
+    nbDestinataires,
+    fiches,
+    // Texte d'origine : rempli dans l'éditeur, et rétabli par « Revenir au texte d'origine ».
+    sujetDefaut: sujetParDefaut(fiches),
+    corpsDefaut: corpsParDefaut({ fiches }),
+  });
 }

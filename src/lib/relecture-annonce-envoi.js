@@ -3,12 +3,13 @@ import { join } from "node:path";
 import nodemailer from "nodemailer";
 import { EXPEDITEUR, configSmtpClub } from "./mail-bienvenue.js";
 import { isAdmin } from "./relecture-admin.js";
-import { NOM_APERCU, fichesAAnnoncer, prenomDepuisNom, redigerAnnonce } from "./relecture-annonce.js";
+import { NOM_APERCU, fichesAAnnoncer, lirePersonnalisation, prenomDepuisNom, redigerAnnonce } from "./relecture-annonce.js";
 import { SLUG_PATTERN } from "./relecture-revision.js";
 
 // Envoi du mail d'annonce des fiches en relecture (/relectures, mode comité,
 // fenêtre « Aperçu du mail ») : POST /api/relectures/annonce/envoyer.
-// Même texte que l'aperçu (redigerAnnonce), même boîte SMTP que le mail de
+// Même texte que l'aperçu (redigerAnnonce), retouché ou non par le comité
+// (body { sujet, corps }, vérifié par lirePersonnalisation), même boîte SMTP que le mail de
 // bienvenue (CLUB_SMTP_*, expéditeur club@perlimpinpin.ai).
 // Règles : un mail = un destinataire, seul dans « À » ; ni les réglages SMTP
 // ni les adresses ne sont journalisés. Prisma, le transport et la pause sont
@@ -58,6 +59,8 @@ export async function traiterEnvoi({
   const mode = data?.mode;
   if (mode !== "test" && mode !== "reel") return refus(400, "Mode invalide (test ou reel).");
   if (mode === "reel" && data.confirmation !== "oui") return refus(400, "Confirmation manquante : tapez « oui ».");
+  const { perso, error } = lirePersonnalisation(data);
+  if (error) return refus(400, error);
 
   const config = configSmtpClub(env);
   if (!config) return refus(500, "Configuration SMTP incomplète.");
@@ -91,7 +94,7 @@ export async function traiterEnvoi({
       await attendre(PAUSE_MS);
     }
     const { email, nom } = destinataires[i];
-    const mail = redigerAnnonce({ fiches, prenom: prenomDepuisNom(nom) });
+    const mail = redigerAnnonce({ fiches, prenom: prenomDepuisNom(nom), perso });
     try {
       await transport.sendMail({
         from: EXPEDITEUR,

@@ -78,9 +78,20 @@ function esc(s) {
   return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 }
 
-// fiches : [{ candidat, parti, titre, fin }] (au moins une) ; prenom : string ou null.
-// Renvoie { sujet, texte, html }.
-export function redigerAnnonce({ fiches, prenom, siteUrl = SITE_URL }) {
+// ---------- texte modifiable depuis la fenêtre « Aperçu du mail » ----------
+// Le comité peut retoucher le sujet et le corps du mail avant l'envoi. La
+// salutation (« Bonjour <prénom>, ») et la ligne de désinscription restent
+// ajoutées automatiquement à chaque mail : elles ne font pas partie du corps.
+// Format du corps (texte simple) : une ligne vide sépare deux paragraphes,
+// **texte** passe en gras, les liens https://… deviennent cliquables.
+
+export const SUJET_MAX = 200;
+export const CORPS_MAX = 8000;
+
+const PIED = "Vous recevez ce mail en tant qu'adhérent du Club Perlimpinpin. Se désinscrire en répondant à cet email";
+
+// Corps d'origine (ce que le comité voit dans l'éditeur avant toute retouche).
+export function corpsParDefaut({ fiches, siteUrl = SITE_URL }) {
   if (!fiches?.length) throw new Error("Aucune fiche à annoncer.");
   const n = fiches.length;
   const un = n === 1;
@@ -88,47 +99,85 @@ export function redigerAnnonce({ fiches, prenom, siteUrl = SITE_URL }) {
   const lien = `${siteUrl}/relectures`;
   const finProche = new Date(Math.min(...fiches.map((f) => new Date(f.fin).getTime())));
   const dateLimite = formatDateLimite(finProche);
-
-  const sujet = `${nombre} ${un ? "nouvelle fiche" : "nouvelles fiches"} à relire avant publication`;
-  const bonjour = prenom ? `Bonjour ${prenom},` : "Bonjour,";
-  const arrivee = `${nombre} ${un ? "nouvelle fiche vient" : "nouvelles fiches viennent"} d'arriver sur la page des relectures, et votre regard nous intéresse avant ${un ? "sa" : "leur"} publication :`;
-  const lignes = fiches.map((f) => `• ${f.candidat} (${f.parti}) : ${f.titre}`);
-  const delai = `Vous avez jusqu'au ${dateLimite} pour commenter. Une source qui manque, un chiffre qui vous semble faux, une note trop sévère ou trop clémente : chaque remarque compte. Chaque fiche se termine aussi par quelques questions adressées directement au comité, c'est un bon point de départ.`;
-  const cloture = "À la clôture, nous répondons à chaque commentaire et nous intégrons ceux qui améliorent l'analyse avant la publication.";
-  const pied = "Vous recevez ce mail en tant qu'adhérent du Club Perlimpinpin. Se désinscrire en répondant à cet email";
-
-  const texte = [
-    bonjour,
+  return [
+    `${nombre} ${un ? "nouvelle fiche vient" : "nouvelles fiches viennent"} d'arriver sur la page des relectures, et votre regard nous intéresse avant ${un ? "sa" : "leur"} publication :`,
     "",
-    arrivee,
-    "",
-    ...lignes,
+    ...fiches.map((f) => `• **${f.candidat}** (${f.parti}) : ${f.titre}`),
     "",
     `👉 Tout se passe ici : ${lien}`,
     "",
-    delai,
+    `Vous avez jusqu'au ${dateLimite} pour commenter. Une source qui manque, un chiffre qui vous semble faux, une note trop sévère ou trop clémente : chaque remarque compte. Chaque fiche se termine aussi par quelques questions adressées directement au comité, c'est un bon point de départ.`,
     "",
-    cloture,
+    "À la clôture, nous répondons à chaque commentaire et nous intégrons ceux qui améliorent l'analyse avant la publication.",
     "",
     "Merci de faire vivre Perlimpinpin !",
     "L'équipe Perlimpinpin",
-    "",
-    pied,
   ].join("\n");
+}
 
-  const p = (contenu, style = "") => `<p style="margin:0 0 16px${style}">${contenu}</p>`;
+export function sujetParDefaut(fiches) {
+  const n = fiches.length;
+  return `${nombreEnLettres(n)} ${n === 1 ? "nouvelle fiche" : "nouvelles fiches"} à relire avant publication`;
+}
+
+// Version texte : on retire seulement les ** du gras.
+function corpsEnTexte(corps) {
+  return corps.replace(/\*\*(.+?)\*\*/g, "$1");
+}
+
+// Version HTML : tout est échappé, puis gras, liens, paragraphes et retours à la ligne.
+export function corpsEnHtml(corps) {
+  return corps
+    .split(/\n[ \t]*\n+/)
+    .map((para) => para.trim())
+    .filter(Boolean)
+    .map((para) => {
+      const contenu = esc(para)
+        .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+        .replace(/https?:\/\/[^\s<]+?(?=[.,;:!?)]*(?:\s|$))/g, (url) => `<a href="${url}" style="color:#2563eb">${url}</a>`)
+        .split("\n")
+        .join("<br>");
+      return `<p style="margin:0 0 16px">${contenu}</p>`;
+    })
+    .join("\n");
+}
+
+// Retouches envoyées par la fenêtre ({ sujet, corps }), vérifiées côté serveur.
+// Renvoie { perso: null } (pas de retouche), { perso: { sujet, corps } } ou { error }.
+export function lirePersonnalisation(data) {
+  const aSujet = data?.sujet !== undefined && data?.sujet !== null;
+  const aCorps = data?.corps !== undefined && data?.corps !== null;
+  if (!aSujet && !aCorps) return { perso: null };
+  if (typeof data.sujet !== "string" || typeof data.corps !== "string") {
+    return { error: "Sujet et texte du mail attendus." };
+  }
+  const sujet = data.sujet.replace(/\s+/g, " ").trim();
+  const corps = data.corps.replace(/\r\n?/g, "\n").trim();
+  if (!sujet) return { error: "Le sujet est vide." };
+  if (sujet.length > SUJET_MAX) return { error: `Sujet trop long (${SUJET_MAX} caractères maximum).` };
+  if (!corps) return { error: "Le texte du mail est vide." };
+  if (corps.length > CORPS_MAX) return { error: `Texte trop long (${CORPS_MAX} caractères maximum).` };
+  return { perso: { sujet, corps } };
+}
+
+// fiches : [{ candidat, parti, titre, fin }] (au moins une) ; prenom : string ou null ;
+// perso : { sujet, corps } retouchés par le comité, ou null (texte d'origine).
+// Renvoie { sujet, texte, html }.
+export function redigerAnnonce({ fiches, prenom, siteUrl = SITE_URL, perso = null }) {
+  if (!fiches?.length) throw new Error("Aucune fiche à annoncer.");
+  const sujet = perso?.sujet ?? sujetParDefaut(fiches);
+  const corps = perso?.corps ?? corpsParDefaut({ fiches, siteUrl });
+  const bonjour = prenom ? `Bonjour ${prenom},` : "Bonjour,";
+
+  const texte = [bonjour, "", corpsEnTexte(corps), "", PIED].join("\n");
+
   const html = [
     '<!doctype html><html lang="fr"><head><meta charset="utf-8"></head>',
     '<body style="margin:0;padding:24px;background:#ffffff;color:#18181b;font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.6">',
     '<div style="max-width:560px">',
-    p(esc(bonjour)),
-    p(esc(arrivee)),
-    p(fiches.map((f) => `• <strong>${esc(f.candidat)}</strong> (${esc(f.parti)}) : ${esc(f.titre)}`).join("<br>")),
-    p(`👉 Tout se passe ici : <a href="${esc(lien)}" style="color:#2563eb">${esc(lien)}</a>`),
-    p(esc(delai)),
-    p(esc(cloture)),
-    p(`Merci de faire vivre Perlimpinpin !<br>L'équipe Perlimpinpin`),
-    p(esc(pied), ";padding-top:16px;border-top:1px solid #e4e4e7;font-size:12px;color:#71717a"),
+    `<p style="margin:0 0 16px">${esc(bonjour)}</p>`,
+    corpsEnHtml(corps),
+    `<p style="margin:0 0 16px;padding-top:16px;border-top:1px solid #e4e4e7;font-size:12px;color:#71717a">${esc(PIED)}</p>`,
     "</div></body></html>",
   ].join("\n");
 

@@ -170,7 +170,7 @@ h3{margin:0}
 .annonce-meta{margin:0;font-size:13.5px;color:var(--muted)}
 .annonce-meta strong{color:var(--ink);font-weight:600}
 .annonce iframe{box-sizing:border-box;display:block;width:100%;height:min(45vh,480px);border:1px solid var(--rule);border-radius:12px;background:#fff}
-.annonce-pied{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px}
+.annonce-pied{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;position:sticky;bottom:0;z-index:1;margin:0 -20px -20px;padding:12px 20px 20px;background:var(--surface);border-top:1px solid var(--rule)}
 .annonce-actions{display:flex;flex-wrap:wrap;gap:8px}
 .annonce-confirm{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:13.5px;color:var(--muted)}
 .annonce-confirm[hidden],.annonce-statut[hidden]{display:none}
@@ -178,6 +178,14 @@ h3{margin:0}
 .annonce .chrono-btn:disabled{opacity:.5;cursor:default}
 .annonce-statut{margin:0;font-size:13.5px;color:var(--ink)}
 .annonce-statut.chrono-err{color:var(--bad)}
+.annonce-edition{display:flex;flex-direction:column;gap:8px;padding:12px;border:1px solid var(--rule);border-radius:12px}
+.annonce-edition[hidden]{display:none}
+.annonce-edition label{font-size:13px;font-weight:600}
+.annonce-edition input,.annonce-edition textarea{box-sizing:border-box;width:100%;font:inherit;font-size:14px;line-height:1.5;background:var(--surface);color:var(--ink);border:1px solid var(--rule);border-radius:8px;padding:8px 10px}
+.annonce-edition textarea{min-height:200px;resize:vertical}
+.annonce-aide{margin:0;font-size:12.5px;color:var(--muted)}
+.annonce-edition-actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.annonce.edition iframe{height:min(30vh,320px)}
 @media (max-width:560px){
   .fcard{grid-template-columns:minmax(0,1fr)}
   .fscore{justify-items:start;text-align:left;grid-auto-flow:row}
@@ -2284,12 +2292,17 @@ Est-ce qu&#x27;on parle du nombre d&#x27;actif pour un retraité ? Si c&#x27;est
   // chrono est en cours (/api/relectures/annonce/apercu), puis envoi depuis la
   // même fenêtre : un test à l'adresse du comité ou l'envoi réel, confirmé en
   // tapant « oui » (/api/relectures/annonce/envoyer).
+  // « Modifier le texte » : le comité retouche le sujet et le corps, met à jour
+  // l'aperçu, et l'envoi (test ou réel) part avec exactement ce texte-là.
+  // Tant qu'une retouche n'est pas passée dans l'aperçu, l'envoi est bloqué.
   var ANNONCE_API = "/api/relectures/annonce/apercu";
   var ENVOI_API = "/api/relectures/annonce/envoyer";
   var AUCUNE_ANNONCE = "Aucune fiche avec chrono en cours";
   var annonceDialog = null;
   // État de la fenêtre ouverte : remis à zéro à chaque aperçu.
-  var envoiAnnonce = { nb: 0, enCours: false, fait: false };
+  // defaut : { sujet, corps, html } d'origine ; perso : { sujet, corps } appliqué
+  // à l'aperçu (null = texte d'origine) ; maj : mise à jour de l'aperçu en cours.
+  var envoiAnnonce = { nb: 0, enCours: false, fait: false, defaut: null, perso: null, maj: false };
 
   function annonceDisponible() {
     return ficheSlugs().some(function (slug) { return !isArchived(slug) && stateOf(slug) === "running"; });
@@ -2315,6 +2328,9 @@ Est-ce qu&#x27;on parle du nombre d&#x27;actif pour un retraité ? Si c&#x27;est
       annonceDialog.setAttribute("aria-labelledby", "annonce-titre");
       // Pas de fermeture par Échap pendant un envoi.
       annonceDialog.addEventListener("cancel", function (ev) { if (envoiAnnonce.enCours) ev.preventDefault(); });
+      // Frappe dans l'éditeur : l'envoi se bloque tant que l'aperçu n'est pas à jour.
+      annonceDialog.addEventListener("input", function () { majEnvoiAnnonce(); });
+      annonceDialog.addEventListener("close", function () { annonceDialog.classList.remove("edition"); });
       document.body.appendChild(annonceDialog);
     }
     annonceDialog.innerHTML = '<div class="annonce-in">' + contenu +
@@ -2325,21 +2341,117 @@ Est-ce qu&#x27;on parle du nombre d&#x27;actif pour un retraité ? Si c&#x27;est
 
   function afficherApercu(res) {
     var n = res.nbDestinataires;
-    envoiAnnonce = { nb: n, enCours: false, fait: false };
+    envoiAnnonce = {
+      nb: n, enCours: false, fait: false, perso: null, maj: false,
+      defaut: { sujet: res.sujetDefaut || res.sujet, corps: res.corpsDefaut || "", html: res.html },
+    };
     ouvrirAnnonce('<h2 id="annonce-titre">Aperçu du mail</h2>' +
-      '<p class="annonce-meta">Sujet : <strong>' + esc(res.sujet) + "</strong></p>" +
+      '<p class="annonce-meta">Sujet : <strong data-annonce-sujet>' + esc(res.sujet) + "</strong></p>" +
       '<p class="annonce-meta"><strong>' + n + " destinataire" + (n > 1 ? "s" : "") + "</strong> · prénom d'exemple, chaque adhérent verra le sien</p>" +
+      '<div class="annonce-edition" hidden>' +
+      '<label for="annonce-sujet">Sujet</label>' +
+      '<input id="annonce-sujet" type="text" maxlength="200">' +
+      '<label for="annonce-corps">Texte du mail</label>' +
+      '<textarea id="annonce-corps" maxlength="8000" spellcheck="true"></textarea>' +
+      '<p class="annonce-aide">« Bonjour + prénom » et la ligne de désinscription sont ajoutés automatiquement. ' +
+      "Ligne vide = nouveau paragraphe · **texte** = gras · les liens https://… deviennent cliquables.</p>" +
+      '<div class="annonce-edition-actions">' +
+      '<button class="chrono-btn" type="button" data-annonce-action="appliquer">Mettre à jour l\'aperçu</button>' +
+      '<button class="chrono-ghost" type="button" data-annonce-action="origine">Revenir au texte d\'origine</button>' +
+      '<span class="annonce-aide" data-annonce-modifie hidden>Aperçu pas à jour : cliquez sur « Mettre à jour l\'aperçu » avant d\'envoyer.</span>' +
+      "</div></div>" +
       '<iframe title="Mail tel qu\'il sera reçu" sandbox="allow-popups allow-popups-to-escape-sandbox"></iframe>' +
       '<div class="annonce-confirm" hidden><label for="annonce-oui">Tapez oui pour confirmer</label>' +
       '<input id="annonce-oui" type="text" autocomplete="off" spellcheck="false">' +
       '<button class="chrono-btn" type="button" data-annonce-action="reel">Confirmer l\'envoi</button></div>' +
       '<p class="annonce-statut" role="status" hidden></p>',
+      '<button class="chrono-ghost" type="button" data-annonce-action="editer">✏️ Modifier le texte</button>' +
       '<button class="chrono-ghost" type="button" data-annonce-action="test">M\'envoyer un test</button>' +
       '<button class="chrono-btn" type="button" data-annonce-action="demander">' +
       (n > 1 ? "Envoyer aux " + n + " adhérents" : "Envoyer à " + n + " adhérent") + "</button>");
     // srcdoc après coup : le HTML du mail n'est jamais interprété dans la page.
     annonceDialog.querySelector("iframe").srcdoc = res.html;
+    annonceDialog.querySelector("#annonce-sujet").value = envoiAnnonce.defaut.sujet;
+    annonceDialog.querySelector("#annonce-corps").value = envoiAnnonce.defaut.corps;
+    // Sans texte d'origine (ancienne API), pas d'édition possible.
+    if (!res.corpsDefaut) annonceDialog.querySelector('[data-annonce-action="editer"]').hidden = true;
     majEnvoiAnnonce();
+  }
+
+  // Texte actuellement appliqué à l'aperçu (retouché ou d'origine).
+  function texteApplique() {
+    var e = envoiAnnonce;
+    return e.perso || { sujet: e.defaut.sujet, corps: e.defaut.corps };
+  }
+
+  // Vrai si l'éditeur contient autre chose que ce que montre l'aperçu.
+  function editionNonAppliquee() {
+    if (!annonceDialog || !envoiAnnonce.defaut) return false;
+    var sujet = annonceDialog.querySelector("#annonce-sujet");
+    var corps = annonceDialog.querySelector("#annonce-corps");
+    if (!sujet || !corps) return false;
+    var t = texteApplique();
+    return sujet.value.replace(/\s+/g, " ").trim() !== t.sujet ||
+      corps.value.replace(/\r\n?/g, "\n").trim() !== t.corps;
+  }
+
+  function editerAnnonce() {
+    var zone = annonceDialog.querySelector(".annonce-edition");
+    zone.hidden = !zone.hidden;
+    annonceDialog.classList.toggle("edition", !zone.hidden);
+    var btn = annonceDialog.querySelector('[data-annonce-action="editer"]');
+    btn.textContent = zone.hidden ? "✏️ Modifier le texte" : "Masquer l'éditeur";
+    if (!zone.hidden) annonceDialog.querySelector("#annonce-corps").focus();
+  }
+
+  // Met l'aperçu à jour avec le texte de l'éditeur (vérifié par le serveur).
+  function appliquerEdition() {
+    var e = envoiAnnonce;
+    if (e.maj || e.enCours) return;
+    var sujet = annonceDialog.querySelector("#annonce-sujet").value.replace(/\s+/g, " ").trim();
+    var corps = annonceDialog.querySelector("#annonce-corps").value.replace(/\r\n?/g, "\n").trim();
+    // Identique au texte d'origine : rien à retoucher.
+    if (sujet === e.defaut.sujet && corps === e.defaut.corps) { revenirOrigine(); return; }
+    e.maj = true;
+    majEnvoiAnnonce();
+    statutAnnonce("Mise à jour de l'aperçu…");
+    fetch(ANNONCE_API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-relecture-admin-code": getAdminCode() },
+      body: JSON.stringify({ sujet: sujet, corps: corps }),
+    })
+      .then(function (r) {
+        return r.json().catch(function () { return {}; }).then(function (res) {
+          e.maj = false;
+          if (!r.ok) {
+            majEnvoiAnnonce();
+            statutAnnonce(esc(res.error || "Échec de la mise à jour (" + r.status + ")."), true);
+            return;
+          }
+          e.perso = { sujet: sujet, corps: corps };
+          annonceDialog.querySelector("[data-annonce-sujet]").textContent = res.sujet;
+          annonceDialog.querySelector("iframe").srcdoc = res.html;
+          majEnvoiAnnonce();
+          statutAnnonce("Aperçu mis à jour : c'est ce texte qui partira.");
+        });
+      })
+      .catch(function () {
+        e.maj = false;
+        majEnvoiAnnonce();
+        statutAnnonce("Échec de la connexion, réessayez.", true);
+      });
+  }
+
+  function revenirOrigine() {
+    var e = envoiAnnonce;
+    if (e.maj || e.enCours) return;
+    e.perso = null;
+    annonceDialog.querySelector("#annonce-sujet").value = e.defaut.sujet;
+    annonceDialog.querySelector("#annonce-corps").value = e.defaut.corps;
+    annonceDialog.querySelector("[data-annonce-sujet]").textContent = e.defaut.sujet;
+    annonceDialog.querySelector("iframe").srcdoc = e.defaut.html;
+    majEnvoiAnnonce();
+    statutAnnonce("Texte d'origine rétabli.");
   }
 
   // Boutons de la fenêtre selon l'état : tout est grisé pendant un envoi, et
@@ -2350,10 +2462,18 @@ Est-ce qu&#x27;on parle du nombre d&#x27;actif pour un retraité ? Si c&#x27;est
     var q = function (sel) { return annonceDialog.querySelector(sel); };
     var oui = q("#annonce-oui");
     if (!oui) return; // fenêtre d'erreur, sans envoi
-    q('[data-annonce-action="test"]').disabled = e.enCours;
-    q('[data-annonce-action="demander"]').disabled = e.enCours || e.fait || !e.nb;
-    q('[data-annonce-action="reel"]').disabled = e.enCours || e.fait || oui.value !== "oui";
+    var modifie = editionNonAppliquee();
+    var bloque = e.enCours || e.maj || modifie;
+    q('[data-annonce-action="test"]').disabled = bloque;
+    q('[data-annonce-action="demander"]').disabled = bloque || e.fait || !e.nb;
+    q('[data-annonce-action="reel"]').disabled = bloque || e.fait || oui.value !== "oui";
     q('[data-annonce-action="fermer"]').disabled = e.enCours;
+    q('[data-annonce-action="editer"]').disabled = e.enCours;
+    q('[data-annonce-action="appliquer"]').disabled = e.enCours || e.maj || e.fait || !modifie;
+    q('[data-annonce-action="origine"]').disabled = e.enCours || e.maj || e.fait || (!e.perso && !modifie);
+    q("#annonce-sujet").disabled = e.enCours || e.fait;
+    q("#annonce-corps").disabled = e.enCours || e.fait;
+    q("[data-annonce-modifie]").hidden = !modifie;
     oui.disabled = e.enCours || e.fait;
   }
 
@@ -2365,7 +2485,7 @@ Est-ce qu&#x27;on parle du nombre d&#x27;actif pour un retraité ? Si c&#x27;est
   }
 
   function envoyerAnnonce(mode) {
-    if (envoiAnnonce.enCours || (mode === "reel" && envoiAnnonce.fait)) return;
+    if (envoiAnnonce.enCours || envoiAnnonce.maj || editionNonAppliquee() || (mode === "reel" && envoiAnnonce.fait)) return;
     var oui = annonceDialog.querySelector("#annonce-oui");
     envoiAnnonce.enCours = true;
     majEnvoiAnnonce();
@@ -2378,7 +2498,13 @@ Est-ce qu&#x27;on parle du nombre d&#x27;actif pour un retraité ? Si c&#x27;est
     fetch(ENVOI_API, {
       method: "POST",
       headers: { "Content-Type": "application/json", "x-relecture-admin-code": getAdminCode() },
-      body: JSON.stringify({ mode: mode, confirmation: mode === "reel" ? oui.value : undefined }),
+      // Texte retouché : exactement celui de l'aperçu (perso), sinon texte d'origine.
+      body: JSON.stringify({
+        mode: mode,
+        confirmation: mode === "reel" ? oui.value : undefined,
+        sujet: envoiAnnonce.perso ? envoiAnnonce.perso.sujet : undefined,
+        corps: envoiAnnonce.perso ? envoiAnnonce.perso.corps : undefined,
+      }),
     })
       .then(function (r) {
         return r.json().catch(function () { return null; }).then(function (res) {
@@ -2647,6 +2773,9 @@ Est-ce qu&#x27;on parle du nombre d&#x27;actif pour un retraité ? Si c&#x27;est
       var quoi = annonceAction.getAttribute("data-annonce-action");
       if (quoi === "fermer") annonceDialog.close();
       else if (quoi === "test" || quoi === "reel") envoyerAnnonce(quoi);
+      else if (quoi === "editer") editerAnnonce();
+      else if (quoi === "appliquer") appliquerEdition();
+      else if (quoi === "origine") revenirOrigine();
       else if (quoi === "demander") {
         annonceDialog.querySelector(".annonce-confirm").hidden = false;
         annonceDialog.querySelector("#annonce-oui").focus();
