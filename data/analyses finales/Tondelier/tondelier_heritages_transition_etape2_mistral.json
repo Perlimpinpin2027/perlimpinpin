@@ -1,0 +1,37 @@
+{
+  "contreAvisMistral": {
+    "remarques": [
+      {
+        "categorie": "coherence_note",
+        "contenu": "La note d'operationnalite_budgetaire (6/10, INCERTAIN) est cohérente avec l'estimation de recettes (5-8 milliards vs 10-15 annoncés), mais la qualification 'INCERTAIN' pourrait être nuancée en 'SOLIDE' pour le sens de l'effet (hausse d'impôt certaine). Cependant, l'incertitude sur le montant justifie le maintien de 'INCERTAIN'.",
+        "severite": "mineure",
+        "confiance": "haute"
+      },
+      {
+        "categorie": "angle_mort",
+        "contenu": "L'absence de traitement explicite de l'assurance-vie comme voie d'évitement majeure (déjà mentionnée dans 'ce_qui_est_discutable') pourrait être considérée comme un angle mort, mais elle est partiellement couverte dans 'angles_morts'. Pas de changement de note nécessaire.",
+        "severite": "mineure",
+        "confiance": "moyenne"
+      },
+      {
+        "categorie": "source",
+        "contenu": "Le commentaire du Club sur le pacte Dutreil (réduction limitée aux entreprises >50M€) est confirmé par les sources (Agefi et proposition de loi 2025). La fiche retient correctement cette version, mais la divergence AFP/Agefi n'est pas tranchée par un document officiel des Écologistes. La confiance dans cette interprétation reste 'moyenne'.",
+        "severite": "mineure",
+        "confiance": "moyenne"
+      }
+    ],
+    "avis_general": "solide"
+  },
+  "usage": {
+    "prompt_tokens": 9804,
+    "total_tokens": 10576,
+    "completion_tokens": 772,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "service_tier": "standard"
+  }
+}
