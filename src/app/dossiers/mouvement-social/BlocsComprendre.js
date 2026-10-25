@@ -169,8 +169,64 @@ function BlocAVenir({ bloc }) {
   );
 }
 
+// Comparaison critère par critère : tableau à en-tête gris foncé sur
+// ordinateur ; sur téléphone, une carte par critère, chaque valeur précédée du
+// nom de sa colonne.
+function BlocComparaison({ bloc }) {
+  const colonnes = bloc.colonnes ?? [];
+  const lignes = bloc.lignes ?? [];
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="hidden overflow-hidden rounded-2xl border border-(--ms-gris200) bg-white md:block">
+        <table className="w-full border-collapse text-left text-[15px] leading-relaxed">
+          <thead>
+            <tr>
+              <th className="w-[18%] bg-(--ms-gris900) px-4 py-3" />
+              {colonnes.map((colonne) => (
+                <th key={colonne} scope="col" className="bg-(--ms-grisFonce) px-4 py-3 text-sm font-bold text-white">
+                  {colonne}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {lignes.map((ligne) => (
+              <tr key={ligne.critere} className="border-t border-(--ms-gris200) align-top">
+                <th scope="row" className="bg-(--ms-jaunePale) px-4 py-3 font-bold text-(--ms-noir)">
+                  {ligne.critere}
+                </th>
+                {ligne.valeurs?.map((valeur, i) => (
+                  <td key={i} className="px-4 py-3 text-(--ms-gris900)">{valeur}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="flex flex-col gap-3 md:hidden">
+        {lignes.map((ligne) => (
+          <div key={ligne.critere} className="flex flex-col gap-3 rounded-2xl border border-(--ms-gris200) bg-white p-5">
+            <p className="text-base font-extrabold text-(--ms-noir)">{ligne.critere}</p>
+            {ligne.valeurs?.map((valeur, i) => (
+              <div key={i} className="flex flex-col gap-1">
+                <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.08em] text-(--ms-gris600)">
+                  {colonnes[i]}
+                </span>
+                <p className="text-[15px] leading-relaxed text-(--ms-gris900)">{valeur}</p>
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+      {bloc.note ? <p className="text-[13px] leading-relaxed text-(--ms-gris600)">{bloc.note}</p> : null}
+      <ListeSources sources={bloc.sources} />
+    </div>
+  );
+}
+
 const PAR_TYPE = {
   texte: BlocTexte,
+  comparaison: BlocComparaison,
   graphique: BlocGraphique,
   grille: BlocGrille,
   encadre: BlocEncadre,

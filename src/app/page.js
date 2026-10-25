@@ -26,7 +26,7 @@ export default async function Home() {
   const [featuredRotation, topDeclarations, classement, t, indexRecherche] =
     await Promise.all([
       // Analyses publiées et dossiers, dans un seul ordre chronologique.
-      getFeaturedRotation(getHorsSeriesAccueil()),
+      getHorsSeriesAccueil().then(getFeaturedRotation),
       getTopDeclarations(4),
       // Classement complet (même requête, sans limite) : le bloc en affiche
       // 5 et déroule les suivants au clic, sans nouvel appel réseau.
