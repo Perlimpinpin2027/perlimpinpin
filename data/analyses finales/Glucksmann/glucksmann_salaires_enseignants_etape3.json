@@ -1,0 +1,268 @@
+{
+  "auditArbitrage": [
+    {
+      "remarque": "La note budgétaire (3/10, INCERTAIN) devrait être FRAGILE (<3/10) et déclencher le plafond, car une dépense non financée de 6 milliards par an, en procédure de déficit excessif, est un obstacle bloquant, pas un simple arbitrage en attente.",
+      "statut": "acceptee",
+      "raison": "Remarque étayée et reprise par deux relecteurs distincts (commentaires club 1 et 4). L'absence totale de financement, combinée à la situation budgétaire (déficit 5,4 % en 2026, dette 121,7 % du PIB en 2027, procédure de déficit excessif), justifie de descendre sous le seuil de 3/10. La note passe à 2/10, qualification FRAGILE, ce qui déclenche le plafond sur le pilier operationnalite_moyens_total (10/30 au lieu de 22/30) et fait passer le score total de 68 à 56."
+    },
+    {
+      "remarque": "La note d'efficacité (22/30, INCERTAIN) devrait être qualifiée SOLIDE avec réserves plutôt qu'INCERTAIN, car le lien causal est direct et bien documenté par la littérature.",
+      "statut": "rejetee",
+      "raison": "Remarque de confiance moyenne, non suffisamment étayée : le texte documente aussi un mauvais ciblage (fins de carrière, absence de ciblage territorial et disciplinaire) et un doute sur la capacité du seul levier salarial à produire le rattrapage visé, ce qui justifie le maintien d'INCERTAIN. La note numérique (22/30) n'est pas modifiée, conformément à la règle interdisant de changer une note pour la faire correspondre à une qualification contestée sans preuve suffisante."
+    },
+    {
+      "remarque": "Le jaune budgétaire annexé au PLF 2027 sur les pensions de la fonction publique, et le précédent du Ségur de la santé, pourraient éclairer l'effet retraite d'une hausse de la grille de base.",
+      "statut": "acceptee",
+      "raison": "Vérifié par recherche web : le jaune budgétaire existe et documente le poids croissant des pensions de la fonction publique ; le précédent Ségur confirme qu'une revalorisation salariale se traduit par un supplément de pension. Ces éléments sont ajoutés aux sections angles_morts et effets_rebonds_externalites, avec la source correspondante, sans toutefois fournir de chiffrage spécifique à cette mesure, donc sans changer la note numérique de 11/20."
+    },
+    {
+      "remarque": "Le seul levier financier ne peut pas avoir un effet de rattrapage de l'attractivité aussi important à lui seul (commentaire sur la longévité des effets).",
+      "statut": "acceptee",
+      "raison": "Remarque de bon sens, cohérente avec le contenu déjà présent sur les angles morts (conditions de travail non traitées) et avec la littérature citée. Ajoutée explicitement dans analyse_longevites (moyen terme) et dans le critère efficacité, sans changer la note déjà conservatrice de 22/30."
+    }
+  ],
+  "fiche_complete": {
+    "mesure_reformulee": {
+      "synthese": "Hausse d'au moins 10 % pour tous les enseignants, jusqu'à 25 % selon la carrière, chiffrée à 6 milliards d'euros par an.",
+      "texte": "Raphaël Glucksmann propose d'augmenter la rémunération de **tous les enseignants d'au moins 10 %**, avec une hausse pouvant monter jusqu'à 25 % selon l'avancement dans la carrière. Objectif affiché : « rattraper les moyennes européennes ». Le coût annoncé est de **6 milliards d'euros**, a priori par an. Cette hausse ouvre un « plan de sauvetage de l'école publique » sur cinq ans, qui prévoit ensuite moins d'élèves par classe en primaire et la rénovation des bâtiments scolaires.\n\nPlusieurs modalités ne sont pas précisées : le calendrier (dès la première année ou étalé sur cinq ans), le support de la hausse (grille de salaire de base ou primes), la courbe qui mène à 25 %, l'inclusion des enseignants du privé sous contrat et des contractuels, et le financement. Nous retenons l'hypothèse la plus proche des mots du candidat : **un minimum de 10 % garanti à chaque enseignant**, et non 10 % en moyenne, avec un pic à 25 % réservé à une partie de la carrière, vraisemblablement le milieu."
+    },
+    "mesure_vers_objectif": {
+      "objectif_court": "Rendre le métier d'enseignant plus attractif",
+      "categorie_objectif": "Éducation",
+      "objectif_vise": "Rendre le métier d'enseignant plus attractif en rapprochant les salaires français des moyennes européennes, pour mieux recruter et mieux garder les enseignants.",
+      "mecanisme_propose": "Une hausse de rémunération d'au moins 10 % pour tous les enseignants, portée jusqu'à 25 % selon l'étape de la carrière, payée sur le budget de l'État.",
+      "lien_causal": "direct"
+    },
+    "nature_et_existant": "Mesure budgétaire et statutaire, de la compétence de l'État. Les grilles de salaire et les primes des enseignants sont fixées par décret, les crédits sont votés chaque année en loi de finances : aucune loi spéciale n'est nécessaire. Ce n'est pas une innovation mais l'amplification d'un mouvement engagé. En 2023, la revalorisation dite « socle » a doublé les indemnités de suivi des élèves (2 550 euros bruts par an) et relevé la prime d'attractivité pendant les quinze premières années, tandis que le « Pacte enseignant » payait des missions en plus (1 250 euros bruts par mission). Selon le Sénat, le gain cumulé depuis septembre 2022, point d'indice compris, va de 9 à 12 % en début de carrière mais retombe autour de 4 à 5,5 % ensuite pour un professeur des écoles. La promesse ressemble beaucoup à celle d'Emmanuel Macron en 2022 : 10 % pour tous, jusqu'à 25 % selon l'ancienneté, avec 6 milliards d'euros fléchés vers les salaires. Mise en œuvre, elle était devenue une hausse d'« environ 10 % en moyenne », concentrée sur les débuts de carrière.",
+    "contexte_programme": {
+      "synthese": "La hausse ouvre un plan école sur cinq ans, mais aucune recette du programme ne lui est affectée.",
+      "texte": "La revalorisation est le premier volet d'un « plan de sauvetage de l'école publique » sur cinq ans, annoncé sur TF1 le 23 août 2026, avec ensuite moins d'élèves par classe en primaire et la rénovation du bâti scolaire. Raphaël Glucksmann a remporté le 11 octobre 2026 la primaire de la gauche sociale-démocrate avec 66,13 % des voix : la mesure engage désormais le candidat commun de Place publique et du Parti socialiste.\n\n**Aucun financement n'est rattaché à cette hausse.** La principale recette nouvelle chiffrée du programme, environ 15 milliards d'euros tirés d'une taxe sur le 1 % des plus gros héritages, est déjà promise « directement » aux fiches de paie des travailleurs. Les autres volets du plan école coûtent aussi, même si la baisse du nombre d'élèves allège en partie le coût des classes plus petites. Député européen depuis 2019, sans mandat national, le candidat n'a pas eu de vote à exprimer sur la paie des enseignants, compétence nationale : aucun écart avec un bilan passé n'a été trouvé."
+    },
+    "contexte_national": {
+      "synthese": "Salaires en hausse depuis 2023 mais milieu de carrière à la traîne, recrutement redressé en 2026, budget sous forte contrainte.",
+      "texte": "**Les salaires ont déjà progressé, surtout en début de carrière.** Selon la DEPP, service statistique du ministère, un enseignant titulaire gagnait en moyenne 3 090 euros nets par mois en 2024 (3 180 euros à temps complet), en hausse de 4,3 % hors inflation sur un an, d'abord grâce aux primes et au plein effet des mesures de 2023. Ces mesures ont surtout profité aux quinze premières années de carrière.\n\n**Le recrutement s'est nettement redressé en 2026 grâce à un autre levier.** En 2025, plus de 2 600 postes étaient restés vacants à l'issue des concours. Avec le passage du concours en fin de licence, 98,5 % des postes de professeurs des écoles et 97,5 % des postes du CAPES externe sont pourvus en 2026. Les syndicats jugent trop tôt pour parler d'un regain durable, et les difficultés restent concentrées dans quelques académies (Versailles, Créteil, Guyane, Mayotte en 2025) et disciplines (mathématiques).\n\n**Le budget est sous forte contrainte.** La mission « Enseignement scolaire » pèse 64,5 milliards d'euros hors pensions dans le budget 2026 (89,6 milliards pensions comprises). Le gouvernement prévoit un déficit public de 5,4 % du PIB en 2026 et vise 5,0 % en 2027, sous procédure européenne de déficit excessif depuis 2024 ; la dette atteindrait 121,7 % du PIB en 2027."
+    },
+    "contexte_international": {
+      "synthese": "Le retard français porte sur le milieu de carrière ; la recherche montre que le salaire attire et retient.",
+      "texte": "**Le retard français se concentre en milieu de carrière.** Selon l'OCDE (Regards sur l'éducation 2025), les enseignants français de l'élémentaire gagnent 26 % de moins que les autres diplômés du supérieur (17 % en moyenne OCDE), ceux du secondaire 18 % de moins (13 %). Après quinze ans d'ancienneté, un professeur de lycée français perçoit environ 53 100 dollars par an en parité de pouvoir d'achat, contre 63 900 en moyenne OCDE et 61 200 dans l'Union européenne. À l'inverse, selon le ministère, les salaires de début et de fin de grille sont légèrement au-dessus de la moyenne européenne. Deux réserves : les données françaises de cette édition portent sur 2022, donc avant la revalorisation de 2023, et la cible bouge, la moyenne OCDE à quinze ans en primaire passant de 59 673 à 64 349 dollars entre les éditions 2025 et 2026.\n\n**La recherche confirme que le salaire compte.** En Australie, 1 % de hausse du salaire de début de carrière élève le niveau académique des étudiants qui entrent en formation d'enseignant d'environ 0,6 rang de percentile (Leigh, 2012). En Angleterre, où la grille est nationale comme en France, un écart de 10 % entre le salaire des enseignants et les salaires locaux fait baisser d'environ 2 % les résultats des établissements aux examens de fin de scolarité obligatoire (Britton et Propper, 2016). Au Texas, une hausse de salaire réduit les départs, mais **l'effet est maximal chez les débutants et disparaît vers 19 ans d'ancienneté** (Hendricks, 2014). Ces résultats sont transposables dans leur logique, pas dans leurs chiffres exacts."
+    },
+    "impact_environnement": null,
+    "analyse_longevites": {
+      "synthese": "Gain de pouvoir d'achat immédiat, effet sur l'attractivité limité par le seul levier salarial, coût durable et croissant via les retraites.",
+      "texte": "**Court terme (0 à 2 ans)** : gain de pouvoir d'achat immédiat pour environ 850 000 enseignants si la hausse est appliquée d'emblée ; effet probable sur le moral et sur les départs des plus jeunes. Si elle est étalée sur cinq ans, l'effet est plus lent mais le coût annuel aussi.\n\n**Moyen terme (2 à 7 ans)** : c'est l'horizon où le salaire agit sur qui choisit le métier, au fil des promotions d'étudiants, mais **le seul levier financier ne peut pas à lui seul produire un rattrapage d'attractivité aussi large** : les conditions de travail, les affectations et la charge de travail pèsent aussi, et ne sont pas traitées par cette mesure. Le coût, lui, devient permanent : environ 6 milliards d'euros par an selon le candidat, à reconduire chaque année et à défendre face aux autres priorités du plan école.\n\n**Long terme (plus de 7 ans)** : si la hausse touche le salaire de base ou une prime intégrée au calcul de la pension, **elle se répercute sur les pensions** des enseignants qui partent à la retraite, un coût qui monte progressivement, comme l'a déjà montré la revalorisation Ségur dans la fonction publique hospitalière. L'effet attendu sur la qualité du corps enseignant, et donc sur les élèves, est lent et cumulatif."
+    },
+    "impact_temporel_et_sectoriel": {
+      "synthese": "Effets macroéconomiques faibles : léger soutien à la consommation, pas d'effet notable sur l'inflation ni sur les banques.",
+      "texte": "**Inflation et pouvoir d'achat** : quelque 6 milliards d'euros bruts par an, soit environ 0,2 % du PIB, répartis sur environ 850 000 ménages : aucun effet notable sur les prix n'est attendu. Le gain de pouvoir d'achat des enseignants est réel, de l'ordre de 300 euros nets par mois pour un salaire moyen de 3 090 euros relevé de 10 %.\n\n**Consommation** : léger soutien, dès la première année si la hausse est immédiate. Il serait neutralisé si la dépense était financée par des hausses d'impôts ou des économies équivalentes ailleurs.\n\n**Système bancaire** : aucun mécanisme identifié. **Secteur public** : la hausse peut entraîner des demandes d'alignement d'autres agents de catégorie A, un effet de diffusion non chiffré."
+    },
+    "ce_qui_est_etabli": {
+      "synthese": "Faisabilité juridique, retard de milieu de carrière, coût annoncé crédible et absence totale de financement sont établis.",
+      "texte": "La hausse se décide par décret et loi de finances, sans obstacle juridique. **Le retard salarial français se concentre en milieu de carrière** (OCDE), les revalorisations de 2023 ayant surtout profité aux quinze premières années. Le coût annoncé de 6 milliards d'euros est cohérent avec deux reconstitutions indépendantes (5,5 à 7,5 milliards par an hors effet sur les retraites). **Aucune recette n'est affectée à cette dépense** dans les déclarations du candidat, alors que la France est sous procédure de déficit excessif. Le recrutement s'est fortement redressé en 2026 après la réforme du concours. La recherche internationale établit un lien entre salaire, niveau des entrants, performance et départs des enseignants."
+    },
+    "ce_qui_est_probable": {
+      "synthese": "Meilleure attractivité et moins de départs chez les jeunes, mais avec un rendement décroissant en fin de carrière.",
+      "texte": "Une hausse de cette ampleur rendrait probablement le métier plus attractif et réduirait les départs des enseignants en début et milieu de carrière. **Une partie importante de la dépense ira à des enseignants expérimentés dont le comportement changera peu**, ce qui en fait aussi une mesure de reconnaissance et de pouvoir d'achat. Sans financement identifié, la pression budgétaire pourrait conduire, comme en 2023, à revoir la promesse à la baisse au moment de l'appliquer."
+    },
+    "ce_qui_est_discutable": {
+      "synthese": "L'universalité de la hausse, l'ampleur du rattrapage européen et le lien direct avec la réussite des élèves.",
+      "texte": "**Faut-il augmenter tout le monde ou cibler ?** Une hausse uniforme est simple et juste aux yeux de la profession ; une hausse ciblée sur les débuts et milieux de carrière, les académies déficitaires ou les disciplines en tension obtiendrait sans doute plus d'effet par euro. Le rattrapage des « moyennes européennes » dépend de la date retenue : les données OCDE françaises les plus citées datent de 2022 et la moyenne de référence progresse elle aussi. L'affirmation du candidat selon laquelle un professeur des écoles français gagne moins qu'un portugais ou un slovène est plausible en parité de pouvoir d'achat selon des séries OCDE plus anciennes, mais n'a pas été vérifiée sur la dernière édition. Enfin, l'effet sur les résultats des élèves en France n'a jamais été mesuré directement."
+    },
+    "ce_qui_est_inconnu": {
+      "synthese": "Calendrier, courbe jusqu'à 25 %, support de la hausse, périmètre exact et financement restent inconnus.",
+      "texte": "Le candidat n'a pas précisé : **le calendrier** (tout de suite ou sur cinq ans), la courbe qui mène à 25 % et la part des enseignants concernés, le support de la hausse (salaire de base ou primes, ce qui change l'effet sur les retraites), l'inclusion du privé sous contrat et des contractuels, le sort du Pacte enseignant, et **le financement**. Sources insuffisantes pour trancher ces points ici."
+    },
+    "angles_morts": {
+      "synthese": "Coût cumulatif sur les retraites, contractuels, demandes d'alignement et leviers alternatifs moins coûteux restent dans l'ombre.",
+      "texte": "**Le coût sur les retraites** n'est pas compté dans les 6 milliards si la hausse passe par la grille de base ou par une prime intégrée au calcul de la pension : le précédent du Ségur dans la fonction publique hospitalière montre qu'une revalorisation salariale se traduit ensuite par un supplément de pension, un mécanisme que le jaune budgétaire annexé au PLF 2027 documente pour l'ensemble de la fonction publique sans toutefois chiffrer le cas spécifique de cette mesure. Les contractuels, environ 8 % des enseignants en 2024 et moins bien payés, ne sont pas mentionnés. Les **demandes d'alignement** d'autres fonctionnaires de même niveau ne sont pas anticipées. Les conditions de travail (affectations, remplacement, charge), qui pèsent aussi sur l'attractivité, ne sont pas traitées par cette mesure.\n\n**Leviers alternatifs pour le même objectif** : la réforme du concours en fin de licence a déjà fortement relevé le taux de postes pourvus en 2026 ; des primes ciblées sur les territoires et disciplines en tension, ou une hausse concentrée sur le milieu de carrière, viseraient le même problème à moindre coût. Ce constat ne remet pas en cause la mesure, il la situe parmi les options possibles."
+    },
+    "notation_detaillee": {
+      "operationnalite_juridique": 10,
+      "qualification_juridique": "SOLIDE",
+      "operationnalite_budgetaire": 2,
+      "qualification_budgetaire": "FRAGILE",
+      "operationnalite_moyens_humains": 9,
+      "qualification_moyens_humains": "SOLIDE",
+      "operationnalite_moyens_total": 10,
+      "plafond_applique": true,
+      "plafond_declencheur": "budgetaire",
+      "efficacite": 22,
+      "qualification_efficacite": "INCERTAIN",
+      "effets_rebonds_externalites": 11,
+      "qualification_effets_rebonds": "INCERTAIN",
+      "degre_preparation": 6,
+      "qualification_preparation": "INCERTAIN",
+      "alignement_logique": 7,
+      "qualification_alignement": "INCERTAIN",
+      "score_total": 56,
+      "appreciation": "plausible sous condition"
+    },
+    "verdict_final": "La mesure tient sur deux points solides : elle est juridiquement simple à mettre en œuvre, et elle vise le vrai retard français, celui du milieu de carrière. La recherche confirme qu'un meilleur salaire attire et retient les enseignants, et le coût annoncé de 6 milliards d'euros par an est cohérent avec nos propres estimations.\n\nMais rien ne la finance : ni recette, ni économie identifiée, alors que la France reste sous procédure de déficit excessif et vise encore 5 % de déficit en 2027. Une promesse quasi identique en 2022 avait déjà été rabotée à l'application faute de marge budgétaire. Le seul levier salarial, en outre, ne suffira probablement pas à produire à lui seul tout le rattrapage d'attractivité visé, et une hausse identique pour tous paie aussi des fins de carrière qui ne partiraient pas.\n\nL'absence totale de financement, dans ce contexte budgétaire, pèse plus lourd qu'un simple arbitrage en attente : c'est un obstacle de fond, pas un détail technique à régler plus tard.",
+    "sources_utilisees": [
+      {
+        "titre": "Public Sénat, « Présidentielle 2027 : que proposent les candidats pour l'école ? », 31 août 2026",
+        "url": "https://www.publicsenat.fr/actualites/politique/presidentielle-2027-que-proposent-les-candidats-pour-lecole"
+      },
+      {
+        "titre": "Public Sénat, « Fiscalité, école, immigration : ce que propose Raphaël Glucksmann », 24 août 2026",
+        "url": "https://www.publicsenat.fr/actualites/politique/fiscalite-ecole-immigration-ce-que-propose-raphael-glucksmann"
+      },
+      {
+        "titre": "LCP, résultats de la primaire sociale-démocrate, 11 octobre 2026",
+        "url": "https://lcp.fr/actualites/primaire-socialiste-vainqueur-des-le-1er-tour-raphael-glucksmann-sera-le-candidat-de-la"
+      },
+      {
+        "titre": "DEPP, Note d'information n° 26.36, « L'évolution du salaire des enseignants entre 2023 et 2024 », août 2026",
+        "url": "https://www.education.gouv.fr/depp/l-evolution-du-salaire-des-enseignants-fonctionnaires-ou-assimiles-entre-2023-et-2024-505401"
+      },
+      {
+        "titre": "AFP via L'Info durable, « Les enseignants gagnaient en moyenne 3 090 euros en 2024 », août 2026",
+        "url": "https://www.linfodurable.fr/les-enseignants-gagnaient-en-moyenne-3090-euros-en-2024-selon-une-etude-58660"
+      },
+      {
+        "titre": "Sénat, rapport sur le PLF 2024, mission « Enseignement scolaire » (O. Paccaud), novembre 2023",
+        "url": "https://www.senat.fr/rap/l23-128-314/l23-128-3140.html"
+      },
+      {
+        "titre": "Sénat, rapport sur le PLF 2026, mission « Enseignement scolaire »",
+        "url": "https://www.senat.fr/rap/l25-139-313/l25-139-313_mono.html"
+      },
+      {
+        "titre": "Assemblée nationale, amendement n° 3257 au PLF 2026 (coût moyen chargé hors pensions d'un enseignant, PAP 2026)",
+        "url": "https://www.assemblee-nationale.fr/dyn/17/amendements/2247/AN/3257.pdf"
+      },
+      {
+        "titre": "Institut Montaigne, chiffrage « Revaloriser les salaires des enseignants de 10 % », 2022",
+        "url": "https://www.institutmontaigne.org/presidentielle-2022/legislatives-2022/ensemble/revaloriser-les-salaires-des-enseignants-de-10"
+      },
+      {
+        "titre": "L'Étudiant (revue de presse académique), coût d'une hausse de 10 % en année pleine, janvier 2023",
+        "url": "https://media.ac-normandie.fr/-/communication/revue-presse/2023/01/10/L'%c9tudiant_nat_actu_Le%20budget%20de%20l'%c9ducation%20nationale%202023,%20loin%20d'%eatre%20suffisant%20pour%20le%20salaire%20des%20enseignants.pdf"
+      },
+      {
+        "titre": "Les Échos (revue de presse académique), « Salaire des enseignants : une polémique relance le débat sur les 10 % », janvier 2023",
+        "url": "https://media.ac-normandie.fr/-/communication/revue-presse/2023/01/05/Les%20Echos_nat_actu_Salaire%20des%20enseignants,%20une%20pol%e9mique%20relance%20le%20d%e9bat%20sur%20les%2010%20%25%20de%20hausse%20pour%20tous.pdf"
+      },
+      {
+        "titre": "Public Sénat, « Enseignants : la hausse des salaires de 10 % sera inconditionnelle », avril 2022",
+        "url": "https://www.publicsenat.fr/actualites/politique/enseignants-la-hausse-des-salaires-de-10-sera-inconditionnelle-insiste-amelie-de"
+      },
+      {
+        "titre": "Ministère de l'Éducation nationale, résultats des concours enseignants session 2026",
+        "url": "https://www.education.gouv.fr/concours-enseignants-de-la-session-2026-premiers-effets-de-la-reforme-de-la-formation-initiale-des-505268"
+      },
+      {
+        "titre": "AFP via Weka, postes non pourvus aux concours 2025",
+        "url": "https://www.weka.fr/actualite/education/article/education-moins-de-candidats-aux-concours-d-enseignants-pour-le-second-degre-en-2025-195720/"
+      },
+      {
+        "titre": "OCDE, Regards sur l'éducation 2025, « Combien sont payés les enseignants ? »",
+        "url": "https://www.oecd.org/fr/publications/regards-sur-l-education-2025_b26d545c-fr/full-report/how-much-are-teachers-and-school-heads-paid_5daf5678"
+      },
+      {
+        "titre": "OCDE, Regards sur l'éducation 2026, « Combien sont payés les enseignants ? »",
+        "url": "https://www.oecd.org/fr/publications/regards-sur-l-education-2026_cba0b622-fr/full-report/how-much-are-teachers-and-school-heads-paid_a6233c97"
+      },
+      {
+        "titre": "L'Étudiant, « Les salaires des enseignants de l'OCDE sont peu attractifs, en particulier en France », septembre 2025",
+        "url": "https://www.letudiant.fr/educpros/actualite/les-salaires-des-enseignants-de-locde-sont-peu-attractifs-en-particulier-en-france.html"
+      },
+      {
+        "titre": "75secondes, salaires des enseignants à 15 ans d'ancienneté selon Regards sur l'éducation 2025",
+        "url": "https://www.75secondes.fr/?p=184884"
+      },
+      {
+        "titre": "Assemblée nationale, réponse ministérielle à la question écrite n° 1687 (comparaison OCDE 2024), avril 2025",
+        "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QE1687.pdf"
+      },
+      {
+        "titre": "Le Monde du droit, dépôt du PLF 2027 (déficit 5,4 % en 2026, cible 5,0 % en 2027), octobre 2026",
+        "url": "https://www.lemondedudroit.fr/fiscal/310-finances-publiques/106025-plf-2027-depot-a-l-an.html"
+      },
+      {
+        "titre": "MoneyVox, dette publique à 121,7 % du PIB en 2027 selon Bercy",
+        "url": "https://www.moneyvox.fr/placement/actualites/110435/budget-2027-la-dette-publique-de-la-france-grimpera-jusqua-121-7-du-pib-en-2027-un-record"
+      },
+      {
+        "titre": "OFCE, « Le déficit public devrait diminuer en 2026 et 2027 », 2026",
+        "url": "https://ofce.sciences-po.fr/prev/prev2603/france/fipu.html"
+      },
+      {
+        "titre": "Britton et Propper, « Teacher pay and school productivity: Exploiting wage regulation », Journal of Public Economics, 2016",
+        "url": "https://research-information.bris.ac.uk/en/publications/teacher-pay-and-school-productivity-exploiting-wage-regulation/"
+      },
+      {
+        "titre": "Leigh, « Teacher pay and teacher aptitude », Economics of Education Review, 2012",
+        "url": "https://researchportalplus.anu.edu.au/en/publications/teacher-pay-and-teacher-aptitude/"
+      },
+      {
+        "titre": "Hendricks, « Does it pay to pay teachers more? Evidence from Texas », Journal of Public Economics, 2014",
+        "url": "https://ideas.repec.org/a/eee/pubeco/v109y2014icp50-63.html"
+      },
+      {
+        "titre": "Légifrance, Code de l'éducation, article L111-1",
+        "url": "https://www.legifrance.gouv.fr/codes/id/LEGIARTI000006524365/2005-04-24"
+      },
+      {
+        "titre": "CESE, rédaction de l'article L111-1 issue de la loi du 8 juillet 2013",
+        "url": "https://www.lecese.fr/print/pdf/node/12572"
+      },
+      {
+        "titre": "Assemblée nationale, Jaune budgétaire « Rapport sur les pensions de retraite de la fonction publique », annexe au PLF 2027",
+        "url": "https://www2.assemblee-nationale.fr/static/17/Annexes-DL/PLF_2027/12-Jaune-2027-Pensions-de-retraite-fonction-publique.pdf"
+      },
+      {
+        "titre": "Le Média Social, « Fonction publique : la revalorisation Ségur donne lieu à un supplément de pension »",
+        "url": "https://www.lemediasocial.fr/fonction-publique-la-revalorisation-segur-donne-lieu-a-un-supplement-de-pension_zOzRu3"
+      }
+    ],
+    "niveau_de_confiance": "Moyen. Le coût, le contexte budgétaire et l'état des salaires sont bien documentés par des sources publiques, et la littérature sur le salaire des enseignants est solide. Mais le candidat n'a pas publié le détail de sa mesure (calendrier, courbe jusqu'à 25 %, support, financement), ce qui laisse une part d'interprétation.",
+    "limites": {
+      "synthese": "Mesure connue par la presse, détails non publiés, données OCDE françaises antérieures à la revalorisation de 2023.",
+      "texte": "Les taux et le coût sont connus par la presse (Public Sénat), pas par un document programmatique détaillé. Notre estimation du coût repose sur des hypothèses explicites : environ 850 000 enseignants, coût moyen hors pensions proche de celui du privé sous contrat du second degré, part de la carrière portée à 25 % comprise entre un tiers et deux cinquièmes des effectifs. **Les comparaisons OCDE utilisent des données françaises de 2022**, antérieures à la revalorisation de 2023. L'effet des hausses de salaire sur les élèves est mesuré à l'étranger, pas en France.\n\nVersion révisée après relecture du Club : la note budgétaire passe de 3/10 (INCERTAIN) à 2/10 (FRAGILE), ce qui déclenche le plafond sur le pilier « opérationnalité et moyens » (10/30 au lieu de 22/30) et fait passer le score total de 68 à 56, l'absence totale de financement étant désormais traitée comme un obstacle bloquant compte tenu de la procédure de déficit excessif. La section sur la longévité des effets précise désormais que le seul levier salarial ne suffit probablement pas à produire un rattrapage d'attractivité complet. La section sur les angles morts mentionne le jaune budgétaire annexé au PLF 2027 sur les pensions de la fonction publique et le précédent du Ségur de la santé, sans toutefois disposer d'un chiffrage spécifique à cette mesure."
+    },
+    "analyse_par_criteres": [
+      {
+        "critere": "operationnalite_moyens",
+        "titre": "Opérationnalité & Moyens",
+        "note": 10,
+        "note_max": 30,
+        "plafond_applique": true,
+        "plafond_declencheur": "budgetaire",
+        "texte": "Le pilier budgétaire plafonne la note globale : **aucune recette ni économie n'est affectée à cette dépense**, ce qui fait basculer ce point en FRAGILE malgré un coût crédible, et ramène mécaniquement le total du critère à 10/30 quel que soit le niveau des deux autres piliers. Sur le plan juridique, rien n'empêche cette hausse, qui se décide par décret et par la loi de finances : **juridique 10/10**. L'administration a déjà déployé en quelques mois la revalorisation de 2023, ce qui montre sa capacité opérationnelle : **moyens humains et administratifs 9/10**. Mais une dépense permanente d'environ 6 milliards d'euros par an, sans financement identifié, dans un pays sous procédure de déficit excessif et dont la dette atteindrait 121,7 % du PIB en 2027, constitue un obstacle bloquant plutôt qu'un simple arbitrage en attente : **budgétaire 2/10**."
+      },
+      {
+        "critere": "efficacite",
+        "titre": "Efficacité",
+        "note": 22,
+        "note_max": 30,
+        "texte": "Le levier est réel : **le salaire influe sur le niveau de ceux qui choisissent le métier** (Leigh, 2012), sur la performance des établissements (Britton et Propper, 2016) et sur les départs (Hendricks, 2014), et le palier à 25 % vise justement le milieu de carrière, là où le retard français est le plus net. Mais l'euro est mal ciblé : au moins 10 % vont aussi aux fins de carrière, chez qui une hausse ne change presque plus les départs, et **le seul levier salarial ne suffit probablement pas à produire, à lui seul, un rattrapage d'attractivité de cette ampleur** sans toucher aux conditions de travail ni cibler les académies et disciplines en tension. Le recrutement s'est par ailleurs déjà redressé en 2026 grâce à la réforme du concours, ce qui relativise l'urgence du besoin. D'où 22/30 : un levier documenté, sans effet pervers qui l'annule, mais coûteux par rapport à une version ciblée."
+      },
+      {
+        "critere": "effets_rebonds_externalites",
+        "titre": "Effets rebonds & Externalités",
+        "note": 11,
+        "note_max": 20,
+        "texte": "Effet le plus net : **la trajectoire de la dette**, avec environ 0,2 point de PIB de déficit supplémentaire chaque année si la dépense n'est pas compensée, dans un pays dont la dette atteindrait 121,7 % du PIB en 2027. Effet plus lent mais documenté par un précédent concret : si la hausse passe par la grille de base ou une prime intégrée au calcul de la pension, **elle relève les futures pensions**, comme l'a montré la revalorisation Ségur dans la fonction publique hospitalière, un coût absent des 6 milliards annoncés et non chiffré précisément pour cette mesure par le jaune budgétaire annexé au PLF 2027. Risque plausible mais non chiffré : des demandes d'alignement d'autres fonctionnaires de même niveau. Les effets sur l'inflation restent négligeables, d'où 11/20."
+      },
+      {
+        "critere": "degre_preparation",
+        "titre": "Degré de préparation",
+        "note": 6,
+        "note_max": 10,
+        "texte": "Le candidat donne deux taux et un coût **cohérent avec notre reconstitution indépendante** (5,5 à 7,5 milliards par an), ce qui dépasse le simple slogan. Mais il ne dit pas comment il paie, et il manque la courbe qui mène à 25 %, le calendrier, le support de la hausse (grille ou primes) et le périmètre exact (privé sous contrat, contractuels) : 6/10."
+      },
+      {
+        "critere": "alignement_logique",
+        "titre": "Alignement & Logique globale",
+        "note": 7,
+        "note_max": 10,
+        "texte": "La mesure s'inscrit logiquement dans le plan pour l'école publique du candidat, en ouverture d'un dispositif sur cinq ans. Tension de financement : **la grande recette nouvelle du programme, une taxe sur les très gros héritages, est déjà promise aux fiches de paie de tous les travailleurs**, et non à cette mesure. Sans mandat national passé sur ce sujet, le candidat n'a pas de vote contraire à se voir opposer : 7/10."
+      }
+    ]
+  },
+  "titre_fiche": "10 à 25 % de plus pour les profs",
+  "resume_court": "Raphaël Glucksmann propose d'augmenter tous les enseignants d'au moins 10 %, et jusqu'à 25 % selon la carrière, pour 6 milliards d'euros par an. Il veut rendre le métier plus attractif en rattrapant les salaires européens, là où la France décroche le plus : le milieu de carrière.\n\nLe levier est réel : le salaire pèse sur qui devient enseignant et sur qui le reste, et le coût annoncé est cohérent avec notre estimation. Mais rien ne la finance, en pleine cure d'austérité budgétaire, et le seul levier salarial ne suffira sans doute pas à lui seul à combler tout le retard d'attractivité. Une hausse identique pour tous paie aussi des fins de carrière qui ne partiraient pas de toute façon.\n\nNote : 56/100, plausible sous condition de trouver un financement. Nous retenons un minimum de 10 % garanti à chacun, le candidat ne précisant pas s'il s'agit d'une moyenne.",
+  "teaser_accueil": "6 milliards promis aux profs, mais par qui payés ? La même promesse avait déjà rétréci une fois.",
+  "verdict_final": "La mesure tient sur deux points solides : elle est juridiquement simple à mettre en œuvre, et elle vise le vrai retard français, celui du milieu de carrière. La recherche confirme qu'un meilleur salaire attire et retient les enseignants, et le coût annoncé de 6 milliards d'euros par an est cohérent avec nos propres estimations.\n\nMais rien ne la finance : ni recette, ni économie identifiée, alors que la France reste sous procédure de déficit excessif et vise encore 5 % de déficit en 2027. Une promesse quasi identique en 2022 avait déjà été rabotée à l'application faute de marge budgétaire. Le seul levier salarial, en outre, ne suffira probablement pas à produire à lui seul tout le rattrapage d'attractivité visé, et une hausse identique pour tous paie aussi des fins de carrière qui ne partiraient pas.\n\nL'absence totale de financement, dans ce contexte budgétaire, pèse plus lourd qu'un simple arbitrage en attente : c'est un obstacle de fond, pas un détail technique à régler plus tard.",
+  "verdict_conclusion": "Une mesure juridiquement simple et bien ciblée sur le fond, mais budgétairement non financée dans un contexte de déficit excessif."
+}

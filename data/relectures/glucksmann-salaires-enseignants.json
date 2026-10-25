@@ -228,6 +228,45 @@
         "titre": "Titre court et phrase de teasing provisoires",
         "texte": "Titre proposé : « +10 % pour tous les enseignants » (31 caractères). Teasing : « Même pourcentage, même plafond, même facture qu'une promesse de 2022... qui s'était rétrécie en route. Cette fois, qui paierait les 6 milliards ? ». Vous conviennent-ils ?"
       }
-    ]
+    ],
+    "archive": {
+      "date": "2026-10-25",
+      "version_suivante": "data/analyses finales/Glucksmann/glucksmann_salaires_enseignants_etape3.json",
+      "synthese": "La note budgétaire passe de 3/10 (INCERTAIN) à 2/10 (FRAGILE), ce qui déclenche le plafond sur le critère opérationnalité et moyens (10/30 au lieu de 22/30) et fait baisser le score total de 68 à 56 ; ajout du précédent Ségur et du jaune budgétaire PLF 2027 sur les retraites, sans chiffrage spécifique disponible.",
+      "reponses": [
+        {
+          "commentaire_id": "cmvmfjgfn000107l0rpljgnxb",
+          "auteur": "Jérémy P.",
+          "section": "Points de jugement à valider",
+          "commentaire": "Une dépense non financée, qui plus est de long terme, sans financement est par nature fragile. Le coût a un impact financier à court-terme (via l'augmentation) et à moyen-terme (via l'augmentation in fine du cout des retraites des profs augmentés via cette mesure et partant à le retraite dans les 5 années suivantes) et à long-terme (pour les retraites au global). Je pense que c'est un obstacle bloquant au regard de la situation budgétaire de la France.",
+          "reponse": "Tu as raison, et on a corrigé la fiche. L'absence totale de financement pour une dépense permanente de 6 milliards d'euros par an, dans un pays sous procédure de déficit excessif avec une dette qui atteindrait 121,7 % du PIB en 2027, pèse désormais comme un obstacle bloquant plutôt qu'un simple arbitrage en attente.\n\nLa note budgétaire passe de 3/10 à 2/10, ce qui la fait basculer en FRAGILE et déclenche le plafond sur le critère opérationnalité et moyens : il tombe à 10/30 au lieu de 22/30. Le score total de la fiche passe de 68 à 56.\n\nSur le coût futur des retraites, on a aussi ajouté un paragraphe dans les angles morts et dans les effets rebonds, avec le précédent du Ségur de la santé qui montre qu'une revalorisation salariale finit par alourdir les pensions.",
+          "retenu": true
+        },
+        {
+          "commentaire_id": "cmvmfu2r8000207l0gzscm1b2",
+          "auteur": "Jérémy P.",
+          "section": "Points de jugement à valider",
+          "commentaire": "Le jaune budgétaire annexé au PLF 27 peut éclairé le débat. \"Rapport - Pensions de retraite de la fonction publique.\" Sans pouvoir rentrer dans le détail du calcul, on voit les effets en terme de rattrapage notamment dans la FPH (grâce au Ségur de la santé).",
+          "reponse": "Merci pour la référence, on l'a vérifiée et intégrée. Le jaune budgétaire « Pensions de retraite de la fonction publique », annexé au PLF 2027, documente bien le poids croissant des pensions, et le précédent du Ségur de la santé confirme qu'une revalorisation salariale se traduit ensuite par un supplément de pension dans la fonction publique hospitalière.\n\nCela dit, ce document ne permet pas de chiffrer précisément l'effet retraite spécifique à une hausse de 10 à 25 % des salaires enseignants, faute de simulation publique sur ce cas précis. On l'a donc ajouté comme élément de contexte dans les angles morts et les effets rebonds, sans modifier la note de 11/20, qui intégrait déjà ce risque de façon qualitative.",
+          "retenu": true
+        },
+        {
+          "commentaire_id": "cmvmfxigy000307l09mptd79h",
+          "auteur": "Jérémy P.",
+          "section": "Longévité des effets",
+          "commentaire": "Effet sur l'attractivité mais le seul levier financier ne peut avoir un effet de rattrapage aussi important.",
+          "reponse": "D'accord avec toi, et c'est désormais plus explicite dans la fiche. Le texte sur la longévité des effets précise maintenant que le seul levier salarial ne peut probablement pas produire, à lui seul, un rattrapage d'attractivité aussi large, les conditions de travail et les affectations comptant aussi.\n\nCe point renforce un constat déjà présent dans les angles morts : les leviers alternatifs (réforme du concours, primes ciblées) et les facteurs non salariaux ne sont pas traités par cette mesure.",
+          "retenu": true
+        },
+        {
+          "commentaire_id": "cmvnwdqn6000008l0b3sc3viz",
+          "auteur": "Arno F.",
+          "section": "Détail du score",
+          "commentaire": "étant donné qu'il n'y a pas de mécanisme de financement précisé, le pilier budgétaire devrait être  fragile",
+          "reponse": "Oui, c'est le même constat que d'autres lecteurs nous ont fait remonter, et on a corrigé la fiche en ce sens. La note budgétaire passe de 3/10 à 2/10, ce qui la qualifie désormais de FRAGILE plutôt qu'INCERTAIN.\n\nCela déclenche le plafond prévu sur le critère opérationnalité et moyens, qui tombe à 10/30, et fait baisser le score total de la fiche de 68 à 56.",
+          "retenu": true
+        }
+      ]
+    }
   }
 }
