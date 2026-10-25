@@ -268,6 +268,13 @@ test("anti-doublon : même texte, ou même titre / objectif depuis la mise en re
   assert.match(trouverDoublon({ ...base, propositions: [{ id: 3, titre: "y", texteOriginal: "x", analyses: [a(11, "2026-10-08", "Objectif")] }] }).critere, /même objectif/);
   // Analyse antérieure à la mise en relecture : pas un doublon.
   assert.equal(trouverDoublon({ ...base, propositions: [{ id: 4, titre: "Titre relu", texteOriginal: "x", analyses: [a(12, "2026-10-05", "Objectif")] }] }), null);
+  // Analyse mise à la corbeille depuis /test : pas un doublon (même titre ou même objectif)…
+  const corbeille = (id) => ({ ...a(id, "2026-10-08", "Objectif"), statut: "corbeille" });
+  assert.equal(trouverDoublon({ ...base, propositions: [{ id: 5, titre: "Titre relu", texteOriginal: "x", analyses: [corbeille(13)] }] }), null);
+  // … mais une analyse vivante à côté reste un doublon,
+  assert.equal(trouverDoublon({ ...base, propositions: [{ id: 6, titre: "y", texteOriginal: "x", analyses: [corbeille(14), { ...a(15, "2026-10-09", "Objectif"), statut: "brouillon" }] }] }).analyseId, 15);
+  // et le même texte reste bloquant (analyze.js le refuserait).
+  assert.equal(trouverDoublon({ ...base, propositions: [{ id: 7, texteOriginal: "mesure. citation : c (s)", analyses: [corbeille(16)] }] }).analyseId, 16);
 });
 
 // ---------- rapport (PR et résumé) ----------
