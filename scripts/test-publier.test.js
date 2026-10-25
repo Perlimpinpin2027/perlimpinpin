@@ -361,3 +361,18 @@ test("actions.js : GitHub branché (src/lib/github.js), avertissement affiché s
   assert.match(source, /from "@\/lib\/github"/);
   assert.match(source, /if \(resultat\.avertissement\) return resultat;/);
 });
+
+test("révision déjà fusionnée à la main : publication en base, aucune tentative de fusion", async () => {
+  const { prisma, journal } = fausseBase({ analyse: AVEC_REVISION, ecrituresAutorisees: true });
+  const { github, appels } = fauxGitHub({ verification: { ok: true, dejaFusionnee: true, pr: PR }, fusionAutorisee: false });
+  const resultat = await publierBrouillonCore(7, { isEditor: editeur, prisma, dryRun: false, github });
+  assert.equal(resultat.ok, true);
+  assert.deepEqual(resultat.revision, { slug: "lepen-budget-immigration", fusionnee: true, dejaFusionnee: true, lienPR: PR.lien });
+  assert.equal(resultat.avertissement, undefined);
+  assert.deepEqual(appels, [["verifier", "lepen-budget-immigration"]]);
+  assert.ok(journal.includes("tx.candidat.update"));
+
+  const sim = fauxGitHub({ verification: { ok: true, dejaFusionnee: true, pr: PR }, fusionAutorisee: false });
+  const simulation = await publierBrouillonCore(7, { isEditor: editeur, prisma: fausseBase({ analyse: AVEC_REVISION }).prisma, dryRun: true, github: sim.github });
+  assert.match(simulation.message, /déjà fusionnée/);
+});

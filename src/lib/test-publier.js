@@ -12,6 +12,8 @@
 // attribue les PerlimpinPOINTS). Ordre : vérification que la PR est
 // fusionnable AVANT toute écriture, publication en base, puis fusion. Si la
 // fusion échoue, la fiche reste publiée et le résultat porte un avertissement.
+// PR déjà fusionnée à la main sur GitHub (pr.dejaFusionnee) : la publication
+// se fait normalement, sans tentative de fusion.
 // Les appels à GitHub sont passés en paramètre (github.verifier,
 // github.fusionner : voir src/lib/github.js).
 
@@ -120,7 +122,7 @@ export async function publierBrouillonCore(analyseId, { isEditor, prisma, dryRun
         lienPR: verification.lien ?? null,
       });
     }
-    pr = verification.pr;
+    pr = { ...verification.pr, dejaFusionnee: Boolean(verification.dejaFusionnee) };
   }
 
   // 6. Simulation : on calcule la future moyenne, on n'écrit RIEN.
@@ -131,7 +133,11 @@ export async function publierBrouillonCore(analyseId, { isEditor, prisma, dryRun
     });
     const somme = publiees.reduce((total, a) => total + a.scoreFaisabilite, 0);
     const moyenne = (somme + analyse.scoreFaisabilite) / (publiees.length + 1);
-    const fusion = pr ? ` Puis la pull request #${pr.numero} (révision « ${slug} ») serait fusionnée (squash) : réponses publiées sur /relectures.` : "";
+    const fusion = !pr
+      ? ""
+      : pr.dejaFusionnee
+        ? ` La pull request #${pr.numero} (révision « ${slug} ») est déjà fusionnée : rien d'autre à faire.`
+        : ` Puis la pull request #${pr.numero} (révision « ${slug} ») serait fusionnée (squash) : réponses publiées sur /relectures.`;
     return {
       ok: true,
       simulation: true,
@@ -174,6 +180,7 @@ export async function publierBrouillonCore(analyseId, { isEditor, prisma, dryRun
       candidatNom: candidatMisAJour.nom,
     };
     if (!pr) return publie;
+    if (pr.dejaFusionnee) return { ...publie, revision: { slug, fusionnee: true, dejaFusionnee: true, lienPR: pr.lien } };
 
     // 8. Fusion de la PR de révision, une fois la fiche publiée.
     const fusion = await fusionner(slug, pr.numero, github);
@@ -211,6 +218,9 @@ export async function fusionnerRevisionCore(analyseId, { isEditor, prisma, dryRu
   const verification = await verifierRevision(slug, github);
   if (!verification.ok) {
     return refus(`La révision n'est pas fusionnable : ${verification.raison}.`, { lienPR: verification.lien ?? null });
+  }
+  if (verification.dejaFusionnee) {
+    return { ok: true, simulation: Boolean(dryRun), analyseId: analyse.id, propositionId: analyse.propositionId, revision: { slug, fusionnee: true, dejaFusionnee: true, lienPR: verification.pr.lien } };
   }
   if (dryRun) {
     return {

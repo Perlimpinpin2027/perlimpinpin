@@ -34,8 +34,10 @@ test("verifierRevisionFusionnable : PR ouverte de revision/<slug>, fusionnable",
 });
 
 test("verifierRevisionFusionnable : pas de PR, conflits, calcul en cours, jeton refusé", async () => {
-  const sansPR = fauxGitHub({ "pulls?state=open": { body: [] } });
-  assert.match((await verifierRevisionFusionnable("ma-fiche", opts(sansPR))).raison, /aucune pull request ouverte pour la branche revision\/ma-fiche/);
+  const sansPR = fauxGitHub({ "pulls?state=open": { body: [] }, "pulls?state=closed": { body: [] } });
+  assert.match((await verifierRevisionFusionnable("ma-fiche", opts(sansPR))).raison, /aucune pull request pour la branche revision\/ma-fiche/);
+  const fermeeSansFusion = fauxGitHub({ "pulls?state=open": { body: [] }, "pulls?state=closed": { body: [{ ...PR_OUVERTE, merged_at: null }] } });
+  assert.match((await verifierRevisionFusionnable("ma-fiche", opts(fermeeSansFusion))).raison, /fermée sans être fusionnée/);
 
   const conflits = fauxGitHub({ "pulls?state=open": { body: [PR_OUVERTE] }, "pulls/12": { body: { mergeable: false, mergeable_state: "dirty" } } });
   const r = await verifierRevisionFusionnable("ma-fiche", opts(conflits));
@@ -78,4 +80,11 @@ test("lienRecherchePR : recherche des PR de la branche, sans appel à l'API", ()
     lienRecherchePR("ma-fiche"),
     "https://github.com/Perlimpinpin2027/perlimpinpin/pulls?q=is%3Apr%20head%3Arevision%2Fma-fiche",
   );
+});
+
+test("verifierRevisionFusionnable : PR déjà fusionnée à la main, publication autorisée sans fusion", async () => {
+  const gh = fauxGitHub({ "pulls?state=open": { body: [] }, "pulls?state=closed": { body: [{ ...PR_OUVERTE, merged_at: "2026-10-25T14:41:31Z" }] } });
+  assert.deepEqual(await verifierRevisionFusionnable("ma-fiche", opts(gh)), { ok: true, dejaFusionnee: true, pr: { numero: 12, lien: PR_OUVERTE.html_url } });
+  assert.match(gh.appels[1].url, /pulls\?state=closed&head=Perlimpinpin2027%3Arevision%2Fma-fiche$/);
+  assert.ok(gh.appels.every((a) => !a.options.method || a.options.method === "GET"), "lecture seule");
 });
