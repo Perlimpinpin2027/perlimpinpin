@@ -57,7 +57,7 @@ async function lireBase(slug, candidat) {
     const noms = (await db.candidat.findMany({ select: { nom: true } })).map((c) => c.nom);
     const propositions = await db.proposition.findMany({
       where: { candidat: { nom: candidat } },
-      select: { id: true, titre: true, texteOriginal: true, analyses: { select: { id: true, createdAt: true, contenuComplet: true } } },
+      select: { id: true, titre: true, texteOriginal: true, analyses: { select: { id: true, statut: true, createdAt: true, contenuComplet: true } } },
     });
     return { commentaires, noms, propositions };
   } finally {

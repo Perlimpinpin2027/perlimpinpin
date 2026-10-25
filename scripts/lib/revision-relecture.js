@@ -115,11 +115,15 @@ export function debutJourParis(date) {
 // ---------- anti-doublon ----------
 
 // propositions : celles du candidat, avec leurs analyses
-// ({ id, titre, texteOriginal, analyses: [{ id, createdAt, contenuComplet }] }).
+// ({ id, titre, texteOriginal, analyses: [{ id, statut, createdAt, contenuComplet }] }).
 // Doublon si une proposition a le même texte (--source), ou si une analyse
 // créée depuis la mise en relecture (relecture.date) a le même titre que la
 // fiche relue ou le même objectif_court (l'étape 3 le recopie tel quel ; cela
 // couvre aussi les fiches importées à la main avec un autre texte).
+// Les analyses mises à la corbeille depuis /test ne comptent pas : c'est le
+// geste prévu pour écarter un brouillon raté et relancer la révision. Le
+// critère « même texte » reste bloquant quoi qu'il arrive, car analyze.js
+// refuserait de toute façon une seconde proposition au texte identique.
 export function trouverDoublon({ propositions, source, titre, objectifCourt, depuis }) {
   const debut = debutJourParis(depuis).getTime();
   const norm = (s) => String(s ?? "").trim().toLowerCase();
@@ -128,6 +132,7 @@ export function trouverDoublon({ propositions, source, titre, objectifCourt, dep
       return { analyseId: p.analyses?.[0]?.id ?? null, propositionId: p.id, critere: "même texte de proposition" };
     }
     for (const a of p.analyses ?? []) {
+      if (a.statut === "corbeille") continue;
       if (new Date(a.createdAt).getTime() < debut) continue;
       const objectif = a.contenuComplet?.mesure_vers_objectif?.objectif_court;
       if (titre && norm(p.titre) === norm(titre)) {
