@@ -54,8 +54,8 @@ export default function FavoriteButton({ id, favori, className = "" }) {
       aria-pressed={isFavori}
       aria-label={isFavori ? "Retirer des favoris" : "Ajouter aux favoris"}
       title={isFavori ? "Retirer des favoris" : "Ajouter aux favoris"}
-      className={`shrink-0 rounded-md p-1 transition-colors hover:bg-zinc-100 ${
-        isFavori ? "text-amber-500" : "text-zinc-300 hover:text-zinc-500"
+      className={`shrink-0 rounded-md p-1 transition-colors hover:bg-black/5 ${
+        isFavori ? "text-amber-500" : "text-zinc-400 hover:text-zinc-600"
       } ${className}`}
     >
       <svg
@@ -66,7 +66,7 @@ export default function FavoriteButton({ id, favori, className = "" }) {
         strokeWidth={1.8}
         strokeLinecap="round"
         strokeLinejoin="round"
-        className="h-4 w-4"
+        className="h-[18px] w-[18px]"
         aria-hidden="true"
       >
         <path d={ICONS.star} />
