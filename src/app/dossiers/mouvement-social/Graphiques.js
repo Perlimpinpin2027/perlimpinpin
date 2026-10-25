@@ -10,13 +10,18 @@ import { ListeSources } from "./elements";
 // largeur), textes en couleurs de texte, info-bulle « libellé : valeur » au
 // survol, tableau des données repliable sous chaque graphique.
 
-const BLEU = "#2a78d6";
-const GRIS = "#d4d4d8";
-const COULEURS_SERIES = ["#2a78d6", "#eb6834"];
-const COULEURS_SEGMENTS = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100"];
-// Segment sur lequel le texte est écrit en noir (le jaune), en blanc ailleurs.
-const SEGMENT_TEXTE_NOIR = "#eda100";
-const BLEUS_ENTONNOIR = ["#104281", "#2a78d6", "#86b6ef"];
+// Couleurs de la charte du dossier : noir, gris et jaune adouci.
+const JAUNE = "#d4b23f";
+const GRIS_CLAIR = "#d4d4d8";
+const GRIS_FONCE = "#3f3f46";
+const COULEURS_SERIES = ["#18181b", JAUNE];
+const COULEURS_SEGMENTS = ["#18181b", JAUNE, "#52525b", "#a1a1aa"];
+// La dernière étape (l'incarcération) ressort en jaune.
+const COULEURS_ENTONNOIR = ["#18181b", "#52525b", JAUNE];
+// Barres foncées : texte blanc dessus ; jaune et gris clair : texte noir (le
+// jaune contraste peu avec le blanc).
+const BARRES_FONCEES = new Set(["#18181b", "#52525b", GRIS_FONCE]);
+const texteSur = (couleur) => (BARRES_FONCEES.has(couleur) ? "text-white" : "text-zinc-950");
 
 // Part d'une valeur dans l'échelle, bornée entre 0 et 100 %.
 const pourcentage = (valeur, haut) => Math.min(100, Math.max(0, (valeur / haut) * 100));
@@ -58,7 +63,7 @@ function Barre({ pct, couleur, valeur, bulle, hauteur = "h-[22px]" }) {
         style={{ width: `${pct}%`, backgroundColor: couleur, minWidth: pct > 0 ? 2 : 0 }}
       >
         {dedans ? (
-          <span className="absolute inset-y-0 right-2 flex items-center text-xs font-semibold text-white">{valeur}</span>
+          <span className={`absolute inset-y-0 right-2 flex items-center text-xs font-semibold ${texteSur(couleur)}`}>{valeur}</span>
         ) : null}
       </div>
       {!dedans ? (
@@ -77,7 +82,8 @@ function Barre({ pct, couleur, valeur, bulle, hauteur = "h-[22px]" }) {
 function GraphiqueBarres({ graphique }) {
   const { donnees = [], unite, max } = graphique;
   const haut = hautEchelle(max, donnees.map((d) => d.valeur));
-  // Avec au moins une barre mise en avant : elles en bleu, les autres en gris.
+  // Avec au moins une barre mise en avant : elles en jaune, les autres en gris
+  // clair ; sinon toutes en gris foncé.
   const avecAccent = donnees.some((d) => d.accent);
   return (
     <ul className="flex flex-col gap-3.5">
@@ -86,7 +92,7 @@ function GraphiqueBarres({ graphique }) {
           <span className="text-sm leading-snug text-zinc-700">{d.label}</span>
           <Barre
             pct={pourcentage(d.valeur, haut)}
-            couleur={!avecAccent || d.accent ? BLEU : GRIS}
+            couleur={!avecAccent ? GRIS_FONCE : d.accent ? JAUNE : GRIS_CLAIR}
             valeur={texteDonnee(d, unite)}
             bulle={`${d.label} : ${texteDonnee(d, unite)}`}
           />
@@ -160,7 +166,7 @@ function GraphiqueBarreEmpilee({ graphique }) {
             >
               {/* Valeur écrite seulement si le segment est assez large. */}
               {pct >= 12 ? (
-                <span className={`text-xs font-semibold ${couleur === SEGMENT_TEXTE_NOIR ? "text-zinc-950" : "text-white"}`}>
+                <span className={`text-xs font-semibold ${texteSur(couleur)}`}>
                   {texte}
                 </span>
               ) : null}
@@ -198,7 +204,7 @@ function GraphiqueEntonnoir({ graphique }) {
                 className="h-full rounded-r-[4px]"
                 style={{
                   width: `${pourcentage(etape.valeur, premiere)}%`,
-                  backgroundColor: BLEUS_ENTONNOIR[Math.min(i, BLEUS_ENTONNOIR.length - 1)],
+                  backgroundColor: COULEURS_ENTONNOIR[Math.min(i, COULEURS_ENTONNOIR.length - 1)],
                   minWidth: 2,
                 }}
               />
@@ -275,7 +281,7 @@ export default function Graphique({ graphique, className = "" }) {
   const Rendu = PAR_TYPE[graphique?.type];
   if (!Rendu) return null;
   return (
-    <figure className={`flex flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-5 sm:p-6 ${className}`}>
+    <figure className={`flex flex-col gap-4 rounded-2xl border border-(--ms-gris200) bg-white p-5 sm:p-6 ${className}`}>
       <figcaption className="flex flex-col gap-1">
         <span className="text-base font-bold leading-snug text-zinc-950">{graphique.titre}</span>
         {graphique.sousTitre ? <span className="text-sm leading-snug text-slate-500">{graphique.sousTitre}</span> : null}

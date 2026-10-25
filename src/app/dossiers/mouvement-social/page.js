@@ -1,28 +1,31 @@
 import { Fragment } from "react";
 import Header from "@/components/Header";
-import SectionHeading from "@/components/SectionHeading";
-import { getScoreBands } from "@/lib/score";
-import { DOSSIER } from "@/lib/couleurs-dossier";
+import { getScoreBadge, getScoreBands } from "@/lib/score";
+import { criteresPrincipaux, OPERATIONNALITE } from "@/lib/criteresScore";
+import { getFichesPubliees } from "@/lib/queries";
 import { compterParCandidat, mesuresParCandidat, partsLeviers } from "@/lib/releve-securite";
 import DOSSIER_MS from "../../../../data/hors-series/mouvement-social.json" with { type: "json" };
 import INVENTAIRE from "../../../../data/hors-series/inventaire-prises-de-parole.json" with { type: "json" };
 import OngletsPropositions from "./OngletsPropositions";
 import TriangleLeviers from "./TriangleLeviers";
-import { SectionComprendre } from "./BlocsComprendre";
-import Graphique from "./Graphiques";
+import { Bloc, SectionComprendre, SyntheseNiveaux } from "./BlocsComprendre";
 import { COULEURS_ORIENTATION } from "./couleurs-orientation";
 import { couleurStatut } from "./statuts";
-import { Etiquette, LienSource, ListeSources, OMBRE_CARTE, Pastille, Prose, TuileChiffre } from "./elements";
+import { inter, variablesCharte } from "./charte";
+import { Etiquette, LienSource, OMBRE_CARTE, Pastille, Prose, TitreNumerote, TuileChiffre } from "./elements";
 
-// Dossier n°2 « Mouvement social » (/dossiers/mouvement-social) : les
-// propositions des candidats après les violences du 17 octobre 2026, classées
-// par levier. Son JSON n'a pas la structure de celui du plan budgétaire RN,
-// d'où cette route dédiée (prioritaire sur /dossiers/[slug]), avec les mêmes
-// styles. Tout le texte vient de data/hors-series/mouvement-social.json ;
-// aucune note n'y est écrite.
-// Le triangle des leviers et la section « Le relevé complet » sont calculés à
-// partir du relevé des prises de parole (inventaire-prises-de-parole.json,
-// remplacé à chaque actualisation), voir src/lib/releve-securite.js.
+// Dossier n°2 « Mouvement social » (/dossiers/mouvement-social) : la crise
+// d'octobre 2026 et les propositions des candidats sur la sécurité. Son JSON
+// n'a pas la structure de celui du plan budgétaire RN, d'où cette route dédiée
+// (prioritaire sur /dossiers/[slug]), avec sa propre charte (charte.js). Tout
+// le texte vient de data/hors-series/mouvement-social.json.
+// Calculé, jamais écrit en dur :
+//   - le triangle, la tuile « mesures relevées » et le relevé complet, à partir
+//     de inventaire-prises-de-parole.json (src/lib/releve-securite.js) ;
+//   - les notes des propositions et « Toutes les analyses », lues en base
+//     (lecture seule) dans la dernière analyse publiée de chaque `ficheId`
+//     (getFichesPubliees) : une fiche publiée apparaît seule à la
+//     régénération suivante, sans toucher au JSON.
 // Tant que `visible` vaut false, le dossier n'est pas inscrit dans le registre
 // (src/lib/hors-series.js) : absent de /dossiers, du carrousel de l'accueil et
 // du sitemap, non indexé, mais accessible par son adresse.
@@ -33,52 +36,95 @@ export const metadata = {
   ...(DOSSIER_MS.visible ? {} : { robots: { index: false, follow: false } }),
 };
 
-// La chronologie marque « à venir » les dates postérieures au jour : la page
-// est régénérée toutes les heures pour que la date du jour reste à jour.
+// Page régénérée toutes les heures : fiches publiées entre-temps et dates
+// « à venir » passées.
 export const revalidate = 3600;
 
 // Ordre des sections si le JSON n'en donne pas.
 const ORDRE_PAR_DEFAUT = [
   "entete",
+  "plan",
   "essentiel",
   "chiffres",
-  "chronologie",
-  "comprendre",
-  "perimetre",
   "triangle",
+  "comprendre",
+  "reponses",
   "propositions",
-  "textesEnCours",
   "toutesLesAnalyses",
+  "pourAllerPlusLoin",
   "releve",
   "methode",
   "sources",
 ];
 
-// Date du jour à Paris, au format du JSON (« 2026-10-23 »).
-function dateDuJour() {
-  return new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Paris" }).format(new Date());
-}
-
-const SECTION = "w-full px-6 pb-14 sm:px-8 sm:pb-16";
+const SECTION = "w-full px-6 pb-16 sm:px-8 sm:pb-20";
 const CONTENEUR = "mx-auto w-full max-w-[1280px]";
-const TITRE_SECTION = "font-sans text-3xl font-extrabold tracking-tight text-zinc-950 sm:text-[2.125rem]";
+const LIEN_INTERNE = "font-semibold text-(--ms-noir) underline decoration-(--ms-jaune) decoration-2 underline-offset-4";
 
-// Date du relevé (« 2026-10-22 ») en toutes lettres : « 22 octobre 2026 ».
+// Date ISO (« 2026-10-22 ») en toutes lettres : « 22 octobre 2026 ».
 function dateEnLettres(iso) {
   if (!iso) return "";
   return new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(
-    new Date(`${iso}T00:00:00Z`),
+    new Date(`${iso.slice(0, 10)}T00:00:00Z`),
   );
 }
 
-// « Relevé mis à jour le 22 octobre 2026 » (libellé du JSON de contenu, date
-// du relevé).
+// Remplace les {clés} d'un texte du JSON par leurs valeurs calculées.
+function remplir(texte, valeurs) {
+  return (texte ?? "").replace(/\{(\w+)\}/g, (tout, cle) => (cle in valeurs ? String(valeurs[cle]) : tout));
+}
+
+// Résumé de fiche sans le gras Markdown (**…**) de l'analyse.
+const sansMarkdown = (texte) => (texte ?? "").replace(/\*\*|__/g, "").trim();
+
+// Titre principal : la partie `surligne` (titreSurligne du JSON) est
+// surlignée en jaune, comme au marqueur (bande sur la moitié basse du texte).
+// Absente du titre : le titre s'affiche sans surlignage.
+function TitreSurligne({ titre, surligne }) {
+  const position = surligne ? titre.indexOf(surligne) : -1;
+  if (position === -1) return titre;
+  return (
+    <>
+      {titre.slice(0, position)}
+      <span className="bg-[linear-gradient(transparent_55%,var(--ms-jaune)_55%)] box-decoration-clone px-0.5">
+        {surligne}
+      </span>
+      {titre.slice(position + surligne.length)}
+    </>
+  );
+}
+
+// « Relevé mis à jour le 22 octobre 2026 » (libellé du JSON, date du relevé).
 function MiseAJour({ libelle, date, className = "" }) {
   if (!libelle || !date) return null;
   return (
-    <p className={`text-[13px] text-zinc-400 ${className}`}>
+    <p className={`font-mono text-xs text-(--ms-gris600) ${className}`}>
       {libelle} {dateEnLettres(date)}
     </p>
+  );
+}
+
+// En-tête des grandes parties (« Comprendre », « Réponses ») : filet noir,
+// surtitre en mono précédé d'un carré jaune, titre très gras, intro.
+function EnTetePartie({ surtitre, num, titre, intro }) {
+  return (
+    <div className="flex flex-col gap-4 border-t-2 border-(--ms-noir) pt-7">
+      {surtitre ? (
+        <span className="flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-[0.1em] text-(--ms-noir)">
+          <span aria-hidden="true" className="h-2.5 w-2.5 bg-(--ms-jaune)" />
+          {surtitre.replace(/^\/\/\s*/, "")}
+        </span>
+      ) : null}
+      <h2 className="flex max-w-4xl items-start gap-4 text-4xl font-black leading-[1.05] tracking-[-0.04em] text-(--ms-noir) sm:text-5xl">
+        {num ? (
+          <span className="mt-1 inline-flex h-10 min-w-10 flex-none items-center justify-center rounded-md bg-(--ms-jaune) px-1.5 font-mono text-lg font-bold tracking-normal text-(--ms-noir) sm:mt-2">
+            {num}
+          </span>
+        ) : null}
+        <span>{titre}</span>
+      </h2>
+      {intro ? <p className="max-w-3xl text-lg leading-relaxed text-(--ms-gris600) sm:text-xl">{intro}</p> : null}
+    </div>
   );
 }
 
@@ -87,43 +133,87 @@ function MiseAJour({ libelle, date, className = "" }) {
 function MesureReleve({ mesure, libelleNonRetenue }) {
   const retenue = mesure.retenue;
   return (
-    <li className={`flex flex-col gap-1.5 border-t border-zinc-100 py-3.5 first:border-t-0 ${retenue ? "" : "text-zinc-400"}`}>
+    <li className={`flex flex-col gap-1.5 border-t border-(--ms-gris200) py-3.5 first:border-t-0 ${retenue ? "" : "text-(--ms-gris400)"}`}>
       <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
-        <span className={`font-semibold ${retenue ? "text-zinc-900" : ""}`}>{mesure.dateAffichee}</span>
-        {mesure.support ? <span className={retenue ? "text-zinc-500" : ""}>· {mesure.support}</span> : null}
+        <span className={`font-mono font-semibold ${retenue ? "text-(--ms-noir)" : ""}`}>{mesure.dateAffichee}</span>
+        {mesure.support ? <span className={retenue ? "text-(--ms-gris600)" : ""}>· {mesure.support}</span> : null}
         {mesure.levier ? (
-          <Pastille className={retenue ? "bg-zinc-100 text-zinc-600" : "bg-zinc-50 text-zinc-400"}>
+          <Pastille className={retenue ? "bg-(--ms-gris200) text-(--ms-gris900)" : "bg-(--ms-gris50) text-(--ms-gris400)"}>
             Levier {mesure.levier}
           </Pastille>
         ) : null}
-        {!retenue ? (
-          <Pastille className="bg-zinc-100 text-zinc-500">{libelleNonRetenue}</Pastille>
-        ) : null}
+        {!retenue ? <Pastille className="bg-(--ms-gris200) text-(--ms-gris600)">{libelleNonRetenue}</Pastille> : null}
       </div>
-      <p className={`text-[15px] leading-snug ${retenue ? "text-zinc-800" : ""}`}>{mesure.mesure}</p>
-      {mesure.quiParle && mesure.quiParle !== mesure.candidat ? (
-        <p className="text-xs italic">par {mesure.quiParle}</p>
-      ) : null}
+      <p className={`text-[15px] leading-snug ${retenue ? "text-(--ms-gris900)" : ""}`}>{mesure.mesure}</p>
+      {mesure.quiParle && mesure.quiParle !== mesure.candidat ? <p className="text-xs italic">par {mesure.quiParle}</p> : null}
       {!retenue && mesure.motifNonRetenue ? <p className="text-xs">{mesure.motifNonRetenue}</p> : null}
       <LienSource source={mesure.url ? { label: "Source", url: mesure.url } : null} prefixe="" className="w-fit" />
     </li>
   );
 }
 
-export default function DossierMouvementSocialPage() {
+// Fiche publiée -> données d'affichage (note, appréciation et ses couleurs,
+// résumé, notes par critère, conclusion, lien). Les notes par critère ne sont
+// affichées que pour le barème actuel (5 critères), seul utilisé par les
+// fiches du dossier.
+function vueFiche(fiche) {
+  if (!fiche) return null;
+  const badge = getScoreBadge(fiche.score);
+  const notation = fiche.notation ?? {};
+  const criteres =
+    notation[OPERATIONNALITE.key] != null
+      ? criteresPrincipaux(notation)
+          .filter((c) => c.note != null)
+          .map(({ label, note, max }) => ({ label, note, max }))
+      : [];
+  return {
+    url: `/declarations/${fiche.propositionId}`,
+    score: fiche.score,
+    appreciation: badge.label,
+    classeScore: badge.scoreClass,
+    classeBadge: badge.badgeClass,
+    resume: sansMarkdown(fiche.resume) || null,
+    criteres,
+    conclusion: fiche.conclusion,
+  };
+}
+
+// Regroupe des éléments par candidat (`candidat` du JSON), dans l'ordre
+// alphabétique du nom de famille (`nomTri`).
+function grouperParCandidat(elements, partiDe) {
+  const groupes = new Map();
+  for (const element of elements) {
+    if (!groupes.has(element.candidat)) {
+      groupes.set(element.candidat, {
+        candidat: element.candidat,
+        nomTri: element.nomTri ?? element.candidat,
+        parti: partiDe(element),
+        elements: [],
+      });
+    }
+    groupes.get(element.candidat).elements.push(element);
+  }
+  return [...groupes.values()].sort((a, b) => a.nomTri.localeCompare(b.nomTri, "fr"));
+}
+
+export default async function DossierMouvementSocialPage() {
   const {
     numero,
     etiquette,
     titre,
+    titreSurligne,
+    miseAJour,
+    charte,
     chapo,
     boutons = [],
     photo,
+    ordreSections,
+    plan,
     essentiel,
     chiffres,
-    ordreSections,
-    chronologie,
-    comprendre,
     triangle,
+    comprendre,
+    reponses,
     perimetre,
     statuts,
     onglets = [],
@@ -131,448 +221,505 @@ export default function DossierMouvementSocialPage() {
     propositions = [],
     textesEnCours,
     toutesLesAnalyses,
+    pourAllerPlusLoin,
+    releve,
     methode,
     sources = [],
-    releve,
   } = DOSSIER_MS;
 
-  // Relevé des prises de parole : comptes par candidat (triangle) et mesures
-  // groupées par candidat (section « Le relevé complet »).
+  // Relevé des prises de parole : comptes par candidat (triangle, tuile
+  // calculée) et mesures groupées par candidat (relevé complet).
   const candidatsTriangle = compterParCandidat(INVENTAIRE).map((c) => ({ ...c, parts: partsLeviers(c) }));
   const triangleVide = !candidatsTriangle.some((c) => c.parts);
   const releveParCandidat = mesuresParCandidat(INVENTAIRE);
+  const mesuresRetenues = INVENTAIRE.mesures.filter((m) => m.retenue);
+  const calculs = {
+    mesuresRetenues: {
+      valeur: mesuresRetenues.length,
+      candidats: new Set(mesuresRetenues.map((m) => m.candidat)).size,
+    },
+  };
+  const tuiles = (chiffres?.items ?? []).map((item) => {
+    const calcul = calculs[item.calcul];
+    if (!calcul) return item;
+    return { ...item, valeur: String(calcul.valeur), legende: remplir(item.calculLegende ?? item.legende, calcul) };
+  });
 
-  const aujourdhui = dateDuJour();
+  // Fiches publiées des propositions (lecture seule en base). Base
+  // injoignable : toutes les propositions restent « Analyse à venir ».
+  const idsFiches = [...new Set(propositions.map((p) => p.ficheId).filter(Number.isInteger))];
+  let fiches = {};
+  try {
+    fiches = await getFichesPubliees(idsFiches);
+  } catch (erreur) {
+    console.error("[dossier mouvement-social] lecture des fiches impossible :", erreur.message);
+  }
+  const statutDe = (id) => {
+    const statut = statuts?.items?.find((s) => s.id === id);
+    return statut ? { label: statut.label, classe: couleurStatut(id) } : null;
+  };
+  const propositionsVues = propositions.map((p) => ({
+    id: p.id,
+    candidat: p.candidat,
+    nomTri: p.nomTri,
+    parti: p.parti,
+    onglet: p.onglet,
+    intitule: p.intitule,
+    description: p.description,
+    statut: statutDe(p.statut),
+    dateAffichee: dateEnLettres(p.date),
+    source: p.source,
+    fiche: vueFiche(fiches[p.ficheId]),
+  }));
+  const groupesParOnglet = Object.fromEntries(
+    onglets.map((o) => [
+      o.id,
+      grouperParCandidat(
+        propositionsVues.filter((p) => p.onglet === o.id),
+        (p) => p.parti,
+      ).map(({ candidat, parti, elements }) => ({ candidat, parti, propositions: elements })),
+    ]),
+  );
+  const analysesParCandidat = grouperParCandidat(
+    propositionsVues.filter((p) => p.fiche),
+    (p) => p.parti,
+  );
+  const publiees = new Set(propositions.filter((p) => fiches[p.ficheId]).map((p) => p.ficheId)).size;
 
   // Barème du plus bas au plus haut (0-19 Irréaliste … 85-100 Exemplaire).
   const bandes = getScoreBands().slice().reverse();
 
-  // Chaque section de la page, affichées dans l'ordre de `ordreSections`
-  // du JSON.
+  // Chaque section de la page, affichées dans l'ordre de `ordreSections` du
+  // JSON. « Ce que couvre ce dossier » et « Des textes déjà en discussion »
+  // sont affichés dans la partie « Réponses » : leurs entrées séparées de
+  // `ordreSections` n'affichent rien, pour ne pas les répéter.
   const sections = {
     entete: (
-      <>
-        {/* En-tête : texte à gauche, illustration à droite (sous le texte
-            sur téléphone). Tant que `photo` est absente du JSON, un cadre
-            vide réserve sa place. */}
-        <section className="w-full px-6 pb-14 pt-12 sm:px-8 sm:pb-16 sm:pt-20">
-          <div className={`${CONTENEUR} grid grid-cols-1 items-center gap-10 lg:grid-cols-[1.08fr_1fr] lg:gap-14`}>
-            <div className="flex flex-col gap-6">
-              <div className="flex flex-wrap items-center gap-3">
-                <span className={`rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-widest text-zinc-950 ${DOSSIER.fond}`}>
-                  Dossier n°{numero}
-                </span>
-                <Etiquette>{etiquette}</Etiquette>
-              </div>
-
-              <h1 className="font-sans text-4xl font-extrabold leading-[1.04] tracking-[-0.035em] text-zinc-950 sm:text-5xl xl:text-6xl">
-                {titre}
-              </h1>
-
-              <p className="max-w-2xl text-lg leading-relaxed text-slate-500 sm:text-xl">{chapo}</p>
-
-              {boutons.length ? (
-                <div className="mt-2 flex flex-wrap gap-3">
-                  {boutons.map((bouton, i) => (
-                    <a
-                      key={bouton.ancre}
-                      href={bouton.ancre}
-                      className={
-                        i === 0
-                          ? "inline-flex min-h-12 items-center gap-3 rounded-xl bg-blue-950 px-6 py-3.5 text-base font-medium text-white transition-colors hover:bg-blue-900"
-                          : "inline-flex min-h-12 items-center rounded-xl border border-zinc-200 bg-white px-6 py-3.5 text-base font-medium text-zinc-900 transition-colors hover:border-zinc-300 hover:bg-zinc-50"
-                      }
-                    >
-                      {bouton.label}
-                      {i === 0 ? <span aria-hidden="true">→</span> : null}
-                    </a>
-                  ))}
-                </div>
-              ) : null}
+      <section className="w-full px-6 pb-12 pt-12 sm:px-8 sm:pb-14 sm:pt-20">
+        <div className={`${CONTENEUR} grid grid-cols-1 items-center gap-10 lg:grid-cols-[1.08fr_1fr] lg:gap-14`}>
+          <div className="flex flex-col gap-6">
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="rounded-full bg-(--ms-jaune) px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-[0.1em] text-(--ms-noir)">
+                Dossier n°{numero}
+              </span>
+              <Etiquette>{etiquette}</Etiquette>
             </div>
-
-            <figure className="mx-auto flex w-full max-w-md flex-col gap-2 lg:max-w-[460px]">
-              {photo?.src ? (
-                <>
-                  <div className={`relative aspect-[4/5] w-full overflow-hidden rounded-2xl ring-1 ring-zinc-100 ${DOSSIER.fondClair} ${OMBRE_CARTE}`}>
-                    <img
-                      src={photo.src}
-                      alt={photo.alt ?? ""}
-                      className="absolute inset-0 h-full w-full object-cover object-top"
-                    />
-                  </div>
-                  {photo.credit ? <figcaption className="text-xs text-zinc-400">{photo.credit}</figcaption> : null}
-                </>
-              ) : (
-                <div
-                  aria-hidden="true"
-                  className={`aspect-[4/5] w-full rounded-2xl border-2 border-dashed border-[#f8b444]/60 ${DOSSIER.fondClair}`}
-                />
-              )}
-            </figure>
-          </div>
-        </section>
-      </>
-    ),
-    essentiel: (
-      <>
-        {/* L'essentiel */}
-        {essentiel ? (
-          <section className={SECTION}>
-            <div className={`${CONTENEUR} flex flex-col gap-5`}>
-              <h2 className="max-w-3xl text-[1.75rem] font-extrabold tracking-tight text-zinc-950">
-                {essentiel.titre}
-              </h2>
-              <Prose paragraphes={essentiel.paragraphes} chapo />
-            </div>
-          </section>
-        ) : null}
-      </>
-    ),
-    chiffres: (
-      <>
-        {/* Ce qui s'est passé : chiffres avec leur source */}
-        {chiffres?.items?.length ? (
-          <section className={SECTION}>
-            <div className={`${CONTENEUR} flex flex-col gap-5`}>
-              <Etiquette>{chiffres.titre}</Etiquette>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                {chiffres.items.map((item) => (
-                  <TuileChiffre key={item.valeur} item={item} />
+            {/* Date de mise à jour (`miseAJour` du JSON), en toutes lettres,
+                puis l'avertissement ; rien si le champ est absent. */}
+            {miseAJour?.date ? (
+              <p className="w-fit max-w-full rounded-3xl border border-(--ms-jaune) bg-(--ms-jaunePale) px-3.5 py-1.5 text-[13px] leading-snug text-(--ms-gris900)">
+                <strong className="font-bold text-(--ms-noir)">
+                  {miseAJour.libelle} {dateEnLettres(miseAJour.date)}
+                </strong>
+                {miseAJour.avertissement ? <> · {miseAJour.avertissement}</> : null}
+              </p>
+            ) : null}
+            <h1 className="text-4xl font-black leading-[1.02] tracking-[-0.04em] text-(--ms-noir) sm:text-5xl xl:text-6xl">
+              <TitreSurligne titre={titre} surligne={titreSurligne} />
+            </h1>
+            <p className="max-w-2xl text-lg leading-relaxed text-(--ms-gris600) sm:text-xl">{chapo}</p>
+            {boutons.length ? (
+              <div className="mt-2 flex flex-wrap gap-3">
+                {boutons.map((bouton, i) => (
+                  <a
+                    key={bouton.ancre}
+                    href={bouton.ancre}
+                    className={
+                      i === 0
+                        ? "inline-flex min-h-12 items-center gap-3 rounded-full bg-(--ms-noir) px-6 py-3 text-base font-semibold text-white transition-colors hover:bg-(--ms-gris900)"
+                        : "inline-flex min-h-12 items-center rounded-full border-2 border-(--ms-noir) bg-white px-6 py-3 text-base font-semibold text-(--ms-noir) transition-colors hover:bg-(--ms-gris50)"
+                    }
+                  >
+                    {bouton.label}
+                    {i === 0 ? (
+                      <span aria-hidden="true" className="text-(--ms-jaune)">
+                        →
+                      </span>
+                    ) : null}
+                  </a>
                 ))}
               </div>
-              {chiffres.note ? <p className="text-[13px] text-zinc-400">{chiffres.note}</p> : null}
-            </div>
-          </section>
-        ) : null}
-      </>
-    ),
-    chronologie: (
-      <>
-        {/* Chronologie : frise à gauche, graphique des manifestants à droite
-            (fixe au défilement sur ordinateur), puis note et sources. Les dates
-            postérieures à aujourd'hui (`dateIso`) sont marquées « à venir ». */}
-        {chronologie?.items?.length ? (
-          <section className={SECTION}>
-            <div className={`${CONTENEUR} flex flex-col gap-6`}>
-              <Etiquette>{chronologie.titre}</Etiquette>
-              <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-2 lg:gap-14">
-                <ol className={`flex flex-col gap-6 border-l-2 ${DOSSIER.bordure} pl-6`}>
-                  {chronologie.items.map((item) => {
-                    const aVenir = item.dateIso != null && item.dateIso > aujourdhui;
-                    return (
-                      <li key={`${item.date}-${item.texte}`} className="relative flex flex-col gap-1">
-                        <span
-                          aria-hidden="true"
-                          className={`absolute -left-[33px] top-1 h-4 w-4 rounded-full ${
-                            aVenir ? "border-2 border-dashed border-zinc-400 bg-white" : `border-[3px] border-white ${DOSSIER.fond}`
-                          }`}
-                        />
-                        <span className={`text-sm font-bold uppercase tracking-wide ${aVenir ? "text-zinc-400" : "text-zinc-950"}`}>
-                          {item.date}
-                          {aVenir ? " · à venir" : ""}
-                        </span>
-                        <p className={`text-base leading-relaxed ${aVenir ? "text-zinc-500" : "text-zinc-700"}`}>{item.texte}</p>
-                      </li>
-                    );
-                  })}
-                </ol>
-                <div className="flex flex-col gap-3 lg:sticky lg:top-28">
-                  {chronologie.graphique ? <Graphique graphique={chronologie.graphique} /> : null}
-                  {chronologie.note ? <p className="text-[13px] leading-relaxed text-zinc-500">{chronologie.note}</p> : null}
-                  <ListeSources sources={chronologie.sources} />
+            ) : null}
+          </div>
+          <figure className="mx-auto flex w-full max-w-md flex-col gap-2 lg:max-w-[460px]">
+            {photo?.src ? (
+              <>
+                <div className={`relative aspect-[4/5] w-full overflow-hidden rounded-2xl ring-1 ring-(--ms-gris200) bg-(--ms-jaunePale) ${OMBRE_CARTE}`}>
+                  <img src={photo.src} alt={photo.alt ?? ""} className="absolute inset-0 h-full w-full object-cover object-top" />
                 </div>
-              </div>
-            </div>
-          </section>
-        ) : null}
-      </>
+                {photo.credit ? <figcaption className="text-xs text-(--ms-gris600)">{photo.credit}</figcaption> : null}
+              </>
+            ) : (
+              <div aria-hidden="true" className="aspect-[4/5] w-full rounded-2xl border-2 border-dashed border-(--ms-jaune) bg-(--ms-jaunePale)" />
+            )}
+          </figure>
+        </div>
+      </section>
     ),
-    comprendre: (
-      <>
-        {/* Comprendre la crise : filet noir, surtitre, grand titre, intro, puis
-            les sections numérotées, affichées par le moteur de blocs. */}
-        {comprendre ? (
-          <section id={comprendre.id ?? "comprendre"} className={`${SECTION} scroll-mt-20`}>
-            <div className={`${CONTENEUR} flex flex-col gap-14`}>
-              <div className="flex flex-col gap-4 border-t-2 border-zinc-950 pt-7">
-                <Etiquette couleur="text-zinc-500">{comprendre.surtitre}</Etiquette>
-                <h2 className="max-w-4xl font-serif text-4xl font-bold leading-[1.08] tracking-tight text-zinc-950 sm:text-5xl">
-                  {comprendre.titre}
-                </h2>
-                {comprendre.intro ? (
-                  <p className="max-w-3xl text-lg leading-relaxed text-slate-500 sm:text-xl">{comprendre.intro}</p>
+
+    // Plan de lecture : chaque entrée mène à sa section (mêmes numéros que
+    // les titres), puis les annexes.
+    plan: plan?.items?.length ? (
+      <section id="plan" className={`${SECTION} scroll-mt-20`}>
+        <div className={`${CONTENEUR} flex flex-col gap-5 rounded-3xl bg-(--ms-grisPlan) p-6 sm:p-10`}>
+          <p className="font-mono text-sm font-bold uppercase tracking-[0.1em] text-(--ms-noir)">{plan.titre}</p>
+          <ol className="grid grid-cols-1 gap-x-10 md:grid-cols-2">
+            {plan.items.map((item) => (
+              <li key={item.ancre} className="border-b border-(--ms-gris400)/40">
+                <a href={item.ancre} className="group flex items-center gap-3.5 py-3.5">
+                  <span className="inline-flex h-8 min-w-8 flex-none items-center justify-center rounded-md bg-(--ms-jaune) px-1 font-mono text-sm font-bold text-(--ms-noir) transition-colors group-hover:bg-(--ms-noir) group-hover:text-(--ms-jaune)">
+                    {item.num}
+                  </span>
+                  <span className="text-base font-bold leading-snug text-(--ms-noir) group-hover:underline">{item.titre}</span>
+                </a>
+              </li>
+            ))}
+          </ol>
+          {plan.annexes?.length ? (
+            <p className="flex flex-wrap items-baseline gap-x-4 gap-y-1 text-sm text-(--ms-gris600)">
+              <span>En annexe :</span>
+              {plan.annexes.map((annexe) => (
+                <a key={annexe.ancre} href={annexe.ancre} className={LIEN_INTERNE}>
+                  {annexe.titre}
+                </a>
+              ))}
+            </p>
+          ) : null}
+        </div>
+      </section>
+    ) : null,
+
+    essentiel: essentiel ? (
+      <section id={essentiel.id ?? "essentiel"} className="w-full scroll-mt-20 px-6 pb-8 sm:px-8">
+        <div className={`${CONTENEUR} flex flex-col gap-5`}>
+          <TitreNumerote num={essentiel.num}>{essentiel.titre}</TitreNumerote>
+          <Prose paragraphes={essentiel.paragraphes} chapo className="text-(--ms-gris900)" />
+        </div>
+      </section>
+    ) : null,
+
+    // Les tuiles, juste sous « L'essentiel ».
+    chiffres: tuiles.length ? (
+      <section className={SECTION}>
+        <div className={`${CONTENEUR} flex flex-col gap-4`}>
+          <Etiquette>{chiffres.titre}</Etiquette>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {tuiles.map((item) => (
+              <TuileChiffre key={item.legende} item={item} />
+            ))}
+          </div>
+          {chiffres.note ? <p className="text-[13px] text-(--ms-gris600)">{chiffres.note}</p> : null}
+        </div>
+      </section>
+    ) : null,
+
+    // Où se situent les candidats ? : triangle des leviers, calculé à partir
+    // du relevé, puis l'avertissement et l'état des analyses.
+    triangle: triangle ? (
+      <section id="triangle" className={`${SECTION} scroll-mt-20`}>
+        <div className={`${CONTENEUR} flex flex-col gap-5`}>
+          <TitreNumerote num={triangle.num}>{triangle.titre}</TitreNumerote>
+          <Prose paragraphes={[triangle.texte, triangle.texteCouleur].filter(Boolean)} className="text-(--ms-gris900)" />
+          <div className="rounded-2xl border border-(--ms-gris200) bg-white p-4 sm:p-8">
+            {triangleVide ? (
+              <p className="rounded-xl border border-dashed border-(--ms-gris400) bg-(--ms-gris50) px-5 py-4 text-[15px] leading-relaxed text-(--ms-gris600)">
+                {triangle.messageVide}
+              </p>
+            ) : (
+              <TriangleLeviers candidats={candidatsTriangle} onglets={onglets} legende={triangle.legende ?? []} />
+            )}
+            <div className="mt-6 flex flex-col gap-4 border-t border-(--ms-gris200) pt-5">
+              <ul className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-(--ms-gris900)">
+                {triangle.legende?.map((item) => (
+                  <li key={item.id} className="flex items-center gap-2">
+                    <span aria-hidden="true" className={`h-3.5 w-3.5 flex-none rounded-full ${COULEURS_ORIENTATION[item.id] ?? ""}`} />
+                    {item.label}
+                  </li>
+                ))}
+              </ul>
+              {triangle.avertissement ? (
+                <p className="max-w-4xl rounded-r-xl border-l-4 border-(--ms-jaune) bg-(--ms-jaunePale) px-5 py-3.5 text-[15px] leading-relaxed text-(--ms-gris900)">
+                  {triangle.avertissement}
+                </p>
+              ) : null}
+              {triangle.statutAnalyses?.texte ? (
+                <p className="font-mono text-xs font-semibold uppercase tracking-[0.06em] text-(--ms-noir)">
+                  {remplir(triangle.statutAnalyses.texte, { publiees, enRelecture: triangle.statutAnalyses.enRelecture ?? 0 })}
+                </p>
+              ) : null}
+              {triangle.regle ? <p className="max-w-4xl text-[14px] leading-relaxed text-(--ms-gris600)">{triangle.regle}</p> : null}
+              {triangle.note ? <p className="max-w-4xl text-[14px] leading-relaxed text-(--ms-gris600)">{triangle.note}</p> : null}
+              <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+                <MiseAJour libelle={releve?.libelleMaj} date={INVENTAIRE.dateReleve} />
+                {triangle.lienReleve ? (
+                  <a href={triangle.lienReleve.ancre} className={`text-sm ${LIEN_INTERNE}`}>
+                    {triangle.lienReleve.label} <span aria-hidden="true">↓</span>
+                  </a>
                 ) : null}
               </div>
-              {comprendre.sections?.map((section, i) => (
-                <SectionComprendre key={section.id} section={section} numero={i + 1} />
-              ))}
             </div>
-          </section>
-        ) : null}
-      </>
-    ),
-    perimetre: (
-      <>
-        {/* Ce que couvre ce dossier : encadré */}
-        {perimetre ? (
-          <section className={SECTION}>
-            <div className={CONTENEUR}>
-              <div className={`flex max-w-4xl flex-col gap-2.5 rounded-2xl px-6 py-5 sm:px-7 sm:py-6 ${DOSSIER.fondClair}`}>
-                <h2 className="text-xl font-bold tracking-tight text-zinc-950">{perimetre.titre}</h2>
-                <p className="text-base leading-relaxed text-zinc-700">{perimetre.texte}</p>
-              </div>
-            </div>
-          </section>
-        ) : null}
-      </>
-    ),
-    triangle: (
-      <>
-        {/* Où se situent les candidats ? : triangle des leviers, calculé à
-            partir du relevé des prises de parole. */}
-        {triangle ? (
-          <section className={SECTION}>
-            <div className={`${CONTENEUR} flex flex-col gap-5`}>
-              <h2 className={TITRE_SECTION}>{triangle.titre}</h2>
-              <Prose paragraphes={[triangle.texte, triangle.texteCouleur].filter(Boolean)} />
-              <div className="rounded-2xl border border-zinc-200 bg-white p-4 sm:p-8">
-                {triangleVide ? (
-                  <p className="rounded-xl border border-dashed border-zinc-300 bg-zinc-50 px-5 py-4 text-[15px] leading-relaxed text-zinc-500">
-                    {triangle.messageVide}
-                  </p>
-                ) : (
-                  <TriangleLeviers candidats={candidatsTriangle} onglets={onglets} legende={triangle.legende ?? []} />
-                )}
-                <div className="mt-6 flex flex-col gap-3 border-t border-zinc-100 pt-5">
-                  <ul className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-zinc-700">
-                    {triangle.legende?.map((item) => (
-                      <li key={item.id} className="flex items-center gap-2">
-                        <span aria-hidden="true" className={`h-3.5 w-3.5 flex-none rounded-full ${COULEURS_ORIENTATION[item.id] ?? ""}`} />
-                        {item.label}
-                      </li>
-                    ))}
-                  </ul>
-                  {triangle.regle ? <p className="max-w-4xl text-[14px] leading-relaxed text-slate-500">{triangle.regle}</p> : null}
-                  {triangle.note ? <p className="max-w-4xl text-[14px] leading-relaxed text-slate-500">{triangle.note}</p> : null}
-                  <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-                    <MiseAJour libelle={releve?.libelleMaj} date={INVENTAIRE.dateReleve} />
-                    {triangle.lienReleve ? (
-                      <a
-                        href={triangle.lienReleve.ancre}
-                        className={`text-sm font-semibold text-zinc-950 underline decoration-2 underline-offset-4 ${DOSSIER.soulignement}`}
-                      >
-                        {triangle.lienReleve.label} <span aria-hidden="true">↓</span>
-                      </a>
-                    ) : null}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-        ) : null}
-      </>
-    ),
-    statuts: (
-      <>
-        {/* Nouvelle annonce ou idée déjà défendue ? : les étiquettes de
-            statut, une couleur chacune (badges des propositions). */}
-        {statuts ? (
-          <section className={SECTION}>
-            <div className={`${CONTENEUR} flex flex-col gap-5`}>
-              <h2 className={TITRE_SECTION}>{statuts.titre}</h2>
-              <p className="max-w-3xl text-lg leading-relaxed text-zinc-700">{statuts.texte}</p>
-              <ul className="flex flex-wrap gap-2.5">
-                {statuts.items?.map((statut) => (
-                  <li key={statut.id}>
-                    <span className={`inline-flex rounded-full px-3 py-1 text-sm font-semibold ${couleurStatut(statut.id)}`}>
-                      {statut.label}
-                    </span>
+          </div>
+        </div>
+      </section>
+    ) : null,
+
+    // Comprendre la crise : en-tête, tableau des niveaux de preuve, sections.
+    comprendre: comprendre ? (
+      <section id={comprendre.id ?? "comprendre"} className={`${SECTION} scroll-mt-20`}>
+        <div className={`${CONTENEUR} flex flex-col gap-14`}>
+          <EnTetePartie surtitre={comprendre.surtitre} titre={comprendre.titre} intro={comprendre.intro} />
+          <SyntheseNiveaux synthese={comprendre.synthese} />
+          {comprendre.sections?.map((section) => (
+            <SectionComprendre key={section.id} section={section} />
+          ))}
+        </div>
+      </section>
+    ) : null,
+
+    // Réponses : ce qu'a fait le gouvernement, les textes en discussion, le
+    // périmètre du dossier.
+    reponses: reponses ? (
+      <section id={reponses.id ?? "reponses"} className={`${SECTION} scroll-mt-20`}>
+        <div className={`${CONTENEUR} flex flex-col gap-10`}>
+          <EnTetePartie surtitre={reponses.surtitre} num={reponses.num} titre={reponses.titre} />
+          {reponses.gouvernement?.items?.length ? (
+            <div className="flex flex-col gap-4">
+              <h3 className="text-xl font-extrabold tracking-[-0.02em] text-(--ms-noir) sm:text-2xl">{reponses.gouvernement.titre}</h3>
+              <ul className="flex max-w-4xl list-disc flex-col gap-2.5 pl-5 text-[17px] leading-relaxed text-(--ms-gris900)">
+                {reponses.gouvernement.items.map((item) => (
+                  <li key={item.texte}>
+                    {item.texte} <LienSource source={item.source} prefixe="" className="whitespace-nowrap" />
                   </li>
                 ))}
               </ul>
             </div>
-          </section>
-        ) : null}
-      </>
-    ),
-    propositions: (
-      <>
-        {/* Les propositions, un onglet par levier. Le JSON ne prévoit pas
-            de titre pour cette section. */}
-        <section id="propositions" className={`${SECTION} scroll-mt-20`}>
-          <div className={CONTENEUR}>
-            <OngletsPropositions
-              onglets={onglets}
-              propositions={propositions}
-              messageOngletVide={messageOngletVide}
-            />
-          </div>
-        </section>
-      </>
-    ),
-    textesEnCours: (
-      <>
-        {/* À noter : des textes déjà en discussion */}
-        {textesEnCours?.items?.length ? (
-          <section className={SECTION}>
-            <div className={CONTENEUR}>
-              <div className={`flex max-w-4xl flex-col gap-4 rounded-2xl px-6 py-5 sm:px-7 sm:py-6 ${DOSSIER.fondClair}`}>
-                <h2 className="text-xl font-bold tracking-tight text-zinc-950">{textesEnCours.titre}</h2>
-                <ul className="flex list-disc flex-col gap-3 pl-5 text-base leading-relaxed text-zinc-700">
-                  {textesEnCours.items.map((item) => (
-                    <li key={item.texte}>
-                      {item.texte} <LienSource source={item.source} prefixe="" className="whitespace-nowrap" />
-                    </li>
-                  ))}
-                </ul>
-                {textesEnCours.note ? <p className="text-[13px] text-zinc-500">{textesEnCours.note}</p> : null}
-              </div>
+          ) : null}
+          {textesEnCours?.items?.length ? (
+            <div className="flex max-w-4xl flex-col gap-4 rounded-2xl border border-(--ms-gris200) bg-white px-6 py-5 sm:px-7 sm:py-6">
+              <h3 className="text-xl font-extrabold tracking-[-0.02em] text-(--ms-noir)">{textesEnCours.titre}</h3>
+              <ul className="flex list-disc flex-col gap-3 pl-5 text-base leading-relaxed text-(--ms-gris900)">
+                {textesEnCours.items.map((item) => (
+                  <li key={item.texte}>
+                    {item.texte} <LienSource source={item.source} prefixe="" className="whitespace-nowrap" />
+                  </li>
+                ))}
+              </ul>
+              {textesEnCours.note ? <p className="text-[13px] text-(--ms-gris600)">{textesEnCours.note}</p> : null}
             </div>
-          </section>
-        ) : null}
-      </>
-    ),
-    toutesLesAnalyses: (
-      <>
-        {/* Toutes les analyses du dossier : la liste des fiches publiées
-            viendra avec les propositions ; en attendant, `messageVide`. */}
-        {toutesLesAnalyses ? (
-          <section id="analyses" className={`${SECTION} scroll-mt-20`}>
-            <div className={`${CONTENEUR} flex flex-col gap-5`}>
-              <h2 className={TITRE_SECTION}>{toutesLesAnalyses.titre}</h2>
-              <p className="max-w-3xl text-lg leading-relaxed text-zinc-700">{toutesLesAnalyses.texte}</p>
-              <p className="max-w-3xl rounded-2xl border border-dashed border-zinc-300 bg-white/60 px-6 py-5 text-[15px] leading-relaxed text-zinc-500">
-                {toutesLesAnalyses.messageVide}
-              </p>
+          ) : null}
+          {perimetre ? (
+            <div className="flex max-w-4xl flex-col gap-2.5 rounded-r-2xl border-l-4 border-(--ms-jaune) bg-(--ms-jaunePale) px-6 py-5 sm:px-7 sm:py-6">
+              <h3 className="text-lg font-extrabold tracking-[-0.02em] text-(--ms-noir)">{perimetre.titre}</h3>
+              <p className="text-base leading-relaxed text-(--ms-gris900)">{perimetre.texte}</p>
             </div>
-          </section>
-        ) : null}
-      </>
-    ),
-    releve: (
-      <>
-        {/* Le relevé complet : un bloc repliable par candidat (ordre de
-            `nomTri`), mesures triées par date, règles de comptage. */}
-        {releve ? (
-          <section id="releve" className={`${SECTION} scroll-mt-20`}>
-            <div className={`${CONTENEUR} flex flex-col gap-5`}>
-              <h2 className={TITRE_SECTION}>{releve.titre}</h2>
-              <p className="max-w-3xl text-lg leading-relaxed text-zinc-700">{releve.texte}</p>
-              <MiseAJour libelle={releve.libelleMaj} date={INVENTAIRE.dateReleve} />
+          ) : null}
+        </div>
+      </section>
+    ) : null,
+    perimetre: null,
+    textesEnCours: null,
 
-              {INVENTAIRE.regles?.length ? (
-                <div className={`flex max-w-4xl flex-col gap-3 rounded-2xl px-6 py-5 sm:px-7 sm:py-6 ${DOSSIER.fondClair}`}>
-                  <h3 className="text-lg font-bold tracking-tight text-zinc-950">Comment nous comptons</h3>
-                  <ul className="flex list-disc flex-col gap-2 pl-5 text-[15px] leading-relaxed text-zinc-700">
-                    {INVENTAIRE.regles.map((regle) => (
-                      <li key={regle}>{regle}</li>
+    // Les propositions, une par une : un onglet par levier.
+    propositions: (
+      <section id="propositions" className={`${SECTION} scroll-mt-20`}>
+        <div className={`${CONTENEUR} flex flex-col gap-5`}>
+          {reponses?.titrePropositions ? (
+            <TitreNumerote num={reponses.numPropositions}>{reponses.titrePropositions}</TitreNumerote>
+          ) : null}
+          <Prose paragraphes={[reponses?.intro, statuts?.texte].filter(Boolean)} className="text-(--ms-gris900)" />
+          <OngletsPropositions onglets={onglets} groupesParOnglet={groupesParOnglet} messageOngletVide={messageOngletVide} />
+        </div>
+      </section>
+    ),
+
+    // Toutes les analyses du dossier : fiches publiées en base, par candidat.
+    toutesLesAnalyses: toutesLesAnalyses ? (
+      <section id="analyses" className={`${SECTION} scroll-mt-20`}>
+        <div className={`${CONTENEUR} flex flex-col gap-5`}>
+          <h2 className="text-2xl font-extrabold tracking-[-0.03em] text-(--ms-noir) sm:text-3xl">{toutesLesAnalyses.titre}</h2>
+          <p className="max-w-3xl text-lg leading-relaxed text-(--ms-gris900)">{toutesLesAnalyses.texte}</p>
+          {analysesParCandidat.length ? (
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              {analysesParCandidat.map((groupe) => (
+                <div key={groupe.candidat} className="flex flex-col gap-3 rounded-2xl border border-(--ms-gris200) bg-white p-5 sm:p-6">
+                  <div className="flex flex-wrap items-baseline gap-x-2">
+                    <p className="text-lg font-extrabold text-(--ms-noir)">{groupe.candidat}</p>
+                    {groupe.parti ? <p className="text-sm text-(--ms-gris600)">{groupe.parti}</p> : null}
+                  </div>
+                  <ul className="flex flex-col divide-y divide-(--ms-gris200)">
+                    {groupe.elements.map((p) => (
+                      <li key={p.id}>
+                        <a href={p.fiche.url} className="group flex items-center justify-between gap-4 py-2.5">
+                          <span className="text-[15px] font-semibold leading-snug text-(--ms-noir) group-hover:underline">{p.intitule}</span>
+                          <span className="flex flex-none items-center gap-2">
+                            <span className={`font-black ${p.fiche.classeScore}`}>{p.fiche.score}/100</span>
+                            <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${p.fiche.classeBadge}`}>{p.fiche.appreciation}</span>
+                          </span>
+                        </a>
+                      </li>
                     ))}
                   </ul>
                 </div>
-              ) : null}
-
-              <div className="flex max-w-4xl flex-col gap-3">
-                {releveParCandidat.map((groupe) => (
-                  <details key={groupe.candidat} className="group rounded-2xl border border-zinc-200 bg-white">
-                    <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 sm:px-6 [&::-webkit-details-marker]:hidden">
-                      <span className="min-w-0">
-                        <span className="block text-base font-bold text-zinc-950">{groupe.candidat}</span>
-                        <span className="block text-xs text-zinc-500">
-                          {groupe.parti} ·{" "}
-                          <strong className="font-semibold text-zinc-700">
-                            {groupe.total} mesure{groupe.total > 1 ? "s" : ""} comptée{groupe.total > 1 ? "s" : ""}
-                          </strong>
-                        </span>
-                      </span>
-                      <span aria-hidden="true" className="flex-none text-zinc-400 transition-transform group-open:rotate-180">
-                        ▾
-                      </span>
-                    </summary>
-                    <ul className="border-t border-zinc-100 px-5 sm:px-6">
-                      {groupe.mesures.map((mesure) => (
-                        <MesureReleve key={mesure.id} mesure={mesure} libelleNonRetenue={releve.libelleNonRetenue} />
-                      ))}
-                    </ul>
-                  </details>
-                ))}
-              </div>
+              ))}
             </div>
-          </section>
-        ) : null}
-      </>
-    ),
-    methode: (
-      <>
-        {/* Méthode et limites, avec l'échelle des verdicts du site. */}
-        {methode ? (
-          <section id="methode" className={`${SECTION} scroll-mt-20`}>
-            <div className={CONTENEUR}>
-              <div className="flex max-w-4xl flex-col gap-2.5 rounded-2xl border border-zinc-200 bg-white p-6 text-[15px] leading-relaxed text-slate-500 sm:p-7">
-                <SectionHeading>{methode.titre}</SectionHeading>
-                {methode.paragraphes?.map((paragraphe) => (
-                  <p key={paragraphe}>{paragraphe}</p>
-                ))}
-                <div className="mt-3 flex flex-wrap gap-1.5">
-                  {bandes.map((bande) => (
-                    <Pastille key={bande.label} className={bande.badge}>
-                      {bande.min}-{bande.max} {bande.label}
-                    </Pastille>
+          ) : (
+            <p className="max-w-3xl rounded-2xl border border-dashed border-(--ms-gris400) bg-white/60 px-6 py-5 text-[15px] leading-relaxed text-(--ms-gris600)">
+              {toutesLesAnalyses.messageVide}
+            </p>
+          )}
+        </div>
+      </section>
+    ) : null,
+
+    // Pour aller plus loin : un volet repliable par élément, fermé par défaut.
+    pourAllerPlusLoin: pourAllerPlusLoin?.blocs?.length ? (
+      <section id="plus-loin" className={`${SECTION} scroll-mt-20`}>
+        <div className={`${CONTENEUR} flex flex-col gap-5`}>
+          <h2 className="text-2xl font-extrabold tracking-[-0.03em] text-(--ms-noir) sm:text-3xl">{pourAllerPlusLoin.titre}</h2>
+          {pourAllerPlusLoin.texte ? <p className="max-w-3xl text-lg leading-relaxed text-(--ms-gris900)">{pourAllerPlusLoin.texte}</p> : null}
+          <div className="flex flex-col gap-3">
+            {pourAllerPlusLoin.blocs.map((volet) => (
+              <details key={volet.titre} className="group rounded-2xl border border-(--ms-gris200) bg-white">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 sm:px-6 [&::-webkit-details-marker]:hidden">
+                  <span className="text-base font-extrabold text-(--ms-noir) sm:text-lg">{volet.titre}</span>
+                  <span aria-hidden="true" className="flex-none text-(--ms-gris600) transition-transform group-open:rotate-180">
+                    ▾
+                  </span>
+                </summary>
+                <div className="flex flex-col gap-6 border-t border-(--ms-gris200) px-5 py-6 sm:px-6">
+                  {volet.blocs?.map((bloc, i) => (
+                    <Bloc key={i} bloc={bloc} />
                   ))}
                 </div>
-              </div>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+    ) : null,
+
+    // Le relevé complet : un bloc repliable par candidat (ordre de `nomTri`),
+    // mesures triées par date, règles de comptage.
+    releve: releve ? (
+      <section id="releve" className={`${SECTION} scroll-mt-20`}>
+        <div className={`${CONTENEUR} flex flex-col gap-5`}>
+          <h2 className="text-2xl font-extrabold tracking-[-0.03em] text-(--ms-noir) sm:text-3xl">{releve.titre}</h2>
+          <p className="max-w-3xl text-lg leading-relaxed text-(--ms-gris900)">{releve.texte}</p>
+          <MiseAJour libelle={releve.libelleMaj} date={INVENTAIRE.dateReleve} />
+          {INVENTAIRE.regles?.length ? (
+            <div className="flex max-w-4xl flex-col gap-3 rounded-r-2xl border-l-4 border-(--ms-jaune) bg-(--ms-jaunePale) px-6 py-5 sm:px-7 sm:py-6">
+              <h3 className="text-lg font-extrabold tracking-[-0.02em] text-(--ms-noir)">Comment nous comptons</h3>
+              <ul className="flex list-disc flex-col gap-2 pl-5 text-[15px] leading-relaxed text-(--ms-gris900)">
+                {INVENTAIRE.regles.map((regle) => (
+                  <li key={regle}>{regle}</li>
+                ))}
+              </ul>
             </div>
-          </section>
-        ) : null}
-      </>
-    ),
-    sources: (
-      <>
-        {/* Sources ; une source avec `ancre` (le relevé) est un lien interne. */}
-        {sources.length ? (
-                  <section className={SECTION}>
-          <div className={`${CONTENEUR} flex flex-col gap-2`}>
-                    <Etiquette>Sources</Etiquette>
-                    <ul className="flex flex-col gap-1.5 text-[13px] leading-snug">
-                      {/* Une source avec `ancre` (le relevé) est un lien interne. */}
-                      {sources.map((source) => (
-                        <li key={source.url ?? source.ancre}>
-                          {source.url ? (
-                            <a
-                              href={source.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-zinc-600 underline decoration-zinc-300 underline-offset-2 transition-colors hover:text-zinc-950"
-                            >
-                              {source.label} <span aria-hidden="true">↗</span>
-                            </a>
-                          ) : (
-                            <a
-                              href={source.ancre}
-                              className="text-zinc-600 underline decoration-zinc-300 underline-offset-2 transition-colors hover:text-zinc-950"
-                            >
-                              {source.label} <span aria-hidden="true">↑</span>
-                            </a>
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                    </div>
-        </section>
-        ) : null}
-      </>
-    ),
+          ) : null}
+          <div className="flex max-w-4xl flex-col gap-3">
+            {releveParCandidat.map((groupe) => (
+              <details key={groupe.candidat} className="group rounded-2xl border border-(--ms-gris200) bg-white">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 sm:px-6 [&::-webkit-details-marker]:hidden">
+                  <span className="min-w-0">
+                    <span className="block text-base font-extrabold text-(--ms-noir)">{groupe.candidat}</span>
+                    <span className="block text-xs text-(--ms-gris600)">
+                      {groupe.parti} ·{" "}
+                      <strong className="font-semibold text-(--ms-gris900)">
+                        {groupe.total} mesure{groupe.total > 1 ? "s" : ""} comptée{groupe.total > 1 ? "s" : ""}
+                      </strong>
+                    </span>
+                  </span>
+                  <span aria-hidden="true" className="flex-none text-(--ms-gris600) transition-transform group-open:rotate-180">
+                    ▾
+                  </span>
+                </summary>
+                <ul className="border-t border-(--ms-gris200) px-5 sm:px-6">
+                  {groupe.mesures.map((mesure) => (
+                    <MesureReleve key={mesure.id} mesure={mesure} libelleNonRetenue={releve.libelleNonRetenue} />
+                  ))}
+                </ul>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+    ) : null,
+
+    // Méthode et limites, avec l'échelle des verdicts du site.
+    methode: methode ? (
+      <section id="methode" className={`${SECTION} scroll-mt-20`}>
+        <div className={CONTENEUR}>
+          <div className="flex max-w-4xl flex-col gap-3 rounded-2xl border border-(--ms-gris200) bg-white p-6 text-[15px] leading-relaxed text-(--ms-gris900) sm:p-7">
+            <h2 className="text-2xl font-extrabold tracking-[-0.03em] text-(--ms-noir)">{methode.titre}</h2>
+            {methode.paragraphes?.map((paragraphe) => (
+              <p key={paragraphe}>{paragraphe}</p>
+            ))}
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {bandes.map((bande) => (
+                <Pastille key={bande.label} className={bande.badge}>
+                  {bande.min}-{bande.max} {bande.label}
+                </Pastille>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    ) : null,
+
+    // Sources ; une source avec `ancre` (le relevé) est un lien interne.
+    sources: sources.length ? (
+      <section className={SECTION}>
+        <div className={`${CONTENEUR} flex flex-col gap-2`}>
+          <Etiquette>Sources</Etiquette>
+          <ul className="flex flex-col gap-1.5 text-[13px] leading-snug">
+            {sources.map((source) => (
+              <li key={source.url ?? source.ancre}>
+                {source.url ? (
+                  <a
+                    href={source.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-(--ms-gris600) underline decoration-(--ms-gris400) underline-offset-2 transition-colors hover:text-(--ms-noir)"
+                  >
+                    {source.label} <span aria-hidden="true">↗</span>
+                  </a>
+                ) : (
+                  <a
+                    href={source.ancre}
+                    className="text-(--ms-gris600) underline decoration-(--ms-gris400) underline-offset-2 transition-colors hover:text-(--ms-noir)"
+                  >
+                    {source.label} <span aria-hidden="true">↑</span>
+                  </a>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    ) : null,
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-page-gradient font-sans">
+    <div className="flex min-h-screen flex-col bg-(--ms-gris50) font-sans" style={variablesCharte(charte?.couleurs)}>
       <Header />
 
-      <main className="flex w-full flex-col">
+      {/* Police Inter sur le contenu du dossier seulement (l'en-tête du site
+          garde sa police). */}
+      <main className={`${inter.variable} flex w-full flex-col font-(family-name:--font-inter) text-(--ms-gris900)`}>
         {(ordreSections ?? ORDRE_PAR_DEFAUT).map((nom) => (
           <Fragment key={nom}>{sections[nom] ?? null}</Fragment>
         ))}
       </main>
+
+      {/* Bouton flottant qui ramène au plan de lecture. */}
+      {plan?.items?.length ? (
+        <a
+          href="#plan"
+          className="fixed bottom-5 right-5 z-30 inline-flex items-center gap-1.5 rounded-full bg-(--ms-noir) px-4 py-2.5 font-mono text-sm font-bold text-(--ms-jaune) shadow-lg transition-transform hover:-translate-y-0.5"
+        >
+          <span aria-hidden="true">↑</span> Plan
+        </a>
+      ) : null}
     </div>
   );
 }

@@ -747,6 +747,45 @@ export async function getScoresPublies(propositionIds) {
   return scores;
 }
 
+// Fiches publiées de plusieurs propositions (propositions du dossier
+// « Mouvement social », champ `ficheId` du JSON). Lecture seule. Renvoie un
+// objet { [propositionId]: fiche } tiré de la dernière analyse PUBLIÉE de
+// chaque proposition : note, résumé, notation détaillée, conclusion, date de
+// dernière mise à jour (le schéma n'a pas de date de publication). Une
+// proposition sans analyse publiée est absente du résultat.
+export async function getFichesPubliees(propositionIds) {
+  if (propositionIds.length === 0) return {};
+  const analyses = await prisma.analyse.findMany({
+    where: { statut: "publie", propositionId: { in: propositionIds } },
+    orderBy: { createdAt: "desc" },
+    select: {
+      propositionId: true,
+      scoreFaisabilite: true,
+      teaser: true,
+      contenuComplet: true,
+      updatedAt: true,
+      proposition: { select: { titre: true, candidat: { select: { nom: true, parti: true } } } },
+    },
+  });
+  const fiches = {};
+  for (const analyse of analyses) {
+    if (fiches[analyse.propositionId]) continue;
+    const contenu = analyse.contenuComplet ?? {};
+    fiches[analyse.propositionId] = {
+      propositionId: analyse.propositionId,
+      titre: analyse.proposition.titre,
+      candidat: analyse.proposition.candidat.nom,
+      parti: analyse.proposition.candidat.parti,
+      score: analyse.scoreFaisabilite,
+      resume: contenu.resume_court ?? analyse.teaser ?? null,
+      notation: contenu.notation_detaillee ?? null,
+      conclusion: typeof contenu.verdict_conclusion === "string" ? contenu.verdict_conclusion : null,
+      miseAJour: analyse.updatedAt.toISOString(),
+    };
+  }
+  return fiches;
+}
+
 // Détail d'une déclaration : la Proposition, son Candidat, et sa dernière
 // Analyse PUBLIÉE (avec le contenuComplet JSON pour les 17 sections). Un
 // brouillon n'est jamais renvoyé au site public : pas d'analyse publiée =>
