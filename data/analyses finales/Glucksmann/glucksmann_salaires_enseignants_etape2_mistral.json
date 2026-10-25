@@ -1,0 +1,37 @@
+{
+  "contreAvisMistral": {
+    "remarques": [
+      {
+        "categorie": "coherence_note",
+        "contenu": "La note d'opérationnalité budgétaire (3/10) est qualifiée d'INCERTAIN, mais l'absence de financement identifié dans un contexte de déficit excessif et de dette élevée devrait être considérée comme un obstacle bloquant. La règle 6 bis est respectée (tentative d'ordre de grandeur), mais la qualification FRAGILE (<3/10) est plus adaptée au vu des contraintes budgétaires. Cela déclencherait le plafond (operationnalite_moyens_total ≤ 10, plafond_applique: true, plafond_declencheur: 'operationnalite_budgetaire').",
+        "severite": "majeure",
+        "confiance": "haute"
+      },
+      {
+        "categorie": "coherence_note",
+        "contenu": "La note d'efficacité (22/30) est qualifiée d'INCERTAIN, mais le texte documente un lien causal direct et des effets probables sur l'attractivité. L'absence de ciblage optimal ne justifie pas une qualification INCERTAIN, mais plutôt une nuance dans l'appréciation. La note pourrait être qualifiée de SOLIDE avec des réserves.",
+        "severite": "mineure",
+        "confiance": "moyenne"
+      },
+      {
+        "categorie": "angle_mort",
+        "contenu": "L'impact sur les retraites (coût futur) est mentionné comme angle mort, mais le jaune budgétaire annexé au PLF 2027 pourrait fournir des éléments chiffrés pour affiner l'analyse des effets rebonds. Cela pourrait influencer la note d'effets rebonds (11/20).",
+        "severite": "mineure",
+        "confiance": "moyenne"
+      }
+    ],
+    "avis_general": "a_nuancer"
+  },
+  "usage": {
+    "prompt_tokens": 10074,
+    "total_tokens": 11234,
+    "completion_tokens": 1160,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "service_tier": "standard"
+  }
+}
