@@ -116,14 +116,15 @@ function toCard(row) {
 
 // Dernières analyses live, les plus récentes en premier, pour le journaliste `userId`.
 // `scope` : "mes" (défaut : ses propres analyses) ou "toutes" (celles de l'équipe).
-// Filtres facultatifs : un dossier (slug de thème) ou les favoris seulement — les favoris
+// Filtres facultatifs : un dossier (slug de thème), un candidat (candidatId) ou les favoris seulement — les favoris
 // sont ceux du journaliste, quelle que soit la portée.
-export async function getRecentLiveAnalyses(limit, { userId, scope, theme, favoris } = {}) {
+export async function getRecentLiveAnalyses(limit, { userId, scope, theme, candidatId, favoris } = {}) {
   // Lève une erreur sans identifiant valide : jamais de liste « ouverte » par défaut
   const portee = scopeWhere(scope, userId);
   const where = {
     ...(favoris ? { favoris: { some: { userId } } } : portee),
     ...(theme ? { theme } : {}),
+    ...(Number.isInteger(candidatId) && candidatId > 0 ? { candidatId } : {}),
   };
   const rows = await prisma.liveAnalyse.findMany({
     where,
@@ -207,6 +208,27 @@ export async function getLiveDossiers({ userId, scope } = {}) {
   return groups
     .map((group) => ({ slug: group.theme, label: liveThemeLabel(group.theme), count: group._count._all }))
     .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label, "fr"));
+}
+
+// « Par candidat » (barre latérale de /live) : candidats ayant au moins une analyse dans
+// la portée choisie (mes analyses / toutes), du plus fourni au moins fourni. Lecture seule.
+// Les analyses sans candidat précisé ne sont pas comptées.
+export async function getLiveCandidatCounts({ userId, scope } = {}) {
+  const groups = await prisma.liveAnalyse.groupBy({
+    by: ["candidatId"],
+    where: { ...scopeWhere(scope, userId), candidatId: { not: null } },
+    _count: { _all: true },
+  });
+  if (groups.length === 0) return [];
+  const candidats = await prisma.candidat.findMany({
+    where: { id: { in: groups.map((group) => group.candidatId) } },
+    select: { id: true, nom: true, photoUrl: true },
+  });
+  const byId = new Map(candidats.map((candidat) => [candidat.id, candidat]));
+  return groups
+    .filter((group) => byId.has(group.candidatId))
+    .map((group) => ({ ...byId.get(group.candidatId), count: group._count._all }))
+    .sort((a, b) => b.count - a.count || a.nom.localeCompare(b.nom, "fr"));
 }
 
 // Ajoute ou retire l'analyse `id` des favoris du journaliste `userId` (favoris

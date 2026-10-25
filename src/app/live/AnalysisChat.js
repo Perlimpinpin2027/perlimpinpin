@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { loginUrl } from "@/lib/live-redirect";
 import ProgressBar from "./ProgressBar";
-import { Icon } from "./ui";
+import { GO_CARD, Icon } from "./ui";
 
 // « Posez une question sur cette analyse… » : fil de discussion avec l'analyse. La
 // réponse vient de l'API (route /chat) et s'appuie uniquement sur le contenu de
@@ -16,9 +16,10 @@ const CHAT_TIMEOUT_MS = 65_000;
 
 // Puces : le texte affiché est court ; la question envoyée est complète.
 const SUGGESTIONS = [
-  { label: "Quel est le coût estimé ?", question: "Quel est le coût estimé de cette mesure ?" },
   { label: "Est-ce légal ?", question: "Cette mesure est-elle légale ? Quelle est sa base juridique ?" },
+  { label: "Quel coût ?", question: "Quel est le coût estimé de cette mesure ?" },
   { label: "Comparez avec d'autres pays", question: "Peut-on comparer cette mesure avec ce qui se fait dans d'autres pays ?" },
+  { label: "Quelles alternatives ?", question: "Quelles alternatives à cette mesure existent ou ont été envisagées ?" },
   { label: "Trouvez les faiblesses", question: "Quelles sont les principales faiblesses de cette proposition ?" },
 ];
 
@@ -64,7 +65,7 @@ function Thread({ items, onRetry }) {
         }
         return (
           <li key={item.key} className="flex justify-start">
-            <div className="max-w-[92%] rounded-2xl rounded-bl-md border border-zinc-200 bg-white px-4 py-3">
+            <div className="max-w-[92%] rounded-2xl rounded-bl-md border border-[#e6e4de] bg-white px-4 py-3">
               <p className="mb-1 font-mono text-[10px] font-bold uppercase tracking-widest text-zinc-400">PerlimpinpinGo</p>
               <p className="whitespace-pre-wrap text-sm leading-relaxed text-zinc-800">{item.content}</p>
               {item.unsaved && (
@@ -78,7 +79,7 @@ function Thread({ items, onRetry }) {
   );
 }
 
-export default function AnalysisChat({ analyseId, initialMessages }) {
+export default function AnalysisChat({ analyseId, initialMessages, mode = "rapide" }) {
   const [items, setItems] = useState(() =>
     initialMessages.map((message) => ({ key: `db-${message.id}`, role: message.role, content: message.content })),
   );
@@ -173,13 +174,13 @@ export default function AnalysisChat({ analyseId, initialMessages }) {
   }
 
   return (
-    <section aria-label="Poser une question sur cette analyse" className="mt-10">
+    <section aria-label="Poser une question sur cette analyse">
       {(items.length > 0 || pending) && (
-        <div className="mb-4">
-          <h2 className="mb-3 text-sm font-semibold text-zinc-500">Conversation</h2>
+        <div className={`${GO_CARD} mt-4 p-6`}>
+          <h2 className="mb-4 text-2xl font-bold tracking-tight text-zinc-900">Questions posées</h2>
           <Thread items={items} onRetry={retry} />
           {pending && (
-            <div className="mt-3 max-w-[92%] rounded-2xl rounded-bl-md border border-zinc-200 bg-white px-4 py-3">
+            <div className="mt-3 max-w-[92%] rounded-2xl rounded-bl-md border border-[#e6e4de] bg-white px-4 py-3">
               <ProgressBar
                 label="Réponse en cours"
                 messages={CHAT_PROGRESS_MESSAGES}
@@ -188,60 +189,71 @@ export default function AnalysisChat({ analyseId, initialMessages }) {
               />
             </div>
           )}
-          <div ref={endRef} />
+          <div ref={endRef} className="scroll-mb-40" />
         </div>
       )}
 
-      <form onSubmit={submit} className="flex items-end gap-2 rounded-3xl border border-zinc-200 bg-white px-4 py-2 focus-within:ring-2 focus-within:ring-blue-200">
-        <textarea
-          ref={textareaRef}
-          value={draft}
-          rows={1}
-          maxLength={QUESTION_MAX_LENGTH}
-          disabled={pending}
-          onChange={(event) => {
-            setDraft(event.target.value);
-            resizeTextarea();
-          }}
-          onKeyDown={(event) => {
-            // Entrée envoie ; Maj+Entrée saute une ligne
-            if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) {
-              event.preventDefault();
-              event.currentTarget.form.requestSubmit();
-            }
-          }}
-          placeholder="Posez une question sur cette analyse…"
-          aria-label="Poser une question sur cette analyse"
-          className="max-h-28 min-w-0 flex-1 resize-none bg-transparent py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none disabled:opacity-60"
-        />
-        <button
-          type="submit"
-          disabled={pending || draft.trim().length < 2}
-          aria-label="Envoyer la question"
-          className="mb-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-zinc-900 text-white transition-colors hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-300"
-        >
-          <Icon name="arrowUp" className="h-4 w-4" />
-        </button>
-      </form>
-
-      <ul className="mt-3 flex flex-wrap gap-2">
-        {SUGGESTIONS.map((suggestion) => (
-          <li key={suggestion.label}>
-            <button
-              type="button"
+      {/* Barre fixée en bas de la colonne centrale (sticky : ne passe pas sous la barre latérale) */}
+      <div className="sticky bottom-3 z-20 mt-4">
+        <div className={`${GO_CARD} p-3 shadow-[0_-8px_24px_-12px_rgba(0,0,0,0.12)]`}>
+          <form
+            onSubmit={submit}
+            className="flex items-end gap-3 rounded-xl border border-[#e6e4de] bg-white px-4 py-1.5 focus-within:ring-2 focus-within:ring-blue-200"
+          >
+            <Icon name="search" className="mb-2.5 h-5 w-5 shrink-0 text-zinc-500" />
+            <textarea
+              ref={textareaRef}
+              value={draft}
+              rows={1}
+              maxLength={QUESTION_MAX_LENGTH}
               disabled={pending}
-              onClick={() => send(suggestion.question)}
-              title={suggestion.question}
-              className="rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-xs text-zinc-600 transition-colors hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-900 disabled:cursor-not-allowed disabled:opacity-50"
+              onChange={(event) => {
+                setDraft(event.target.value);
+                resizeTextarea();
+              }}
+              onKeyDown={(event) => {
+                // Entrée envoie ; Maj+Entrée saute une ligne
+                if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) {
+                  event.preventDefault();
+                  event.currentTarget.form.requestSubmit();
+                }
+              }}
+              placeholder="Posez une question sur cette analyse…"
+              aria-label="Poser une question sur cette analyse"
+              className="max-h-28 min-w-0 flex-1 resize-none bg-transparent py-2 text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:outline-none disabled:opacity-60"
+            />
+            <button
+              type="submit"
+              disabled={pending || draft.trim().length < 2}
+              aria-label="Envoyer la question"
+              className="mb-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-zinc-900 text-white transition-colors hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-300"
             >
-              {suggestion.label}
+              <Icon name="arrowUp" className="h-4 w-4" />
             </button>
-          </li>
-        ))}
-      </ul>
-      <p className="mt-2 text-[11px] text-zinc-400">
-        Les réponses s&apos;appuient uniquement sur le contenu de cette analyse (estimation préliminaire, sans recherche externe).
-      </p>
+          </form>
+
+          <ul className="mt-2.5 flex flex-wrap gap-2">
+            {SUGGESTIONS.map((suggestion) => (
+              <li key={suggestion.label}>
+                <button
+                  type="button"
+                  disabled={pending}
+                  onClick={() => send(suggestion.question)}
+                  title={suggestion.question}
+                  className="rounded-full border border-[#e6e4de] bg-[#fbfaf8] px-3.5 py-1.5 text-sm text-zinc-700 transition-colors hover:border-zinc-300 hover:bg-white hover:text-zinc-900 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {suggestion.label}
+                </button>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-2 px-1 text-[11px] text-zinc-400">
+            {mode === "approfondie"
+              ? "Les réponses s'appuient uniquement sur le contenu de cette analyse et sur les sources qu'elle a trouvées."
+              : "Les réponses s'appuient uniquement sur le contenu de cette analyse (estimation préliminaire, sans recherche externe)."}
+          </p>
+        </div>
+      </div>
     </section>
   );
 }

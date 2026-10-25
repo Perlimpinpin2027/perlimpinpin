@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { liveThemeLabel } from "@/lib/live-themes";
 import { MesureCard } from "./MesureDetail";
 import ProgressBar, { DEEP_MESSAGES } from "./ProgressBar";
-import { ComingSoon, Icon } from "./ui";
+import { ComingSoon, GO_BUTTON, GO_CARD, Icon, SOON_BADGE } from "./ui";
 import { loginUrl } from "@/lib/live-redirect";
 
 const DECLARATION_MAX_LENGTH = 20000;
@@ -29,9 +29,6 @@ const ANALYSE_MODES = [
   },
 ];
 
-// Entrée prévue plus tard : affichée, inactive.
-const FUTURE_INPUTS = [{ icon: "transcript", label: "Transcript" }];
-
 // Fichiers acceptés pour « Fichier » (le serveur revérifie type et contenu).
 const FILE_ACCEPT =
   ".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain";
@@ -39,8 +36,11 @@ const FILE_EXTENSIONS = ["pdf", "docx", "txt"];
 // 4 Mo : les fonctions Vercel refusent les requêtes de plus de 4,5 Mo.
 const FILE_MAX_BYTES = 4 * 1024 * 1024;
 
+// Boutons Fichier / URL / Dictée sous le texte
 const SOURCE_BUTTON_CLASS =
-  "flex w-full items-center gap-2 rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-50";
+  "inline-flex h-11 items-center gap-2 rounded-xl border border-[#e6e4de] bg-[#f8f7f4] px-4 text-[15px] font-medium text-zinc-700 transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-50";
+const INPUT_CLASS =
+  "w-full rounded-xl border border-[#e6e4de] bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-200 disabled:opacity-60";
 
 export default function LiveAnalyzer({ candidats = [] }) {
   const router = useRouter();
@@ -62,6 +62,10 @@ export default function LiveAnalyzer({ candidats = [] }) {
   const [sourceError, setSourceError] = useState(null);
   const [sourceNotice, setSourceNotice] = useState(null);
   const [pendingSource, setPendingSource] = useState(null); // texte en attente de confirmation
+
+  // Panneaux sous la zone de saisie : candidat et source, aide « Comment ça marche ? »
+  const [extrasOpen, setExtrasOpen] = useState(false);
+  const [aideOpen, setAideOpen] = useState(false);
 
   // Place le texte extrait dans le textarea ; demande confirmation s'il
   // contenait déjà quelque chose.
@@ -223,224 +227,187 @@ export default function LiveAnalyzer({ candidats = [] }) {
     router.refresh();
   }
 
+  const modeActif = ANALYSE_MODES.find((option) => option.value === mode);
+  const candidatChoisi = candidats.find((candidat) => String(candidat.id) === candidatId) ?? null;
+
   return (
     <>
-      <div className="rounded-2xl border border-zinc-200 bg-white p-6">
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <div>
-            <label htmlFor="live-declaration" className="text-sm font-medium text-zinc-700">
+      <form onSubmit={handleSubmit}>
+        <div className={`${GO_CARD} rounded-3xl p-3 sm:p-5`}>
+          <div className="rounded-2xl border border-[#e6e4de] bg-[#fbfaf8] transition-shadow focus-within:border-zinc-300 focus-within:ring-4 focus-within:ring-blue-100">
+            <label htmlFor="live-declaration" className="sr-only">
               Déclaration du candidat
             </label>
-            <div className="mt-1.5 flex flex-col gap-3 sm:flex-row">
             <textarea
               id="live-declaration"
               required
-              rows={10}
+              rows={4}
               value={declaration}
               onChange={(event) => setDeclaration(event.target.value)}
               maxLength={DECLARATION_MAX_LENGTH}
               disabled={loading}
-              placeholder="Collez ou tapez la déclaration à analyser…"
-              className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm leading-relaxed text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-200 disabled:opacity-60"
+              placeholder="Collez une déclaration politique à analyser…"
+              className="block min-h-[120px] w-full resize-y bg-transparent px-5 pb-2 pt-4 text-lg leading-relaxed text-zinc-900 placeholder:text-zinc-400 focus:outline-none disabled:opacity-60"
             />
-            <div className="flex shrink-0 flex-row gap-2 sm:flex-col">
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept={FILE_ACCEPT}
-                onChange={handleFileChange}
-                className="hidden"
-                aria-label="Choisir un fichier PDF, DOCX ou TXT"
-              />
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={loading || extracting !== null}
-                title="PDF, DOCX ou TXT, 4 Mo maximum"
-                className={SOURCE_BUTTON_CLASS}
-              >
-                <Icon name="file" className="h-4 w-4" />
-                {extracting === "fichier" ? "Lecture…" : "Fichier"}
-              </button>
-              <button
-                type="button"
-                onClick={() => setUrlOpen((open) => !open)}
-                aria-expanded={urlOpen}
-                disabled={loading || extracting !== null}
-                className={`${SOURCE_BUTTON_CLASS} ${urlOpen ? "!border-zinc-400 !bg-zinc-100" : ""}`}
-              >
-                <Icon name="link" className="h-4 w-4" />
-                URL
-              </button>
-              {FUTURE_INPUTS.map((input) => (
-                <ComingSoon key={input.label}>
-                  <button
-                    type="button"
-                    disabled
-                    className="flex w-full cursor-not-allowed items-center gap-2 rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm font-medium text-zinc-400"
-                  >
-                    <Icon name={input.icon} className="h-4 w-4" />
-                    {input.label}
-                  </button>
-                </ComingSoon>
-              ))}
-            </div>
-            </div>
 
-            {urlOpen && (
-              <div className="mt-2 flex flex-col gap-2 sm:flex-row">
+            <div className="flex flex-wrap items-center justify-between gap-3 px-3 pb-3">
+              <div className="flex flex-wrap gap-2">
                 <input
-                  type="url"
-                  value={urlValue}
-                  onChange={(event) => setUrlValue(event.target.value)}
-                  onKeyDown={(event) => {
-                    // Entrée récupère l'article, sans soumettre l'analyse
-                    if (event.key === "Enter") {
-                      event.preventDefault();
-                      handleUrlFetch();
-                    }
-                  }}
-                  disabled={loading || extracting !== null}
-                  placeholder="https://www.exemple.fr/article"
-                  aria-label="Adresse de l'article à récupérer"
-                  className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-200 disabled:opacity-60"
+                  ref={fileInputRef}
+                  type="file"
+                  accept={FILE_ACCEPT}
+                  onChange={handleFileChange}
+                  className="hidden"
+                  aria-label="Choisir un fichier PDF, DOCX ou TXT"
                 />
                 <button
                   type="button"
-                  onClick={handleUrlFetch}
-                  disabled={loading || extracting !== null || urlValue.trim().length === 0}
-                  className="shrink-0 rounded-lg bg-zinc-900 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-40"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={loading || extracting !== null}
+                  title="PDF, DOCX ou TXT, 4 Mo maximum"
+                  className={SOURCE_BUTTON_CLASS}
                 >
-                  {extracting === "url" ? "Récupération…" : "Récupérer"}
+                  <Icon name="paperclip" className="h-[18px] w-[18px]" />
+                  {extracting === "fichier" ? "Lecture…" : "Fichier"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setUrlOpen((open) => !open)}
+                  aria-expanded={urlOpen}
+                  disabled={loading || extracting !== null}
+                  className={`${SOURCE_BUTTON_CLASS} ${urlOpen ? "!border-zinc-400 !bg-white" : ""}`}
+                >
+                  <Icon name="link" className="h-[18px] w-[18px]" />
+                  URL
+                </button>
+                <ComingSoon>
+                  <button type="button" disabled className={`${SOURCE_BUTTON_CLASS} !opacity-100 text-zinc-400`}>
+                    <Icon name="microphone" className="h-[18px] w-[18px]" />
+                    Dictée
+                    <span className={SOON_BADGE}>Bientôt</span>
+                  </button>
+                </ComingSoon>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3">
+                {/* Type d'analyse : rapide (texte seul) ou approfondie (recherche de sources) */}
+                <fieldset disabled={loading} className="min-w-0">
+                  <legend className="sr-only">Type d&apos;analyse</legend>
+                  <div className="inline-flex rounded-full border border-[#e6e4de] bg-[#f1f0ec] p-1">
+                    {ANALYSE_MODES.map((option) => {
+                      const selected = mode === option.value;
+                      return (
+                        <label
+                          key={option.value}
+                          title={`${option.label} : ${option.duration}`}
+                          className={`cursor-pointer rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-blue-200 has-[:disabled]:cursor-not-allowed ${
+                            selected ? "bg-white text-zinc-900 shadow-sm" : "text-zinc-500 hover:text-zinc-800"
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name="live-mode"
+                            value={option.value}
+                            checked={selected}
+                            onChange={() => setMode(option.value)}
+                            className="sr-only"
+                          />
+                          {option.value === "rapide" ? "Rapide" : "Approfondie"}
+                        </label>
+                      );
+                    })}
+                  </div>
+                </fieldset>
+
+                <button
+                  type="submit"
+                  disabled={loading || declaration.trim().length < 20}
+                  className="inline-flex h-[52px] items-center gap-3 rounded-full bg-zinc-900 px-7 text-[17px] font-semibold text-white transition-colors hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  {loading ? "Analyse en cours…" : "Analyser les faits"}
+                  <Icon name="arrowRight" className="h-5 w-5" />
                 </button>
               </div>
-            )}
-
-            {pendingSource && (
-              <div role="alertdialog" aria-label="Remplacer le texte actuel" className="mt-2 rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-900">
-                <p>
-                  Le champ contient déjà du texte. Le remplacer par le contenu de{" "}
-                  <strong className="break-all">{pendingSource.origine}</strong> ?
-                </p>
-                <div className="mt-2 flex gap-2">
-                  <button
-                    type="button"
-                    onClick={confirmReplace}
-                    className="rounded-md bg-zinc-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-zinc-800"
-                  >
-                    Remplacer
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setPendingSource(null)}
-                    className="rounded-md border border-amber-300 bg-white px-3 py-1.5 text-xs font-semibold text-amber-900 hover:bg-amber-100"
-                  >
-                    Annuler
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {sourceError && (
-              <p role="alert" className="mt-2 text-sm text-red-600">
-                {sourceError}
-              </p>
-            )}
-            {sourceNotice && !sourceError && (
-              <p role="status" className="mt-2 text-sm text-emerald-700">
-                {sourceNotice}
-              </p>
-            )}
-          </div>
-
-          <div>
-            <label htmlFor="live-candidat" className="text-sm font-medium text-zinc-700">
-              Candidat <span className="font-normal text-zinc-400">(facultatif)</span>
-            </label>
-            <select
-              id="live-candidat"
-              value={candidatId}
-              onChange={(event) => setCandidatId(event.target.value)}
-              disabled={loading}
-              className="mt-1.5 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-blue-200 disabled:opacity-60 sm:w-72"
-            >
-              <option value="">Non précisé</option>
-              {candidats.map((candidat) => (
-                <option key={candidat.id} value={candidat.id}>
-                  {candidat.nom}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label htmlFor="live-source-url" className="text-sm font-medium text-zinc-700">
-              Lien de la source <span className="font-normal text-zinc-400">(facultatif)</span>
-            </label>
-            <input
-              id="live-source-url"
-              type="url"
-              value={sourceUrl}
-              onChange={(event) => setSourceUrl(event.target.value)}
-              disabled={loading}
-              placeholder="https://… (article, vidéo YouTube, Dailymotion, X, France TV)"
-              className="mt-1.5 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-200 disabled:opacity-60"
-            />
-            <p className="mt-1 text-xs text-zinc-400">
-              Pour une vidéo, un lecteur s&apos;affichera sur la page de l&apos;analyse.
-            </p>
-          </div>
-
-          <fieldset disabled={loading} className="min-w-0">
-            <legend className="text-sm font-medium text-zinc-700">Type d&apos;analyse</legend>
-            <div className="mt-1.5 grid gap-2 sm:grid-cols-2">
-              {ANALYSE_MODES.map((option) => {
-                const selected = mode === option.value;
-                return (
-                  <label
-                    key={option.value}
-                    className={`flex cursor-pointer gap-3 rounded-xl border px-4 py-3 transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-blue-200 has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-60 ${
-                      selected ? "border-zinc-900 bg-zinc-50" : "border-zinc-200 bg-white hover:border-zinc-300"
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="live-mode"
-                      value={option.value}
-                      checked={selected}
-                      onChange={() => setMode(option.value)}
-                      className="mt-1 h-4 w-4 shrink-0 accent-zinc-900"
-                    />
-                    <span className="min-w-0">
-                      <span className="flex flex-wrap items-baseline gap-x-2">
-                        <span className="text-sm font-semibold text-zinc-900">{option.label}</span>
-                        <span className="text-xs text-zinc-500">{option.duration}</span>
-                      </span>
-                      <span className="mt-0.5 block text-xs leading-relaxed text-zinc-500">{option.description}</span>
-                    </span>
-                  </label>
-                );
-              })}
             </div>
-          </fieldset>
-
-          <div className="flex items-center gap-4">
-            <button
-              type="submit"
-              disabled={loading || declaration.trim().length < 20}
-              className="rounded-full bg-zinc-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              {loading ? "Analyse en cours…" : "Analyser"}
-            </button>
-            {error && (
-              <p role="alert" className="text-sm text-red-600">
-                {error}
-              </p>
-            )}
           </div>
+
+          <p className="px-2 pt-3 text-xs text-zinc-500">
+            <span className="font-semibold text-zinc-700">{modeActif.label}</span> · {modeActif.duration} ·{" "}
+            {modeActif.description}
+          </p>
+
+          {urlOpen && (
+            <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+              <input
+                type="url"
+                value={urlValue}
+                onChange={(event) => setUrlValue(event.target.value)}
+                onKeyDown={(event) => {
+                  // Entrée récupère l'article, sans soumettre l'analyse
+                  if (event.key === "Enter") {
+                    event.preventDefault();
+                    handleUrlFetch();
+                  }
+                }}
+                disabled={loading || extracting !== null}
+                placeholder="https://www.exemple.fr/article"
+                aria-label="Adresse de l'article à récupérer"
+                className={INPUT_CLASS}
+              />
+              <button
+                type="button"
+                onClick={handleUrlFetch}
+                disabled={loading || extracting !== null || urlValue.trim().length === 0}
+                className="shrink-0 rounded-xl bg-zinc-900 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                {extracting === "url" ? "Récupération…" : "Récupérer le texte"}
+              </button>
+            </div>
+          )}
+
+          {pendingSource && (
+            <div role="alertdialog" aria-label="Remplacer le texte actuel" className="mt-3 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-900">
+              <p>
+                Le champ contient déjà du texte. Le remplacer par le contenu de{" "}
+                <strong className="break-all">{pendingSource.origine}</strong> ?
+              </p>
+              <div className="mt-2 flex gap-2">
+                <button
+                  type="button"
+                  onClick={confirmReplace}
+                  className="rounded-md bg-zinc-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-zinc-800"
+                >
+                  Remplacer
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPendingSource(null)}
+                  className="rounded-md border border-amber-300 bg-white px-3 py-1.5 text-xs font-semibold text-amber-900 hover:bg-amber-100"
+                >
+                  Annuler
+                </button>
+              </div>
+            </div>
+          )}
+
+          {sourceError && (
+            <p role="alert" className="mt-3 px-2 text-sm text-red-600">
+              {sourceError}
+            </p>
+          )}
+          {sourceNotice && !sourceError && (
+            <p role="status" className="mt-3 px-2 text-sm text-emerald-700">
+              {sourceNotice}
+            </p>
+          )}
+          {error && (
+            <p role="alert" className="mt-3 px-2 text-sm text-red-600">
+              {error}
+            </p>
+          )}
 
           {loading && (
-            <div>
+            <div className="mt-4 px-2">
               <ProgressBar
                 key={mode}
                 label={mode === "approfondie" ? "Analyse approfondie en cours" : "Analyse en cours"}
@@ -456,12 +423,107 @@ export default function LiveAnalyzer({ candidats = [] }) {
               )}
             </div>
           )}
-        </form>
-      </div>
+        </div>
+
+        {/* Ligne sous la carte : candidat et source (facultatifs), aide */}
+        <div className="mt-3 grid items-center gap-3 sm:grid-cols-[1fr_auto_1fr]">
+          <span className="hidden sm:block" />
+          <button
+            type="button"
+            onClick={() => setExtrasOpen((open) => !open)}
+            aria-expanded={extrasOpen}
+            aria-controls="live-extras"
+            className={`${GO_BUTTON} h-11 justify-center rounded-full px-5`}
+          >
+            <Icon name={extrasOpen ? "chevronDown" : "plus"} className="h-[18px] w-[18px]" />
+            {candidatChoisi ? (
+              <span>
+                Candidat : <strong className="font-semibold">{candidatChoisi.nom}</strong>
+                {sourceUrl.trim() ? " · source ajoutée" : ""}
+              </span>
+            ) : sourceUrl.trim() ? (
+              "Source ajoutée · ajouter un candidat"
+            ) : (
+              "Ajouter un candidat ou une source"
+            )}
+          </button>
+          <button
+            type="button"
+            onClick={() => setAideOpen((open) => !open)}
+            aria-expanded={aideOpen}
+            aria-controls="live-aide"
+            className="inline-flex items-center gap-2 justify-self-center text-sm text-zinc-500 transition-colors hover:text-zinc-900 sm:justify-self-end"
+          >
+            <Icon name="question" className="h-5 w-5" />
+            Comment ça marche ?
+          </button>
+        </div>
+
+        {extrasOpen && (
+          <div id="live-extras" className={`${GO_CARD} mt-3 grid gap-4 p-5 sm:grid-cols-[minmax(0,18rem)_minmax(0,1fr)]`}>
+            <div>
+              <label htmlFor="live-candidat" className="text-sm font-medium text-zinc-700">
+                Candidat <span className="font-normal text-zinc-400">(facultatif)</span>
+              </label>
+              <select
+                id="live-candidat"
+                value={candidatId}
+                onChange={(event) => setCandidatId(event.target.value)}
+                disabled={loading}
+                className={`mt-1.5 ${INPUT_CLASS}`}
+              >
+                <option value="">Non précisé</option>
+                {candidats.map((candidat) => (
+                  <option key={candidat.id} value={candidat.id}>
+                    {candidat.nom}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label htmlFor="live-source-url" className="text-sm font-medium text-zinc-700">
+                Lien de la source <span className="font-normal text-zinc-400">(facultatif)</span>
+              </label>
+              <input
+                id="live-source-url"
+                type="url"
+                value={sourceUrl}
+                onChange={(event) => setSourceUrl(event.target.value)}
+                disabled={loading}
+                placeholder="https://… (article, vidéo YouTube, Dailymotion, X, France TV)"
+                className={`mt-1.5 ${INPUT_CLASS}`}
+              />
+              <p className="mt-1 text-xs text-zinc-400">
+                Pour une vidéo, un lecteur s&apos;affichera sur la page de l&apos;analyse.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {aideOpen && (
+          <div id="live-aide" className={`${GO_CARD} mt-3 p-5 text-sm leading-relaxed text-zinc-700`}>
+            <p className="flex items-center gap-2 font-semibold text-zinc-900">
+              <Icon name="bulb" className="h-5 w-5 text-amber-500" />
+              Conseil
+            </p>
+            <p className="mt-2">
+              Collez la déclaration telle que le candidat l&apos;a prononcée, avec ses chiffres exacts et son
+              contexte (sujet, date, interlocuteur). Plus le passage est précis et complet, plus l&apos;estimation
+              est fiable : évitez les paraphrases et les citations tronquées.
+            </p>
+            <p className="mt-2">
+              <strong className="font-semibold text-zinc-900">Analyse rapide</strong> (~15 à 20 secondes) : à partir
+              du seul texte de la déclaration, une estimation à vérifier avant diffusion.{" "}
+              <strong className="font-semibold text-zinc-900">Analyse approfondie</strong> (~1 à 3 minutes) : avec une
+              recherche de sources externes, pour une analyse sourcée.
+            </p>
+          </div>
+        )}
+      </form>
 
       {result && (
         <section className="mt-8 flex flex-col gap-4" aria-live="polite">
-          <p className="rounded-lg border border-zinc-200 bg-white/70 px-4 py-3 text-sm text-zinc-600">
+          <p className={`${GO_CARD} px-4 py-3 text-sm text-zinc-600`}>
             {result.mode === "approfondie" ? (
               <>
                 <strong className="text-zinc-800">Analyse approfondie.</strong> Réalisée avec une recherche de sources externes
