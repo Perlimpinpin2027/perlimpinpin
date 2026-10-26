@@ -25,6 +25,13 @@ on:
         description: "Slug de la fiche (nom du fichier de data/relectures/, sans .json)"
         required: true
         type: string
+      # Appels Claude par l'API Message Batches (scripts/lib/claude-lot.js).
+      # Absent de l'appel de POST /api/relectures/revision : défaut false.
+      mode_lot:
+        description: "Moitié prix, mais la révision peut prendre de quelques minutes à plusieurs heures"
+        required: false
+        type: boolean
+        default: false
 
 concurrency:
   group: revision-${{ inputs.slug }}
@@ -37,7 +44,7 @@ permissions:
 jobs:
   revision:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 120
     env:
       SLUG: ${{ inputs.slug }}
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
@@ -82,6 +89,8 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+          # Transmis à analyze.js (spawnSync hérite de l'environnement).
+          CLAUDE_LOT: ${{ inputs.mode_lot && '1' || '' }}
         run: node scripts/reviser-relecture.js "$SLUG" --sortie "$RUNNER_TEMP/revision"
 
       - name: Contrôle des fichiers modifiés

@@ -7,6 +7,7 @@ import { PrismaNeon } from "@prisma/adapter-neon";
 import { neonConfig } from "@neondatabase/serverless";
 import ws from "ws";
 import { cleanContenu } from "./lib/clean-text.js";
+import { MODE_LOT, envoyerEnLot, sanitizeContentBlocks } from "./lib/claude-lot.js";
 import { PARTIES_PAR_TWEET, ecrirePartie, lirePartie } from "../src/lib/reseaux.js";
 import {
   validateEtape1Structure,
@@ -234,25 +235,6 @@ function readWithInactivityTimeout(reader, timeoutMs) {
   });
 }
 
-// Un pause_turn (limite d'itérations du tool serveur atteinte) peut couper
-// le flux en plein milieu d'un bloc, ex. un bloc "thinking" tout juste
-// démarré, sans texte. Renvoyer un tel bloc incomplet dans le tour suivant
-// fait échouer la validation de l'API ("each thinking block must contain
-// thinking"). On retire les blocs visiblement incomplets avant de
-// reconstruire l'historique de conversation.
-function sanitizeContentBlocks(blocks) {
-  return blocks.filter((block) => {
-    if (!block) return false;
-    if (block.type === "thinking") {
-      return typeof block.thinking === "string" && block.thinking.length > 0;
-    }
-    if (block.type === "text") {
-      return typeof block.text === "string" && block.text.length > 0;
-    }
-    return true;
-  });
-}
-
 async function readStreamedMessage(response, { inactivityTimeoutMs = STREAM_INACTIVITY_TIMEOUT_MS } = {}) {
   const reader = response.body.getReader();
   const decoder = new TextDecoder();
@@ -331,6 +313,37 @@ async function readStreamedMessage(response, { inactivityTimeoutMs = STREAM_INAC
 
   message.content = sanitizeContentBlocks(blocks);
   return message;
+}
+
+// Point d'entrée unique des appels Claude. Avec CLAUDE_LOT=1, passe par
+// l'API Message Batches (moitié prix, voir scripts/lib/claude-lot.js) ; si
+// le lot est annulé, expiré ou trop long, repli sur l'appel direct. Sans
+// CLAUDE_LOT, appel direct en streaming, comme avant. `label` reprend le
+// libellé des messages d'erreur (ex. « étape 3 bis »).
+async function envoyerMessageClaude(body, label) {
+  if (MODE_LOT) {
+    const message = await envoyerEnLot(body, {
+      label,
+      baseUrl: ANTHROPIC_BASE_URL,
+      headers: ANTHROPIC_HEADERS,
+      fetchImpl: fetchWithTimeout,
+    });
+    if (message) return message;
+    console.log("  ↪ repli en appel direct (prix normal)");
+  }
+
+  const response = await fetchWithTimeout(`${ANTHROPIC_BASE_URL}/messages`, {
+    method: "POST",
+    headers: ANTHROPIC_HEADERS,
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    throw new Error(`Erreur API Anthropic, ${label} (${response.status}) : ${errorBody}`);
+  }
+
+  return readStreamedMessage(response);
 }
 
 // Filet de secours si le modèle enrobe malgré tout le JSON (bloc de code,
@@ -515,10 +528,8 @@ ${JSON.stringify(invalidJson, null, 2)}
 
 Retourne uniquement le JSON corrigé, structuré exactement comme l'original (mêmes clés, même forme), sans texte avant ni après, sans bloc de code.`;
 
-  const response = await fetchWithTimeout(`${ANTHROPIC_BASE_URL}/messages`, {
-    method: "POST",
-    headers: ANTHROPIC_HEADERS,
-    body: JSON.stringify({
+  return envoyerMessageClaude(
+    {
       model: "claude-sonnet-5",
       // 16000 : un JSON d'étape 1 ou de fiche_complete riche (recherches,
       // sources, 4-5 critères détaillés) peut dépasser largement 8000
@@ -529,15 +540,9 @@ Retourne uniquement le JSON corrigé, structuré exactement comme l'original (m�
       thinking: { type: "disabled" },
       messages: [{ role: "user", content: instruction }],
       stream: true,
-    }),
-  });
-
-  if (!response.ok) {
-    const errorBody = await response.text();
-    throw new Error(`Erreur API Anthropic, réparation JSON (${label}) (${response.status}) : ${errorBody}`);
-  }
-
-  return readStreamedMessage(response);
+    },
+    `réparation JSON (${label})`,
+  );
 }
 
 // Avertit sans jamais bloquer ni tronquer : titre_fiche/teaser_accueil plus
@@ -743,18 +748,7 @@ export function construireRequeteEtape3(etape1, mistralResult, commentaires = nu
 }
 
 async function appelerEtape3(body) {
-  const response = await fetchWithTimeout(`${ANTHROPIC_BASE_URL}/messages`, {
-    method: "POST",
-    headers: ANTHROPIC_HEADERS,
-    body: JSON.stringify(body),
-  });
-
-  if (!response.ok) {
-    const errorBody = await response.text();
-    throw new Error(`Erreur API Anthropic, étape 3 (${response.status}) : ${errorBody}`);
-  }
-
-  return readStreamedMessage(response);
+  return envoyerMessageClaude(body, "étape 3");
 }
 
 const recherchesDe = (usage) => usage?.server_tool_use?.web_search_requests ?? 0;
@@ -831,24 +825,16 @@ const PROMPT_VERSION_BASIQUE_PATH = join(__dirname, "..", "data", "prompt-versio
 const TENTATIVES_VERSION_BASIQUE = 3;
 
 async function callVersionBasique(userMessage) {
-  const response = await fetchWithTimeout(`${ANTHROPIC_BASE_URL}/messages`, {
-    method: "POST",
-    headers: ANTHROPIC_HEADERS,
-    body: JSON.stringify({
+  return envoyerMessageClaude(
+    {
       model: "claude-sonnet-5",
       max_tokens: 8000,
       thinking: { type: "disabled" },
       messages: [{ role: "user", content: userMessage }],
       stream: true,
-    }),
-  });
-
-  if (!response.ok) {
-    const errorBody = await response.text();
-    throw new Error(`Erreur API Anthropic, étape 3 bis (${response.status}) : ${errorBody}`);
-  }
-
-  return readStreamedMessage(response);
+    },
+    "étape 3 bis",
+  );
 }
 
 // Somme de deux usages : nombres additionnés, y compris dans les objets
@@ -970,24 +956,16 @@ Renvoie le JSON complet, en gardant tel quel tout ce qui n'est pas cité ci-dess
 const PROMPT_RESEAUX_PATH = join(__dirname, "..", "data", "prompt-reseaux.md");
 
 async function callReseaux(userMessage) {
-  const response = await fetchWithTimeout(`${ANTHROPIC_BASE_URL}/messages`, {
-    method: "POST",
-    headers: ANTHROPIC_HEADERS,
-    body: JSON.stringify({
+  return envoyerMessageClaude(
+    {
       model: "claude-sonnet-5",
       max_tokens: 4000,
       thinking: { type: "disabled" },
       messages: [{ role: "user", content: userMessage }],
       stream: true,
-    }),
-  });
-
-  if (!response.ok) {
-    const errorBody = await response.text();
-    throw new Error(`Erreur API Anthropic, étape 3 ter (${response.status}) : ${errorBody}`);
-  }
-
-  return readStreamedMessage(response);
+    },
+    "étape 3 ter",
+  );
 }
 
 // Fiche envoyée au modèle : la fiche finale, sans les ajouts des étapes
@@ -1158,6 +1136,9 @@ const PRICING = {
   mistralLarge: { input: 2, output: 6 },
 };
 
+// Mode lot (CLAUDE_LOT=1) : moitié prix quand usage.service_tier vaut
+// "batch". addUsage garde la dernière valeur texte : une étape qui mélange un
+// appel en lot et un repli direct est donc estimée approximativement.
 function estimateClaudeCost(usage = {}) {
   const {
     input_tokens = 0,
@@ -1165,7 +1146,9 @@ function estimateClaudeCost(usage = {}) {
     cache_read_input_tokens = 0,
     output_tokens = 0,
   } = usage;
+  const facteur = usage.service_tier === "batch" ? 0.5 : 1;
   return (
+    facteur *
     (input_tokens * PRICING.claudeSonnet.input +
       cache_creation_input_tokens * PRICING.claudeSonnet.cacheWrite +
       cache_read_input_tokens * PRICING.claudeSonnet.cacheRead +
@@ -1206,6 +1189,7 @@ function estimateMistralCost(usage) {
 // recherchesWeb : seulement avec des commentaires du Club (recherche web de
 // l'étape 3) ; absent, le coût garde exactement sa forme habituelle.
 // usage3ter (publications X) : absent, le coût garde sa forme d'avant l'étape 3 ter.
+// modeLot : seulement avec CLAUDE_LOT=1 ; sans, le coût garde sa forme habituelle.
 export function buildCoutPipeline({ usage2, usage3, usage3bis, usage3ter, recherchesWeb }) {
   const coutEtape2 = estimateMistralCost(usage2);
   const coutEtape3 = estimateClaudeCost(usage3);
@@ -1218,6 +1202,7 @@ export function buildCoutPipeline({ usage2, usage3, usage3bis, usage3ter, recher
   const cacheEtape3 = bilanCache(usage3);
 
   return {
+    ...(MODE_LOT ? { modeLot: true } : {}),
     tokensEtape1: null,
     tokensEtape2: usage2,
     tokensEtape3: usage3,
