@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState, useEffect } from "react";
 import { connexion } from "../actions";
 import { buttonClass, inputClass, labelClass } from "../ui";
@@ -31,9 +32,17 @@ export default function ConnexionForm() {
         />
       </div>
       <div>
-        <label htmlFor="relecture-password" className={labelClass}>
-          Mot de passe
-        </label>
+        <div className="flex items-baseline justify-between gap-3">
+          <label htmlFor="relecture-password" className={labelClass}>
+            Mot de passe
+          </label>
+          <Link
+            href="/relectures/mot-de-passe-oublie"
+            className="text-[13px] text-zinc-500 underline decoration-zinc-300 underline-offset-4 hover:text-zinc-900 hover:decoration-zinc-900"
+          >
+            Mot de passe oublié ?
+          </Link>
+        </div>
         <input
           id="relecture-password"
           name="password"
