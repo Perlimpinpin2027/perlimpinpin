@@ -25,7 +25,7 @@
   },
   "accent": "#f8b444",
   "miseAJour": {
-    "date": "2026-10-25",
+    "date": "2026-10-27",
     "libelle": "Mis à jour le",
     "avertissement": "Ce dossier est susceptible d'évoluer au fur et à mesure des mobilisations."
   },
@@ -436,18 +436,22 @@
             "items": [
               {
                 "date": "26 octobre",
+                "dateIso": "2026-10-26",
                 "texte": "Annonces attendues du gouvernement, notamment sur Parcoursup, et concertation avec les organisations de jeunesse, les enseignants, les syndicats et le patronat."
               },
               {
                 "date": "27 octobre",
+                "dateIso": "2026-10-27",
                 "texte": "Examen au Sénat du projet de loi « casseurs-payeurs »."
               },
               {
                 "date": "31 octobre",
+                "dateIso": "2026-10-31",
                 "texte": "Troisième date annoncée par la coordination des gilets jaunes."
               },
               {
                 "date": "5 novembre",
+                "dateIso": "2026-11-05",
                 "texte": "Grève et manifestations à l'appel de la CFDT, de la CGT, de FO, de l'Unsa et de la FSU."
               }
             ],
@@ -1084,7 +1088,100 @@
     "intro": "Les propositions des candidats sont classées en trois leviers. Chacune est vérifiée (source, date, auteur) avant d'être ajoutée, puis analysée dans une fiche notée. Tant que la fiche n'est pas publiée, la proposition est signalée « Analyse à venir », sans note provisoire.",
     "num": "08",
     "titrePropositions": "Les propositions des candidats analysées",
-    "numPropositions": "09"
+    "numPropositions": "09",
+    "blocs": [
+      {
+        "type": "encadre",
+        "ton": "info",
+        "id": "casseurs-payeurs",
+        "titre": "« Casseurs-payeurs » : deux textes au Parlement",
+        "texte": "Faire payer les auteurs de dégradations : l'idée fait l'objet de deux textes distincts. Le premier, présenté par le gouvernement, rend redevables des personnes présentes dans un groupement violent, même sans preuve qu'elles aient elles-mêmes cassé. Le second, déposé par des députés, ne vise que les personnes condamnées.",
+        "sources": [
+          {
+            "label": "Banque des Territoires",
+            "url": "https://www.banquedesterritoires.fr/le-projet-de-loi-casseurs-payeurs-examine-au-senat-le-27-octobre"
+          },
+          {
+            "label": "Assemblée nationale, proposition de loi n° 3305",
+            "url": "https://www.assemblee-nationale.fr/dyn/17/textes/l17b3305_proposition-loi"
+          }
+        ]
+      },
+      {
+        "type": "comparaison",
+        "colonnes": [
+          "Projet de loi du gouvernement",
+          "Proposition de loi n° 3305"
+        ],
+        "lignes": [
+          {
+            "critere": "Origine",
+            "valeurs": [
+              "Présenté en Conseil des ministres le 16 septembre 2026",
+              "Déposée le 13 octobre 2026 par Éric Michoux (UDR) et 23 autres députés"
+            ]
+          },
+          {
+            "critere": "Qui paie ?",
+            "valeurs": [
+              "Toute personne restée dans un groupement violent après un ordre de dispersion, même sans avoir elle-même dégradé, sauf « motif légitime » (journalistes, par exemple)",
+              "Les seules personnes condamnées pour des destructions ou dégradations commises lors d'une manifestation ou d'un rassemblement"
+            ]
+          },
+          {
+            "critere": "Combien ?",
+            "valeurs": [
+              "Jusqu'à 10 000 euros par personne, réclamés par l'État",
+              "La réparation intégrale des dommages qui leur sont imputables, sans plafond"
+            ]
+          },
+          {
+            "critere": "Comment récupérer l'argent ?",
+            "valeurs": [
+              "Saisie possible des allocations familiales, des aides au logement et, depuis l'examen en commission, du RSA",
+              "Recours obligatoire de l'État, des collectivités et des assureurs qui ont indemnisé les victimes"
+            ]
+          },
+          {
+            "critere": "Autres mesures",
+            "valeurs": [
+              "Ajoutées en commission : drones pour identifier les participants, expulsion des étrangers condamnés, suspension de comptes en ligne, peine pour participation à un groupement violent portée à 3 ans de prison et 45 000 euros d'amende",
+              "Parents tenus de payer solidairement les dommages causés par leurs enfants mineurs"
+            ]
+          },
+          {
+            "critere": "Où en est-il ?",
+            "valeurs": [
+              "Adopté en commission au Sénat le 21 octobre, débattu en séance à partir du 27 octobre ; il devra ensuite passer à l'Assemblée nationale",
+              "Renvoyée à la commission des lois de l'Assemblée, pas encore examinée"
+            ]
+          }
+        ],
+        "note": "Pour le gouvernement, il s'agit de « faire supporter aux auteurs des dégradations le coût de leurs actes ». À gauche, des parlementaires dénoncent une inversion de la charge de la preuve et une « fuite en avant répressive ». Le Conseil d'État a exprimé des doutes sur la capacité du texte à identifier précisément les auteurs.",
+        "sources": [
+          {
+            "label": "Banque des Territoires",
+            "url": "https://www.banquedesterritoires.fr/le-projet-de-loi-casseurs-payeurs-examine-au-senat-le-27-octobre"
+          },
+          {
+            "label": "Maire-info",
+            "url": "https://www.maire-info.com/violences-urbaines/le-projet-de-loi-a-casseurs-payeurs-a-da-ja-durci-par-les-sa-nateurs-art26-31206"
+          },
+          {
+            "label": "Journal du Net",
+            "url": "https://www.journaldunet.com/business/action-publique/1557203-le-senat-examine-le-projet-de-loi-casseurs-payeurs-soutenu-par-le-gouvernement/"
+          },
+          {
+            "label": "Assemblée nationale, texte de la proposition n° 3305",
+            "url": "https://www.assemblee-nationale.fr/dyn/opendata/PIONANR5L17B3305.html"
+          },
+          {
+            "label": "Datan",
+            "url": "https://datan.fr/deputes/saone-et-loire-71/depute_eric-michoux"
+          }
+        ]
+      }
+    ]
   },
   "perimetre": {
     "titre": "Ce que couvre ce dossier",
@@ -1153,6 +1250,10 @@
           {
             "texte": "Les mesures liées à la nationalité visent des publics précis : les binationaux pour la déchéance, les étrangers pour l'expulsion.",
             "renvoi": "#auteurs"
+          },
+          {
+            "texte": "Deux textes « casseurs-payeurs » sont en discussion au Parlement : l'un vise toutes les personnes restées dans un groupement violent, l'autre les seules personnes condamnées.",
+            "renvoi": "#casseurs-payeurs"
           }
         ]
       }
@@ -1185,13 +1286,6 @@
   "textesEnCours": {
     "titre": "À noter : des textes déjà en discussion",
     "items": [
-      {
-        "texte": "Le projet de loi « casseurs-payeurs », présenté en Conseil des ministres le 16 septembre, doit être examiné au Sénat à partir du 27 octobre.",
-        "source": {
-          "label": "LCP",
-          "url": "https://lcp.fr/actualites/lycees-bloques-le-projet-de-loi-casseurs-payeurs-examine-fin-octobre-au-senat-442963"
-        }
-      },
       {
         "texte": "La loi Ripost, adoptée le 21 juillet 2026, prolonge la vidéosurveillance algorithmique jusqu'en 2030, sans reconnaissance faciale.",
         "source": {
@@ -1555,6 +1649,22 @@
     {
       "label": "Amnesty International, « Gilets jaunes : un bilan inquiétant », 18 novembre 2019",
       "url": "https://www.amnesty.fr/liberte-d-expression/actualites/gilets-jaunes-un-bilan-inquietant"
+    },
+    {
+      "label": "Assemblée nationale, proposition de loi n° 3305 visant à instaurer le principe de « casseur-payeur » lors des manifestations, attroupements et rassemblements violents, 13 octobre 2026",
+      "url": "https://www.assemblee-nationale.fr/dyn/17/textes/l17b3305_proposition-loi"
+    },
+    {
+      "label": "Banque des Territoires, « Le projet de loi casseurs-payeurs examiné au Sénat le 27 octobre », octobre 2026",
+      "url": "https://www.banquedesterritoires.fr/le-projet-de-loi-casseurs-payeurs-examine-au-senat-le-27-octobre"
+    },
+    {
+      "label": "Maire-info, « Le projet de loi casseurs-payeurs déjà durci par les sénateurs », 22 octobre 2026",
+      "url": "https://www.maire-info.com/violences-urbaines/le-projet-de-loi-a-casseurs-payeurs-a-da-ja-durci-par-les-sa-nateurs-art26-31206"
+    },
+    {
+      "label": "Journal du Net, « Le Sénat examine le projet de loi casseurs-payeurs soutenu par le gouvernement », 27 octobre 2026",
+      "url": "https://www.journaldunet.com/business/action-publique/1557203-le-senat-examine-le-projet-de-loi-casseurs-payeurs-soutenu-par-le-gouvernement/"
     },
     {
       "label": "Perlimpinpin, relevé des prises de parole des candidats sur la sécurité (voir ci-dessus)",

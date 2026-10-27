@@ -476,8 +476,9 @@ export default async function DossierMouvementSocialPage() {
       </section>
     ) : null,
 
-    // Réponses : ce qu'a fait le gouvernement, les textes en discussion, le
-    // périmètre du dossier.
+    // Réponses : ce qu'a fait le gouvernement, les blocs de `reponses.blocs`
+    // (moteur de blocs ; un bloc avec `id` sert d'ancre, ex. #casseurs-payeurs),
+    // les textes en discussion, le périmètre du dossier.
     reponses: reponses ? (
       <section id={reponses.id ?? "reponses"} className={`${SECTION} scroll-mt-20`}>
         <div className={`${CONTENEUR} flex flex-col gap-10`}>
@@ -494,6 +495,11 @@ export default async function DossierMouvementSocialPage() {
               </ul>
             </div>
           ) : null}
+          {reponses.blocs?.map((bloc, i) => (
+            <div key={bloc.id ?? i} id={bloc.id} className={bloc.id ? "scroll-mt-24" : undefined}>
+              <Bloc bloc={bloc} />
+            </div>
+          ))}
           {textesEnCours?.items?.length ? (
             <div className="flex max-w-4xl flex-col gap-4 rounded-2xl border border-(--ms-gris200) bg-white px-6 py-5 sm:px-7 sm:py-6">
               <h3 className="text-xl font-extrabold tracking-[-0.02em] text-(--ms-noir)">{textesEnCours.titre}</h3>
