@@ -44,7 +44,7 @@ permissions:
 jobs:
   revision:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 180
     env:
       SLUG: ${{ inputs.slug }}
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
@@ -91,6 +91,7 @@ jobs:
           MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
           # Transmis à analyze.js (spawnSync hérite de l'environnement).
           CLAUDE_LOT: ${{ inputs.mode_lot && '1' || '' }}
+          CLAUDE_LOT_ATTENTE_MAX_MIN: "20"
         run: node scripts/reviser-relecture.js "$SLUG" --sortie "$RUNNER_TEMP/revision"
 
       - name: Contrôle des fichiers modifiés
