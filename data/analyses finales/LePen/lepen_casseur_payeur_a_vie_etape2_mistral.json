@@ -1,0 +1,43 @@
+{
+  "contreAvisMistral": {
+    "remarques": [
+      {
+        "categorie": "coherence_note",
+        "contenu": "La note 'operationnalite_budgetaire' (8/10, SOLIDE) est cohérente, mais l'analyse ne discute pas explicitement l'ordre de grandeur des recettes potentielles ni les coûts de recouvrement, ce qui pourrait minorer la solidité budgétaire. Toutefois, la qualification reste acceptable.",
+        "severite": "mineure",
+        "confiance": "moyenne"
+      },
+      {
+        "categorie": "coherence_note",
+        "contenu": "La note 'operationnalite_moyens_humains' (5/10, INCERTAIN) est justifiée par l'absence de données sur l'identification des auteurs, mais l'analyse ne précise pas si des moyens supplémentaires (ex : drones judiciaires) sont prévus pour pallier ce goulot. Risque de sous-évaluation.",
+        "severite": "majeure",
+        "confiance": "moyenne"
+      },
+      {
+        "categorie": "juridique_operationnel",
+        "contenu": "La RÈGLE DE PLAFOND est correctement appliquée (operationnalite_moyens_total = 19 ≤ 30, plafond_applique = false). Cependant, 'operationnalite_juridique' (6/10, INCERTAIN) pourrait être surévaluée si l'absence de plafond expose à une censure constitutionnelle, comme le souligne le Conseil d'État. Risque de fragilité juridique non pleinement reflété.",
+        "severite": "majeure",
+        "confiance": "haute"
+      },
+      {
+        "categorie": "angle_mort",
+        "contenu": "L'analyse omet de discuter l'impact potentiel sur les assurances : les assureurs pourraient devenir les principaux bénéficiaires des recouvrements, réduisant l'effet dissuasif pour les casseurs. Cela pourrait modifier l'appréciation de l'efficacité (14/30).",
+        "severite": "majeure",
+        "confiance": "moyenne"
+      }
+    ],
+    "avis_general": "a_nuancer"
+  },
+  "usage": {
+    "prompt_tokens": 6553,
+    "total_tokens": 7039,
+    "completion_tokens": 486,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "service_tier": "standard"
+  }
+}
