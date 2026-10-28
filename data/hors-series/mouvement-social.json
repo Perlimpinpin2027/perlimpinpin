@@ -47,15 +47,16 @@
     "essentiel",
     "chiffres",
     "triangle",
+    "propositions",
+    "perimetre",
+    "toutesLesAnalyses",
     "comprendre",
     "reponses",
-    "perimetre",
-    "propositions",
     "textesEnCours",
-    "toutesLesAnalyses",
     "pourAllerPlusLoin",
-    "releve",
+    "annexes",
     "methode",
+    "releve",
     "sources"
   ],
   "charte": {
@@ -80,63 +81,75 @@
     "titre": "Plan de lecture",
     "items": [
       {
-        "num": "01",
+        "num": "1",
         "titre": "L'essentiel en deux minutes",
         "ancre": "#essentiel"
       },
       {
-        "num": "02",
+        "num": "2",
         "titre": "Qui propose quoi ? La carte des candidats",
         "ancre": "#triangle"
       },
       {
-        "num": "03",
-        "titre": "Une colère d'abord scolaire",
-        "ancre": "#debut"
-      },
-      {
-        "num": "04",
-        "titre": "17 octobre : la bascule",
-        "ancre": "#17-octobre"
-      },
-      {
-        "num": "05",
-        "titre": "24 octobre : l'épreuve du maintien de l'ordre",
-        "ancre": "#24-octobre"
-      },
-      {
-        "num": "06",
-        "titre": "Casseurs et pilleurs : ce que l'on sait vraiment",
-        "ancre": "#auteurs"
-      },
-      {
-        "num": "07",
-        "titre": "Réseaux, IA, ingérences : les accélérateurs",
-        "ancre": "#amplification"
-      },
-      {
-        "num": "08",
-        "titre": "Apporter des réponses politiques aux violences",
-        "ancre": "#reponses"
-      },
-      {
-        "num": "09",
+        "num": "3",
         "titre": "Les propositions des candidats analysées",
         "ancre": "#propositions"
-      }
-    ],
-    "annexes": [
-      {
-        "titre": "Pour aller plus loin",
-        "ancre": "#plus-loin"
       },
       {
-        "titre": "Le relevé complet",
-        "ancre": "#releve"
+        "num": "4",
+        "titre": "Comprendre la crise",
+        "ancre": "#comprendre",
+        "sousItems": [
+          {
+            "num": "4.1",
+            "titre": "Une colère d'abord scolaire",
+            "ancre": "#debut"
+          },
+          {
+            "num": "4.2",
+            "titre": "17 octobre : la bascule",
+            "ancre": "#17-octobre"
+          },
+          {
+            "num": "4.3",
+            "titre": "24 octobre : l'épreuve du maintien de l'ordre",
+            "ancre": "#24-octobre"
+          },
+          {
+            "num": "4.4",
+            "titre": "Casseurs et pilleurs : ce que l'on sait vraiment",
+            "ancre": "#auteurs"
+          },
+          {
+            "num": "4.5",
+            "titre": "Réseaux, IA, ingérences : les accélérateurs",
+            "ancre": "#amplification"
+          },
+          {
+            "num": "4.6",
+            "titre": "Apporter des réponses politiques aux violences",
+            "ancre": "#reponses"
+          }
+        ]
       },
       {
-        "titre": "Méthode et sources",
-        "ancre": "#methode"
+        "num": "5",
+        "titre": "Méthode, sources et relevé complet",
+        "ancre": "#annexes",
+        "sousItems": [
+          {
+            "titre": "Méthode et limites",
+            "ancre": "#methode"
+          },
+          {
+            "titre": "Le relevé complet des prises de parole",
+            "ancre": "#releve"
+          },
+          {
+            "titre": "Sources",
+            "ancre": "#sources"
+          }
+        ]
       }
     ]
   },
@@ -149,7 +162,7 @@
       "Notre question : les propositions des candidats peuvent-elles ramener le calme et la sécurité ? Nous les classons, puis évaluons chacune : efficacité, faisabilité juridique, coût, effets indésirables. Nous ne disons pas pour qui voter."
     ],
     "id": "essentiel",
-    "num": "01"
+    "num": "1"
   },
   "chiffres": {
     "titre": "// En quatre chiffres",
@@ -227,12 +240,12 @@
       "enRelecture": 3,
       "noteEnRelecture": "Le nombre de fiches publiées est calculé à partir de la liste des propositions ; le nombre de fiches en relecture est mis à jour à la main."
     },
-    "num": "02"
+    "num": "2"
   },
   "comprendre": {
     "id": "comprendre",
-    "surtitre": "// Comprendre la crise",
-    "titre": "Avant de juger les réponses, comprendre la crise",
+    "surtitre": "// Contexte et constats",
+    "titre": "Comprendre la crise",
     "intro": "Pour savoir si une mesure de sécurité peut ramener le calme, il faut savoir d'où vient la colère, ce qui s'est passé et à qui la mesure s'adresse.",
     "synthese": {
       "titre": "Le tri des certitudes",
@@ -469,7 +482,7 @@
             ]
           }
         ],
-        "num": "03"
+        "num": "4.1"
       },
       {
         "id": "17-octobre",
@@ -551,11 +564,11 @@
             ]
           }
         ],
-        "num": "04"
+        "num": "4.2"
       },
       {
         "id": "24-octobre",
-        "num": "05",
+        "num": "4.3",
         "titre": "24 octobre : l'épreuve du maintien de l'ordre",
         "blocs": [
           {
@@ -915,7 +928,7 @@
             "texte": "Elles décrivent des personnes interpellées, poursuivies ou écrouées, pas l'ensemble des participants aux violences. Elles dépendent de l'endroit où se trouvaient les forces de l'ordre et des preuves réunies. Nationalité, immigration et origine sont trois notions distinctes (voir les définitions dans « Pour aller plus loin »). Aucune origine ne peut être déduite d'un nom, d'une photo ou d'une vidéo."
           }
         ],
-        "num": "06"
+        "num": "4.4"
       },
       {
         "id": "amplification",
@@ -1038,13 +1051,13 @@
             ]
           }
         ],
-        "num": "07"
+        "num": "4.5"
       }
-    ]
+    ],
+    "num": "4"
   },
   "reponses": {
     "id": "reponses",
-    "surtitre": "// Les réponses",
     "titre": "Apporter des réponses politiques aux violences",
     "gouvernement": {
       "titre": "Ce qu'a fait le gouvernement",
@@ -1087,9 +1100,9 @@
       ]
     },
     "intro": "Les propositions des candidats sont classées en trois leviers. Chacune est vérifiée (source, date, auteur) avant d'être ajoutée, puis analysée dans une fiche notée. Tant que la fiche n'est pas publiée, la proposition est signalée « Analyse à venir », sans note provisoire.",
-    "num": "08",
+    "num": "4.6",
     "titrePropositions": "Les propositions des candidats analysées",
-    "numPropositions": "09",
+    "numPropositions": "3",
     "blocs": [
       {
         "type": "encadre",
@@ -1182,7 +1195,8 @@
           }
         ]
       }
-    ]
+    ],
+    "affichage": "sousSection"
   },
   "perimetre": {
     "titre": "Ce que couvre ce dossier",
@@ -1605,6 +1619,11 @@
         ]
       }
     ]
+  },
+  "annexes": {
+    "id": "annexes",
+    "num": "5",
+    "titre": "Méthode, sources et relevé complet"
   },
   "releve": {
     "titre": "Le relevé complet des prises de parole",
