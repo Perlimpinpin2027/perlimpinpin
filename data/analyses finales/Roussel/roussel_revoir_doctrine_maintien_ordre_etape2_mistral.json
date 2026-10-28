@@ -1,0 +1,37 @@
+{
+  "contreAvisMistral": {
+    "remarques": [
+      {
+        "categorie": "coherence_note",
+        "contenu": "La note 'operationnalite_budgetaire' (8/10, SOLIDE) est cohérente, mais l'analyse ne détaille pas explicitement une estimation budgétaire ou un ordre de grandeur pour la révision de doctrine et la formation associée, bien que cela soit évoqué comme 'modeste'. Une justification plus précise aurait renforcé la confiance.",
+        "severite": "mineure",
+        "confiance": "moyenne"
+      },
+      {
+        "categorie": "coherence_note",
+        "contenu": "La note 'degre_preparation' (1/10, FRAGILE) est justifiée par l'absence de mécanisme précis, mais l'analyse ne discute pas si un cadre théorique ou des propositions existantes (ex. rapport du Sénat) auraient pu servir de base reconstructible pour évaluer la préparation. Cela pourrait relever la note sans preuve empirique directe.",
+        "severite": "majeure",
+        "confiance": "moyenne"
+      },
+      {
+        "categorie": "juridique_operationnel",
+        "contenu": "La règle de plafond est correctement appliquée (plafond_applique: false), car aucune sous-composante d'opérationnalité n'est FRAGILE (<3/10).",
+        "severite": "mineure",
+        "confiance": "haute"
+      }
+    ],
+    "avis_general": "solide"
+  },
+  "usage": {
+    "prompt_tokens": 5067,
+    "total_tokens": 5400,
+    "completion_tokens": 333,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "service_tier": "standard"
+  }
+}
