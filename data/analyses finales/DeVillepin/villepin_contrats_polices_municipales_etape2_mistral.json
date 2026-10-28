@@ -1,0 +1,43 @@
+{
+  "contreAvisMistral": {
+    "remarques": [
+      {
+        "categorie": "chiffre",
+        "contenu": "Le nombre de communes de plus de 3 500 habitants (3 256 en 2023) est correct selon la DGCL, mais la source citée (Guide statistique de la fiscalité directe locale 2023) ne semble pas directement accessible pour vérification. Confiance moyenne.",
+        "severite": "mineure",
+        "confiance": "moyenne"
+      },
+      {
+        "categorie": "coherence_note",
+        "contenu": "La note de 'operationnalite_budgetaire' (6/10, INCERTAIN) est justifiée par l'absence de chiffrage du candidat, mais l'analyse tente une estimation (220M€/an pour 5 000 recrutements). La qualification INCERTAIN est cohérente, mais la note pourrait être légèrement ajustée (5-6/10) si l'estimation est jugée trop hypothétique.",
+        "severite": "mineure",
+        "confiance": "haute"
+      },
+      {
+        "categorie": "coherence_note",
+        "contenu": "La note de 'efficacite' (14/30, INCERTAIN) repose sur un lien causal indirect et des études américaines. Le raisonnement est structuré, mais la qualification INCERTAIN est cohérente avec l'absence de preuve empirique française. Aucune remarque majeure.",
+        "severite": "mineure",
+        "confiance": "haute"
+      },
+      {
+        "categorie": "juridique_operationnel",
+        "contenu": "La règle de plafond est correctement appliquée (aucune sous-composante FRAGILE, 'plafond_applique' est false). Les notes respectent les bornes (0-10 pour les sous-composantes, 0-30 pour 'operationnalite_moyens_total').",
+        "severite": "mineure",
+        "confiance": "haute"
+      }
+    ],
+    "avis_general": "solide"
+  },
+  "usage": {
+    "prompt_tokens": 6000,
+    "total_tokens": 6465,
+    "completion_tokens": 465,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "service_tier": "standard"
+  }
+}
