@@ -1,0 +1,37 @@
+{
+  "contreAvisMistral": {
+    "remarques": [
+      {
+        "categorie": "coherence_note",
+        "contenu": "La note `operationnalite_budgetaire` (7/10, INCERTAIN) est justifiée par une estimation sourcée (146M€/an), mais l'absence de chiffrage candidat n'est pas un motif suffisant pour écarter une qualification SOLIDE. L'incertitude porte sur le champ non précisé, pas sur l'ordre de grandeur.",
+        "severite": "majeure",
+        "confiance": "haute"
+      },
+      {
+        "categorie": "coherence_note",
+        "contenu": "La note `efficacite` (9/30, FRAGILE) repose sur une évaluation empirique solide (IPP 2024), mais le texte ne discute pas explicitement si un raisonnement structuré (ex. : théorie de la dissuasion) pourrait atténuer l'absence d'effet à court terme pour l'objectif visé.",
+        "severite": "mineure",
+        "confiance": "moyenne"
+      },
+      {
+        "categorie": "juridique_operationnel",
+        "contenu": "Le plafond appliqué (`operationnalite_moyens_total` = 10) est correct, déclenché par `operationnalite_moyens_humains` (2/10, FRAGILE). La règle est respectée.",
+        "severite": "mineure",
+        "confiance": "haute"
+      }
+    ],
+    "avis_general": "a_nuancer"
+  },
+  "usage": {
+    "prompt_tokens": 7075,
+    "total_tokens": 7425,
+    "completion_tokens": 350,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "service_tier": "standard"
+  }
+}
