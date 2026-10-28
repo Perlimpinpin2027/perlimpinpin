@@ -1,0 +1,37 @@
+{
+  "contreAvisMistral": {
+    "remarques": [
+      {
+        "categorie": "coherence_note",
+        "contenu": "La note de 'operationnalite_budgetaire' (7/10, SOLIDE) est cohérente avec l'analyse, mais l'absence de chiffrage dans le programme n'est pas suffisamment discutée. L'analyste évoque un 'coût modéré' sans tentative claire d'ordre de grandeur à partir de sources officielles, ce qui pourrait justifier une qualification INCERTAIN plutôt que SOLIDE.",
+        "severite": "majeure",
+        "confiance": "moyenne"
+      },
+      {
+        "categorie": "coherence_note",
+        "contenu": "La note d'efficacité (14/30, INCERTAIN) semble sous-évaluée au regard du texte. L'analyse reconnaît un mécanisme sérieux pour apaiser les cortèges (dialogue, mise à distance, fin des nasses) et des preuves empiriques via les modèles nord-européens. Une note plus proche de SOLIDE (ex. 18-20/30) pourrait être justifiée pour ce volet, même si le manque de réponse aux groupes violents reste un point faible.",
+        "severite": "majeure",
+        "confiance": "moyenne"
+      },
+      {
+        "categorie": "angle_mort",
+        "contenu": "L'analyse omet de discuter l'impact potentiel d'une réforme du maintien de l'ordre sur la capacité des forces de l'ordre à gérer des crises non liées aux manifestations (ex. attentats, émeutes urbaines). Cet angle mort pourrait influencer la note d'effets rebonds (12/20) ou d'efficacité (14/30).",
+        "severite": "majeure",
+        "confiance": "moyenne"
+      }
+    ],
+    "avis_general": "a_nuancer"
+  },
+  "usage": {
+    "prompt_tokens": 6327,
+    "total_tokens": 6743,
+    "completion_tokens": 416,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "service_tier": "standard"
+  }
+}
