@@ -1,0 +1,43 @@
+{
+  "contreAvisMistral": {
+    "remarques": [
+      {
+        "categorie": "chiffre",
+        "contenu": "Le chiffre de 5 % de binationaux parmi les 18-50 ans date de l'enquête TeO1 (2008-2009). L'enquête TeO2 (2019-2020) actualise ces données mais n'est pas citée. La source est donc périmée, bien que l'ordre de grandeur reste plausible. Confiance : moyenne.",
+        "severite": "mineure",
+        "confiance": "moyenne"
+      },
+      {
+        "categorie": "coherence_note",
+        "contenu": "La note d'operationnalite_budgetaire (9/10, SOLIDE) est justifiée, mais l'absence de chiffrage côté candidat n'est pas discutée comme une limite potentielle. La règle 6 bis est respectée car un ordre de grandeur est implicitement établi (coût négligeable), mais cela mériterait une mention explicite.",
+        "severite": "mineure",
+        "confiance": "haute"
+      },
+      {
+        "categorie": "coherence_note",
+        "contenu": "La note d'efficacite (3/30, FRAGILE) est cohérente avec le texte, mais le raisonnement sur l'absence d'effet dissuasif (basé sur la rareté et le délai de la sanction) pourrait être renforcé par une référence plus explicite aux sources sur la dissuasion (ex. : NIJ, 2013).",
+        "severite": "mineure",
+        "confiance": "haute"
+      },
+      {
+        "categorie": "juridique_operationnel",
+        "contenu": "La RÈGLE DE PLAFOND est correctement appliquée (plafond_declencheur = 'juridique', operationnalite_moyens_total = 10). Aucune erreur.",
+        "severite": "mineure",
+        "confiance": "haute"
+      }
+    ],
+    "avis_general": "solide"
+  },
+  "usage": {
+    "prompt_tokens": 6196,
+    "total_tokens": 6663,
+    "completion_tokens": 467,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "service_tier": "standard"
+  }
+}
